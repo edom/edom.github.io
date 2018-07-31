@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Limit</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/limit.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Limit</h1>
+  </header>
+
+  <div class="post-content">
+    <p>We motivate the definition of the limit of a sequence.</p>
+
+<p>A <em>sequence</em> \( s \) consists of the elements \( s_0 \), \( s_1 \), and so on, possibly endlessly.
+The notation <span>\( s = ( 1/n )_{n=1}^{\infty} \)</span> means the sequence
+<span>\begin{align*}
+s_1 &amp;= 1/1,
+\\ s_2 &amp;= 1/2,
+\\ s_3 &amp;= 1/3,
+\end{align*}</span>
+and so on where \( s_n = 1/n \) for each integer \( n \) greater than or equal to one.
+The index does not have to begin with one.
+For example, the notation <span>\( ( n^2 )_{n \in \Nat} \)</span> means the sequence
+<span>\begin{align*}
+s_0 = 0^2,
+\\ s_1 = 1^2,
+\\ s_2 = 2^2,
+\end{align*}</span>
+and so on where \( s_n = n^2 \) for each \( n \) in \( \Nat \).
+Unless indicated otherwise, an index is a natural number, which begins from zero.
+Instead of using indexes such as \( s_n \), we can also use brackets \( s[n] \),
+and we can even use parentheses \( s(n) \).
+We define \( S(A) \) to be the image of \( A \) through \( s \),
+that is the set of all possible outputs of \( s \),
+that is the set <span>\( \{ x ~|~ a \in A, ~ s(a) = x \} \)</span>.
+The set \( S(A) \) is obtained by applying \( s \) to each element of \( A \),
+that is, if <span>\( A = \{ a_1, a_2, a_3, \ldots \} \)</span>, then <span>\( S(A) = \{ s(a_1), s(a_2), s(a_3), \ldots \} \)</span>.
+Let \( A \) be a set from which the sequence elements are taken.
+Let \( A \) also has a partial order \( \le \).
+The statement \( \beta \le \alpha \) can also be written \( \alpha \ge \beta \).
+The notation \( s(k) \) suggests that a sequence can be thought as a function \( \Nat \to A \).
+Due to the partial order, we can define an <em>upper bound of \( s \)</em> as a \( z \) such that \( s_n \le z \) for all \( n \),
+and we can define a <em>lower bound of \( s \)</em> as an \( a \) such that \( s_n \ge a \) for all \( n \).
+The <em>supremum</em> of \( s \) is its least upper bound.
+The <em>infimum</em> of \( s \) is its greatest lower bound.
+If and only if the infimum \( \inf s \) and the supremum \( \sup s \) have the same value \( L \),
+then we say that \( s \) <em>converges</em> to \( L \),
+and we say that the <em>limit</em> of \( s \) is \( L \),
+and we write \( \lim s = L \).</p>
+
+<p>Note that the bounds do not have to occur in the sequence itself.</p>
+
+<p>If we have a sequence \( s \),
+then we can apply a function \( f \) to each member of \( s \)
+to create a new sequence \( t_n = f(s_n) \).
+Every function can be <em>lifted</em> into a function that works on sequences
+by applying that original function to each element of the sequence.</p>
+
+<p>Now that we have defined the limit of a sequence,
+we can now define the limit of a function <em>as its input approaches a value</em>.
+Let \( f \) be a function.
+By saying “the input of \( f \) approaches \( a \)”,
+we mean that there exists a sequence \( x \) that converges to \( a \).
+We define the <em>limit</em> of a function \( f \) as its input \( x \) approaches \( a \) to be \( L \), written \( \lim_{x \to a} f(x) = L \),
+if and only if for every sequence \( u \) that converges to \( a \),
+the limit of the sequence <span>\( \lim (f(u_n))_{n \in \Nat} = f(a) \)</span>.</p>
+
+<p>Another way we can define \( \lim_{x \to a} f(x) \) is by the epsilon-delta definition of limit
+as done by Cauchy, Bolzano, and Weierstrass.</p>
+
+<p>A <em>generalized sequence</em> is a function from an index set \( I \) to an element set \(A \),
+where the index has an ordering \( \le \).</p>
+
+<h2 id="related-materials">Related materials</h2>
+
+<ul>
+  <li>Wikipedia
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Sequence#Examples_and_notation">Sequence: Examples and notation</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Limit_(mathematics)">Limit</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Net_(mathematics)">Topological net</a></li>
+    </ul>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/limit.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/limit.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2017-06-27 03:00:00 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

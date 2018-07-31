@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Intelligence</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/intelligence.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Intelligence</h1>
+  </header>
+
+  <div class="post-content">
+    <ul>
+  <li>Abbreviations:
+    <ul>
+      <li>AI: Artificial Intelligence</li>
+      <li>ML: Machine Learning</li>
+      <li>COLT: Computational Learning Theory</li>
+    </ul>
+  </li>
+  <li><a href="/intmeta.html">About intelligence research</a>
+    <ul>
+      <li>How can I become an AI researcher?</li>
+      <li>How are others’ works progressing?</li>
+    </ul>
+  </li>
+  <li><a href="/intwhat.html">What is intelligence?</a></li>
+  <li>What are some AI survey papers, review articles, and expository works?
+    <ul>
+      <li>Google query: most recent mathematical ai book</li>
+      <li>http://eliassi.org/COLTSurveyArticle.pdf</li>
+      <li><a href="https://en.wikipedia.org/wiki/Computational_learning_theory#Surveys">WP: COLT surveys</a></li>
+      <li><a href="http://www.cs.ox.ac.uk/people/varun.kanade/teaching/CLT-HT2018/lectures/">COLT lecture 2018</a></li>
+      <li>Book: “An Introduction to Computational Learning Theory” by Kearns and Vazirani</li>
+      <li>https://mitpress.mit.edu/books/introduction-computational-learning-theory</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="plan">Plan</h2>
+
+<ul>
+  <li>Read about universal intelligence
+    <ul>
+      <li>Pamela McCorduck’s “Machines who think” for some history
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Timeline_of_artificial_intelligence">WP: Timeline of artificial intelligence</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Progress_in_artificial_intelligence">WP: Progress in artificial intelligence</a></li>
+        </ul>
+      </li>
+      <li>[Hutter2005Book]</li>
+      <li><a href="http://www.hutter1.net/ai/uaibook.htm">hutter1.net…uaibook.htm</a>
+        <ul>
+          <li>He formulated the “degree of intelligence” in 2005; we had a similar idea in 2018 in <a href="/intwhat.html">intwhat.html</a></li>
+          <li>(edited) “AIXI […] learns by eliminating Turing machines […] once they become inconsistent with the progressing history.”</li>
+        </ul>
+      </li>
+      <li><a href="http://www.hutter1.net/ai/suaibook.pdf">Presentation, 393 slides</a></li>
+      <li><a href="http://users.cecs.anu.edu.au/~ssanner/MLSS2010/Hutter1.pdf">Slides</a>, maybe a draft of the above.</li>
+      <li>Shane Legg’s PhD thesis “Machine super intelligence” [Legg2008]</li>
+      <li><a href="http://www.vetta.org/documents/universal_intelligence_abstract_ai50.pdf">Legg and Hutter: A formal definition of intelligence for artificial systems</a></li>
+      <li>2005 Negnevitsky AI book \cite{negnevitsky2005artificial}?</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="questions">Questions</h2>
+
+<ul>
+  <li>COLT
+    <ul>
+      <li>Should we read this?
+        <ul>
+          <li><a href="https://arxiv.org/abs/1405.1513">Ibrahim Alabdulmohsin: A Mathematical Theory of Learning</a></li>
+          <li>1999: <a href="http://www.cis.syr.edu/people/royer/stl2e/">Sanjay Jain et al.: Systems that learn</a></li>
+          <li>https://www.quora.com/What-are-the-best-math-books-for-machine-learning</li>
+          <li>https://machinelearningwithvick.quora.com/Learning-about-machine-learning</li>
+          <li>http://web.archive.org/web/20101102210231/http://measuringmeasures.com/blog/2010/1/15/learning-about-statistical-learning.html</li>
+          <li>https://www.quora.com/Which-are-the-best-books-to-get-the-Math-background-for-Machine-Learning</li>
+          <li>https://www.quora.com/How-do-I-learn-mathematics-for-machine-learning?share=1</li>
+        </ul>
+      </li>
+      <li>http://emis.ams.org/journals/TAC/reprints/articles/22/tr22.pdf
+        <ul>
+          <li>https://www.quora.com/What-are-some-survey-papers-on-artificial-intelligence-and-deep-learning</li>
+          <li>http://people.idsia.ch/~juergen/deep-learning-conspiracy.html</li>
+          <li><a href="https://arxiv.org/abs/1404.7828">Jürgen Schmidhuber: “Deep Learning in Neural Networks: An Overview”</a></li>
+          <li>http://www.ijircce.com/upload/2017/june/107_A%20Survey.pdf</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>Should we read these?</p>
+
+<p>2017, <a href="https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/building-machines-that-learn-and-think-for-themselves/E28DBFEC380D4189FB7754B50066A96F">Building machines that learn and think for themselves</a></p>
+
+<h2 id="note-to-self">Note to self</h2>
+
+<ul>
+  <li>Which AI architecture has won lots of AI contests lately?
+    <ul>
+      <li>Is it LSTM RNN?</li>
+      <li>What is LSTM RNN?
+        <ul>
+          <li>“long short-term memory recurrent neural network”</li>
+          <li>http://colah.github.io/posts/2015-08-Understanding-LSTMs/</li>
+          <li>“The expression <em>long short-term</em> refers to the fact that LSTM is a model
+  for the <em>short-term memory</em> which can last for a <em>long</em> period of time.” (<a href="https://en.wikipedia.org/wiki/Long_short-term_memory">Wikipedia</a>)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>How do we learn amid lies, deception, disinformation, misinformation?
+    <ul>
+      <li>Related to adversarial learning? https://en.wikipedia.org/wiki/Adversarial_machine_learning ?</li>
+    </ul>
+  </li>
+  <li>What are some tools that I can use to make my computer learn?
+    <ul>
+      <li>Google TensorFlow</li>
+      <li>Does OpenAI have tools?</li>
+    </ul>
+  </li>
+  <li>TODO s/adapt/habituate</li>
+  <li>Let \( f(t,x) \) be the system’s response intensity for stimulus intensity \( x \) at time \( t \). We say the system is <em>habituating</em> between the time \( t_1 \) and \( t_2 \) iff \( f(t_1,x) &gt; f(t_2,x) \) for all stimulus intensity \( x \).</li>
+  <li>“The habituation process is a form of adaptive behavior (or neuroplasticity) that is classified as non-associative learning.” https://en.wikipedia.org/wiki/Habituation</li>
+  <li>How many AI approaches are there?
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Portal:Artificial_intelligence">WP AI Portal</a> lists 4 approaches</li>
+      <li>Pedro Domingos lists 5 “tribes”</li>
+    </ul>
+  </li>
+  <li>(merge AI researchers)
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Portal:Artificial_intelligence">WP AI Portal</a> lists several leading AI researchers</li>
+    </ul>
+  </li>
+  <li>2000, György Turán, <a href="https://link.springer.com/article/10.1023%2FA%3A1018948021083">Remarks on COLT</a></li>
+  <li>2016, Krendzelak, Jakab, <a href="https://ieeexplore.ieee.org/document/7802092/">Fundamental principals of Computational Learning Theory</a>
+    <ul>
+      <li>Reading queue:
+        <ul>
+          <li>D. Angluin, C. Smith, “Inductive inference: theory and methods”, A.C.M. Computing Surveys, vol. 15, pp. 237-269, 1983.</li>
+          <li>M. Anthony, N. Biggs, “Computational Learning Theory” in , Cambridge university press, 1992.</li>
+          <li>M.J. Kearns, “The computational Complexity of Machine Learning” in , The MIT Press, May 1990.</li>
+          <li>L.G. Valiant, “A theory of the learnable”, Communications of the A.C.M., vol. 27, no. 11, pp. 1134-1142, 1984.</li>
+          <li>L. Pitt, L.G. Valiant, “Computational limitations on learning from examples”, Journal of the A.C.M., vol. 35, no. 4, pp. 965-984, 1988.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>helpful slides
+https://cs.uwaterloo.ca/~klarson/teaching/W15-486/lectures/22Colt.pdf</li>
+  <li>Bertoni et al.
+http://elearning.unimib.it/pluginfile.php/283303/mod_resource/content/1/Apprendimento_Automatico/Computational_Learning.pdf</li>
+  <li>https://stats.stackexchange.com/questions/142906/what-does-pac-learning-theory-mean</li>
+  <li>https://pdfs.semanticscholar.org/presentation/fbbd/65646c8a81094864d4e0b0dfb9c1f22181af.pdf</li>
+  <li>http://web.cs.iastate.edu/~honavar/colt-tutorial.pdf</li>
+  <li>https://en.wikipedia.org/wiki/Probably_approximately_correct_learning#cite_note-valiant-1
+A Theory of the Learnable
+Leslie G. Valiant
+1984
+http://web.mit.edu/6.435/www/Valiant84.pdf</li>
+  <li>kearns vazirani introduction
+ftp://ftp.cis.upenn.edu/pub/cse140/public_html/2002/kvpages.pdf</li>
+  <li>http://www.cis.upenn.edu/~mkearns/
+the computational complexity of machine learning
+http://www.cis.upenn.edu/~mkearns/papers/thesis.pdf
+https://www.worldscientific.com/worldscibooks/10.1142/10175</li>
+  <li>2015
+http://www.cs.tufts.edu/~roni/Teaching/CLT/</li>
+  <li>probably link to this
+http://bactra.org/notebooks/learning-theory.html</li>
+  <li>semantics-first
+https://pdfs.semanticscholar.org/83e7/b615c165209af54dd0fe05c850bb08232625.pdf</li>
+  <li>discrete approximation theory
+see the references of this paper
+https://www.worldscientific.com/doi/suppl/10.1142/10175/suppl_file/10175_chap01.pdf</li>
+  <li>https://profs.info.uaic.ro/~ciortuz/SLIDES/ml7.pdf</li>
+</ul>
+
+<p>Optimal learning for humans
+https://www.kqed.org/mindshift/37289</p>
+
+<p>Curate from this
+https://thesecondprinciple.com/optimal-learning/</p>
+
+<p>Boston dynamics dog robots</p>
+
+<p>Tesla car autopilots</p>
+
+<p>Google and Uber self-driving cars</p>
+
+<p>https://www.quora.com/Will-we-ever-have-a-rigorous-and-robust-definition-for-intelligence</p>
+
+<p>rigorous definition of intelligence
+The new ai is general and rigorous, idsia
+Toward a theory of intelligence,RAND</p>
+
+<p>A system responds to a stimulus.
+Define: a system is <em>adapting</em> to a stimulus if the same stimulus level elicits decreasing response level from the system.
+The stimulus level has to be increased to maintain the response level.</p>
+
+<p>Is learning = adapting?
+Is intelligence = adaptiveness?</p>
+
+<h2 id="others">Others</h2>
+
+<ul>
+  <li>What are some expository works in AI?
+    <ul>
+      <li><a href="https://www.sciencedirect.com/science/article/pii/S1574013717300606">The evolution of sentiment analysis—A review of research topics, venues, and top cited papers</a></li>
+    </ul>
+  </li>
+  <li>What are the trends in AI?
+    <ul>
+      <li><a href="https://twitter.com/michael_nielsen/status/983502409325395969">Michael Nielsen’s tweet</a>:
+  “I meet lots of people who tell me fatalistically (&amp; often despondently) that it’s near impossible to do important work on neural nets today, unless you have huge compute and huge data sets.”
+        <ul>
+          <li><a href="https://arxiv.org/abs/1712.00409">Deep Learning Scaling is Predictable, Empirically</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Should we read this?
+    <ul>
+      <li><a href="http://www.cs.cmu.edu/~16831-f12/notes/F11/16831_lecture15_shorvath.pdf">Boosting: Gradient descent in function space</a></li>
+      <li><a href="http://alessio.guglielmi.name/res/cos/">Alessio Guglielmi’s deep inference</a></li>
+      <li><a href="https://arxiv.org/abs/1412.1044">Problem theory, Ramón Casares</a></li>
+    </ul>
+  </li>
+  <li>EcoBot is a robot that can feed itself.
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/EcoBot">Wikipedia: EcoBot</a>:
+  “a class of energetically autonomous robots that can remain self-sustainable
+  by collecting their energy from material, mostly waste matter, in the environment”</li>
+    </ul>
+  </li>
+  <li><a href="https://www.sciencedaily.com/releases/2016/04/160427081533.htm">A single-celled organism capable of learning</a>: protists may learn by habituation</li>
+  <li>Selected threads from /r/artificial:
+    <ul>
+      <li><a href="https://www.reddit.com/r/artificial/comments/8begcv/what_are_some_of_the_best_books_on_artificial/">What are some of the best books on AI/ML?</a></li>
+      <li><a href="https://www.reddit.com/r/artificial/comments/8bzrmd/math_phd_want_to_learn_more_about_ai_what_to_read/">Math PhD. Want to learn more about AI. What to read?</a></li>
+    </ul>
+  </li>
+  <li>What is so bad about human extinction?
+    <ul>
+      <li>If you are nihilist, then there is nothing inherently bad about human extinction.</li>
+    </ul>
+  </li>
+  <li>What is the question?</li>
+  <li>How do we make an AI?</li>
+  <li>How do we create a seed AI?</li>
+  <li>History questions:
+    <ul>
+      <li>Why was Raymond J. Solomonoff \cite{SolAlpProb2011, GacsVitanyiSolomonoff} interested in predicting sequences of bits?
+  What was he interested in?
+  What was he trying to do?</li>
+    </ul>
+  </li>
+  <li>Mathematical spaces
+    <ul>
+      <li>What is a metric?</li>
+      <li>What is a norm?</li>
+      <li>What is a measure?</li>
+      <li>https://en.wikipedia.org/wiki/Space_(mathematics)#Three_taxonomic_ranks</li>
+      <li>https://en.wikipedia.org/wiki/Topological_space#Classification_of_topological_spaces</li>
+      <li>https://en.wikipedia.org/wiki/Functional_analysis
+        <ul>
+          <li>What is a Hilbert space?</li>
+          <li>What is a Banach space?</li>
+          <li>What is a Sobolev space?</li>
+          <li>What is a measure?
+            <ul>
+              <li>What is a Lebesgue measure?
+                <ul>
+                  <li>What is an Lp space?
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Lp_space#Lp_spaces">Wikipedia: Lp space</a></li>
+                      <li>How is it pronounced?
+                        <ul>
+                          <li>“Lebesgue space with \(p\)-norm”</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>What is a small lp space?</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="non-prioritized-questions">Non-prioritized questions</h2>
+
+<ul>
+  <li>What is AI? Why should I care?
+    <ul>
+      <li>AI is the way for us to become gods.</li>
+    </ul>
+  </li>
+  <li>What is the relationship between AI and ML?
+    <ul>
+      <li>ML is a subset of AI.
+        <ul>
+          <li>Then what is the rest of AI that is not ML?
+            <ul>
+              <li>Ethics? Philosophy? Rule systems?</li>
+              <li><a href="https://ai.stackexchange.com/questions/35/what-is-the-difference-between-artificial-intelligence-and-machine-learning">AI SE 35: What is the difference between artificial intelligence and machine learning?</a></li>
+              <li>What is intelligence without learning?
+  Non-adaptive intelligence? Static intelligence?</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>What is a cyborg?</li>
+  <li>If human goal function is survival, then why exists suicide?
+    <ul>
+      <li>Evolutionary noise?</li>
+    </ul>
+  </li>
+</ul>
+
+<p>https://en.wikipedia.org/wiki/Universal_Darwinism</p>
+
+<h2 id="how-might-we-build-a-seed-ai">How might we build a seed AI?</h2>
+
+<ul>
+  <li>Use off-the-shelf computers.</li>
+  <li>Use supercomputers.</li>
+  <li>Use clusters.</li>
+  <li>Use computers over the Internet.</li>
+  <li>Raise an AI like raising a child.</li>
+  <li>Evolve a system. Create an environment with selection pressure. Run it long enough.
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Evolutionary_robotics">WP: Evolutionary robotics</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Evolutionary_computation">WP: Evolutionary computation</a></li>
+    </ul>
+  </li>
+  <li>What is TensorFlow? Keras? CNTK? Theano?
+    <ul>
+      <li>The building blocks of AI? Standardized AI components?</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="guesses">Guesses</h2>
+
+<p>In the future, there are only two kinds of jobs:
+telling machines to do things,
+and being told to do things by machines.</p>
+
+<h2 id="undigested-information">Undigested information</h2>
+
+<ul>
+  <li><a href="https://kevinbinz.com/2017/08/13/ml-five-tribes/">kevinbinz.com: Five Tribes of Machine Learning</a>,
+part of <a href="https://kevinbinz.com/2017/05/09/sequence-machine-learning/">machine learning sequence</a>,
+some contents from Pedro Domingos’s book “The master algorithm”</li>
+  <li><a href="http://nlp.fast.ai/classification/2018/05/15/introducting-ulmfit.html">Introducing state of the art text classification with universal language models</a></li>
+  <li>Summary of Pedro Domingos’s book “The master algorithm”
+    <ul>
+      <li>Sparse autoencoders (p. 116).</li>
+      <li>“A nugget of knowledge so incontestable, so fundamental, that we can build all induction on top of it” (p. 64) in Chapter 9.</li>
+      <li>Induction is the inverse of deduction,
+  as subtraction is the inverse of addition. (Is this a quote from the book?)</li>
+      <li>EM (expectation maximization) algorithm (p. 209).</li>
+      <li>Metalearning (p. 237).</li>
+      <li>A classifier that classifies by combining the output of subclassifiers.</li>
+      <li><a href="http://homes.cs.washington.edu/~pedrod/papers/mlj05.pdf">Markov logic network</a> (p. 246) named <a href="Alchemy">http://alchemy.cs.washington.edu/</a> (p. 250)</li>
+    </ul>
+  </li>
+  <li>Harvard University the graduate school of arts and sciences:
+<a href="http://sitn.hms.harvard.edu/flash/2017/history-artificial-intelligence/">Rockwell Anyoha: History of AI</a></li>
+  <li><a href="http://jacques.pitrat.pagesperso-orange.fr/">Jacques Pitrat</a> and his CAIA,
+bootstrapping AI with AI.</li>
+  <li><a href="http://www.hutter1.net/ai/uaibook.htm">Marcus Hutter book: Universal Artificial Intelligence: Sequential Decisions based on Algorithmic Probability</a>
+and the <a href="http://www.hutter1.net/ai/suaibook.pdf">slides</a>.</li>
+  <li><a href="http://math.bu.edu/people/mkon/V5Fin.pdf">Mark A. Kon, Louise A. Raphael, Daniel A. Williams:
+Extending Girosi’s approximation estimates for functions in Sobolev spaces via statistical learning theory</a>
+    <ul>
+      <li>“Girosi [8] established an interesting connection between statistical learning theory
+  (SLT) and approximation theory, showing that SLT methods can be used to
+  prove results of a purely approximation theoretic nature.”</li>
+    </ul>
+  </li>
+  <li>Speech synthesizer using hidden Markov model?
+Someone must have done it. Find the paper.</li>
+  <li>ISIR (International Society for Intelligence Research)
+human intelligence research <a href="http://www.isironline.org/resources/teaching-pages/">teaching pages</a>.</li>
+  <li>https://en.wikipedia.org/wiki/Artificial_life</li>
+  <li>What is the simplest life form? (2008)
+https://www.quora.com/What-is-the-simplest-life-form</li>
+  <li>https://stats.stackexchange.com/questions/142906/what-does-pac-learning-theory-mean</li>
+  <li>https://brenocon.com/blog/2008/12/statistics-vs-machine-learning-fight/
+    <ul>
+      <li>YC thread for that https://news.ycombinator.com/item?id=4927168</li>
+    </ul>
+  </li>
+  <li><a href="https://www.quora.com/What-are-the-most-important-foundational-papers-in-artificial-intelligence-machine-learning">Quora: What are the most important, foundational papers in artificial intelligence/machine learning?</a></li>
+  <li>JAIR (Journal of Artificial Intelligence Research):
+<a href="https://www.jair.org/index.php/jair/navigationMenu/view/IJCAIJAIR">IJCAI-JAIR awards</a></li>
+  <li>Schmidhuber, <a href="http://people.idsia.ch/~juergen/fastestuniverse.pdf">The Fastest Way of Computing All Universes</a></li>
+  <li><a href="http://raysolomonoff.com/dartmouth/">Dartmouth AI archives</a>
+    <ul>
+      <li><a href="http://raysolomonoff.com/publications/indinf56.pdf">Solomonoff, “An inductive inference machine”</a></li>
+    </ul>
+  </li>
+  <li>Shane Legg, Joel Veness: algorithmic intelligence quotient
+    <ul>
+      <li>https://github.com/mathemajician/AIQ</li>
+      <li>An Approximation of the Universal Intelligence Measure
+  by Shane Legg and Joel Veness, 2011</li>
+    </ul>
+  </li>
+  <li><a href="https://courses.cs.washington.edu/courses/csep590/06au/projects/history-ai.pdf">History of AI</a>, University of Washington, History of Computing, CSEP 590A</li>
+  <li><a href="https://en.wikipedia.org/wiki/Timeline_of_artificial_intelligence">WP: Timeline of AI</a></li>
+  <li>https://www.quantamagazine.org/why-self-taught-artificial-intelligence-has-trouble-with-the-real-world-20180221/</li>
+  <li>http://news.mit.edu/2010/ai-unification</li>
+  <li>http://airesearch.com/</li>
+  <li>https://theconversation.com/understanding-the-four-types-of-ai-from-reactive-robots-to-self-aware-beings-67616</li>
+  <li>https://artificialintelligence.id/</li>
+  <li>https://www.asianscientist.com/2017/09/academia/indonesia-ai-nvidia-binus-kinetica/</li>
+  <li><a href="https://arxiv.org/abs/1206.5533">Practical recommendations for gradient-based training of deep architectures</a></li>
+  <li><a href="https://arxiv.org/abs/1604.06737">Entity Embeddings of Categorical Variables</a></li>
+  <li>Google Colab</li>
+  <li>https://qz.com/1172431/artificial-intelligence-ai-should-be-raised-like-children-not-computers/</li>
+  <li>RNN, LSTM, GRU
+    <ul>
+      <li>RNN is recurrent neural network.</li>
+      <li>LSTM is a kind of RNN.</li>
+      <li>GRU is a kind of RNN.</li>
+      <li>https://jhui.github.io/2017/03/15/RNN-LSTM-GRU/</li>
+    </ul>
+  </li>
+  <li>http://web.mit.edu/tslvr/www/lessons_two_years.html</li>
+  <li>https://gallery.mailchimp.com/dc3a7ef4d750c0abfc19202a3/files/93e40657-1adb-4891-94ad-c65dda68061f/Ng_MLY01_02.pdf</li>
+  <li>https://www.reddit.com/r/MachineLearning/comments/73n9pm/d_confession_as_an_ai_researcher_seeking_advice/#bottom-comments</li>
+  <li><a href="http://www.inf.ed.ac.uk/teaching/courses/mlpr/2017/notes/w6b_netflix_prize.html">netflix prize, part of MLPR class notes</a></li>
+  <li>Scott M. Lundberg, Su-In Lee: A Unified Approach to Interpreting Model Predictions
+    <ul>
+      <li>http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions.pdf</li>
+      <li>https://github.com/slundberg/shap</li>
+    </ul>
+  </li>
+  <li><a href="https://www.datascience.com/blog/introduction-to-bayesian-inference-learn-data-science-tutorials">datascience.com: Introduction to Bayesian Inference</a></li>
+  <li><a href="http://www.fc.uaem.mx/~bruno/material/brooks_87_representation.pdf">1987, Intelligence without representation, Rodney A. Brooks</a></li>
+  <li><a href="http://colah.github.io/posts/2015-08-Backprop/">colah.github.io: Backprop</a></li>
+  <li>google search “ai theory research”</li>
+  <li><a href="http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.2.4835">2002, PhotoTOC: Automatic Clustering for Browsing Personal Photographs, by John C. Platt, Mary Czerwinski, Brent A. Field</a></li>
+  <li>philosophy of learning
+    <ul>
+      <li><a href="http://learning.media.mit.edu/content/publications/EA.Piaget%20_%20Papert.pdf">Piaget’s constructivism vs Papert’s constructionism</a>, Edith Ackermann</li>
+    </ul>
+  </li>
+  <li><a href="https://arxiv.org/abs/1508.01084">2015, Deep Convolutional Networks are Hierarchical Kernel Machines</a></li>
+  <li><a href="https://www.youtube.com/watch?v=F5Z52jl4yHQ">Michio Kaku: Who is right about A.I.: Mark Zuckerberg or Elon Musk?</a></li>
+  <li><a href="https://stats.stackexchange.com/questions/104385/assigning-meaningful-cluster-name-automatically">Stats SE 104385: text processing: assigning meaningful cluster name automatically</a></li>
+  <li>The mathematics of deep learning (a website)</li>
+  <li>Can AI be used to upscale old audio/video recordings? Fix deteriorated pictures, films, documents? Color old pictures, photos, films?
+“Modernize” past artifacts? Digital restoration of archives?</li>
+  <li>brain-computer interface
+    <ul>
+      <li>pop science
+        <ul>
+          <li><a href="https://www.youtube.com/watch?v=P29EXskk9oU">How Brain Waves Can Control Physical Objects</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>machine learning
+    <ul>
+      <li>confusion matrix</li>
+      <li>algebra of words
+        <ul>
+          <li>https://medium.com/@erushton214/a-simple-spell-checker-built-from-word-vectors-9f28452b6f26</li>
+        </ul>
+      </li>
+      <li>https://www.datasciencecentral.com/profiles/blogs/crisp-dm-a-standard-methodology-to-ensure-a-good-outcome</li>
+      <li><a href="http://www.inference.vc/untitled/">ML beyond Curve Fitting: An Intro to Causal Inference and do-Calculus</a></li>
+    </ul>
+  </li>
+  <li>deepmind wavenet</li>
+  <li><a href="https://openreview.net/pdf?id=ByldLrqlx">deepcoder: learning to write programs</a></li>
+  <li>Ramblings, opinions, guesses, hypotheses, conjectures, speculations
+    <ul>
+      <li>AI is approximation (or constrained optimization?) in Sobolev spaces (or ( L^p(\Real) ) spaces?)?</li>
+      <li>Intelligent agents are only possible if the world they live in is structured.
+  If the laws of physics randomly change over time,
+  then intelligent agents are unlikely.</li>
+      <li>We should merge machine learning, probability, and statistics?
+        <ul>
+          <li><a href="http://en.wikipedia.org/wiki/Recursive_self_improvement">WP:Recursive self-improvement</a></li>
+        </ul>
+      </li>
+      <li>World = agent + environment.
+  Environment is everything that the agent does not control directly.
+  The body of an agent is part of the environment, not of the agent.</li>
+    </ul>
+  </li>
+  <li><a href="http://dl.acm.org/citation.cfm?id=2567715">Dimension independent similarity computation (DISCO)</a></li>
+  <li><a href="http://www.jair.org/">Journal of artificial intelligence research</a> (open access)</li>
+  <li><a href="https://arxiv.org/abs/1802.08195">Adversarial Examples that Fool both Human and Computer Vision</a>,
+from <a href="https://www.youtube.com/watch?v=AbxPbfODGcs">two minute papers 241</a>.</li>
+  <li><a href="https://www.semanticscholar.org/paper/Machine-Theory-of-Mind-Rabinowitz-Perbet/4a48d7528bf1f81f48be8a644ffb1bcc08f1b2c5">Machine theory of mind</a></li>
+  <li>Ilias Diakonikolas, Daniel Kane and Alistair Stewart. Optimal Learning via the Fourier Transform for Sums of Independent Integer Random Variables</li>
+  <li>https://en.m.wikipedia.org/wiki/List_of_important_publications_in_computer_science#Machine_learning</li>
+  <li><a href="https://arxiv.org/abs/1704.07441">Detecting English Writing Styles For Non Native Speakers</a></li>
+  <li>“Hicklin envisaged that learning resulted from a dynamic equilibrium between information acquisition and loss.”
+(<a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/tea.3660210910">Mathematical modeling of learning, Peter F. W. Preece</a>, 1984)</li>
+  <li>AI research tries to make a system that can optimize a wide variety of goal functions?</li>
+  <li><a href="https://cs.nyu.edu/~mohri/mlbook/">Mehryar Mohri, Afshin Rostamizadeh, and Ameet Talwalkar; book; “Foundations of machine learning”</a></li>
+  <li>http://bigthink.com/videos/the-top-3-supplements-for-surviving-the-singularity</li>
+  <li>https://google.github.io/CausalImpact/CausalImpact.html</li>
+  <li>intelligence testing
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=8YWjSQHfV5U">YT:Jordan Peterson - Example IQ questions and what Career/job fits your IQ</a>
+        <ul>
+          <li>problem: no job for people with IQ below 87?</li>
+          <li><a href="https://www.reddit.com/r/JordanPeterson/comments/84qmsj/source_of_83_iq_minimum_for_the_us_military/">R:source for soldier minimum IQ requirement of 85</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Fluid_and_crystallized_intelligence">WP:Fluid and crystallized intelligence</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Raven%27s_Progressive_Matrices">WP:Raven’s progressive matrices</a>
+  is a language-neutral visual test for fluid intelligence?</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>[YT:4 Experiments Where the AI Outsmarted Its Creators</td>
+          <td>Two Minute Papers #242](https://www.youtube.com/watch?v=GdTBqBnqhaQ)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><a href="https://arxiv.org/abs/1509.06569">Tensorizing Neural Networks</a></li>
+  <li><a href="https://arxiv.org/abs/1502.02367">Gated Feedback Recurrent Neural Networks</a></li>
+  <li>no information http://syntience.com/</li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/intelligence.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/intelligence.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2017-06-22 03:57:00 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

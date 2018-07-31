@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Justifying physics</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/natkno.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Justifying physics</h1>
+  </header>
+
+  <div class="post-content">
+    <ul>
+  <li>Overview
+    <ul>
+      <li>Target audience:
+        <ul>
+          <li>Everyone who wants to justify physics.</li>
+          <li>Everyone who wants to formalize physics.</li>
+        </ul>
+      </li>
+      <li>Natural knowledge is knowledge about nature (reality).</li>
+      <li>This page tries to list natural knowledge, sorted descending by verifiability.</li>
+      <li>This page tries to teach natural knowledge in the fastest way possible.
+        <ul>
+          <li>Knowledge is presented top-down:
+            <ul>
+              <li>A child verifies its parent.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Brief excursion to philosophy
+    <ul>
+      <li>Truth is a continuum (not binary true-and-false).</li>
+      <li>Brief excursion to epistemology
+        <ul>
+          <li>We <em>assume</em> that there are three sources of knowledge:
+            <ul>
+              <li>observation (the senses)</li>
+              <li>definition (fiat, agreement between speakers of the same language)</li>
+              <li>inference (logic, rules of thought)</li>
+            </ul>
+          </li>
+          <li>We don’t need to go deeper into <a href="/philo.html">Philosophy</a> for now.</li>
+        </ul>
+      </li>
+      <li>A problem with physics: <em>too many unjustified tacit assumptions</em>.
+        <ul>
+          <li>Every scientific revolution invalidates some tacit assumptions?</li>
+          <li>Physics is mathematics + engineering + philosophy.
+            <ul>
+              <li>If we skip the mathematics, we can’t measure.</li>
+              <li>If we skip the engineering, we can’t experiment.</li>
+              <li>If we skip the philosophy, we can’t progress.
+                <ul>
+                  <li>We will make unjustified tacit assumptions.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="https://en.wikipedia.org/wiki/Tacit_assumption">WP:Tacit assumption</a></li>
+          <li><a href="https://www.researchgate.net/publication/295525659_Tacit_assumptions_or_Implicit_assumptions_if_they_are_flawed_leads_to_paradoxical_paradigm_and_scientific_crisis">Tacit assumptions or Implicit assumptions (if they are flawed) leads to paradoxical paradigm and scientific crisis</a></li>
+          <li><a href="https://www.researchgate.net/post/How_to_expose_insidious_tacit_assumptions_which_sidetrack_scientific_progress_into_wrong_path_leading_to_scientific_crisis_if_not_exposed">How to expose insidious tacit assumptions, which sidetrack scientific progress into wrong path (leading to scientific crisis), if not exposed?</a></li>
+          <li><a href="https://www.jstor.org/stable/986647">1975, article, paywall, “Tacit Assumptions in Fundamental Particle Physics”</a>
+            <ul>
+              <li><a href="http://www.iaea.org/inis/collection/NCLCollectionStore/_Public/06/183/6183879.pdf">unpaywalled</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Let’s go back to prehistoric times.
+    <ul>
+      <li>Let’s begin with very wrong ideas.
+        <ul>
+          <li>We’re “cheating”: we have hindsight; they didn’t.</li>
+        </ul>
+      </li>
+      <li>We will revise knowledge as we go. We will become less wrong.</li>
+      <li>We might will never be 0% wrong.
+        <ul>
+          <li>But knowledge doesn’t have to be 100% true in order to be useful.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="/matter.html">Matter</a></li>
+  <li>Falling
+    <ul>
+      <li>Define: The <em>Earth</em> is where we stand.</li>
+      <li>Define: <em>Duration</em> is what a timer measures.</li>
+      <li>Define: <em>Position</em> is where something is.</li>
+      <li>Define: <em>Velocity</em> is the rate of change of position.</li>
+      <li>Define: <em>Acceleration</em> is the rate of change of velocity.</li>
+      <li>Define: <em>Speed</em> is the magnitude of velocity.</li>
+      <li>Define: <em>Time</em> is duration.</li>
+      <li>Define: The <em>distance</em> between two points A and B is \( v \cdot t \),
+        <ul>
+          <li>iff \( t \) is the minimum time required by something with constant speed \( v \) to go from A to B.</li>
+        </ul>
+      </li>
+      <li>Define: <em>Length</em> is what a ruler measures.</li>
+      <li>Define: <em>Acceleration</em> is the rate of change of velocity.</li>
+      <li>Infer: Things fall <em>with constant acceleration</em> toward the Earth.
+        <ul>
+          <li>That is: <span>\( h = k \cdot t^2 \)</span> where
+            <ul>
+              <li>\( h \) is height of fall;</li>
+              <li>\( t \) is time of fall;</li>
+              <li>\( k \) is a constant.</li>
+            </ul>
+          </li>
+          <li>Observe: Things <em>fall</em> toward the Earth.</li>
+          <li>Observe: Time of fall depends on height only and not mass.
+            <ul>
+              <li><a href="https://en.wikipedia.org/wiki/Galileo%27s_Leaning_Tower_of_Pisa_experiment">WP:Galileo’s Leaning Tower of Pisa experiment</a>
+                <ul>
+                  <li>Two balls having different weight, dropped from the same height, will reach the Earth at the same time.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Infer: Things fall with the same acceleration everywhere on Earth.
+        <ul>
+          <li>Observe: <em>Catenary</em> is symmetrical.
+            <ul>
+              <li>Tie a rope to two upright posts.</li>
+              <li>Keep the rope loose, but don’t let it touch the ground.</li>
+              <li><a href="https://en.wikipedia.org/wiki/Catenary">WP:Catenary</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Infer: Every part of a thing falls with the same acceleration.
+        <ul>
+          <li>Observe:
+            <ul>
+              <li>Break a thing into several parts (pieces).</li>
+              <li>Drop the parts.</li>
+              <li>Every part falls with the same acceleration.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Observe: Cavendish torsion balance experiment (1797–1798)
+        <ul>
+          <li>This experiment finds out the density of the Earth.</li>
+          <li>That is related to the gravitational constant \( G \).</li>
+          <li><a href="https://en.wikipedia.org/wiki/Cavendish_experiment">WP:Cavendish experiment</a></li>
+        </ul>
+      </li>
+      <li>Infer: <a href="https://en.wikipedia.org/wiki/Newton%27s_law_of_universal_gravitation">WP:Newton’s law of universal gravitation</a>
+        <ul>
+          <li>\( F = G \cdot m_1 \cdot m_2 / r^2 \)</li>
+          <li>What is the justification?
+            <ul>
+              <li>Does Newton justify Kepler?</li>
+              <li>Does Kepler justify Newton?</li>
+            </ul>
+          </li>
+          <li>How did Newton arrive at this?</li>
+          <li>Infer: <a href="https://en.wikipedia.org/wiki/Kepler%27s_laws_of_planetary_motion">WP:Kepler’s laws of planetary motion</a>
+            <ul>
+              <li>Observe: Tycho Brahe’s data</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Define: A person is <em>experiencing weightlessness</em> iff his weight is zero (the weight scale says zero).</li>
+      <li>Assume: Einstein’s equivalence principle?
+        <ul>
+          <li>A free-falling person will experience weightlessness.</li>
+          <li>A person in void (zero gravity, absence of any other mass) will also experience weightlessness.</li>
+          <li>Those two phenomenons are <em>the same phenomenon</em>.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Electromagnetism
+    <ul>
+      <li>Electromagnetism unifies optics, electricity, and magnetism.</li>
+      <li>Define: <a href="https://en.wikipedia.org/wiki/Lodestone">WP:Lodestone</a>.</li>
+      <li>Define: A <em>magnet</em> is a piece of lodestone.</li>
+      <li>Electricity
+        <ul>
+          <li>Observe: Electricity
+            <ul>
+              <li>Rub amber with cat fur.</li>
+              <li>The amber can now <em>attract</em> feathers.</li>
+              <li>Define: Such rubbed amber <em>exhibits electricity</em>.</li>
+              <li>These things might be easier to find in the 21st century:
+                <ul>
+                  <li>Glass (instead of amber).</li>
+                  <li>Silk or wool (instead of cat fur).</li>
+                  <li>Pieces of paper (instead of feather).</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>Charge
+            <ul>
+              <li>Define: To <em>charge</em> a thing is to make it exhibit electricity.</li>
+              <li>Observe: Ways to charge a thing
+                <ul>
+                  <li>Rubbing
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Triboelectric_effect">WP:Triboelectric effect</a>
+                        <ul>
+                          <li><a href="https://en.wikipedia.org/wiki/Triboelectric_effect#Triboelectric_series">WP:Triboelectric series</a></li>
+                        </ul>
+                      </li>
+                      <li><a href="https://en.wikipedia.org/wiki/Electrostatic_generator">WP:Electrostatic generator</a>
+                        <ul>
+                          <li>frictional machines, Otto von Guericke, around 1663</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>Influencing
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Electrostatic_induction">WP:Electrostatic induction</a></li>
+                      <li>Let A be a charged thing.</li>
+                      <li>Let B be an uncharged thing.</li>
+                      <li>Putting A near B charges B.</li>
+                      <li>Putting A away from B uncharges B.</li>
+                    </ul>
+                  </li>
+                  <li>Touching
+                    <ul>
+                      <li>Let A be a charged thing.</li>
+                      <li>Let B be an uncharged thing.</li>
+                      <li>If A and B touch, then B becomes charged.</li>
+                      <li>If A and B are separated after touching, then B is still charged.</li>
+                      <li>Assume: This doesn’t work if B is a metal?</li>
+                      <li>Observe: Two things equalizes their electric charge when they touch?</li>
+                    </ul>
+                  </li>
+                  <li>Conduction
+                    <ul>
+                      <li>Let A be a charged thing.</li>
+                      <li>Let B be an uncharged thing.</li>
+                      <li>Let C be a piece of iron.</li>
+                      <li>Let C touch both A and B, but without A touching B directly.</li>
+                      <li>Remove C.</li>
+                      <li>Verify that B is now charged.</li>
+                      <li>Assume: This still holds if the iron in C is replaced with any other metal.</li>
+                      <li>Define: Iron is a <em>conductor</em>.</li>
+                      <li>Assume: Every metal is a conductor.</li>
+                      <li>Define: Everything is either a conductor or an <em>isolator</em>.</li>
+                      <li>Assume: An isolator is a thing that can be charged by rubbing.</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>Two ways of charging: <em>vitreously</em> and <em>resinously</em>
+                <ul>
+                  <li>Inferences
+                    <ul>
+                      <li>Infer: There are two kinds of charged things.</li>
+                      <li>Infer: Two similarly charged things repel each other.</li>
+                      <li>Infer: Two differently charged things attract each other.</li>
+                    </ul>
+                  </li>
+                  <li>Observe:
+                    <ul>
+                      <li>Rub glass G with silk S.</li>
+                      <li>Rub glass H with silk T.</li>
+                      <li>The glasses <em>repel</em> each other (G-H).</li>
+                      <li>The silks <em>repel</em> each other (S-T).</li>
+                      <li>A glass and a silk <em>attract</em> each other (G-S, G-T, H-S, H-T).</li>
+                      <li>Define: A rubbed glass is <em>vitreously charged</em>.
+                        <ul>
+                          <li>“Vitreous” is a Latinate word that means “glassy”.</li>
+                          <li><a href="https://en.wiktionary.org/wiki/vitreous">Wiktionary:vitreous</a>
+                            <ul>
+                              <li>1733, <a href="https://en.wikipedia.org/wiki/Charles_Fran%C3%A7ois_de_Cisternay_du_Fay">WP:Charles François de Cisternay du Fay</a></li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                      <li>Define: A thing is <em>resinously charged</em> iff it is charged but not vitreously.</li>
+                      <li><a href="https://physics.stackexchange.com/questions/266246/how-did-physicists-know-that-there-are-two-kind-of-charges/266250">Phys. SE 266246: How did physicists know that there are two kind of charges?</a></li>
+                    </ul>
+                  </li>
+                  <li>Superseded theories
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Fluid_theory_of_electricity">WP:Fluid theory of electricity</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>Assume: An <em>electrometer</em> measures the <em>strength</em> of electricity exhibited by a thing.
+                <ul>
+                  <li>Assume: The strength of electricity exhibited by a rubbed amber can be measured by the amount of paper it can pull.</li>
+                  <li><a href="https://en.wikipedia.org/wiki/Electrometer">WP:Electrometer</a></li>
+                  <li>How do we know whether a thing is charged, if we don’t care about the exact amount of charge?
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Electroscope">WP:Electroscope</a>
+                        <ul>
+                          <li><a href="https://en.wikipedia.org/wiki/Versorium">WP:Versorium</a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>What?
+                <ul>
+                  <li>Define: <em>Positive charge</em> is the charge left on a glass rod after being rubbed with silk.
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Electric_charge">WP:Electric charge</a>
+                        <ul>
+                          <li>“It is arbitrary which polarity is called positive and which is called negative.”</li>
+                          <li>“Positive charge can be defined as the charge left on a glass rod after being rubbed with silk.”</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>Coulomb’s torsion balance
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Coulomb%27s_law">WP:Coulomb’s law</a>
+                        <ul>
+                          <li>\( F = k \cdot q_1 \cdot q_2 / r^2 \)</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>Observe: Rubbing a piece of iron doesn’t charge it?</li>
+              <li>Observe: Electric charge can be stored.</li>
+              <li>Observe: Electric charge can be unloaded.</li>
+              <li><a href="https://physics.stackexchange.com/questions/23572/how-does-an-object-regains-its-neutrality-after-being-charged-by-rubbing">Phys. SE 23572: How does an object regains its neutrality after being charged by rubbing?</a></li>
+            </ul>
+          </li>
+          <li>todo:
+            <ul>
+              <li>Conductors and isolators</li>
+              <li>Infer: Metal and electricity
+                <ul>
+                  <li>Observe: Iron doesn’t exhibit electricity after being rubbed.</li>
+                  <li>Observe: Iron exhibits electricity by influence.</li>
+                </ul>
+              </li>
+              <li><a href="https://en.wikipedia.org/wiki/Electrical_conductor">WP:Electrical conductor</a>
+                <ul>
+                  <li>https://www.quora.com/Why-do-conductors-not-produce-static-electricity</li>
+                  <li>https://www.scientificamerican.com/article/static-science-how-well-do-different-materials-make-static-electricity/</li>
+                  <li>https://www.reddit.com/r/askscience/comments/2ujpw8/why_does_metal_eg_a_metal_slide_not_produce_static/</li>
+                </ul>
+              </li>
+              <li>Capacitor</li>
+              <li><a href="https://en.wikipedia.org/wiki/Leyden_jar">WP:Leyden jar</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Magnetism
+        <ul>
+          <li>Observe: Two magnets attract or repel each other.</li>
+          <li>Observe: A magnet and a piece of iron attract each other.</li>
+          <li>…</li>
+          <li>todo: Magnetic pole</li>
+          <li>Infer: The Earth is a magnet.
+            <ul>
+              <li>Observe: Every resting magnetic needle near you points to the same direction (except if you’re at the Earth’s magnetic poles).</li>
+              <li>Observe: The Earth has magnetic poles.
+                <ul>
+                  <li><a href="https://en.wikipedia.org/wiki/North_Magnetic_Pole#Expeditions_and_measurements">WP:North Magnetic Pole, expeditions</a></li>
+                  <li><a href="https://en.wikipedia.org/wiki/South_Magnetic_Pole#Expeditions">WP:South Magnetic Pole, expeditions</a></li>
+                  <li>Observe: They are moving.
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Polar_drift">WP:Polar drift</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="https://en.wikipedia.org/wiki/Magnetism#History">WP:Magnetism, history</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/De_Magnete">WP:De Magnete</a> (1600)</li>
+        </ul>
+      </li>
+      <li>Observe: <a href="https://en.wikipedia.org/wiki/Oersted%27s_law">WP:Oersted’s law</a>:
+  Electrical current in a wire deflects nearby magnetic needles.</li>
+      <li>todo:
+        <ul>
+          <li>Reversibility between motor and generator
+            <ul>
+              <li>Input electricity, output mechanicity.</li>
+              <li>Input mechanicity, output electricity.</li>
+            </ul>
+          </li>
+          <li>https://en.wikipedia.org/wiki/Homopolar_motor</li>
+          <li>https://en.wikipedia.org/wiki/Homopolar_generator</li>
+          <li>https://en.wikipedia.org/wiki/Electric_motor</li>
+          <li>https://en.wikipedia.org/wiki/Electric_generator</li>
+          <li>https://en.wikipedia.org/wiki/Electromagnetic_induction</li>
+          <li>https://en.wikipedia.org/wiki/Faraday%27s_law_of_induction</li>
+          <li>https://en.wikipedia.org/wiki/Biot%E2%80%93Savart_law</li>
+          <li>https://en.wikipedia.org/wiki/Lenz%27s_law</li>
+          <li>https://en.wikipedia.org/wiki/Maxwell%27s_equations</li>
+        </ul>
+      </li>
+      <li>Summaries
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Electricity#History">WP:Electricity, history</a>
+            <ul>
+              <li>William Gilbert (1544–1603) distinguished the lodestone effect from the amber effect.
+                <ul>
+                  <li>Rods of amber could be rubbed with cat’s fur to attract light things like feathers.</li>
+                  <li>“Electric” means “like amber”.</li>
+                  <li><a href="https://en.wikipedia.org/wiki/Amber">WP:Amber</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="https://en.wikipedia.org/wiki/History_of_electromagnetic_theory">WP:History of electromagnetic theory</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Timeline_of_electromagnetism_and_classical_optics">WP:Timeline of electromagnetism and classical optics</a></li>
+    </ul>
+  </li>
+  <li>Unplaced
+    <ul>
+      <li>Infer: Law of the lever: \( F_1 \cdot r_1 = F_2 \cdot r_2 \).
+        <ul>
+          <li>Move the fulcrum, or slide the lever along the fulcrum.</li>
+        </ul>
+      </li>
+      <li>Observe: A burning leaf stops burning if it’s enclosed.</li>
+      <li>Observe: Food spoils. Food goes rancid.</li>
+      <li><a href="https://physics.stackexchange.com/questions/259021/how-do-flames-neutralize-a-static-charge">Phys. SE 259021: How do flames neutralize a static charge?</a></li>
+      <li>Left and right
+        <ul>
+          <li>We can define left and right absolutely due to parity violation.</li>
+          <li><a href="https://en.wikipedia.org/wiki/Wu_experiment">WP:Wu experiment</a>
+            <ul>
+              <li><a href="https://en.wikipedia.org/wiki/Parity_(physics)#Parity_violation">WP:Parity, violation</a></li>
+            </ul>
+          </li>
+          <li><a href="https://physics.stackexchange.com/questions/18729/absolute-defintion-of-the-right-i-e-not-left-direction">Phys. SE 18729: absolute defintion of the right (i. e. not left) direction</a></li>
+        </ul>
+      </li>
+      <li><a href="https://en.wikipedia.org/wiki/Buoyancy">WP:Buoyancy</a></li>
+      <li>Observe: Salt conducts electricity?</li>
+      <li>Geology
+        <ul>
+          <li>Mineral distribution hypothesis?
+            <ul>
+              <li>Assume:
+                <ul>
+                  <li>The Earth was once a hot liquid.</li>
+                  <li>The surface cooled down and solidified.</li>
+                </ul>
+              </li>
+              <li>Infer:
+                <ul>
+                  <li>Denser minerals should sink towards the core of Earth.</li>
+                  <li>As we dig deeper, the Earth should be more dense.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="http://www.bgs.ac.uk/mineralsUK/mineralsYou/wheredo.html">Where do minerals come from?</a>
+            <ul>
+              <li>“Minerals are concentrated by igneous, sedimentary and metamorphic processes”</li>
+              <li><a href="https://en.wikipedia.org/wiki/Structure_of_the_Earth">WP:Structure of the Earth</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>How do we know that light <em>is</em> an electromagnetic wave?
+        <ul>
+          <li>We know that light behaves like an electromagnetic wave, from
+            <ul>
+              <li>the speed of light, and</li>
+              <li>the wave behavior of light.</li>
+            </ul>
+          </li>
+          <li>But that’s all; how do we know that it <em>is</em> it?</li>
+        </ul>
+      </li>
+      <li>Formal Physics
+        <ul>
+          <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4066961/">2012, article, “Physics and proof theory”</a></li>
+        </ul>
+      </li>
+      <li>Unread
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/History_of_science">WP:History of science</a></li>
+          <li>Experiments
+            <ul>
+              <li>https://www.explainthatstuff.com/great-physics-experiments.html</li>
+              <li>https://www.quora.com/What-are-some-of-the-most-important-experiments-in-physics</li>
+              <li>https://www.telegraph.co.uk/news/science/science-news/3341042/Top-ten-greatest-experiments.html</li>
+              <li>https://www.space.com/36307-5-most-ingenious-experiments.html</li>
+              <li>https://explorable.com/physics-experiments</li>
+              <li>https://en.wikipedia.org/wiki/List_of_experiments#Physics</li>
+              <li>https://en.wikipedia.org/wiki/Experimental_physics#Famous_experiments</li>
+              <li><a href="https://www.youtube.com/watch?v=HXLj5J4I1nY">de Sitter’s Observations - Intro to Physics</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Scientific theory
+        <ul>
+          <li>https://en.wikipedia.org/wiki/Scientific_theory#Unification</li>
+          <li>https://en.wikipedia.org/wiki/Superseded_scientific_theories#Physics</li>
+        </ul>
+      </li>
+      <li>Define: <em>Force</em> is what a force meter measures.
+        <ul>
+          <li>A <a href="https://en.wikipedia.org/wiki/Force_meter">WP:Force meter</a> is a spring.</li>
+        </ul>
+      </li>
+      <li><a href="https://en.wikipedia.org/wiki/Weighing_scale">WP:Weighing scale</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Hooke%27s_law">WP:Hooke’s law</a>
+        <ul>
+          <li>Let X be a thing.</li>
+          <li>Hang a copy of X on a spring. The spring lengthens by \( x \) from its resting length.</li>
+          <li>Hang two copies of X on a spring. The spring lengthens by \( 2 \cdot x \) from its resting length.</li>
+        </ul>
+      </li>
+      <li>https://en.wikipedia.org/wiki/Universal_testing_machine</li>
+      <li>https://en.wikipedia.org/wiki/Dynamometer</li>
+      <li>https://en.wikipedia.org/wiki/Bucket_argument</li>
+      <li>1999, book, Roberto Torretti, “The philosophy of physics”</li>
+      <li>Electric current
+        <ul>
+          <li>Detour: Justification of electric current requires chemistry.</li>
+          <li>http://www.need.org/Files/curriculum/infobook/Elec3I.pdf</li>
+          <li>http://practicalphysics.org/electric-charge-and-current-short-history.html</li>
+          <li>https://en.wikipedia.org/wiki/Electric_current</li>
+        </ul>
+      </li>
+      <li><a href="https://www.quora.com/Will-the-theories-of-relativity-and-quantum-mechanics-merge-With-what-result">Quora: Will the theories of relativity and quantum mechanics merge? With what result?</a></li>
+      <li>https://en.wikipedia.org/wiki/Scientific_Revolution</li>
+      <li>Define: Sundial.
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Sundial">WP:Sundial</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Analemma">WP:Analemma</a>;
+  solar analemma = figure eight pattern of the sun on the sky across the year</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="/mind.html">Mind</a></li>
+  <li>Unread
+    <ul>
+      <li>Ampere’s experiments
+        <ul>
+          <li><a href="http://farside.ph.utexas.edu/teaching/302l/lectures/node70.html">Ampère’s Experiments</a></li>
+          <li>http://www.larouchepub.com/eiw/public/1992/eirv19n20-19920515/eirv19n20-19920515_030-the_ampere_crucial_experiments.pdf</li>
+        </ul>
+      </li>
+      <li>https://newrepublic.com/article/118655/theoretical-phyisicist-explains-why-science-not-about-certainty</li>
+    </ul>
+  </li>
+  <li><a href="https://www.reddit.com/r/askscience/comments/1xxbq0/in_quantum_physics_observer_effect_what_qualifies/">Reddit: In quantum physic’s ‘observer effect’, what qualifies as an ‘observer’?</a></li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/natkno.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/natkno.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-06-05 01:30 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

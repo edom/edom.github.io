@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Relation</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/relation.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Relation</h1>
+  </header>
+
+  <div class="post-content">
+    <p>The <em>arity</em> of a relation is its number of parameters.
+For example, if \(A\) has arity 2, then \(A(x,y)\) is a <em>formula</em>.</p>
+
+<p>Relations of arity 0, 1, and 2 are also called <em>nullary</em>, <em>unary</em>, and <em>binary</em>, respectively.</p>
+
+<p>A <em>constant</em> is a nullary relation.</p>
+
+<p>A <em>set</em> is a unary relation.
+We can write either \(A(x)\) or \(x \in A\) to mean that \(x\) is an <em>element</em> of the set \(A\).</p>
+
+<p>What is the difference between a relation and a predicate?</p>
+
+<p>A pedantic note:
+Theoretically, a formula is not a truth value,
+and it is the <em>interpretation</em> that maps formulas to truth values.
+For example, if \(A\) is a unary relation,
+then \(A(x)\) is a formula, not the truth value,
+and therefore it does not make sense to say “\(A(x)\) is true”.
+Practically, the interpretation is implicit, and we say “\(A(x)\) is true” to mean “the implied interpretation maps \(A(x)\) to truth value 1”.</p>
+
+<h2 id="binary-relations">Binary relations</h2>
+
+<p>These are isomorphic:</p>
+
+<ul>
+  <li><a href="https://en.wikipedia.org/wiki/Binary_relation">binary relation</a>,</li>
+  <li><a href="https://en.wikipedia.org/wiki/Transition_system">transition system</a>,</li>
+  <li><a href="https://en.wikipedia.org/wiki/Abstract_rewriting_system">rewriting system</a>,</li>
+  <li><a href="https://en.wikipedia.org/wiki/Directed_graph">directed graph</a> (digraph).</li>
+</ul>
+
+<p>Every binary relation \(A\) is also a <em>directed graph</em>
+where \((x,y)\) is an edge iff \(A(x,y)\).
+We will mix terms.
+For example, a relation is <em>acyclic</em> iff its graph is acyclic.</p>
+
+<p>Let \(A\) be a binary relation.</p>
+
+<p>Iff \(A(x,y)\), then \(x\) is in the <em>domain</em> of \(A\).</p>
+
+<p>Iff \(A(x,y)\), then \(y\) is in the <em>range</em> of \(A\).</p>
+
+<p>\(x\) <em>reaches</em> \(y\) (\(y\) is <em>reachable</em> from \(x\))
+iff there is a path from \(x\) to \(y\).</p>
+
+<p>\(x\) is <em>initial</em> iff its in-degree is zero (no \(y\) satisfying \(A(y,x)\)).</p>
+
+<p>\(x\) is <em>terminal</em> iff its out-degree is zero (no \(y\) satisfying \(A(x,y)\)).</p>
+
+<p>The <em>composition</em> of \(A\) and \(B\) is \(A \circ B\)
+where <span>\( (A \circ B)(x,y) = \exists m ( B(x,m) \wedge A(m,y) ) \)</span>.
+Note the swap: first \( B \) maps \(x\) to \(m\),
+and then \( A \) maps \(m\) to \(y\).
+Function composition is special case of relation composition.</p>
+
+<p>The <em>\(n\)th self-composition</em> of \(A\) is <span>\( A^n = A \circ A^{n-1} \)</span>.</p>
+
+<p>The <em>infinite self-composition</em> of \(A\) is <span>\( A^\infty \)</span>,
+the smallest relation satisfying \( A \circ A^\infty = A^\infty \).
+We also say that \(A^\infty\) is the <em>least fixed point</em> of \( F \) where <span>\( F(X) = A \circ X \)</span>.</p>
+
+<p>The <em>transitive closure</em> of \(A\) is the union of all self-compositions of \(A\).
+Formally, <span>\( tc(A) = \bigcup_{k=1}^\infty A^k \)</span>.</p>
+
+<h2 id="external-links">External links</h2>
+
+<ul>
+  <li><a href="https://proofwiki.org/wiki/Definition:Relation">ProofWiki definition of relation</a></li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/relation.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/relation.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2017-06-29 22:40 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

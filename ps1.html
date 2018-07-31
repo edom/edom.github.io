@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Reverse-engineering PlayStation 1 3D games to control the camera</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/ps1.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Reverse-engineering PlayStation 1 3D games to control the camera</h1>
+  </header>
+
+  <div class="post-content">
+    <ul>
+  <li>I want to move the camera arbitrarily in the PlayStation game “Street Fighter EX plus alpha”.
+    <ul>
+      <li>The same technique might be applicable to other 3D PS1 games such as “Street Fighter EX2 plus”, “Tekken 3”, and “Fighting Layer” (Namco System 12, beefed-up PlayStation 1).</li>
+      <li>Interesting instructions: RTPT, CTC2.
+        <ul>
+          <li>I think that’s the only way the game can render the graphics at 30 fps, given the hardware.</li>
+          <li>Need some knowledge of linear algebra and computer graphics.</li>
+        </ul>
+      </li>
+      <li>Plan:
+        <ul>
+          <li>Find the address of the most often called RTPT instruction.</li>
+          <li>Find the CTC2 address that sets up the transformation matrices before that RTPT instruction.</li>
+          <li>Map the call graph.
+  Find the bottom-most call that coincides with the rendering of one frame.
+            <ul>
+              <li>Insert breakpoint.</li>
+              <li>Go until return.</li>
+            </ul>
+          </li>
+          <li>Use GDB.
+  Turn on debug info.
+  Disable optimization.
+  Write some tracing code.
+  Use GDB to toggle the code.
+  Write a line to trace output file every time a CTC2 or RTPT instruction is executed.
+  Every line contains register values (including program counter PC).</li>
+          <li>Add GDB script to run current function until it returns.
+  Do this by putting a temporary breakpoint at <code class="highlighter-rouge">$ra</code>.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>How to use GDB to debug MAME?
+    <ul>
+      <li>PCSX is easy to debug because it is in C, uses global variables (such as <code class="highlighter-rouge">psxRegs</code>), and doesn’t care about 100% faithful emulation.</li>
+      <li>MAME uses C++ and tries to emulate the whole hardware.
+        <ul>
+          <li>Can we supercompile MAME to make it faster?
+  But how do we debug supercompiled programs?</li>
+          <li>We can make our own global variables.
+  The source is open.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>https://en.wikipedia.org/wiki/PlayStation_(console)#Hardware</li>
+  <li>https://en.wikipedia.org/wiki/PlayStation_technical_specifications</li>
+  <li>http://phoboslab.org/log/2015/04/reverse-engineering-wipeout-psx</li>
+  <li>Tools
+    <ul>
+      <li><code class="highlighter-rouge">strings</code> from GNU binutils: <code class="highlighter-rouge">strings -t x FILE.bin</code></li>
+      <li><code class="highlighter-rouge">iat</code>: convert bin to iso
+        <ul>
+          <li>“Archive Manager” can open ISO</li>
+        </ul>
+      </li>
+      <li>Does it work?
+        <ul>
+          <li>https://github.com/cebix/psximager</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>technical documentation
+    <ul>
+      <li>https://www.zophar.net/fileuploads/2/10731bgqkx/playstation.htm</li>
+      <li>http://problemkaputt.de/psx-spx.htm</li>
+    </ul>
+  </li>
+  <li>Emulators
+    <ul>
+      <li>pcsx-reloaded</li>
+    </ul>
+  </li>
+  <li>Developing
+    <ul>
+      <li>SDKs
+        <ul>
+          <li>psxsdk
+            <ul>
+              <li>http://unhaut.x10host.com/psxsdk/doc/dir_000009.html</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Reverse engineering
+    <ul>
+      <li>https://reverseengineering.stackexchange.com/questions/1817/is-there-any-disassembler-to-rival-ida-pro</li>
+      <li>http://www.capstone-engine.org/</li>
+    </ul>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/ps1.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/ps1.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-05-25 00:00 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

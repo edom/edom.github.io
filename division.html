@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Division from plus, times, and norm</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/division.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Division from plus, times, and norm</h1>
+  </header>
+
+  <div class="post-content">
+    <h2 id="abstract">Abstract</h2>
+
+<p>If we have multiplication, addition, and preorder, then we can define division.
+(The multiplication does not have to commute.
+A preorder is a binary relation that is reflexive and transitive.)
+To divide \(n\) by \(d\) is to find
+\((q,r)\) that satisfies \(n = q \times d + r\)
+and minimizes the norm of \(r\).
+This allows us to generalize division to integers and sets.</p>
+
+<h2 id="terminology">Terminology</h2>
+
+<p>In \(a \times b = c\),
+we call \(a\) the multiplier, \(b\) the multiplicand, and \(c\) the product.
+The multiplicand is the thing that is repeated.
+The multiplier is how many times the multiplicand is repeated.
+Therefore \(2 \times 3 = 3+3\) and \(3 \times 2 = 2+2+2\).</p>
+
+<p>When we write \(p \times q\), we say that we <em>left-multiply \(q\) by \(p\)</em>,
+and we can also say that we <em>right-multiply \(p\) by \(q\)</em>.
+The “left” and “right” tell us where the multiplier is.
+In a left multiplication, the multiplier (the thing that multiplies)
+is on the left side of the multiplicand (the thing that is multiplied).
+We say that we left-multiply or right-multiply a multiplicand <em>by</em> a multiplier.</p>
+
+<p>In \(n / d = q\),
+we call \(n\) the dividend,
+\(d\) the divisor,
+and \(q\) the quotient.
+The dividend is the thing that is divided.
+The divisor is the thing that divides.
+The word “quotient” comes from the Latin word “quotiens” that means “how many times”,
+which suggests that the quotient describes <em>how many times</em> we must repeat the divisor to obtain the dividend.
+Therefore \(6/2 = 3\) because \(2+2+2 = 6\)
+and \(6/3 = 2\) because \(3+3 = 6\).
+For example, 6 balls divided by 2 boxes is 3 balls <em>per</em> box.</p>
+
+<p>The divisor in a division
+becomes the multiplicand in the related multiplication.
+Formally, \(n / d = q\) iff \(n = q \times d\).
+To obtain the related multiplication of a division,
+<em>right</em>-multiply each side of the equation by the divisor.
+Right multiplication cancels right division.</p>
+
+<p>In the case of left division and right division,
+the “left” and “right” tell us where the divisor is.
+Left division means the divisor is on the left side of the dividend.</p>
+
+<p>If \(p \times (q \times r) = r\), we call \(p\)
+the <em>left inverse</em> of \(q\) because \(p\)
+cancels a multiplication where \(q\) is on the <em>left</em> side.
+We also say that we <em>left-divide</em> \(q \times r\) by \(q\).
+We also write \(q \backslash (q \times r) = r\).</p>
+
+<p>Similarly, if \((p \times q) \times r = p\), we call \(r\)
+the <em>right inverse</em> of \(q\) because it
+cancels a multiplication where \(q\) is on the <em>right</em> side.
+We write \((p \times q) / q = p\).</p>
+
+<p>To <em>left-divide</em> a dividend by a divisor is
+to <em>left-multiply</em> the dividend by the <em>left-inverse</em> of the divisor.
+To <em>right-divide</em> a dividend by a divisor is
+to <em>right-multiply</em> the dividend by the <em>right-inverse</em> of the divisor.</p>
+
+<p>The consequence of those definitions is that
+\(6 / 2 = 3\) is
+because \(3 \times 2 = 6\),
+not because \(2 \times 3 = 6\).</p>
+
+<p>A problem with this division is that
+it is not always defined for every non-zero divisor.
+Here the <em>remainder</em> comes into play
+and allows us to extend the definition of division.
+The remainder is the smallest thing that we must add to satisfy the equation
+after we find the quotient.
+If the remainder is zero, we say that the divisor <em>divides</em> the dividend.</p>
+
+<p>The expression \(2 \times 3\) means \(3+3\), not \(2+2+2\).
+They both evaluates to \(6\), but they mean different things.
+For natural numbers this sounds pedantic,
+but this is important when the multiplication does not commute,
+such as set multiplication that we shall see later.</p>
+
+<p>We define \(n/d = q\) where \(n = q \times d + r\)
+such that \(r\) is <em>minimal</em> in a way.</p>
+
+<h2 id="structure">Structure</h2>
+
+<p>Let there be a ring-like structure.
+Let there be a set \(R\),
+an addition \(+\),
+a multiplication \(\times\),
+and a norm \(m : R \to [ 0,\infty )\).
+The operations do not have to have identities.
+They do not have to be invertible.
+They do not have to commute.</p>
+
+<p>Dividing \(n\) by \(d\) is finding \((q,r)\) such that \(n = q \times d + r\)
+and making sure that such \((q,r)\) is unique.
+However, there may be many \((q,r)\) that satisfies that equation.
+We want at most one pair.
+Which pair should we choose as the result of the division?</p>
+
+<p>If \(R = \Nat\), we choose the smallest \(r\).
+If \(R = \Int\), we choose the \(r\) that minimizes \(|r|\),
+the absolute value of \(r\).
+If \(R\) is a set, we choose the \(r\)
+that minimizes \(|r|\), the size of \(r\).
+The common theme here is that we can define a <em>norm</em>.
+The division then picks the pair that minimizes the norm of the remainder.
+Here we write \(|r|\) (the norm of \(r\))
+to mean the distance between zero (the additive identity) and \(r\).
+The norm of a natural number is the number itself.</p>
+
+<p>That equation is a special case of the linear equation
+\( b = a_1 \cdot x_1 + \ldots + a_p \cdot x_p \)
+where \(b = n\), \(p = 2\), \(a = (d,1)\), \(x = (q,r)\).</p>
+
+<h2 id="generalization">Generalization</h2>
+
+<p>To understand division,
+first we look at following example about the natural numbers.
+Later we will generalize the division to also work on sets.</p>
+
+<p>Suppose that we want to divide \(n\) by \(d\).
+Whenever we divide \(n\) by \(d\),
+what we actually do is we
+find \(q\) and \(m\) that satisfy
+\(n = q \times d + m\)
+where \(q\) is \emph{maximal}
+and \(m\) is \emph{minimal}
+in the sense that there are no bigger \(q\) and smaller \(m\)
+that satisfy the equation.
+We call \(n\) the \emph{dividend} (the thing that is divided),
+\(d\) the \emph{divisor} (the thing that divides),
+\(q\) the \emph{quotient},
+and \(m\) the \emph{modulus} or the \emph{remainder}.</p>
+
+<p>Now consider the integers.
+Given \(n \neq 0\) and \(d \neq 0\),
+there are infinitely many \((q,m)\) pairs that satisfy \( n = q \times d + m \).
+Which one should we choose?</p>
+
+<p>We have just defined natural number division in terms of multiplication, addition, and natural ordering.
+If we can define set multiplication, set addition, and set ordering, then we can define set division.</p>
+
+<p>We can define the multiplication of two sets as their Cartesian product.
+We can define the addition of two sets as their union.
+We can define that a set is less than another iff the former is a proper subset of the latter.
+We then define the remainder as the smallest set that we must add to satisfy the equation.
+Formally,
+<span>\begin{align*}
+    Q \times D &amp;= \{ (q,d) ~|~ q : Q, ~ d : D \}
+    \\
+    A + B &amp;= \{ x ~|~ x : A \vee x : B \}
+    \\
+    A \le B &amp;\iff A \subseteq B
+    \\
+    N &amp;= Q \times D + R \text{ such that \(R\) is minimal according to \(\le\).}
+\end{align*}</span></p>
+
+<p>To compute the quotient and the modulus,
+we solve \(N = Q \times D + R\)
+with the constraint that \(R\) is \emph{minimal}
+in the sense that there are no smaller \(R\)
+that satisfies that equation.</p>
+
+<p>Similar to \(n/d = q\), we define \( N / D = Q \).
+It seems that all we did was rewrite everything using capital letters,
+but this simplicity is deceiving:
+the variables now represent sets instead of numbers.</p>
+
+<h2 id="examples">Examples</h2>
+
+<h3 id="set-division">Set division</h3>
+
+<p>Let’s say we have these:
+<span>\begin{align*}
+    N &amp;= \{ a, b, c, aa, ab, ac, ba, bb, bc, ca, cb, cc \}
+    \\
+    D &amp;= \{ a, b \}
+\end{align*}</span>
+We compute:
+<span>\begin{align*}
+    N &amp;= Q \times D + M
+    \\
+    N &amp;= \{ a, b, c \} \times \{ a, b \} + \{ c, ac, bc, cc \}
+\end{align*}</span>
+We can’t shrink (M) anymore
+so we claim:
+<span>\begin{align*}
+    Q &amp;= \{ a, b, c \}
+    \\
+    M &amp;= \{ a, b, c, ac, bc, cc \}
+\end{align*}</span></p>
+
+<h3 id="polynomial-division">Polynomial division</h3>
+
+<p>Let’s say we have a polynomial \(x^2 + 2x + 3\) and we want to divide it with \(x + 1\).
+<span>\begin{align*}
+    n &amp;= x^2 + 2x + 3
+    \\
+    d &amp;= x + 1
+    \\
+    q &amp;= x + 1
+    \\
+    r &amp;= 1
+\end{align*}</span>
+We define \(p \le q\) iff \(\deg~p \le \deg~q\) or \(p_1 \le q_1 \wedge \ldots\).</p>
+
+<h3 id="language-division">Language division</h3>
+
+<p>The left quotient
+of a language \(L\) with respect to a string \(p\) is \({p} \backslash L\).
+The language \( p \backslash L \) is the set of every string \( x \)
+that would be an element of \( L \) if \( p \) were prepended to \( x \).
+Such left division is the special case of left-division of languages
+where the divisor has only one element.
+<span>\begin{align*}
+    \{p\} \backslash L &amp;= \{ x ~|~ px \in L \}
+    \\
+    P \backslash L &amp;= \{ x ~|~ px \in L, ~ p \in P \} ?
+\end{align*}</span></p>
+
+<p>The Brzozowski quotient is a special case where the divisor is a singleton set:
+<span>\( \{p\} \backslash L \)</span>.</p>
+
+<h2 id="related-materials">Related materials</h2>
+
+<ul>
+  <li>Wikipedia
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Division_(mathematics)">Division</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Quotient_of_a_formal_language">Quotient of a formal language</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Brzozowski_derivative">Brzozowski derivative</a>
+        <ul>
+          <li><a href="https://arxiv.org/find/cs/1/au:+Brzozowski_J/0/1/0/all/0/1">Janusz Brzozowski et al. on arxiv</a></li>
+        </ul>
+      </li>
+      <li><a href="https://en.wikipedia.org/wiki/Preorder">Preorder</a></li>
+    </ul>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/division.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/division.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2017-03-20 03:24:26 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

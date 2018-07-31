@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Amazon Web Services</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/aws.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Amazon Web Services</h1>
+  </header>
+
+  <div class="post-content">
+    <ul>
+  <li>How do we detect if we’re running on AWS?
+    <ul>
+      <li><a href="https://forums.aws.amazon.com/message.jspa?messageID=122425">Question on AWS forum</a></li>
+      <li>Some choices:
+        <ul>
+          <li>on instance launch time: set an environment variable in the AMI used to launch instances.
+  This seems to be the most reliable way.</li>
+          <li>on application runtime:
+            <ul>
+              <li>HTTP server at 169.254.169.254</li>
+              <li>Reverse DNS lookup</li>
+              <li><code class="highlighter-rouge">/proc/xen</code> (if your development machine doesn’t use xen)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>How do we get EC2 instance metadata?
+    <ul>
+      <li>http://stackoverflow.com/questions/625644/find-out-the-instance-id-from-within-an-ec2-machine</li>
+      <li>http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html</li>
+    </ul>
+  </li>
+  <li>Amazon RDS is not for scaling.
+It is designed to simplify operation of relational databases.
+<a href="https://www.quora.com/Does-Amazon-RDS-solve-the-MySQL-scaling-issue">It is not designed to scale relational databases horizontally</a>.</li>
+  <li>The write capacity does not raise in proportion to the number of machines.</li>
+  <li>Deployment with Amazon Machine Images
+    <ul>
+      <li>We assume that the code scales horizontally.</li>
+      <li>Install everything you need to that instance.</li>
+      <li>Snapshot an AMI from an instance.</li>
+    </ul>
+  </li>
+  <li>EC2 security notes:
+    <ul>
+      <li>Because all instances are launched from the same image,
+  they have the same SSH host keys.
+  Compromising any of them will also compromise all other instances sharing the key.</li>
+      <li>See also <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/building-shared-amis.html">Amazon’s notes on building shared AMIs</a>.</li>
+    </ul>
+  </li>
+  <li>How do I install AWS CLI on Ubuntu 14.04?
+    <ul>
+      <li><code class="highlighter-rouge">sudo apt-get install awscli</code></li>
+    </ul>
+  </li>
+  <li>RDS
+    <ul>
+      <li>In Amazon RDS PostgreSQL, slow queries are not logged by default.
+  See <a href="http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.Concepts.PostgreSQL.html">RDS user guide</a>.</li>
+      <li><a href="http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-rds-db.html">Using Route 53 for aliasing your RDS instances</a></li>
+      <li><a href="http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html">RDS best practices</a></li>
+    </ul>
+  </li>
+  <li>Shit did happen.
+    <ul>
+      <li>A busy RDS instance got CPU-throttled (ran out of CPU credits).
+        <ul>
+          <li><em>CPU credit doesn’t have to reach zero</em> in order for the instance to be throttled.
+  Don’t use CloudWatch alarm condition <code class="highlighter-rouge">CpuCredit = 0</code>.</li>
+        </ul>
+      </li>
+      <li>A busy RDS instance got IOPS-throttled (ran out of IOPS credits).
+        <ul>
+          <li>2018 CloudWatch doesn’t have IOPS credit metric.
+  Can’t make alarm.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="https://aws.amazon.com/blogs/aws/aws-device-farm-update-remote-access-to-devices-for-interactive-testing/">AWS Device Farm</a>: interactive testing on real devices.</li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/aws.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/aws.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-05-15 02:31:00 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

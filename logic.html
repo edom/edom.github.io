@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Logic</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/logic.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Logic</h1>
+  </header>
+
+  <div class="post-content">
+    <ul>
+  <li>Let’s study a <em>propositional calculus</em>, a formal language.
+    <ul>
+      <li>It’s important because we’re going to build other formal languages on it.</li>
+      <li>A “calculus” is a set of rules.
+        <ul>
+          <li>What is the “calculus” in “propositional calculus”?
+            <ul>
+              <li><a href="https://www.encyclopediaofmath.org/index.php/Calculus">EOM:Calculus</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="https://en.wikipedia.org/wiki/Propositional_calculus">WP:Propositional calculus</a></li>
+    </ul>
+  </li>
+  <li>A <em>language</em> has <em>syntax</em> (form) and <em>semantics</em> (meaning).</li>
+  <li>A <em>formal language</em> describes a set of strings by using an <em>alphabet</em> and some <em>formation rules</em>.
+    <ul>
+      <li>The alphabet is the set of symbols that can be in the strings.</li>
+      <li>The formation rules decide which strings are in the language.</li>
+    </ul>
+  </li>
+  <li>A <em>formula</em> is a string in the language.</li>
+  <li>For a propositional calculus:
+    <ul>
+      <li>The alphabet is:
+        <ul>
+          <li>the set of these five blackboard-bold <em>logical symbols</em>:
+            <ul>
+              <li>\( \bbN \) (negation, “not”),</li>
+              <li>\( \bbC \) (conjunction, “and”),</li>
+              <li>\( \bbD \) (disjunction, “or”),</li>
+              <li>the left parenthesis,</li>
+              <li>and the right parenthesis;</li>
+            </ul>
+          </li>
+          <li>plus a set of <em>non-logical symbols</em>:
+            <ul>
+              <li>Anything can be non-logical symbols as long as it isn’t already a logical symbol.</li>
+              <li>Usually a non-logical symbol is a Latin capital letter,
+                <ul>
+                  <li>but we don’t have to restrict ourselves to one letter per symbol.
+                    <ul>
+                      <li>We can freely decide that a symbol can be one word, or even a phrase.
+                        <ul>
+                          <li>It may even be outside the Latin alphabet.</li>
+                          <li>It might be a Chinese character, or an emoticon, or a drawing.</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>The formation rules are:
+        <ol>
+          <li>Every non-logical symbol alone is a formula.</li>
+          <li>If \(\alpha\) is a formula,
+  then \((\bbN ~ \alpha)\) (“not \(\alpha\)”) is a formula.</li>
+          <li>If \(\alpha\) is a formula and \(\beta\) is a formula,
+  then \((\bbC ~ \alpha ~ \beta)\) (“\(\alpha\) and \(\beta\)”) is a formula.</li>
+          <li>If \(\alpha\) is a formula and \(\beta\) is a formula,
+  then \((\bbD ~ \alpha ~ \beta)\) (“\(\alpha\) or \(\beta\)”) is a formula.</li>
+        </ol>
+      </li>
+      <li>Examples for propositional calculus:
+        <ul>
+          <li>An example formula is \( (\bbC ~ X ~ Y) \).</li>
+          <li>An example of a string that is <em>not</em> a formula is \( \bbC ~ X ~ Y \) because it lacks the parentheses.</li>
+        </ul>
+      </li>
+      <li>(Note to self)
+        <ul>
+          <li>We should be less formal.</li>
+          <li>We should teach the formation rules by example.</li>
+          <li>We should use standard symbols \( \neg, \wedge, \vee \).</li>
+          <li>Should we use \( \&amp; \) instead of \( \wedge \)?
+            <ul>
+              <li>Do \( \wedge \) and \( \vee \) confuse newcomers?</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Now that we are familiar with the syntax of propositional calculus,
+we can move on to a <em>predicate calculus</em>.
+    <ul>
+      <li>To the logical symbols, we add two <em>quantifier</em> symbols:
+        <ul>
+          <li>\( \forall \) (“for all”, universal quantifier),</li>
+          <li>\( \exists \) (“there exists”, existential quantifier).</li>
+        </ul>
+      </li>
+      <li>Every capital letter in italic font is called a <em>relation symbol</em>.
+  Every relation symbol has an <em>arity</em> that is a natural number;
+  the arity is the number of parameters taken by the relation symbol.
+  If the arity is zero, the relation symbol is also called a <em>constant symbol</em>.</li>
+      <li>The non-logical symbols of a predicate calculus is a set of relation symbols;
+  each relation symbol looks like \( A^n \) where \( n \) is the symbol’s <em>arity</em>;
+  it is the number of arguments.
+        <ul>
+          <li>For example, we can define a predicate calculus whose set of relation symbols is <span>\( \{ E^2 \} \)</span>.
+            <ul>
+              <li>An example formula is then <span>\( E(x,y) \)</span>.</li>
+              <li>An example sentence is then <span>\( \forall x ~ E(x,x) \)</span>.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>We call a predicate calculus has order one iff the quantifiers can only take constant symbols.</li>
+      <li>To the formation rules, we add:
+        <ol>
+          <li>if \( \rho^n \) is a relation symbol of arity \( n \),
+  and \( \alpha_1, \ldots, \alpha_n \) are variables, then \( (\rho^n \alpha_1 \ldots \alpha_n) \) is a formula;</li>
+          <li>if \( \rho^0 \) is a relation symbol of arity zero, then \( \rho^0 \) is a formula;</li>
+          <li>if \( \alpha \) is a formula and \( \beta \) is a formula, then <span>\( (\bbC \alpha \beta) \)</span> is a formula.</li>
+          <li>if \( v \) is a variable, \( Q \) is a quantifier, and \( F \) is a formula, then \( (Q v ~ F) \) is a formula.</li>
+        </ol>
+      </li>
+      <li>A <em>sentence</em> is something that can be given a truth value;
+  in propositional calculus, it is a formula;
+  in first-order predicate calculus, it is a formula with no free variables.
+  An example of a first-order predicate calculus sentence is \( \forall x : E(x,x) \).
+  An example of a first-order predicate calculus formula that is not a sentence is \( E(x,x) \).</li>
+      <li>An <em>interpretation</em> of a language is a function
+  that takes a sentence of that language and gives a <em>truth value</em>.
+  For example, if we have a graph,
+  then we may map every term \( x \) to a vertex \( I(x) \) of the graph,
+  and we may map the formula <span>\( R(x,y) \)</span>
+  <span>\( I(R(x,y)) \)</span>, that is whether \( (I(x), I(y)) \) is an edge of the graph.</li>
+    </ul>
+  </li>
+</ul>
+
+<div>\begin{align*}
+I(R(x,y)) = E(I(x),I(y))
+\end{align*}</div>
+
+<ul>
+  <li>How many truth values are there?
+    <ul>
+      <li>It depends on the logic.</li>
+      <li>In classical logic,
+  there are <em>two</em> truth values: <em>false</em> and <em>true</em>.</li>
+      <li>In SQL (a language used to interact with relational databases),
+  there are <em>three</em> truth values: <em>false</em>, <em>null</em>, and <em>true</em>.</li>
+      <li>In the IEEE 1164 standard, part of VHDL (a language for describing electronic circuits),
+  there are <em>nine</em> truth values.</li>
+      <li>In fuzzy logic, there are as many truth values as there are real numbers in \( [0,1] \).</li>
+      <li><a href="https://en.wikipedia.org/wiki/Four-valued_logic">WP:Four-valued logic</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/IEEE_1164">WP:IEEE 1164</a></li>
+    </ul>
+  </li>
+  <li>A <em>metalanguage</em> is a language that describes a language.
+    <ul>
+      <li>We used English as a metalanguage to describe propositional calculus.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Now we formalize.
+Let \( L \) be a language,
+let \( F \) be the set of formulas of \( L \),
+and let \( T \) be the set of truth values of this interpretation.
+Let <span>\( T = (\{0,1\},\neg,\wedge,\vee) \)</span> be a <em>Boolean algebra</em>.
+(???)</p>
+
+<p>An <em>interpretation</em> of a language \( L \)
+is a function \( I : F \to T \).
+This function must satisfy
+\( I((\bbN x)) = \neg I(x) \),
+and \( I((\bbC x y)) = I(x) \wedge I(y) \),
+and \( I((\bbD x y)) = I(x) \vee I(y) \).</p>
+
+<p>For example, <span>\( \{ x, y \} \)</span> is a model of <span>\( x \)</span>.</p>
+
+<p>For example, <span>\( \{ x, y, (\bbC x y) \} \models (\bbC x y) \).</span></p>
+
+<p>For example, <span>\( \{ (\bbC x y) \} \)</span> is <em>not</em> an interpretation of \( L \),
+because if <span>\( (\bbC x y) \)</span> is in \(I\),
+then both \(x\) and \(y\) must also be in \(I\).</p>
+
+<p>We say that \( I \) <em>models</em> \( p \) or \( I \) is a <em>model</em> of \( P \),
+written \( I \models p \),
+iff \( I(p) \) is true.
+We say that \( p \) is <em>satisfiable</em> iff \( p \) <em>has a model</em>, that is, iff there exists \( I \) such that \( I \models p \).
+The symbol \( \models \) is called a “double turnstile”.
+Why do we bother inventing another notation (\( \models \)) for a notation that already exists (\( \in \))?</p>
+
+<p>For example, we may choose to map \( x \) to “true” and everything else to “false”.
+We write \( \).</p>
+
+<ul>
+  <li>Extensions of first-order logic:
+    <ul>
+      <li>modal logic</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Given the formation rules of a language, we can
+(1) <em>generate</em> all formulas
+(2) <em>decide</em> whether a given string is a formula.</p>
+
+<ul>
+  <li>The logics form a hierarchy.
+    <ul>
+      <li>propositional logic</li>
+      <li>first-order logic</li>
+      <li>second-order logic</li>
+    </ul>
+  </li>
+</ul>
+
+<p>This first-order language can describe itself,
+where \( L(\alpha) \) is true iff \( \alpha \) is a string that is a Latin small letter alone:
+<span>\begin{align*}
+\forall \alpha : L(\alpha) &amp;\implies W(\alpha)
+\\ \forall \alpha : \forall \beta : W(\alpha) &amp;\implies W((N \alpha))
+\\ \forall \alpha : \forall \beta : W(\alpha) \wedge W(\beta) &amp;\implies W((C \alpha \beta))
+\\ \forall \alpha : \forall \beta : W(\alpha) \wedge W(\beta) &amp;\implies W((D \alpha \beta))
+\end{align*}</span>
+and that can also be written using sequent calculus notation
+with implicit universal quantification over free variables:
+<span>\begin{align*}
+L(\alpha) &amp;\vdash W(\alpha)
+\\ W(\alpha) &amp;\vdash W((N \alpha))
+\\ W(\alpha), W(\beta) &amp;\vdash W((C \alpha \beta))
+\\ W(\alpha), W(\beta) &amp;\vdash W((D \alpha \beta))
+\end{align*}</span></p>
+
+<ul>
+  <li><a href="http://www3.cs.stonybrook.edu/~cram/cse505/Fall16/Lectures/proplogic.pdf">“Propositional logic: models and proofs”</a>,
+by C. R. Ramakrishnan, 2016</li>
+  <li><a href="https://en.wikibooks.org/wiki/Finite_Model_Theory/Preliminaries">Rough summary of first order logic</a>, Finite Model Theory wikibook</li>
+  <li>Model theory
+    <ul>
+      <li>Finite model theory
+        <ul>
+          <li><a href="http://homepages.inf.ed.ac.uk/libkin/fmt/fmt.pdf">Elements of finite model theory</a> by Leonid Libkins</li>
+          <li><a href="https://en.wikipedia.org/wiki/Finite_model_theory">WP:Finite model theory</a></li>
+        </ul>
+      </li>
+      <li><a href="http://mathstat.helsinki.fi/logic/people/jouko.vaananen/shortcourse.pdf">Short course on model theory</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Signature_(logic)">WP:Signature</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Structure_(mathematical_logic)">WP:Structure</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Löwenheim–Skolem_theorem">WP:Löwenheim–Skolem theorem</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Model_theory">WP:Model theory</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Double_turnstile">WP:Double turnstile</a>
+        <ul>
+          <li>https://math.stackexchange.com/questions/469/what-is-the-meaning-of-the-double-turnstile-symbol-models</li>
+        </ul>
+      </li>
+      <li><a href="https://en.wikipedia.org/wiki/Logic_of_graphs">WP:Logic of graphs</a></li>
+    </ul>
+  </li>
+  <li>Formal logic
+    <ul>
+      <li><a href="http://web.uvic.ca/~tiberius/logic/formal.pdf">Introduction to formal logic</a>, philosophy</li>
+      <li><a href="https://en.wikipedia.org/wiki/Well-formed_formula">WP:Well-formed formula</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Formal_system">WP:Formal system</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Formal_language">WP:Formal language</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/G%C3%B6del%27s_completeness_theorem">WP:Gödel’s completeness theorem</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/G%C3%B6del%27s_incompleteness_theorems">WP:Gödel’s incompleteness theorems</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Proof_theory">WP:Proof theory</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Sequent_calculus">WP:Sequent calculus</a>
+        <ul>
+          <li>Turnstile symbol</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Ungrouped
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Mathematical_logic">WP:Mathematical logic</a></li>
+      <li><a href="https://plato.stanford.edu/entries/logic-probability/">Logic and probability</a>, Stanford Encyclopedia of Philosophy</li>
+      <li><a href="https://en.wikipedia.org/wiki/Semantic_theory_of_truth">WP:Semantic theory of truth</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/T-schema">WP:Tarski’s definition of truth: T-schema</a></li>
+      <li><a href="http://cliplab.org/logalg/">Computational Logic Course Material</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/List_of_first-order_theories">WP:List of first-order theories</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Realizability">WP:Realizability</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Universal_quantification#Universal_closure">WP:Universal quantification, universal closure</a></li>
+      <li>Math fonts
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Fraktur">WP:Fraktur</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Blackboard_bold">WP:Blackboard bold</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="mess">Mess</h2>
+
+<p>In propositional logic, it takes at most \(O(n)\) steps to determine whether a string of length \(n\) is a formula.</p>
+
+<p>A <em>variable</em> is any of the 26 Latin small letters from \(a\) to \(z\).</p>
+
+<p>In <em>propositional logic</em>, we represent a sentence with a letter.
+For example, we can use the letter \( p \) to represent “John is lecturing”
+and the letter \( q \) to represent “John is awake”.
+From those two sentences, we can construct another sentence \( p \to q \)
+that represents “If John is lecturing, then John is awake”.</p>
+
+<p>A <em>logical system</em> (a “logic”) is a <em>formal system</em> and an <em>interpretation</em>.
+A formal system has a <em>syntax</em> and some <em>inference rules</em>.
+The syntax tells us how to form <em>formulas</em>.
+A syntax is a set of rules that determine which strings are formulas.
+The inference rules tell us how we can rewrite a formula to another formula
+while preserving the truth of the formula.
+A formula has no inherent meaning,
+but we can give meaning to it by defining an <em>interpretation</em>.
+An <em>interpretation</em> maps a formal system to a <em>model</em>.</p>
+
+<p>A <em>sentence</em> is a formula with no free variables.
+A <em>formula</em> is a statement whose truth can be determined, that is either true or false.
+For example, “John is lecturing” and \( 1+1 = 2 \) are statements.
+Later we will see that there are other ways of defining “truth”.</p>
+
+<p>A <em>signature</em> \( \sigma \) is a triple of
+a set of relation symbols,
+a set of function symbols,
+and an arity function.
+A <em>structure</em> \( \struc{A} \) is a triple \( (A,\sigma,I) \) where \(A\) is a domain,
+\(\sigma\) is a signature, and \( I \) is an <em>interpretation function</em>.</p>
+
+<p>A formal argument is an argument that is made by blindly following the rules,
+by mechanically following the rules to manipulate symbols,
+without any meaning, without any guesswork.
+This allows computers to help us.</p>
+
+<ul>
+  <li>Readings?
+    <ul>
+      <li><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.456.6021&amp;rep=rep1&amp;type=pdf">Model theory</a>, 1970 article, Howard Jerome Keisler.
+  It is accessible and it still gives a good and relevant introduction in 2017.</li>
+      <li><a href="https://www.ics.uci.edu/~alspaugh/cls/shr/logicConcepts.html">Logic terms and concepts</a>
+        <ul>
+          <li>Must distinguish logic and <em>meta-logic</em>.</li>
+        </ul>
+      </li>
+      <li>???
+        <ul>
+          <li>Model theory, 1989 book, Chang and Keisler</li>
+        </ul>
+      </li>
+      <li>Barwise 1989 handbook of mathematical logic 8th impression 1999
+        <ul>
+          <li>Understand logic terms by formalizing group theory</li>
+        </ul>
+      </li>
+      <li><a href="http://www.math.helsinki.fi/logic/people/jouko.vaananen/shortcourse.pdf">A short course on finite model theory</a> by Jouko Väänänen</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Here we will review mathematical logic and model theory.</p>
+
+<p>Mathematical logic allows us to represent English in symbols without ambiguity.
+Logic also works with other human languages, not only English.</p>
+
+<p>A key idea in logic is the separation between <em>form</em> and <em>meaning</em>.
+The validity of an argument depends only on its form?</p>
+
+<p>Every argument of this form (modus ponens) is valid:</p>
+<div>\begin{align*}
+p, ~ p \to q \vdash q
+\end{align*}</div>
+
+<p>Abductive reasoning (physics?):</p>
+
+<div>\begin{align*}
+p, ~ q \vdash_? p \to q
+\end{align*}</div>
+
+<p>In classical deductive logic, there is only one way to reach valid conclusion:
+by valid premises and valid argument.
+There are three ways to arrive at an invalid conclusion:
+    - by invalid premises but valid argument,
+    - by valid premises but invalid argument,
+    - by invalid premises and invalid argument.</p>
+
+<p>In logic, an interpretation assigns truth value to well-formed formulas.</p>
+
+<p>A system is <em>sound</em> iff every provable sentence is true: <span>\(A \vdash B \implies A \models B\)</span>.</p>
+
+<p>A system is <em>complete</em> iff every true sentence is provable <span>\(A \models B \implies A \vdash B\)</span>.</p>
+
+<p>https://en.wikibooks.org/wiki/Formal_Logic/Predicate_Logic/Satisfaction</p>
+
+<p><em>Intended interpretation</em> is synonym for <em>standard model</em>.</p>
+
+<p>We use <a href="https://en.wikipedia.org/wiki/S-expression">s-expressions</a> to simplify parsing.</p>
+
+<p>Greek letters are part of the <em>metalanguage</em> (the language describing the <em>object language</em>).</p>
+
+<p>Example term: \((A (A a b) (N c))\).</p>
+
+<h3 id="interpretation">Interpretation</h3>
+
+<p>An <em>interpretation</em> is a function that takes a term.</p>
+
+<p>Example interpretation:</p>
+
+<div>\begin{align*}
+I(a) &amp;= 1
+\\
+I(b) &amp;= 1
+\\
+I(c) &amp;= 0
+\\
+I((A \alpha \beta)) &amp;= I(\alpha) \wedge I(\beta) = \min(I(\alpha),I(\beta))
+\\
+I((N \alpha)) &amp;= \neg I(\alpha) = 1 - I(\alpha)
+\end{align*}</div>
+
+<p>where \(0\) means “false” and \(1\) means “true”.</p>
+
+<p>Applying the rules recursively to the example term gives</p>
+
+<div>\begin{align*}
+I((A(Aab)(Nc))) &amp;= I((Aab)) \wedge I((Nc))
+\\ &amp;= (I(a) \wedge I(b)) \wedge I((Nc))
+\\ &amp;= (1 \wedge I(b)) \wedge I((Nc))
+\\ &amp;= (1 \wedge 1) \wedge I((Nc))
+\\ &amp;= 1 \wedge I((Nc))
+\\ &amp;= 1 \wedge \neg I(c)
+\\ &amp;= 1 \wedge \neg 0
+\\ &amp;= 1 \wedge 1
+\\ &amp;= 1.
+\end{align*}</div>
+
+<h2 id="probability-logic">Probability logic</h2>
+
+<ul>
+  <li>First-order probability logic (FOPL) shares the same syntax as first-order logic (FOL), but different interpretation:
+    <ul>
+      <li>FOL interpretation maps FOL wff to truth value <span>\( \{0,1\} \)</span>.</li>
+      <li>FOPL interpretation maps FOL wff to probability <span>\( [0,1] \)</span>.</li>
+    </ul>
+  </li>
+  <li>Boolean algebra is a special case of fuzzy logic?
+    <ul>
+      <li>Replace \(\{0,1\}\) (the set of Boolean values) with \([0,1]\) (the set of real numbers in the unit line).</li>
+      <li><a href="https://en.wikipedia.org/wiki/Boolean_algebra">WP:Boolean algebra</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Fuzzy_logic">WP:Fuzzy logic</a></li>
+    </ul>
+  </li>
+</ul>
+
+<div>\begin{align*}
+t(p \wedge q) &amp;= \min(t(p), t(q))
+\\ t(p \vee q) &amp;= \max(t(p), t(q))
+\\ t(\neg p) &amp;= 1 - t(p)
+\end{align*}</div>
+
+<ul>
+  <li>Fuzzy logic is a special case of probability space?
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Probability_space">WP:probability space</a>.</li>
+      <li>What should \(t(p \to q)\) be?</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Classical logic:</p>
+
+<div>\begin{align*}
+t(p \to q) &amp;= t(\neg p \vee q) = \max(1 - t(p), t(q))
+\end{align*}</div>
+
+<p>Bayesian:</p>
+
+<div>\begin{align*}
+t(p \to q) &amp;= t(q|p) = \frac{t(q \wedge p)}{t(p)}
+\end{align*}</div>
+
+<p>Induction:</p>
+
+<div>\begin{align*}
+\exists a (p(a) \wedge q(a)) \vdash_i \forall x (p(x) \wedge q(x))
+\\
+T(p) \subseteq T(q) \vdash_i \forall x (p(x) \implies q(x))
+\\
+T(p) = \{ x ~|~ p(x) \}
+\end{align*}</div>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/logic.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/logic.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2017-07-02 16:00:00 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

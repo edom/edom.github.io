@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Reverse-engineering the network protocol used by a Java desktop application</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/rejava.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Reverse-engineering the network protocol used by a Java desktop application</h1>
+  </header>
+
+  <div class="post-content">
+    <ul>
+  <li>I want to reverse-engineer a Java 6 stock trading application.
+    <ul>
+      <li>The app’s license agreement doesn’t mention anything about reverse engineering.</li>
+      <li>I only want the network protocol.
+  I don’t need to reverse the GUI.</li>
+    </ul>
+  </li>
+  <li>Tools
+    <ul>
+      <li>The tool <a href="https://github.com/gousiosg/java-callgraph">java-callgraph</a> is mentioned often,
+  such as in <a href="https://stackoverflow.com/questions/29382231/how-do-i-trace-methods-calls-in-java">SO 29382231</a>
+  and <a href="https://stackoverflow.com/questions/4951517/static-analysis-of-java-call-graph">SO 4951517</a>.</li>
+      <li>AspectJ Aspect Oriented Programming, bytecode instrumentation, bytecode manipulation</li>
+      <li>IntelliJ IDEA, an IDE that comes with a class file decompiler</li>
+      <li><a href="https://github.com/helios-decompiler/standalone-app">Helios decompiler</a>: “All-in-one Java reverse engineering tool”</li>
+    </ul>
+  </li>
+  <li>Tracing runtime method calls using AspectJ
+    <ul>
+      <li>Download the latest stable release of AspectJ (1.9.1 as of 2018-04-20) from the <a href="https://www.eclipse.org/aspectj/downloads.php">official download page</a>.
+  It’s an installer.
+        <ul>
+          <li>Install it using <code class="highlighter-rouge">java -jar aspectj-1.9.1.jar</code> (change the filename if required).
+            <ul>
+              <li>Read the <code class="highlighter-rouge">README-AspectJ.html</code> whose exact location is displayed at the end of installation.</li>
+            </ul>
+          </li>
+          <li>Read <a href="https://www.eclipse.org/aspectj/doc/released/devguide/ltw.html">The AspectJ™ development environment guide, Chapter 5, “Load-time-weaving”</a>.</li>
+        </ul>
+      </li>
+      <li>The plan
+        <ul>
+          <li>Print something everytime a method is called.</li>
+          <li>Insert bytecode at the beginning of every method.</li>
+          <li>Exclude <code class="highlighter-rouge">java.*</code> and <code class="highlighter-rouge">javax.*</code> classes, but include <code class="highlighter-rouge">java.net.*</code> and <code class="highlighter-rouge">java.nio.*</code>.
+  Also include everything else.</li>
+        </ul>
+      </li>
+      <li>What is the minimum knowledge necessary to make sense of AspectJ?
+  Where is the crash course?
+        <ul>
+          <li>What can it do that we need?
+            <ul>
+              <li>Using AspectJ, we can insert tracing code at the beginning of every method at class load time.</li>
+            </ul>
+          </li>
+          <li>“Aspect weaving” is bytecode manipulation.</li>
+          <li>short read, <a href="http://www.baeldung.com/aspectj">baeldung.com: Intro to AspectJ</a></li>
+          <li>long read, <a href="https://www.eclipse.org/aspectj/doc/next/progguide/index.html">The AspectJ™ Programming Guide</a></li>
+          <li><a href="https://www.eclipse.org/aspectj/downloads.php">Downloads</a>: Do we have to do this? Can we use Maven instead?</li>
+          <li><a href="https://www.eclipse.org/aspectj/doc/released/faq.php">FAQ</a></li>
+        </ul>
+      </li>
+      <li>Sample codes
+        <ul>
+          <li>https://mathewjhall.wordpress.com/2011/03/31/tracing-java-method-execution-with-aspectj/</li>
+          <li>Task-oriented AspectJ cookbook: <a href="https://www.safaribooksonline.com/library/view/aspectj-cookbook/0596006543/ch04s02.html">4.1. Capturing a Method Call</a></li>
+          <li>https://www.yegor256.com/2014/06/01/aop-aspectj-java-method-logging.html</li>
+          <li><a href="https://teaspoon-consulting.com/articles/tracing-java-method-calls.html">Tracing method calls in Java with JDB</a></li>
+          <li>2007, article, <a href="http://blog.zvikico.com/2007/11/five-ways-for-t.html">Five ways for tracing Java execution</a></li>
+          <li>https://stackoverflow.com/questions/19850695/does-java-have-any-mechanism-for-a-vm-to-trace-method-calls-on-itself-without-u
+            <ul>
+              <li>Use Javassist?</li>
+            </ul>
+          </li>
+          <li>https://stackoverflow.com/questions/49159666/how-to-intercept-each-method-call-within-given-method-using-spring-aop-or-aspect</li>
+          <li>https://www.rhyous.com/2012/05/26/aop-logging-all-method-calls-and-executions-in-java-with-aspectj/</li>
+          <li>Eclipse Trace.aj sample file, <a href="https://github.com/eclipse/org.aspectj/blob/master/tests/bugs/messyAround/aspects/Trace.aj">github</a></li>
+          <li>https://blog.csanchez.org/2005/03/27/tracing-an-application-using-aspec/</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Increase log4j verbosity</li>
+  <li>Trading login
+    <div class="highlighter-rouge"><pre class="highlight"><code>2018-07-27T15:11:09.132Z	main	void esmart.trading.engine.TradingComm.a(i, g) -&gt; void esmart.trading.engine.TradingComm.m()
+2018-07-27T15:12:06.743Z	Thread-37	void esmart.trading.engine.TradingComm.a(String, String, d) -&gt; void esmart.trading.engine.TradingComm.m()
+</code></pre>
+    </div>
+    <ul>
+      <li><code class="highlighter-rouge">esmart.trading.engine.TradingComm:a(i,g)</code> starts two threads:
+        <ul>
+          <li>The thread <code class="highlighter-rouge">o</code> (of type <code class="highlighter-rouge">a.a.a.b</code>).</li>
+          <li>The thread <code class="highlighter-rouge">p</code> (of type <code class="highlighter-rouge">a.a.a.c</code>).</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Inferences
+    <ul>
+      <li>The netty major version is 3.</li>
+      <li><code class="highlighter-rouge">esmart.feed.engine.network.d:a</code> determines our public IP address.</li>
+      <li><code class="highlighter-rouge">esmart.feed.engine.ui.qo:n</code> Socket.connects to somewhere.</li>
+      <li>Initializing netty
+        <ul>
+          <li><code class="highlighter-rouge">a.a.d.e:h()</code> initializes netty client.</li>
+          <li><code class="highlighter-rouge">a.a.d.e:a(String,String)</code> connects.</li>
+          <li>It uses LengthFieldBasedFrameDecoder
+            <ul>
+              <li>http://netty.io/3.6/api/org/jboss/netty/handler/codec/frame/LengthFieldBasedFrameDecoder.html</li>
+              <li><code class="highlighter-rouge">var1.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(2147483647, 0, 4, 0, 4, true));</code></li>
+              <li><code class="highlighter-rouge">INFO 2018-07-25 22:14:40,830 [New I/O  worker #1] a.a.d.e Connected to : esmartbnis.com/202.129.186.235:62229</code>
+                <ul>
+                  <li>server IP addresses
+                    <ul>
+                      <li>202.129.186.235</li>
+                      <li>180.178.108.230</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><code class="highlighter-rouge">a.a.d.e</code> extends <code class="highlighter-rouge">IdleStateAwareChannelHandler</code>.</li>
+          <li>After the frame is decoded, the frame payload (without the length) is passed to the handler.</li>
+          <li><code class="highlighter-rouge">a.a.d.e:a(byte[])</code> and <code class="highlighter-rouge">a.a.d.h:a</code> are supposed to be inverses of each other.</li>
+          <li><code class="highlighter-rouge">a.a.d.h:a()</code> encrypts a serialized MsgPack array using <code class="highlighter-rouge">a.a.c.c:a(byte[])</code>,
+  a polyalphabetic substitution cipher that is its own inverse:
+  applying the cipher twice (with the same key) gives the original message.</li>
+          <li>Application uses callback.
+  Control is inverted.
+  Netty calls the application.
+            <ul>
+              <li>http://netty.io/3.6/api/org/jboss/netty/handler/timeout/IdleStateAwareChannelHandler.html</li>
+            </ul>
+          </li>
+          <li>Servers (open ports) at esmartbnis.com
+            <ul>
+              <li>News server uses port 843.
+  Input is XML.
+  Output is JSON.</li>
+              <li>Update server uses FTP (port 21 for control).</li>
+              <li>Feed server uses port 62229.
+                <ul>
+                  <li>Traffic to server is compressed and encrypted.</li>
+                  <li>Traffic from server is compressed but not encrypted.</li>
+                  <li>Encryption
+                    <ul>
+                      <li>Client generates symmetric key S (in practice the String representation of a random UUID).</li>
+                      <li>Client constructs and encodes a STOMP frame CONNECT with login, passcode, and S.</li>
+                      <li>Client encrypts the bytes using server RSA 1024-bit public key hardcoded in client, in ECB mode, with PKCS#1 (v1.5) padding.</li>
+                      <li>Client encrypts the following frames with S using <code class="highlighter-rouge">a.a.c.c:a(byte[])</code>.</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>Trading server uses port 63339.</li>
+            </ul>
+          </li>
+          <li><code class="highlighter-rouge">a.a.d.e:channelConnected</code> calls <code class="highlighter-rouge">a.a.d.e:d()</code> which does login by constructing the following message:
+            <div class="highlighter-rouge"><pre class="highlight"><code>h var1 = new h(this, "CONNECT");
+var1.a("login", this.l);
+var1.a("passcode", this.m);
+this.a(var1);
+</code></pre>
+            </div>
+            <ul>
+              <li><code class="highlighter-rouge">a.a.d.h</code> is message frame/format/model/struct/POJO/bean, used by both client and server.
+                <ul>
+                  <li><code class="highlighter-rouge">a.a.d.h:a()</code> serializes, returning a ChannelBuffer.</li>
+                  <li><code class="highlighter-rouge">a.a.d.e.a(byte[])</code> deserializes server response, returning an <code class="highlighter-rouge">a.a.d.h</code>.</li>
+                </ul>
+              </li>
+              <li>The protocol seems to be close to <a href="https://activemq.apache.org/apollo/documentation/stomp-manual.html">STOMP as implemented by ActiveMQ Apollo</a>,
+                <ul>
+                  <li>Similarity: SUBSCRIBE has a <code class="highlighter-rouge">selector</code> header.</li>
+                  <li>Difference: SEND has a misspelled <code class="highlighter-rouge">replyto</code> header.
+  Apollo has <code class="highlighter-rouge">reply-to</code>.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>The protocol (as decoded by <code class="highlighter-rouge">a.a.d.e:a(byte[])</code>):
+            <ul>
+              <li>Make a STOMP frame/message.</li>
+              <li>Encode the STOMP command as the first element in a MsgPack array.</li>
+              <li>Encode the STOMP header <em>values</em> in an application-predefined order as the rest of the elements of the MsgPack array.
+  Header names aren’t sent over the network.
+  Header order is hard-coded in the application.</li>
+              <li>Serialize the MsgPack array into byte array X.</li>
+              <li>ZIP the byte array X into Y.</li>
+              <li>Let the length of Y be 32-bit big-endian integer N.</li>
+              <li>The byte array NY is what is sent over the network.</li>
+              <li>Some data such as login/passcode are encrypted.</li>
+            </ul>
+          </li>
+          <li><code class="highlighter-rouge">a.a.c.d:a(byte[],PublicKey)</code> encrypts the byte array using <code class="highlighter-rouge">RSA/ECB/PKCS1Padding</code> cipher.</li>
+          <li>Java libpcap wrapper
+            <ul>
+              <li><a href="https://www.pcap4j.org/">pcap4j</a>, <a href="https://github.com/kaitoy/pcap4j">github</a></li>
+              <li>jnetpcap</li>
+              <li>pcap4j looks best, so we pick it.
+                <ul>
+                  <li>https://github.com/java-native-access/jna/issues/281
+                    <ul>
+                      <li><code class="highlighter-rouge">-Djna.nosys=true</code></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>When the client receives a server response:
+            <ul>
+              <li><code class="highlighter-rouge">a.a.d.e:messageReceived</code> gets executed.
+                <ul>
+                  <li><code class="highlighter-rouge">a.a.d.e:b(byte[])</code> reacts to server response.
+  Probably changes some fields.
+                    <ul>
+                      <li><code class="highlighter-rouge">a.a.d.e:a(byte[])</code> decodes server response bytes into a STOMP message.
+  It’s a custom binary encoding?
+  Are the authors overlaying STOMP on a legacy protocol?
+                        <ul>
+                          <li>The class <code class="highlighter-rouge">a.a.c.e</code> does ZIP compression/decompression.</li>
+                          <li>Package <code class="highlighter-rouge">a.a.b</code> is an unknown compressor/decompressor.</li>
+                          <li>Field <code class="highlighter-rouge">a.a.c.e:B</code> is compression method.
+  1 means compression in <code class="highlighter-rouge">a.a.b</code> package.
+  2 means ZIP.</li>
+                          <li>Ubuntu 14.04: <code class="highlighter-rouge">zlib-flate</code> CLI from <code class="highlighter-rouge">qpdf</code> package, compress/decompress stdin to stdout</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>Then probably a STOMP SEND/MESSAGE frame encapsulates a FIX (Financial Information Exchange) message.</li>
+            </ul>
+          </li>
+          <li>Then <code class="highlighter-rouge">a.a.d.e:a(a.a.d.h)</code> sends it to the server.</li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">a.a.c.a</code> seems to be a base64 decoder copied from the Internet.
+        <ul>
+          <li>2003-07-22: http://www.cs.huji.ac.il/~dbi/ex2/Base64Coder.java
+            <ul>
+              <li>https://github.com/chdh
+                <ul>
+                  <li>http://www.source-code.biz/base64coder/java/</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>2012-05-24: <a href="https://stackoverflow.com/questions/469695/decode-base64-data-in-java/10736154#10736154">SO 469695 answer 10736154</a>.</li>
+          <li>2013-11-09: https://github.com/mixpanel/mixpanel-android/blob/master/src/main/java/com/mixpanel/android/util/Base64Coder.java
+            <ul>
+              <li>copyright year goes back to 2003</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Schedule problems
+        <ul>
+          <li>The server is down every 00:00 – 01:00 UTC+7.</li>
+          <li>The traffic is only interesting in the <a href="http://www.idx.co.id/en-us/investor/trading-hours/">trading hours</a>.
+            <ul>
+              <li>We can’t just reverse-engineer the program at any convenient time.
+                <ul>
+                  <li>Capture the traffic.</li>
+                  <li>Analyze the traffic later when there is time.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>The server is also accessible via <a href="http://esmartbnis.com">http://esmartbnis.com</a>.
+  It uses HTTP, JavaScript, WebSocket.
+  It should use the same protocol as the Java client.</li>
+      <li>Some strings to find?
+        <ul>
+          <li><code class="highlighter-rouge">loading news failed, your connection / server not ready</code></li>
+          <li>The string <code class="highlighter-rouge">63339</code> is in <code class="highlighter-rouge">TradingComm</code>.</li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">esmart.feed.engine.network.d</code> gets the client IP address.
+  It’s copied from the Internet.
+        <ul>
+          <li>created on 2013-12-06 https://stackoverflow.com/questions/9481865/getting-the-ip-address-of-the-current-machine-using-java/20418809#20418809
+            <ul>
+              <li>created on 2008-03-04 https://issues.apache.org/jira/browse/JCS-40</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>How do we write our own ClassLoader using Javassist, and use it as the boot classloader?</li>
+  <li>The use cases we are interested in
+    <ul>
+      <li>Check application updates.</li>
+      <li>Check news.</li>
+      <li>Log in.</li>
+      <li>Get stock data?</li>
+      <li>Place order?</li>
+    </ul>
+  </li>
+  <li>Producing static call graph Using <code class="highlighter-rouge">java-callgraph</code>
+    <ul>
+      <li>In hindsight, this step is unnecessary.
+  We should have begun with runtime method tracing using AspectJ and bytecode decompiling using IntelliJ IDEA.</li>
+      <li>Building, assuming JDK 8 and Maven 3 are installed:
+        <div class="highlighter-rouge"><pre class="highlight"><code>git clone git@github.com:gousiosg/java-callgraph.git
+cd java-callgraph
+mvn package
+</code></pre>
+        </div>
+      </li>
+      <li>Producing static call graph of classes in JAR files:
+        <div class="highlighter-rouge"><pre class="highlight"><code>java -jar target/javacg-0.1-SNAPSHOT-static.jar JAR1 JAR2 ...
+</code></pre>
+        </div>
+        <ul>
+          <li>The graph representation is adjacency list.
+  One line of text represents one edge in the call graph.
+  The format is documented at its <a href="https://github.com/gousiosg/java-callgraph">GitHub page</a>.
+  A line <code class="highlighter-rouge">X Y</code> means the method X calls the method Y.</li>
+          <li>It only works with JARs.
+  It doesn’t work with directories.</li>
+        </ul>
+      </li>
+      <li>We can also produce a class dependency graph using the <code class="highlighter-rouge">jdeps</code> tool that comes with the JDK.</li>
+      <li>Discerning the static call graph
+        <ul>
+          <li><code class="highlighter-rouge">egrep -i 'java.net|netty|crypt|msgpack|buffer' static | egrep -v 'java.lang|java.awt|javax.swing' | sort | less</code></li>
+          <li>Which methods have anything to do with encryption?
+            <ul>
+              <li><code class="highlighter-rouge">awk '$2 ~ /crypt/' static | sort</code></li>
+              <li>The class <code class="highlighter-rouge">a.a.c.d</code> is the only class that uses <code class="highlighter-rouge">javax.crypto.*</code>.</li>
+            </ul>
+          </li>
+          <li>Which methods use the class <code class="highlighter-rouge">a.a.c.d</code>?
+            <ul>
+              <li><code class="highlighter-rouge">awk '$2 ~ /a.a.c.d/' static | sort</code></li>
+            </ul>
+          </li>
+          <li>What other methods are interesting?
+            <ul>
+              <li><code class="highlighter-rouge">java.net.Socket.get(Input|Output)Stream</code></li>
+              <li><code class="highlighter-rouge">netty</code></li>
+            </ul>
+          </li>
+          <li>After reading the static call graph, I think this might be how the app sends a message:
+            <ul>
+              <li>Construct plaintext message using msgpack.</li>
+              <li>Encrypt the plaintext, producing ciphertext, probably a ByteBuffer.</li>
+              <li>Send the ciphertext with java.net or netty.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>The plan:
+    <ul>
+      <li>Do we need a call graph or call trace?
+  Will a trace suffice?
+        <ul>
+          <li>A trace is a line that consists of time, thread id, qualified class name, and method signature.</li>
+          <li>Use AOP (aspect-oriented programming) that uses bytecode manipulation such as AspectJ.</li>
+        </ul>
+      </li>
+      <li>Compute static call graph.
+        <ul>
+          <li>Find patterns in the call graph.
+  Find calls from non-network class to network class.
+            <ul>
+              <li>A <em>network class</em> is a class whose qualified name matches any of these patterns:
+                <ul>
+                  <li><code class="highlighter-rouge">java.net.*</code></li>
+                  <li><code class="highlighter-rouge">java.nio.*</code></li>
+                  <li><code class="highlighter-rouge">*.netty.*</code></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>Don’t exclude any class.
+  Filter it later instead.</li>
+        </ul>
+      </li>
+      <li>https://stackoverflow.com/questions/29451704/using-javassist-to-log-method-calls-and-argument-values-how-to-make-a-logger-cl</li>
+      <li>AspectJ load-time weaving (LTW)
+        <ul>
+          <li>https://stackoverflow.com/questions/13781372/java-aspect-oriented-programming-runtime-aspect-weaving-and-class-loading-time</li>
+          <li>even more intrusive
+            <ul>
+              <li>2008, article, “Aspect Weaving in Standard Java Class Libraries”, <a href="http://www.inf.usi.ch/faculty/binder/documents/pppj08.pdf">pdf</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Find tools.
+        <ul>
+          <li>2008, article, “The Rigi Reverse Engineering Environment”, <a href="https://www.rose-hulman.edu/class/cs/csse575/Resources/rigi-wasdett2008-paper06.pdf">pdf</a>
+            <ul>
+              <li>https://en.wikipedia.org/wiki/Rigi_(software)</li>
+              <li>requires source code</li>
+            </ul>
+          </li>
+          <li>2001, article, “Shimba—An environment for reverse engineering Java software systems”, <a href="https://www.researchgate.net/publication/220280416_Shimba-An_environment_for_reverse_engineering_Java_software_systems">abstract</a>
+            <ul>
+              <li>The abstract sounds promising, but where is the paper?
+  Where is the source code?
+  It’s not on GitHub.
+  That article is locked up somewhere and the source code is nowhere in sight.
+  That research practically doesn’t exist; it practically never happened.
+  What a waste.</li>
+            </ul>
+          </li>
+          <li>2018, article, “Scientists should be solving problems, not struggling to access journals”, <a href="https://www.theguardian.com/higher-education-network/2018/may/21/scientists-access-journals-researcher-article">html</a></li>
+          <li>2002, article, “Dynamic Analysis For Reverse Engineering and Program Understanding”, <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.302.1091&amp;rep=rep1&amp;type=pdf">pdf</a></li>
+          <li>Generating Java dynamic call graph - no license, course assignment https://github.com/EmilyShepherd/Dynamic-Call-Graph
+            <ul>
+              <li>https://github.com/dkarv/jdcallgraph</li>
+              <li>https://stackoverflow.com/questions/6540423/simple-dynamic-call-graphs-in-java</li>
+            </ul>
+          </li>
+          <li>https://erik.doernenburg.com/2008/09/call-graph-visualisation-with-aspectj-and-dot/</li>
+        </ul>
+      </li>
+      <li>Find some information about how to debug Java bytecode.
+        <ul>
+          <li>2018-07-22 decision: Write a Java program that uses the JDI (Java Debug Interface).
+            <ul>
+              <li>2018-07-23 hindsight: That was a bad decision.
+  We should have computed the call graph first.</li>
+            </ul>
+          </li>
+          <li>References we will often use
+            <ul>
+              <li><a href="https://docs.oracle.com/javase/8/docs/jdk/api/jpda/jdi/index.html">Java 8 JDI javadoc</a></li>
+            </ul>
+          </li>
+          <li>Details:
+            <ul>
+              <li>Things that come with JDK 7:
+                <ul>
+                  <li><a href="https://docs.oracle.com/javase/7/docs/technotes/guides/jpda/index.html">JPDA (Java Platform Debug Architecture)</a>
+                    <ul>
+                      <li><a href="https://docs.oracle.com/javase/7/docs/technotes/guides/jpda/examples.html">JPDA examples that come with JDK</a>
+                        <ul>
+                          <li><a href="https://docs.oracle.com/javase/7/docs/technotes/guides/jpda/javadt.html">javadt</a> GUI tool</li>
+                          <li><a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jdb.html">jdb</a> command-line tool</li>
+                          <li><a href="https://docs.oracle.com/javase/7/docs/technotes/guides/jpda/trace.html">trace</a></li>
+                        </ul>
+                      </li>
+                      <li>JPDA = JVMTI + JDWP + JDI
+                        <ul>
+                          <li>JVMTI = Java Virtual Machine Tool Interface</li>
+                          <li>JDWP = Java Debug Wire Protocol</li>
+                          <li>JDI = Java Debug Interface
+                            <ul>
+                              <li>“We recommend the JDI layer for all debugger development.” (<a href="https://docs.oracle.com/javase/7/docs/technotes/guides/jpda/architecture.html#jdi">source</a>)</li>
+                              <li>This enables us to write programs that debug programs.</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>Sample code
+                <ul>
+                  <li>There doesn’t seem to be any official tutorials.</li>
+                  <li><a href="https://dzone.com/articles/generating-minable-event">dzone.com: Generating a minable event stream with JDI</a></li>
+                  <li><a href="http://illegalargumentexception.blogspot.com/2009/03/java-using-jpda-to-write-debugger.html">Java: Using JPDA to write a debugger</a></li>
+                  <li><a href="https://github.com/openjdk-mirror/jdk7u-jdk/blob/master/src/share/classes/com/sun/tools/example/debug/tty/TTY.java">JDK 7 jdb source code</a>.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Use JDB to debug the program.
+        <ul>
+          <li>Or perhaps Eclipse? <a href="https://www.crowdstrike.com/blog/native-java-bytecode-debugging-without-source-code/">crowdstrike.com: Native Java Bytecode Debugging without Source Code</a></li>
+        </ul>
+      </li>
+      <li>Find out where to focus.
+        <ul>
+          <li>Map network-related call graph.
+            <ul>
+              <li>Put a breakpoint at Socket.getOutputStream.</li>
+              <li>It uses netty and thread pools, encumbering the recovery of the interesting stack frames.</li>
+              <li>It uses a serialization library <code class="highlighter-rouge">msgpack</code>. Perhaps put breakpoints there?</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Write a program to dump the call graph of every call to netty class from non-netty class.</li>
+    </ul>
+  </li>
+  <li>Obstacles and woes:
+    <ul>
+      <li>There is no <code class="highlighter-rouge">chdir</code> in Java standard library, and it seems that there will never be.
+  See <a href="https://bugs.openjdk.java.net/browse/JDK-4045688">WONTFIX: JDK-4045688: “Add chdir or equivalent notion of changing working directory”</a>.</li>
+      <li>Method entry event is abysmally slow because it forces bytecode interpretation (<a href="https://stackoverflow.com/questions/751105/why-does-the-debugged-program-slow-down-so-much-when-using-method-entry-debuggin/api.stackexchange.com">SO 751105</a>).
+  Others experience this problem too:
+  <a href="https://netbeans.org/bugzilla/show_bug.cgi?id=47759">NetBeans 47759</a>,
+  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=90870">Eclipse 90870</a>,
+  <a href="https://stackoverflow.com/questions/48114042/jpda-methodentryevent-causing-app-to-run-very-slow">SO 48114042</a>.</li>
+      <li>JDI implementation oversight
+        <ul>
+          <li>Breakpointing an abstract method throws a NullPointerException with no message, because <code class="highlighter-rouge">m.location()</code> returns <code class="highlighter-rouge">null</code> which can’t be passed to <code class="highlighter-rouge">createBreakpointRequest</code> which doesn’t check for nulls.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Do I have to do this time-consuming stuff? What are the alternatives?
+    <ul>
+      <li>I can buy data.</li>
+      <li>I can ask the company to provide some documentation about their protocols.
+        <ul>
+          <li>Whom should I talk to?
+            <ul>
+              <li>I can ask my sales representative whether he knows the people who made or is maintaining the application.</li>
+              <li>Someone in a local Java User Group might know something.
+                <ul>
+                  <li>https://groups.google.com/forum/#!forum/jugi
+                    <ul>
+                      <li>The mailing list has devolved into a job board.</li>
+                    </ul>
+                  </li>
+                  <li>Is there a chat? IRC?</li>
+                  <li>https://www.facebook.com/groups/ForumJavaIndonesia/</li>
+                </ul>
+              </li>
+              <li>People who have made a similar application
+                <ul>
+                  <li>2008 PT Trimegah Securities Tbk https://www.linkedin.com/in/syahreza-pahlevi-ginting-0041b52/</li>
+                  <li>2016 BCA Sekuritas https://www.linkedin.com/in/kusnandartoni/</li>
+                  <li>2010 https://www.linkedin.com/in/elvino-a07277b/</li>
+                  <li>unclear linkedin profile
+                    <ul>
+                      <li>2013-2016 Bareksa, 2012 Limas https://www.linkedin.com/in/arisman-26672a52/</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>I can try to convince the company to open-source this platform.
+        <ul>
+          <li>Somewhat unlikely in this country that is behind the US by 10 years or perhaps even more.</li>
+        </ul>
+      </li>
+      <li>I can switch to the company’s other product that is a web app that uses websockets.
+        <ul>
+          <li>Which one is easier to reverse-engineer?</li>
+        </ul>
+      </li>
+      <li>These are possible, but I would rather not do these:
+        <ul>
+          <li>Get a job in a securities company, and then get the required information.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>The plan:
+    <ul>
+      <li>Try existing deobfuscators, supercompilers, disassemblers, debuggers, and other tools.</li>
+    </ul>
+  </li>
+  <li>Can we reverse-engineer by supercompilation or partial evaluation?</li>
+  <li>search keywords to try
+    <ul>
+      <li>java bytecode optimizer</li>
+      <li>java deobfuscator</li>
+      <li>metacompilation, supercompilation, partial evaluation, program specialization, etc. https://everipedia.org/wiki/Metacompilation/</li>
+    </ul>
+  </li>
+  <li>https://www.reddit.com/r/REMath/</li>
+  <li>https://security.stackexchange.com/questions/29866/reverse-engineering-and-java</li>
+  <li>Transpile Java bytecode to JavaScript, and use jsnice?</li>
+  <li>supercompile Java programs
+    <ul>
+      <li>“Ongoing work on Supercompilation of Java code (or supercompilation in general)?” http://lambda-the-ultimate.org/node/2739</li>
+      <li>“A Java Supercompiler and Its Application to Verification of Cache-Coherence Protocols” https://link.springer.com/chapter/10.1007/978-3-642-11486-1_16</li>
+      <li>2002, “Supercompiling Java Programs” http://goertzel.org/papers/SupercompilingJavaMay2002.htm
+        <ul>
+          <li>What are the differences between supercompilation and partial evaluation?</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Reverse engineering Java
+    <ul>
+      <li>2012, article, “A Patterns Based Reverse Engineering Approach for Java Source Code”, <a href="https://www.researchgate.net/publication/261391889_A_Patterns_Based_Reverse_Engineering_Approach_for_Java_Source_Code">description</a></li>
+      <li>Reverse engineering Java using Eclipse
+        <ul>
+          <li><a href="https://wiki.eclipse.org/Java_reverse_engineering">wiki.eclipse.org: Java reverse engineering</a></li>
+        </ul>
+      </li>
+      <li>Java agents
+        <ul>
+          <li>https://blog.takipi.com/double-agent-java-vs-native-agents/</li>
+        </ul>
+      </li>
+      <li>Related JEPs (Java Enhancement Proposals)
+        <ul>
+          <li>2018-07-23: last updated in 2015, created in 2011, <a href="http://openjdk.java.net/jeps/159">JEP 159: Enhanced Class Redefinition</a>, <a href="https://bugs.openjdk.java.net/browse/JDK-8046149">JDK-8046149</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/rejava.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/rejava.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-07-24 00:10 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>
