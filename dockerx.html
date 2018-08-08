@@ -6,12 +6,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Perusahaan listrik negara</title>
+  <title>Running X client applications on Docker on Linux</title>
   <meta name="description" content="Personal website">
 
   <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="https://edom.github.io/pln.html">
+  <link rel="canonical" href="https://edom.github.io/dockerx.html">
   <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
 
   
@@ -51,34 +51,42 @@
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Perusahaan listrik negara</h1>
+    <h1 class="post-title">Running X client applications on Docker on Linux</h1>
   </header>
 
   <div class="post-content">
-    <p>Zona waktu GMT+7.</p>
+    <div class="highlighter-rouge"><pre class="highlight"><code>docker \
+    -e DISPLAY \
+    -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+    -u &lt;user&gt; &lt;image&gt; &lt;command&gt;
+</code></pre>
+</div>
 
-<p>Daerah Green Ville tahap 4, Jakarta Barat.</p>
+<p>Replace <code class="highlighter-rouge">&lt;user&gt;</code> with a non-root user.
+You need a non-root user because the X server rejects connection from the root user by default.
+You can change this with <code class="highlighter-rouge">xhost</code>, but it’s better to connect with a non-root user.</p>
 
-<p>2017-10-05 13:42 PLN mati.</p>
+<p>The <code class="highlighter-rouge">&lt;command&gt;</code> argument is optional.</p>
 
-<p>2018: Gardu PLN meledak.</p>
+<p>The <code class="highlighter-rouge">-e DISPLAY</code> parameter reexports the <code class="highlighter-rouge">DISPLAY</code> environment variable to the application inside the container.
+X client applications will read from this environment variable to determine which server to connect to.</p>
 
-<p>2018-01-02 07:00 PLN mati.
-Waktu kembali hidup tidak dicatat.</p>
+<p>The <code class="highlighter-rouge">-v HOST:CONT:ro</code> option mounts <code class="highlighter-rouge">HOST</code> directory to <code class="highlighter-rouge">CONT</code> directory read-only.
+This is so that the application in the container can connect to the host X server’s Unix socket.</p>
 
-<p>2018-04-03 22:00 brownout.
-00:00 mati total.
-07:20 nyala.</p>
+<p>On Linux, display <code class="highlighter-rouge">:0</code> corresponds to the Unix socket <code class="highlighter-rouge">/tmp/.X11-unix/X0</code>.
+Everyone who can connect to that Unix socket will
+be able to run X client applications on the machine;
+it is not specific to Docker.</p>
 
-<p>2018-05-10 02:50 PLN mati 1 menit.</p>
+<p>If X complains about shared memory, try:</p>
 
-<p>2018-05-10 20:00 PLN mati 5 detik.</p>
-
-<p>2017-12-20 00:17 PLN mati sekitar 15 menit.</p>
-
-<p>2018-08-08 23:28 PLN mati 1 menit.</p>
-
-<p>Mengapa PLN suka mati 1 menit?</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>docker \
+    -e DISPLAY=unix$DISPLAY \
+    -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+    -u &lt;user&gt; &lt;image&gt; &lt;command&gt;
+</code></pre>
+</div>
 
   </div>
 
@@ -96,8 +104,8 @@ Waktu kembali hidup tidak dicatat.</p>
 *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
 *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
 var disqus_config = function () {
-    this.page.url = "https://edom.github.io/pln.html";  // Replace PAGE_URL with your page's canonical URL variable
-    this.page.identifier = "https://edom.github.io/pln.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    this.page.url = "https://edom.github.io/dockerx.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/dockerx.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
 };
 (function() { // DON'T EDIT BELOW THIS LINE
 var d = document, s = d.createElement('script');
@@ -113,7 +121,7 @@ s.setAttribute('data-timestamp', +new Date());
     <data class="u-url" href="/"></data>
 
     <div class="wrapper">
-        <p>This page was created on 2018-05-10 00:00 +0700.</p>
+        <p>This page was created on 2016-05-02 03:31:20 +0700.</p>
         <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
         but it's unused because this site is a wiki, not a blog.</p>
     </div>

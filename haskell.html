@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Haskell</title>
+  <title>Using Haskell</title>
   <meta name="description" content="Personal website">
 
   <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
@@ -51,17 +51,81 @@
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Haskell</h1>
+    <h1 class="post-title">Using Haskell</h1>
   </header>
 
   <div class="post-content">
     <ul>
+  <li>Setting up development environment
+    <ul>
+      <li>Duplicate intersecting efforts?
+  Too many choices?
+        <ul>
+          <li>Why is there Haskell Platform and Haskell Stack?</li>
+          <li>Which should we use?</li>
+          <li>Why is there haskell-lang.org and haskell.org?
+            <ul>
+              <li>https://news.ycombinator.com/item?id=12054690</li>
+            </ul>
+          </li>
+          <li>Why should I use Platform if there is Stack?</li>
+          <li>Why should I use Stack if there is Cabal new-style?</li>
+          <li>Why Stack?
+            <ul>
+              <li>Vetted packages?</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Install the Haskell <code class="highlighter-rouge">stack</code> tool.
+        <ul>
+          <li>I use the <a href="https://docs.haskellstack.org/en/stable/install_and_upgrade/#linux">manual download</a>.
+            <ul>
+              <li>If you want to make sure that the download isn’t corrupted, check the corresponding sha256sum from <a href="https://github.com/commercialhaskell/stack/releases/">GitHub releases page</a>.</li>
+              <li>If you don’t mind sudoing, use the installer script in the <a href="https://docs.haskellstack.org/en/stable/README/">documentation</a>.</li>
+            </ul>
+          </li>
+          <li>Then I check the archive contents using <code class="highlighter-rouge">tar tzf</code>.</li>
+          <li>If there’s no weird paths, I extract the archive with <code class="highlighter-rouge">tar xzf</code>.</li>
+          <li>Then I make the symbolic link <code class="highlighter-rouge">~/.local/bin/stack</code>.</li>
+          <li>If you use the manual download, you may have to install some operating system packages.
+            <ul>
+              <li>The list is on the <a href="https://get.haskellstack.org/">install script</a>.
+  Search for <code class="highlighter-rouge">install_dependencies</code> for your distro.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Choose a Stack solver.</li>
+      <li>(2018-08-07) Download GHC 7.10 using Stack.
+        <ul>
+          <li>Which version of GHC should I use?
+  You should use 7.10.
+            <ul>
+              <li>The one that is supported by <a href="http://hackage.haskell.org/package/HaRe">HaRe</a> (Haskell refactoring tool) and other tools (IDE, Leksah, Cabal, etc.).
+  In 2018, I think the safe choice is GHC 7.10.</li>
+            </ul>
+          </li>
+          <li>The widely supported GHC version lags very much behind the latest stable GHC version.
+  I think this may be because the GHC team is rolling out lots of breaking changes in the parser because they are working on the “Trees that grow” proposal.</li>
+        </ul>
+      </li>
+      <li>unread, Stephen Diehl
+        <ul>
+          <li>http://www.stephendiehl.com/posts/vim_2016.html</li>
+          <li>http://www.stephendiehl.com/posts/vim_haskell.html</li>
+          <li>http://www.stephendiehl.com/posts/haskell_2018.html</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
   <li>Haskell in 2018
     <ul>
       <li>https://www.reddit.com/r/haskell/comments/7wmhyi/an_opinionated_guide_to_haskell_in_2018/</li>
       <li>https://github.com/Gabriel439/post-rfc/blob/master/sotu.md</li>
       <li>https://www.reddit.com/r/haskell/comments/54fv8b/what_is_the_state_of_haskell/</li>
       <li>https://lexi-lambda.github.io/blog/2018/02/10/an-opinionated-guide-to-haskell-in-2018/</li>
+      <li><a href="https://eta-lang.org/">Eta: Haskell on JVM</a></li>
     </ul>
   </li>
   <li>Development workflow and tools
@@ -82,17 +146,6 @@
       <li>2016, http://www.stephendiehl.com/posts/vim_2016.html
         <ul>
           <li>2015 (?), http://www.stephendiehl.com/posts/vim_haskell.html</li>
-        </ul>
-      </li>
-      <li>Which version of GHC should I use?
-        <ul>
-          <li>The one that is supported by HaRe (Haskell refactoring tool) and other tools (IDE, Leksah, Cabal, etc.).
-  In 2018, I think the safe choice is GHC 7.10?
-            <ul>
-              <li>http://hackage.haskell.org/package/HaRe</li>
-              <li>Does Cabal 2.2 work with GHC 7.10?</li>
-            </ul>
-          </li>
         </ul>
       </li>
     </ul>
@@ -221,6 +274,22 @@
       <li>https://wiki.haskell.org/Generics
         <ul>
           <li>SYB (Scrap Your Boilerplate), uniplate, etc.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>What does “Avoid ‘success at all costs’” mean?
+    <ul>
+      <li>https://news.ycombinator.com/item?id=12056169</li>
+    </ul>
+  </li>
+  <li>The alternative to Cabal PVP is compile error, or, even worse, logic error and runtime failure?
+    <ul>
+      <li>Cabal PVP depends on library authors/maintainers to test and update their dependency bounds.</li>
+      <li>It’s not only Haskell, but all programming.
+  Every library author must thoughtfully maintain backward compatibility and can’t just make arbitrary changes and break things.
+        <ul>
+          <li>https://plan99.net/~mike/writing-shared-libraries.html</li>
         </ul>
       </li>
     </ul>
