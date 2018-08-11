@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Optimizing lambda calculus</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/optlam.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Optimizing lambda calculus</h1>
+  </header>
+
+  <div class="post-content">
+    <ul>
+  <li>http://thyer.name/lambda-animator/</li>
+  <li>http://thyer.name/phd-thesis/</li>
+  <li>http://hackage.haskell.org/package/graph-rewriting-lambdascope</li>
+  <li>partial evaluation
+    <ul>
+      <li>2010, slides, “O, partial evaluator, where art thou?”, Lennart Augustsson, <a href="http://www.cse.chalmers.se/~palka/Lennarts_talk/PEPM-2010.pdf">pdf</a>
+        <ul>
+          <li>https://en.wikipedia.org/wiki/Partial_evaluation
+            <ul>
+              <li>Futamura projection</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>1997, article, “Distributed partial evaluation”, <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.134.1238">citeseerx</a></li>
+    </ul>
+  </li>
+  <li>Lambda calculus
+    <ul>
+      <li>might be related to bottom-up beta substitution
+        <ul>
+          <li>Abdullah hinted that BUBS (bottom-up beta-substitution [Shivers2004])
+  might be used to make a garbage-free or a fast interpreter.</li>
+          <li>https://en.wikipedia.org/wiki/Strict_programming_language</li>
+          <li>https://en.wikipedia.org/wiki/Lazy_evaluation</li>
+          <li><a href="https://memo.barrucadu.co.uk/strict-vs-lazy.html">Strict-by-default vs Lazy-by-default</a></li>
+          <li>https://en.wikipedia.org/wiki/Applicative_computing_systems</li>
+          <li>non-strict, beta reduction, normal order, applicative order</li>
+          <li>The terms “lazy” and “strict” imply operational semantics.
+  They are two strategies for beta-reduction.
+  “Lazy” is normal-order.
+  “Strict” is applicative-order.</li>
+          <li><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.90.2386&amp;rep=rep1&amp;type=pdf">An Algorithm for Optimal Lambda Calculus Reduction, John Lamping</a></li>
+          <li><a href="http://www.lsv.fr/Publis/PAPERS/PDF/sinot-wrs07.pdf">Complete Laziness: a Natural Semantics, François-Régis Sinot</a></li>
+          <li>http://rochel.info/ graph-rewriting-lambdascope (screenshot): An implementation of an optimal evaluator for the λ-calculus, PDFLambdascope</li>
+        </ul>
+      </li>
+      <li>How is lambda calculus algebraic?
+        <ul>
+          <li><a href="https://www.mscs.dal.ca/~selinger/papers/combinatory.pdf">“The lambda calculus is algebraic”, Peter Selinger</a>
+            <ul>
+              <li>“We argue that free variables should not be interpreted as elements in a model, as is usually done, but as indeterminates.”</li>
+            </ul>
+          </li>
+          <li><a href="https://pdfs.semanticscholar.org/055d/69ee4dc95fbf6457419c90338493667478b1.pdf">“On the algebraic models of lambda calculus”, Antonino Salibra</a>
+            <ul>
+              <li>“The variety (equational class) of lambda abstraction algebras was introduced
+  to algebraize the untyped lambda calculus in the same way Boolean algebras algebraize the classical propositional calculus.”
+  Propositional logic is modeled by Boolean algebra.
+  First-order logic is modeled by cylindric algebra?
+  Lambda calculus is modeled by lambda abstraction algebra.
+  Why algebra? Because it is equational?</li>
+            </ul>
+          </li>
+          <li><a href="https://en.wikipedia.org/wiki/Algebraic_logic">Wikipedia “algebraic logic”</a></li>
+          <li><a href="https://pdfs.semanticscholar.org/7596/19f05a42ff3045bcf87fcaa3edbff01e1130.pdf">“The algebraic lambda-calculus”, Lionel Vaux</a></li>
+          <li><a href="https://pdfs.semanticscholar.org/44c9/2ad00b8ceba78319005db048b24d61a80748.pdf">“Lambda abstraction algebras: representation theorems”, Don Pigozzi, Antonino Salibra</a></li>
+          <li><a href="http://www.dsi.unive.it/~salibra/mainfinale.pdf">“Applying Universal Algebra to Lambda Calculus”, Giulio Manzonetto, Antonino Salibra</a></li>
+        </ul>
+      </li>
+      <li>Dana Scott’s PCF; also search the Internet for “the language pcf”
+  <a href="http://www.cs.bham.ac.uk/~mhe/papers/RNC3.pdf">“Introduction to Real PCF (Notes)”, Mart'in H"otzel Escard'o</a></li>
+      <li>1993 John Launchbury <a href="https://pdfs.semanticscholar.org/492b/200419199892857faa6a6956614641ae9464.pdf">Lazy imperative programming</a></li>
+    </ul>
+  </li>
+  <li>lambda calculus
+    <ul>
+      <li>Church-encoding enables lambda calculus to represent conditionals and algebraic data types.</li>
+      <li>Fixed-point combinators enables recursion and looping.</li>
+      <li>https://en.wikipedia.org/wiki/Lambda_cube</li>
+      <li>https://en.wikipedia.org/wiki/Calculus_of_constructions</li>
+      <li>https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus
+        <ul>
+          <li>“The simply typed lambda calculus […], a form of type theory,
+  is a typed interpretation of the lambda calculus with only one type constructor: […] that builds function types.”
+            <ul>
+              <li>What is an “interpretation of the lambda calculus”?</li>
+              <li>What is “the lambda calculus”? Is there only one lambda calculus?</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>https://www.reddit.com/r/haskell/comments/8els6f/why_are_combinators_as_powerful_as_full/</li>
+      <li>https://math.stackexchange.com/questions/5639/the-power-of-lambda-calculi</li>
+      <li>Implement lambda calculus.
+        <ul>
+          <li>Without dynamic allocation / garbage collection.</li>
+          <li>Translate lambda calculus to assembly
+            <ul>
+              <li>Basic idea:
+                <ul>
+                  <li>Every expression translates to a subroutine.</li>
+                  <li>Calling the subroutine ~ evaluating the expression.</li>
+                  <li>Subroutine return value ~ value obtained by evaluating the expression.</li>
+                </ul>
+              </li>
+              <li>A lambda abstraction translates to a subroutine that accepts one parameter.</li>
+              <li>An application translates to a subroutine call.</li>
+              <li>An int value translates to what? Choice:
+                <ul>
+                  <li>itself</li>
+                  <li>a subroutine that returns the int</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>2012, article, <a href="https://arxiv.org/abs/1202.2924">“From Mathematics to Abstract Machine: A formal derivation of an executable Krivine machine”</a>
+            <ul>
+              <li>https://en.wikipedia.org/wiki/Krivine_machine</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/optlam.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/optlam.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-08-11 23:36 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

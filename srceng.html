@@ -56,12 +56,27 @@
 
   <div class="post-content">
     <ul>
+  <li>Stop words (word ignore list) deal with index construction, not about query comprehension.
+The search may ignore stop words when crawling, but it should not ignore stop words in queries.
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Stop_words">WP:Stop words</a></li>
+      <li>query comprehension
+        <ul>
+          <li>Every word changes the intention/meaning of the query.</li>
+          <li>We need contextual search engine.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Google: 1998, article, “The Anatomy of a Large-Scale Hypertextual Web Search Engine”, Sergey Brin, Lawrence Page, <a href="http://ilpubs.stanford.edu:8090/361/1/1998-8.pdf">pdf</a></li>
   <li>Is there a distributed search engine, something as good as Google, but not owned by a company?
     <ul>
       <li>https://en.wikipedia.org/wiki/Distributed_search_engine</li>
       <li>https://fourweekmba.com/distributed-search-engines-vs-google/</li>
+      <li>2011, article, “‘Sciencenet’—towards a global search and share engine for all scientific knowledge”, <a href="https://academic.oup.com/bioinformatics/article/27/12/1734/255451">html</a></li>
       <li>YaCy, <a href="https://yacy.net/en/index.html">homepage</a>, <a href="https://github.com/yacy/yacy_search_server">GitHub</a>, <a href="https://en.wikipedia.org/wiki/YaCy">WP</a>
         <ul>
+          <li>2014, article, “Description of the YaCy Distributed Web Search Engine”, <a href="https://www.esat.kuleuven.be/cosic/publications/article-2459.pdf">pdf</a></li>
           <li><a href="https://lwn.net/Articles/469972/">2011 article, LWN</a></li>
           <li><a href="https://www.pcmag.com/article2/0,2817,2397267,00.asp">2011 article, pcmag review</a></li>
           <li>Setting up YaCy
@@ -109,9 +124,10 @@
                 </ul>
               </li>
               <li>Should we host YaCy on GCP (Google Cloud Platform)?
-  It’s cheap (USD 3.88 per month in us-west-1/us-central-1/us-east-1? Really? What about network data transfer costs into?).
+  It’s cheap (USD 4.28 per month in us-west-1/us-central-1/us-east-1? Really? What about network data transfer costs into?).
   It might be even cheaper (GCP free tier).
                 <ul>
+                  <li>Even cheaper: Run YaCy on GCE preemptible instances?</li>
                   <li>alternative: DigitalOcean? https://www.digitalocean.com/pricing/</li>
                 </ul>
               </li>
@@ -120,7 +136,7 @@
           </li>
           <li>Problems
             <ul>
-              <li>Solr sometimes runs out of memory.
+              <li>YaCy, Solr, who knows what, sometimes runs out of memory.
   How come?</li>
               <li>Does YaCy deal with stemming and synonyms?
   For example, compare the results for “using media in politics”, “use media in politics”, and “usage of media in politics”.</li>
