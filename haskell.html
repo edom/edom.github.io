@@ -97,21 +97,31 @@
           </li>
         </ul>
       </li>
-      <li>Choose a Stack solver.</li>
-      <li>(2018-08-07) Download GHC 7.10 using Stack.
+      <li>Choose a Stack solver.
         <ul>
-          <li>Which version of GHC should I use?
-  You should use 7.10.
+          <li>Forget it. Just install GHC to home.
             <ul>
-              <li>The one that is supported by <a href="http://hackage.haskell.org/package/HaRe">HaRe</a> (Haskell refactoring tool) and other tools (IDE, Leksah, Cabal, etc.).
-  In 2018, I think the safe choice is GHC 7.10.</li>
+              <li><code class="highlighter-rouge">./configure --prefix ~/.local</code></li>
+              <li><code class="highlighter-rouge">make -j4 install</code></li>
             </ul>
           </li>
+        </ul>
+      </li>
+      <li>Which version of GHC should I use?
+      - The one that is supported by
+      <a href="http://hackage.haskell.org/package/HaRe">HaRe</a> (Haskell refactoring tool) and
+      <a href="https://github.com/leksah/leksah">Leksah</a>.
+          - On 2018-08-20, this is 8.0.2.
+              - Leksah requires ghc &gt;= 8.0.2.
+              - HaRe supports ghc &lt;= 8.0.2.
+              - GHC 8.0 is unacceptably slow.
+                  - Forget HaRe. We’ll go with Leksah. Use GHC 8.4.3.
+        <ul>
           <li>The widely supported GHC version lags very much behind the latest stable GHC version.
   I think this may be because the GHC team is rolling out lots of breaking changes in the parser because they are working on the “Trees that grow” proposal.</li>
           <li>Which Stackage LTS version should I use?
             <ul>
-              <li><a href="https://www.stackage.org/lts-6.35">LTS 6.35</a>, because of GHC 7.10.3.
+              <li><a href="https://www.stackage.org/lts-6.35">LTS 6.35</a> if GHC 7.10.3?
                 <ul>
                   <li>It also hosts a hoogle search for searching Haskell program elements.</li>
                 </ul>

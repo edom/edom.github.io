@@ -67,21 +67,19 @@ and it is limited to fixed-arity lambda expressions.</p>
 
 <p>The idea of <code class="highlighter-rouge">lambda/c</code> is this pattern:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>(lambda/c (a) z) =&gt; (lambda (a) z)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(lambda/c (a) z) =&gt; (lambda (a) z)
 (lambda/c (a b) z) =&gt; (lambda (a) (lambda (b) z))
 (lambda/c (a b c) z) =&gt; (lambda (a) (lambda (b) (lambda (c) z)))
 ...
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The idea of <code class="highlighter-rouge">apply/c</code> is this pattern:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>(apply/c a b) =&gt; (a b)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(apply/c a b) =&gt; (a b)
 (apply/c a b c) =&gt; ((a b) c)
 (apply/c a b c d) =&gt; (((a b) c) d)
 ...
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>However, there is a difference:
 <code class="highlighter-rouge">apply</code> is an arity-2 procedure taking a procedure and a list,
@@ -89,16 +87,15 @@ whereas <code class="highlighter-rouge">apply/c</code> is a macro that takes one
 
 <p>The idea of <code class="highlighter-rouge">define/c</code> is this parallel:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>(define (a b ... y) z) = (define a (lambda (b ... y) z))
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(define (a b ... y) z) = (define a (lambda (b ... y) z))
 (define/c (a b ... y) z) = (define a (lambda/c (b ... y) z))
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="the-code">The code</h2>
 
 <p>I tried this code on Guile 2.0.9 on Ubuntu 14.04.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>(define-syntax lambda/c
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(define-syntax lambda/c
     (syntax-rules ()
         (
             (_ (x) body ...)
@@ -140,8 +137,7 @@ whereas <code class="highlighter-rouge">apply/c</code> is a macro that takes one
         )
     )
 )
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="example">Example</h2>
 
@@ -149,14 +145,13 @@ whereas <code class="highlighter-rouge">apply/c</code> is a macro that takes one
 (by copying them to your REPL, for example),
 the following fragment should print three threes.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>(define f (lambda/c (x y) (+ x y)))
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(define f (lambda/c (x y) (+ x y)))
 (define g (lambda (x) (lambda (y) (+ x y))))
 (define/c (h x y) (+ x y))
 (apply/c f 1 2)
 (apply/c g 1 2)
 (apply/c h 1 2)
-</code></pre>
-</div>
+</code></pre></div></div>
 
   </div>
 

@@ -78,79 +78,91 @@
           <li>TypeScript (JavaScript) is ideal for AST decoration problem?
   You just add a key to the AST node object you want to decorate.
             <ul>
-              <li>Any language with structural typing is ideal?
-```typescript
-interface Node {
-}</li>
+              <li>Any language with structural typing is ideal?</li>
             </ul>
+
+            <div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kr">interface</span> <span class="nx">Node</span> <span class="p">{</span>
+  <span class="p">}</span>
+
+  <span class="kr">interface</span> <span class="nx">Node_parse</span> <span class="kd">extends</span> <span class="nx">Node</span> <span class="p">{</span>
+  <span class="p">}</span>
+
+  <span class="kr">interface</span> <span class="nx">Node_desugar</span> <span class="kd">extends</span> <span class="nx">Node_parse</span> <span class="p">{</span>
+  <span class="p">}</span>
+</code></pre></div>            </div>
           </li>
         </ul>
       </li>
+      <li>Loosely-typed Haskell?
+        <ul>
+          <li>This is basically the JavaScript way.</li>
+        </ul>
+
+        <div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kr">type</span> <span class="kt">Key</span> <span class="o">=</span> <span class="kt">String</span>
+  <span class="kr">data</span> <span class="kt">Value</span>
+      <span class="o">=</span> <span class="kt">VNum</span> <span class="kt">Double</span>
+      <span class="o">|</span> <span class="kt">VStr</span> <span class="kt">String</span>
+      <span class="o">|</span> <span class="kt">VObj</span> <span class="kt">Object</span>
+  <span class="kr">type</span> <span class="kt">Object</span> <span class="o">=</span> <span class="p">[(</span><span class="kt">Key</span><span class="p">,</span> <span class="kt">Value</span><span class="p">)]</span>
+  <span class="kr">type</span> <span class="kt">Node</span> <span class="o">=</span> <span class="kt">Object</span>
+</code></pre></div>        </div>
+      </li>
+      <li>2017, article, “Trees that grow”, https://www.microsoft.com/en-us/research/uploads/prod/2016/11/trees-that-grow.pdf
+        <ul>
+          <li>“The compiler writer is then faced with two unpalatable choices.
+  She can define a new data type representing the output decorated tree, at the cost of much duplication.
+  Or she can write a single data type with all the necessary fields and constructors, at the cost of having many unused fields and constructors at different stages of compilation.”</li>
+          <li>However, we can fake extensible ADTs with pattern synonyms, with Fix, and without type families.
+            <ul>
+              <li>Similar endeavors
+                <ul>
+                  <li>https://wiki.haskell.org/Type_composition</li>
+                </ul>
+              </li>
+              <li>Haskell doesn’t beta-reduce types.</li>
+              <li>This is an example code:</li>
+            </ul>
+
+            <div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kr">data</span> <span class="kt">Exp_</span> <span class="n">name</span> <span class="n">exp</span>
+      <span class="o">=</span> <span class="kt">Var</span> <span class="n">name</span>
+      <span class="o">|</span> <span class="kt">Add</span> <span class="n">exp</span> <span class="n">exp</span>
+      <span class="o">|</span> <span class="o">...</span>
+
+  <span class="kr">data</span> <span class="kt">Locd</span> <span class="n">a</span>
+      <span class="o">=</span> <span class="kt">MkLocd</span> <span class="kt">Loc</span> <span class="n">a</span>
+
+  <span class="kr">data</span> <span class="kt">Typed</span> <span class="n">t</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">MkTyped</span> <span class="n">t</span> <span class="n">a</span>
+
+  <span class="kr">newtype</span> <span class="kt">Compose</span> <span class="n">f</span> <span class="n">g</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">MkCompose</span> <span class="p">{</span> <span class="n">unCompose</span> <span class="o">::</span> <span class="n">f</span> <span class="p">(</span><span class="n">g</span> <span class="n">a</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="kr">type</span> <span class="kt">PsExp</span> <span class="n">name</span> <span class="o">=</span> <span class="kt">Fix</span> <span class="p">(</span><span class="kt">Compose</span> <span class="kt">Locd</span> <span class="p">(</span><span class="kt">Exp_</span> <span class="n">name</span><span class="p">))</span>
+  <span class="kr">type</span> <span class="kt">TcExp</span> <span class="n">name</span> <span class="o">=</span> <span class="kt">Fix</span> <span class="p">(</span><span class="kt">Compose</span> <span class="kt">Locd</span> <span class="p">(</span><span class="kt">Compose</span> <span class="kt">Typed</span> <span class="p">(</span><span class="kt">Exp_</span> <span class="n">name</span><span class="p">)))</span>
+
+  <span class="c1">-- To ameliorate the verbosity:</span>
+
+  <span class="kr">class</span> <span class="kt">Exp</span> <span class="n">name</span> <span class="n">exp</span> <span class="kr">where</span>
+      <span class="n">var</span> <span class="o">::</span> <span class="n">name</span> <span class="o">-&gt;</span> <span class="n">exp</span>
+      <span class="n">add</span> <span class="o">::</span> <span class="n">exp</span> <span class="o">-&gt;</span> <span class="n">exp</span> <span class="o">-&gt;</span> <span class="n">exp</span>
+      <span class="o">...</span>
+
+  <span class="kr">instance</span> <span class="kt">Exp</span> <span class="p">(</span><span class="kt">PsExp</span> <span class="n">name</span><span class="p">)</span> <span class="kr">where</span> <span class="o">...</span>
+  <span class="kr">instance</span> <span class="kt">Exp</span> <span class="p">(</span><span class="kt">TcExp</span> <span class="n">name</span><span class="p">)</span> <span class="kr">where</span> <span class="o">...</span>
+</code></pre></div>            </div>
+          </li>
+        </ul>
+      </li>
+      <li>What if GHC can “inline” data types at compile time?
+  What if GHC can “inline” A and B in <code class="highlighter-rouge">data A = MA Int; data B = MB Int String; data E = EA A | EB B;</code>,
+  producing <code class="highlighter-rouge">data E = EA Int | EB Int String</code>?
+  Implementing this with Haskell 98 types should be straightforward.</li>
+      <li>related
+      - “Data types a la carte”
+          - http://hackage.haskell.org/package/compdata
+      - Haskell type composition
+      - https://wiki.haskell.org/Extensible_datatypes</li>
     </ul>
   </li>
 </ul>
-
-<p>interface Node_parse extends Node {
-}</p>
-
-<p>interface Node_desugar extends Node_parse {
-}</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>    - Loosely-typed Haskell?
-        - This is basically the JavaScript way.
-```haskell
-type Key = String
-data Value
-    = VNum Double
-    | VStr String
-    | VObj Object
-type Object = [(Key, Value)]
-type Node = Object
-</code></pre>
-</div>
-<div class="highlighter-rouge"><pre class="highlight"><code>- 2017, article, "Trees that grow", https://www.microsoft.com/en-us/research/uploads/prod/2016/11/trees-that-grow.pdf
-    - "The compiler writer is then faced with two unpalatable choices.
-    She can define a new data type representing the output decorated tree, at the cost of much duplication.
-    Or she can write a single data type with all the necessary fields and constructors, at the cost of having many unused fields and constructors at different stages of compilation."
-    - However, we can fake extensible ADTs with pattern synonyms, with Fix, and without type families.
-        - Similar endeavors
-            - https://wiki.haskell.org/Type_composition
-        - Haskell doesn't beta-reduce types.
-        - This is an example code: ```haskell data Exp_ name exp
-= Var name
-| Add exp exp
-| ...
-</code></pre>
-</div>
-
-<p>data Locd a
-    = MkLocd Loc a</p>
-
-<p>data Typed t a = MkTyped t a</p>
-
-<p>newtype Compose f g a = MkCompose { unCompose :: f (g a) }</p>
-
-<p>type PsExp name = Fix (Compose Locd (Exp_ name))
-type TcExp name = Fix (Compose Locd (Compose Typed (Exp_ name)))</p>
-
-<p>– To ameliorate the verbosity:</p>
-
-<p>class Exp name exp where
-    var :: name -&gt; exp
-    add :: exp -&gt; exp -&gt; exp
-    …</p>
-
-<p>instance Exp (PsExp name) where …
-instance Exp (TcExp name) where …
-```
-    - What if GHC can “inline” data types at compile time?
-    What if GHC can “inline” A and B in <code class="highlighter-rouge">data A = MA Int; data B = MB Int String; data E = EA A | EB B;</code>,
-    producing <code class="highlighter-rouge">data E = EA Int | EB Int String</code>?
-    Implementing this with Haskell 98 types should be straightforward.
-    - related
-            - “Data types a la carte”
-                - http://hackage.haskell.org/package/compdata
-            - Haskell type composition
-            - https://wiki.haskell.org/Extensible_datatypes</p>
 
   </div>
 

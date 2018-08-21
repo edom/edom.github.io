@@ -165,7 +165,7 @@ to compute \( p(x) \) (to compute the predicate \( p \) with input \( x \)).</p>
 <p>Such NTM \( N \) can compute \( \FunSat(p,n) \) in \( O(n + \max_{x \in \SetBit^n} \FunMinTime_N(p,x)) \) steps.
 This is such algorithm:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>function sat (p, n) {
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function sat (p, n) {
     var x: array [1..n] of bit
     for i := 1 to n {
         x[i] := guess
@@ -173,20 +173,18 @@ This is such algorithm:</p>
     if p(x) { accept }
     else { reject }
 }
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Such DTM \( D \) can compute \( \FunSat(p,n) \) in \( O(\sum_{x \in \SetBit^n} \FunMinTime_D(p,x)) \) steps.
 This is such algorithm:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>function sat (p, n) {
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function sat (p, n) {
     for x in B^n {
         if p(x) { accept }
     }
     reject
 }
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p><strong>Conjecture:</strong> There exists a computable predicate \( p \in \SetPred \) such that</p>
 <ol>

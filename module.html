@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Designing module systems</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/module.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Designing module systems</h1>
+  </header>
+
+  <div class="post-content">
+    <ul>
+  <li>A program is a big lambda expression. Why do we need modules?</li>
+  <li>How do we organize programs?
+    <ul>
+      <li>The smallest unit for this discussion is a machine instruction.</li>
+      <li>A subroutine is a collection of instructions.</li>
+      <li>A library is a collection of subroutines.</li>
+      <li>A program is a collection of libraries and an entry point.</li>
+      <li>History
+        <ul>
+          <li>The initial motivation was to reuse.
+            <ul>
+              <li>Reduce development cost.</li>
+            </ul>
+          </li>
+          <li>The next motivation was to reduce disk and memory usage.</li>
+        </ul>
+      </li>
+      <li>The essence of programming-in-the-large is Don’t Repeat Yourself?</li>
+    </ul>
+  </li>
+  <li>What is a module?
+    <ul>
+      <li>“What is a module?” = “How do we decompose a program?”</li>
+      <li>What do others say?
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Module">Wikipedia</a></li>
+          <li><a href="https://en.wiktionary.org/wiki/module">Wiktionary</a></li>
+          <li><a href="https://www.dictionary.com/browse/module">dictionary.com</a></li>
+        </ul>
+      </li>
+      <li>What are the properties of a module?</li>
+      <li>What are its relationships with other things?
+        <ul>
+          <li>interchangeability</li>
+        </ul>
+      </li>
+      <li>A module groups things.
+        <ul>
+          <li>Is this essential or accidental?
+  Is it made for grouping?
+  Is grouping only a side-effect?</li>
+        </ul>
+      </li>
+      <li>What can we do with modules?
+        <ul>
+          <li>We can combine modules.</li>
+          <li>We can shadow modules.</li>
+          <li>We can link modules.</li>
+          <li>We can embed/inline modules.</li>
+        </ul>
+      </li>
+      <li>A module is an incomplete/dependent piece of functionality/code.
+        <ul>
+          <li>A module may have unresolved symbols?</li>
+        </ul>
+      </li>
+      <li>A module is a decomposition of a program?</li>
+      <li>Module is about reusability?</li>
+      <li>A program is a module and a starting point.</li>
+      <li>A module specifies a contract.
+  A module can be swapped with another module that satisfies the same contract without changing the correctness of the program.</li>
+      <li>A module is a bunch of imports and exports?</li>
+      <li>A module is smallest unit of reuse? Isn’t that function?</li>
+      <li>A module is smallest unit of compilation? Isn’t that function?</li>
+    </ul>
+  </li>
+  <li>Module is second-order logic programming?
+Note below, that the same <code class="highlighter-rouge">Plus</code> is used as both a variable and a predicate.</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export(module_name, type, name, value).
+
+export(prelude, int, plus, Plus) |- export(my_module, int, three, Plus(1, 2)).
+</code></pre></div></div>
+
+<ul>
+  <li>Who uses module?
+Human and computer.
+    <ul>
+      <li>Human uses modules for organizing things.</li>
+      <li>Computer uses modules to separate compilation, to speed up recompilation, to enable partial recompilation.</li>
+    </ul>
+  </li>
+  <li>Does a module have to coincide with a compilation unit?</li>
+  <li>How do other languages deal with modules?
+    <ul>
+      <li><a href="https://github.com/dhall-lang/dhall-lang/issues/182">dhall modules · Issue #182 · dhall-lang/dhall-lang</a></li>
+      <li><a href="https://futhark-lang.org/blog/2017-01-25-futhark-module-system.html">Futhark</a></li>
+      <li><a href="https://elixir-lang.org/getting-started/modules-and-functions.html">Elixir</a></li>
+      <li>Racket
+        <ul>
+          <li>2011, article, “Languages as Libraries”, <a href="http://www.cs.utah.edu/plt/publications/pldi11-tscff.pdf">pdf</a></li>
+        </ul>
+      </li>
+      <li>Scheme R7RS, Common Lisp, Clojure</li>
+      <li>Java, Scala, Kotlin, Go, C, C++
+        <ul>
+          <li>C ABI
+            <ul>
+              <li>A module is an ELF shared object file (SO file).</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Pascal, Ada, Oberon, Algol, Fortran</li>
+      <li>JavaScript, TypeScript, ECMAScript</li>
+      <li>Standard ML, Caml, OCaml, MLTON, SML/NJ, F#
+        <ul>
+          <li>2000, “A modular module system”, <a href="https://hal.inria.fr/hal-01499946/document">pdf</a></li>
+        </ul>
+      </li>
+      <li>Haskell has underpowered module system.</li>
+      <li>book, “Advanced topics in types and programming languages”, part IV, programming in the large, <a href="http://camlunity.ru/swap/Functional%20Programming/Type%20Systems/Pierce/Advanced%20Topics%20in%20Types%20and%20Programming%20Languages.pdf">pdf</a>
+        <ul>
+          <li>book, “Types and programming languages”, <a href="https://www.asc.ohio-state.edu/pollard.4/type/books/pierce-tpl.pdf">pdf</a></li>
+        </ul>
+      </li>
+      <li><a href="https://en.wikipedia.org/wiki/Modular_programming">WP:Modular programming</a></li>
+    </ul>
+  </li>
+  <li>Basic module functions?
+    <ul>
+      <li>How does a code describe its dependencies?</li>
+      <li>How does the machine disambiguate names?</li>
+      <li>Functions should be versioned. Not module. Not package.
+  Version describes semantics.</li>
+    </ul>
+  </li>
+  <li>Key idea: A module is just a lambda abstraction that returns a record (tuple whose components are named), in a dependently-typed language.
+    <ul>
+      <li>Module = lambda-calculus + dictionary</li>
+      <li>This idea is similar to Nix and JavaScript modules.</li>
+      <li><code class="highlighter-rouge">type Module = Map Name Decl -&gt; Map Name Decl</code></li>
+      <li>A module translates into a lambda-calculus expression.</li>
+      <li>An import translates to an entry in the input kvm.
+        <ul>
+          <li>kvm = key-value map, look-up table, dictionary</li>
+        </ul>
+      </li>
+      <li>An export translates to an entry in the output kvm.</li>
+      <li>Example:</li>
+    </ul>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  module {
+      import add mul Int32;
+      export f g T;
+      f = add;
+      g = mul;
+      T = Int32;
+  };
+
+  -- The expression above translates to:
+
+  \ {add; mul; Int32; ...} -&gt; {
+      f = add;
+      g = mul;
+      T = Int32;
+  };
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Key ideas of that example:
+        <ul>
+          <li>Dictionary pattern matching simulates row polymorphism.</li>
+          <li><code class="highlighter-rouge">{a;b;c;}</code> is shorthand for <code class="highlighter-rouge">{a:a; b:b; c:c;}</code>.</li>
+          <li><a href="https://blog.robphoenix.com/elixir/notes-on-elixir-pattern-matching-maps/">Notes on Elixir: Pattern-Matching Maps · Rob Phoenix</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Hypothesis: Lazy evaluation solves the partial query problem elegantly.</li>
+  <li>What are some cool ideas?
+    <ul>
+      <li>Dhall can import from IPFS.
+        <ul>
+          <li>http://www.haskellforall.com/2016/12/dhall-non-turing-complete-configuration.html</li>
+        </ul>
+      </li>
+      <li>Elixir can pattern-match maps (dictionaries).</li>
+    </ul>
+  </li>
+  <li>What is a module in an untyped functional programming language such as Tulip?</li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/module.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/module.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-08-22 00:12 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

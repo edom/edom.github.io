@@ -370,20 +370,18 @@ A TFPL can <em>describe</em> every TM just fine.</p>
 
 <p>How do we write this “echo” program in TFP? Is it even total?</p>
 
-<div class="language-haskell highlighter-rouge"><pre class="highlight"><code><span class="n">main</span> <span class="o">:</span> <span class="kt">IO</span> <span class="nb">()</span>
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">main</span> <span class="o">:</span> <span class="kt">IO</span> <span class="nb">()</span>
 <span class="n">main</span> <span class="o">=</span> <span class="n">getLine</span> <span class="o">&gt;&gt;=</span> <span class="n">putStrLn</span> <span class="o">&gt;&gt;</span> <span class="n">main</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>We can <em>describe</em> the infinite list of natural numbers <code class="highlighter-rouge">[0,1,2,3,...]</code> in a TFP.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>f : Nat -&gt; Nat
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f : Nat -&gt; Nat
 f n = n + 1
 
 f : Nat -&gt; Nat
 f n = n
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p><a href="https://arxiv.org/abs/1610.09254">Partiality, Revisited: The Partiality Monad as a Quotient Inductive-Inductive Type</a></p>
 
@@ -433,9 +431,8 @@ See <a href="https://cs.stackexchange.com/questions/42150/meaning-of-positive-po
 
 <p>In a TFPL, there is no expression whose type is <code class="highlighter-rouge">forall a. a</code>.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>exit : IO a
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>exit : IO a
+</code></pre></div></div>
 
 <h2 id="rewriting-systems">Rewriting systems</h2>
 
@@ -459,27 +456,24 @@ See <a href="https://en.wikipedia.org/wiki/Normal_form_(abstract_rewriting)">Wik
 <p>The following <code class="highlighter-rouge">hang</code> function is not total.
 Why?</p>
 
-<div class="language-haskell highlighter-rouge"><pre class="highlight"><code><span class="n">hang</span> <span class="o">:</span> <span class="kt">Nat</span> <span class="o">-&gt;</span> <span class="kt">Nat</span>
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">hang</span> <span class="o">:</span> <span class="kt">Nat</span> <span class="o">-&gt;</span> <span class="kt">Nat</span>
 <span class="n">hang</span> <span class="n">x</span> <span class="o">=&gt;</span> <span class="n">hang</span> <span class="n">x</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The expression <code class="highlighter-rouge">hang x</code> can be rewritten to <code class="highlighter-rouge">hang x</code>, so <code class="highlighter-rouge">hang x</code> is not a normal form,
 but this goes on forever, so <code class="highlighter-rouge">hang x</code> does not have a normal form, and thus <code class="highlighter-rouge">hang x</code> is not total.</p>
 
 <p>This <code class="highlighter-rouge">loop</code> thing is not a function in the mathematical sense. Why is that?</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>loop : a
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>loop : a
 loop =&gt; loop
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Consider this, where <code class="highlighter-rouge">exit</code> terminates the program.</p>
 
-<div class="language-haskell highlighter-rouge"><pre class="highlight"><code><span class="n">what</span> <span class="o">:</span> <span class="kt">Nat</span>
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">what</span> <span class="o">:</span> <span class="kt">Nat</span>
 <span class="n">what</span> <span class="o">=&gt;</span> <span class="n">exit</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The function <code class="highlighter-rouge">crash</code> also does not produce a <code class="highlighter-rouge">Nat</code>.</p>
 
