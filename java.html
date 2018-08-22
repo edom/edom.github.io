@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
   <link rel="stylesheet" href="/assets/main.css">
   <link rel="canonical" href="https://edom.github.io/java.html">
-  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus" href="/feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
 
   
 
@@ -39,7 +39,7 @@
 
     <header class="site-header" role="banner">
   <div class="wrapper">
-    <a class="site-title" rel="author" href="/">Erik Dominikus</a>
+    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
   </div>
 </header>
 
@@ -78,6 +78,123 @@
       <li>Does supercompiling the IDE affect speed?</li>
     </ul>
   </li>
+  <li>We can use the JVM without the Java language.
+    <ul>
+      <li>https://en.wikipedia.org/wiki/List_of_JVM_languages</li>
+    </ul>
+  </li>
+  <li>Profiling
+    <ul>
+      <li>Install NetBeans.</li>
+      <li>Choose ‘Profile’ in the menu, and then ‘Attach to External Process’.</li>
+      <li>Click the down-pointing triangle on the right of the Attach button.</li>
+      <li>Choose ‘Setup Attach to Process…’.</li>
+      <li>Select ‘Manually started remote Java process’.</li>
+      <li>Choose the remote operating system.</li>
+      <li>Follow further instructions in NetBeans.
+        <ul>
+          <li>If you need <code class="highlighter-rouge">JAVA_HOME</code> on Oracle JRE 8 on Ubuntu 14.04, use <code class="highlighter-rouge">/usr/lib/jvm/java-8-oracle/jre</code>.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>How do I start the JVM with a profiling agent?</li>
+  <li>Let the compiler help you.
+    <ul>
+      <li>If you make your the fields of your Java class final, you will never forget to set it.
+        <ul>
+          <li>You don’t need to remember anything.</li>
+          <li>It just won’t compile.</li>
+        </ul>
+      </li>
+      <li>You can have dependency injection without dependency injection container/framework.
+        <ul>
+          <li>https://sites.google.com/site/unclebobconsultingllc/blogs-by-robert-martin/dependency-injection-inversion</li>
+          <li>If you have so many classes that instantiating them hurts, don’t create so many classes in the first place.</li>
+          <li>Neutral article http://fabien.potencier.org/do-you-need-a-dependency-injection-container.html</li>
+          <li>Very opinionated article, borderline fanatical http://www.yegor256.com/2014/10/03/di-containers-are-evil.html</li>
+          <li>http://blog.ploeh.dk/2010/02/03/ServiceLocatorisanAnti-Pattern/
+            <ul>
+              <li>“In short, the problem with Service Locator is that it hides a class’ dependencies, causing run-time errors instead of compile-time errors […]”</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Package by feature, not by layer: http://www.javapractices.com/topic/TopicAction.do?Id=205
+    <ul>
+      <li>Dont separate model, data, entity, accessor, and service packages; package by feature not layer</li>
+    </ul>
+  </li>
+  <li>IntelliJ IDEA can open a Maven project whose POM XML file name is not pom.xml.</li>
+  <li>JVM memory usage problem
+    <ul>
+      <li>Tuning JVM memory usage
+        <ul>
+          <li>https://docs.oracle.com/cd/E13150_01/jrockit_jvm/jrockit/geninfo/diagnos/tune_footprint.html</li>
+          <li>https://www.javacodegeeks.com/2017/11/minimize-java-memory-usage-right-garbage-collector.html</li>
+        </ul>
+      </li>
+      <li>“Make JVM respect CPU and RAM limits” https://hub.docker.com/_/openjdk/</li>
+      <li>https://blogs.oracle.com/java-platform-group/java-se-support-for-docker-cpu-and-memory-limits</li>
+    </ul>
+  </li>
+  <li>2017-02-21
+    <ul>
+      <li>https://github.com/javaparser/javaparser</li>
+      <li>https://github.com/javaparser/javasymbolsolver</li>
+    </ul>
+  </li>
+  <li>https://github.com/java-deobfuscator/deobfuscator</li>
+  <li>2017-05-20
+    <ul>
+      <li>Generating Java code
+        <ul>
+          <li>Alternatives
+            <ul>
+              <li>Use Python to generate Java code?
+  Python comes installed with Ubuntu.</li>
+              <li>Use Java CodeModel to generate Java code.
+  https://github.com/javaee/jaxb-codemodel</li>
+              <li>Use the Haskell package <code class="highlighter-rouge">language-java</code>
+  to generate Java code.</li>
+              <li>Read table metadata from DataSource,
+  generate Java source file for Entity and DAO.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>2017-05-18
+    <ul>
+      <li>Java is procedural.</li>
+      <li><code class="highlighter-rouge">object.method(argument)</code> is a syntactic sugar for <code class="highlighter-rouge">method(object, argument)</code>.</li>
+      <li>Where should the method <code class="highlighter-rouge">m</code> be defined?
+  It can be defined in both <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code>.
+  <code class="highlighter-rouge">a.m(b)</code> or <code class="highlighter-rouge">b.m(a)</code> or <code class="highlighter-rouge">C.m(a,b)</code>?
+  If you have to ask this, your design is wrong.</li>
+      <li>Antipattern: two classes A and B with conversion from A to B and B to A?
+        <ul>
+          <li>Solution: Delete one of them?</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>http://blog.sokolenko.me/2014/11/javavm-options-production.html</li>
+  <li><a href="http://maintainj.com/index.html">MaintainJ: “We simplify the complexity of maintaining Java code”</a>
+    <ul>
+      <li>Watch the demo.</li>
+      <li>What does it do, as seen by programmers, in non-marketing tech-speak?
+        <ul>
+          <li>Start/stop dumping call trace of a running JVM into a file.</li>
+          <li>Open the dump as a sequence diagram in Eclipse.</li>
+          <li>Some filtering.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
 
   </div>
@@ -113,7 +230,7 @@ s.setAttribute('data-timestamp', +new Date());
     <data class="u-url" href="/"></data>
 
     <div class="wrapper">
-        <p>This page was created on 2018-07-25 15:24 +0700.</p>
+        <p>This page was created on 2018-05-16 03:03 +0700.</p>
         <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
         but it's unused because this site is a wiki, not a blog.</p>
         <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
