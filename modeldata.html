@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Modeling all data</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/modeldata.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Modeling all data</h1>
+  </header>
+
+  <div class="post-content">
+    <ul>
+  <li>Relating ontology, Haskell records, and Java classes
+    <ul>
+      <li>We can translate a Haskell record (algebraic data type with exactly one constructor) to a Java final class whose fields are final.
+        <ul>
+          <li>One Haskell record field becomes one final Java class field.</li>
+        </ul>
+      </li>
+      <li>We want to create a language that can express “ADT B is obtained by adding a Loc field to every constructor of ADT A”.
+        <ul>
+          <li><code class="highlighter-rouge">B = Loc * A</code> (if A is not recursive)</li>
+          <li>This also solves the AST decoration problem.
+  Often shows up in making a programming language:
+  <code class="highlighter-rouge">Exp = Fix (\ a -&gt; Loc * ExpF a)</code> where <code class="highlighter-rouge">ExpF a = Con Int | Neg a | Add a a | Mul a a</code>.</li>
+        </ul>
+      </li>
+      <li>We want to express “function ‘getName’ works with every record that has a ‘name’ field”.
+  (Row polymorphism.)
+        <ul>
+          <li><code class="highlighter-rouge">getName : { name : String, ... } -&gt; String</code></li>
+        </ul>
+      </li>
+      <li>What is a record?
+        <ul>
+          <li>A record is a tuple whose components are named.</li>
+        </ul>
+      </li>
+      <li>What is a class?
+        <ul>
+          <li><a href="/cbp.html">Class-based programming</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Prior arts
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Data_model">Data model - Wikipedia</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Data_modeling">Data modeling - Wikipedia</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Database_model">Database model - Wikipedia</a></li>
+    </ul>
+  </li>
+  <li>Working with XML
+    <ul>
+      <li>Essential editor features
+        <ul>
+          <li>Automate closing tag.</li>
+          <li>Editing an opening tag also edits the closing tag.</li>
+          <li>Editing a closing tag also edits the opening tag.</li>
+        </ul>
+      </li>
+      <li>Supporting XML Schema Definition (XSD)
+        <ul>
+          <li>In principle, from a type defined in an XSD file, we can generate a Haskell module and a Java class.
+            <ul>
+              <li>The problem: Finding an XSD editor.
+                <ul>
+                  <li>IntelliJ IDEA works for me, but I’d be happy if there is a lighter alternative.</li>
+                  <li><a href="https://en.wikipedia.org/wiki/XML_Schema_Editor#cite_note-1">XML Schema Editor - Wikipedia</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="http://www.kohsuke.org/xmlschema/XMLSchemaDOsAndDONTs.html">W3C XML Schema: DOs and DON’Ts</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Comparison_of_XML_editors">WP:Comparison of XML editors</a>
+            <ul>
+              <li>Pick the one with open-source license and schema-aware autocompletion.
+                <ul>
+                  <li>2018-08-22
+                    <ul>
+                      <li>emacs nxml-mode</li>
+                      <li>jEdit XML plugin</li>
+                      <li>QXMLEdit? Can it autocomplete?</li>
+                      <li>XML Notepad</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>ontology and programming
+    <ul>
+      <li>“ontoprog: Ontology-based Programming: Extended Semantics for OOP languages”, <a href="https://github.com/andreasBihlmaier/ontoprog">github</a></li>
+      <li>2012, article, “Modeling the Knowledge Domain of the Java Programming Language as an Ontology”, <a href="http://eeyem.eap.gr/wp-content/uploads/2017/06/11_ICWL2012.pdf">pdf</a></li>
+      <li>2007, article, “Towards a programming language ontology”, <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.82.194&amp;rep=rep1&amp;type=pdf">pdf</a></li>
+    </ul>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/modeldata.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/modeldata.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-08-24 01:31 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>
