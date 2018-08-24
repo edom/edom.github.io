@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Parsing</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/parse.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Parsing</h1>
+  </header>
+
+  <div class="post-content">
+    <ul>
+  <li><a href="https://jeffreykegler.github.io/personal/timeline_v3">Parsing: a timeline – V3.0</a>: 2012 article about a history of parsing.
+    <ul>
+      <li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/8cz97n/parsing_a_timeline_hopefully_this_puts_parsing_is/">Parsing: a timeline. Hopefully this puts “Parsing is a solved problem” to rest. : ProgrammingLanguages</a></li>
+      <li><a href="http://jeffreykegler.github.io/Ocean-of-Awareness-blog/individual/2018/05/knuth_1965.html">Why is parsing considered solved?</a></li>
+    </ul>
+  </li>
+  <li>syntax, grammar, parsing, pretty-printing
+    <ul>
+      <li>Parsing is the act of modifying the <em>state</em> of the parser.
+        <ul>
+          <li>2017, <a href="https://www.cl.cam.ac.uk/~nk480/parsing.pdf">“A Typed, Algebraic Approach to Parsing”</a>
+            <ul>
+              <li>“[…] we extend the notion of Brzozowski derivative from regular expressions to the typed context-free expressions.”</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Unparsing is the linearization (serialization) of a tree.</li>
+      <li>Parsing is the treeization (delinearization, deserialization) of a line.</li>
+      <li>Parsing is String -&gt; Maybe Tree.</li>
+      <li>Unparsing is Tree -&gt; String.</li>
+      <li>Can we make parsing truly one-to-one? String -&gt; Tree. CST = AST. Very rigid syntax. Forbid whitespace freedom.</li>
+      <li>Why lex (lexical analysis / tokenization)?
+        <ul>
+          <li>Cleaner grammar (no need to mention whitespaces in the grammar).
+            <ul>
+              <li>Example:
+                <ul>
+                  <li>With lexing: <code class="highlighter-rouge">exp ::= exp "+" exp</code></li>
+                  <li>Without lexing: <code class="highlighter-rouge">exp ::= exp white "+" white exp</code>.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>https://en.wikibooks.org/wiki/Compiler_Construction/Lexical_analysis
+            <ul>
+              <li>“Strictly speaking, tokenization may be handled by the parser. The reason why we tend to bother with tokenising in practice is that it makes the parser simpler,
+  and decouples it from the character encoding used for the source code.”</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>given grammar, generate both parser and unparser/pretty-printer
+        <ul>
+          <li>http://www.semdesigns.com/Products/DMS/DMSPrettyPrinters.html?Home=DMSToolkit</li>
+          <li>https://hackage.haskell.org/package/invertible-syntax-0.2.1/src/Example.lhs</li>
+          <li>https://hackage.haskell.org/package/invertible-syntax</li>
+          <li><a href="http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf">Tillmann Rendel and Klaus Ostermann. “Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing”. In Proc. of Haskell Symposium, 2010.</a></li>
+          <li>http://jssst.or.jp/files/user/taikai/2016/PPL/ppl1-1.pdf</li>
+        </ul>
+      </li>
+      <li>Parsing Expression Grammar (PEG)
+        <ul>
+          <li>https://github.com/harc/ohm/
+            <ul>
+              <li>https://ohmlang.github.io/
+                <ul>
+                  <li>https://harc.ycr.org/project/ohm/</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>Packrat</li>
+        </ul>
+      </li>
+      <li>2015, <a href="https://arxiv.org/abs/1511.08307">Nez: practical open grammar language</a></li>
+      <li>algebra of pretty-printing
+        <ul>
+          <li>1995, Hughes, “The design of a pretty-printing library”</li>
+          <li>1998, Wadler, “A prettier printer”</li>
+          <li>Hughes, Peyton-Jones, et al., http://hackage.haskell.org/package/pretty-1.1.3.6/docs/Text-PrettyPrint-HughesPJ.html</li>
+        </ul>
+      </li>
+      <li><a href="https://www.cs.kent.ac.uk/people/staff/oc/pretty.html">Efficient simple pretty printing combinators</a></li>
+      <li>Earley parser
+        <ul>
+          <li>https://en.wikipedia.org/wiki/Earley_parser</li>
+          <li>https://hackage.haskell.org/package/Earley</li>
+        </ul>
+      </li>
+      <li>https://github.com/Gabriel439/post-rfc/blob/master/sotu.md#parsing–pretty-printing
+        <ul>
+          <li>https://hackage.haskell.org/package/trifecta</li>
+          <li>https://hackage.haskell.org/package/parsers</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="https://yi-editor.github.io/posts/2014-09-04-incremental-parsing/">incremental/online parsing</a></li>
+  <li>Making compilers
+    <ul>
+      <li>From grammar description, the machine should generate both a parser and a pretty-printer.
+        <ul>
+          <li><a href="http://lambda-the-ultimate.org/node/4191">LTU: Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing</a></li>
+          <li><a href="http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf">Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing</a></li>
+        </ul>
+      </li>
+      <li>Syntax analysis (parsing)
+        <ul>
+          <li>Brzozowski quotients.
+            <ul>
+              <li><a href="https://arxiv.org/abs/1010.5023">Yacc is dead</a></li>
+              <li>“Parsing with derivatives”</li>
+            </ul>
+          </li>
+          <li>What is an/the inverse of parsing?
+            <ul>
+              <li>Inverse of parsing is generation? From grammar, generate all possible strings and their syntax trees.</li>
+              <li>Inverse of analytical grammar is generative grammar?</li>
+              <li>Parser is syntax analyzer.</li>
+              <li>Analysis is the opposite of synthesis?</li>
+              <li>What is syntax synthesizer?</li>
+              <li>Inverse of parsing is pretty-printing?</li>
+              <li>If matching is analogous to subtraction, then what is analogous to multiplication? Generation?</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Parsing
+    <ul>
+      <li>Can we parse incrementally?
+        <ul>
+          <li>Differentiating Parsers
+  Automatic derivation of incremental parser from a grammar or a non-incremental parser?
+  Like automatic differentiation but generalized to any program?
+  http://lambda-the-ultimate.org/node/3704</li>
+          <li>http://matt.might.net/articles/implementation-of-regular-expression-matching-in-scheme-with-derivatives/</li>
+          <li>Parsing with derivatives?
+            <ul>
+              <li>https://hackage.haskell.org/package/derp</li>
+              <li>https://arxiv.org/abs/1010.5023</li>
+              <li>http://matt.might.net/articles/parsing-with-derivatives/ “Yacc is dead”</li>
+            </ul>
+          </li>
+          <li>Type-directed automatic incrementalization
+            <ul>
+              <li>http://www.cs.cmu.edu/~joshuad/papers/incr/</li>
+            </ul>
+          </li>
+          <li>https://en.wikipedia.org/wiki/Incremental_computing
+            <ul>
+              <li>https://inc-lc.github.io/</li>
+            </ul>
+          </li>
+          <li>http://okmij.org/ftp/continuations/differentiating-parsers.html</li>
+          <li>https://hackage.haskell.org/package/incremental-parser</li>
+          <li>Brzozowski quotient</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/parse.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/parse.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-08-25 00:50 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

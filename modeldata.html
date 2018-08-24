@@ -55,38 +55,73 @@
   </header>
 
   <div class="post-content">
+    <p>We are concerned about two things: what we need to store, and how we store it.</p>
+
+<p>Business process automation begins with data modeling.</p>
+
+<p>Suppose we are building an online shop.
+We sell disparate things such as houses, cars, and phones.
+We want each item type to have tailored search
+because people have different concerns:</p>
+
+<ul>
+  <li>Someone buying a used car is concerned about mileage.</li>
+  <li>Someone buying a house is concerned about location.</li>
+  <li>Someone buying a phone is concerned about RAM size.</li>
+</ul>
+
+<p>There are several models of a car:</p>
+
+<ul>
+  <li>Visual model: set of 3D triangles.</li>
+  <li>Engineering attributes model: engine size, crash safety rating.</li>
+  <li>Economics attributes model: fuel economy, price.</li>
+</ul>
+
+<p>Every model captures an aspect and ignores everything else.</p>
+
+<p>What is a car? All these answers are partially true:</p>
+
+<ul>
+  <li>A car is a vehicle with four wheels.</li>
+  <li>A car is a tuple (manufacture-year, sale-price).</li>
+  <li>A car is an engine container.</li>
+  <li>A car is a set of triangles and a tuple (x,y,z,vx,vy,vz).</li>
+</ul>
+
+<p>There are no true or false answers.
+There are only useful or useless answers.</p>
+
+<p>The identity problem also affects data modeling.</p>
+
+<p>We combine the models that have the data that our application needs.</p>
+
+<p>We assume primitive data types such as unsigned/two’s-complement-signed 8/16/32/64-bit integer.</p>
+
+<p>Row polymorphism should help write enterprise software because most data in enterprise software are records.</p>
+
+<h2 id="relating-ontology-haskell-records-and-java-classes">Relating ontology, Haskell records, and Java classes</h2>
+
+<p>A record is a tuple whose components are named.</p>
+
+<p>What is a class? <a href="/cbp.html">Class-based programming</a>.</p>
+
+<p>We can translate a Haskell record (algebraic data type with exactly one constructor) to a Java final class whose fields are final.
+One Haskell record field becomes one final Java class field.</p>
+
+<ul>
+  <li>We want to create a language that can express “ADT B is obtained by adding a Loc field to every constructor of ADT A”.
     <ul>
-  <li>Relating ontology, Haskell records, and Java classes
-    <ul>
-      <li>We can translate a Haskell record (algebraic data type with exactly one constructor) to a Java final class whose fields are final.
-        <ul>
-          <li>One Haskell record field becomes one final Java class field.</li>
-        </ul>
-      </li>
-      <li>We want to create a language that can express “ADT B is obtained by adding a Loc field to every constructor of ADT A”.
-        <ul>
-          <li><code class="highlighter-rouge">B = Loc * A</code> (if A is not recursive)</li>
-          <li>This also solves the AST decoration problem.
+      <li><code class="highlighter-rouge">B = Loc * A</code> (if A is not recursive)</li>
+      <li>This also solves the AST decoration problem.
   Often shows up in making a programming language:
   <code class="highlighter-rouge">Exp = Fix (\ a -&gt; Loc * ExpF a)</code> where <code class="highlighter-rouge">ExpF a = Con Int | Neg a | Add a a | Mul a a</code>.</li>
-        </ul>
-      </li>
-      <li>We want to express “function ‘getName’ works with every record that has a ‘name’ field”.
-  (Row polymorphism.)
-        <ul>
-          <li><code class="highlighter-rouge">getName : { name : String, ... } -&gt; String</code></li>
-        </ul>
-      </li>
-      <li>What is a record?
-        <ul>
-          <li>A record is a tuple whose components are named.</li>
-        </ul>
-      </li>
-      <li>What is a class?
-        <ul>
-          <li><a href="/cbp.html">Class-based programming</a></li>
-        </ul>
-      </li>
+    </ul>
+  </li>
+  <li>We want to express “function ‘getName’ works with every record that has a ‘name’ field”.
+(Row polymorphism.)
+    <ul>
+      <li><code class="highlighter-rouge">getName : { name : String | _ } -&gt; String</code></li>
     </ul>
   </li>
   <li>Prior arts
@@ -140,9 +175,39 @@
   </li>
   <li>ontology and programming
     <ul>
+      <li><a href="https://protegewiki.stanford.edu/wiki/Main_Page">Stanford Protege Wiki</a> has several tutorials about writing ontologies.</li>
       <li>“ontoprog: Ontology-based Programming: Extended Semantics for OOP languages”, <a href="https://github.com/andreasBihlmaier/ontoprog">github</a></li>
       <li>2012, article, “Modeling the Knowledge Domain of the Java Programming Language as an Ontology”, <a href="http://eeyem.eap.gr/wp-content/uploads/2017/06/11_ICWL2012.pdf">pdf</a></li>
       <li>2007, article, “Towards a programming language ontology”, <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.82.194&amp;rep=rep1&amp;type=pdf">pdf</a></li>
+    </ul>
+  </li>
+  <li>REST ontology
+    <ul>
+      <li>REST forces hierarchical ontology.</li>
+      <li>https://server/property/101/name -&gt; “foo”
+        <ul>
+          <li>“101” is an instance of “property” class.</li>
+          <li>“property” is a class in “server” namespace.</li>
+          <li>Attribute “name” of “101” has value “foo”.</li>
+        </ul>
+      </li>
+      <li>https://server/property/101 -&gt; {“name”: “foo”, “location”: “somewhere”}
+        <ul>
+          <li>“101” is an instance of “property” class.</li>
+        </ul>
+      </li>
+      <li>https://server/property/101/stock/level/day -&gt; 10
+        <ul>
+          <li>means that property 101 can last 10 days</li>
+          <li>A/B mean A has B?</li>
+          <li>A/B mean B is an instance of A?</li>
+        </ul>
+      </li>
+      <li><a href="http://blog.steveklabnik.com/posts/2012-02-23-rest-is-over">REST is OVER! - Literate Programming</a>
+        <ul>
+          <li>REST has been renamed to “Hypermedia API”.</li>
+        </ul>
+      </li>
     </ul>
   </li>
 </ul>

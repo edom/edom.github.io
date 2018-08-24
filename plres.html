@@ -107,10 +107,19 @@
       <li>Software is executable mathematics.</li>
     </ul>
   </li>
-  <li>The <a href="https://github.com/ollef/sixten">Sixten</a> language might be a good starting point.</li>
+  <li>Where shall we start?
+    <ul>
+      <li>These languages are interesting starting points:
+        <ul>
+          <li><a href="https://github.com/ollef/sixten">Sixten</a></li>
+          <li>Dhall</li>
+          <li><a href="http://www.haskellforall.com/2014/09/morte-intermediate-language-for-super.html">Morte: an intermediate language for super-optimizing functional programs</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
   <li>Every functional programming language is lambda calculus plus plus.
     <ul>
-      <li>Every functional programming language L can be modeled by a category C(L) whose objects are the types of L and arrows are the function expressions of L.</li>
       <li>I thought lambda calculus could be summarized in one page, but Henk Barendregt wrote hundreds of pages about it. Is there more to lambda calculus than it seems?
         <ul>
           <li>1994, 50 pages, http://www.nyu.edu/projects/barker/Lambda/barendregt.94.pdf</li>
@@ -119,7 +128,7 @@
       </li>
     </ul>
   </li>
-  <li>where to find more
+  <li>Where to find recent programming language research?
     <ul>
       <li>recent programming language research
         <ul>
@@ -127,7 +136,7 @@
             <ul>
               <li>POPL (“ACM SIGPLAN Symposium on Principles of Programming Languages”)
                 <ul>
-                  <li>its twitter https://twitter.com/poplconf?lang=en</li>
+                  <li><a href="https://twitter.com/poplconf?lang=en">its twitter</a></li>
                 </ul>
               </li>
             </ul>
@@ -139,30 +148,15 @@
           <li>https://www.cs.cmu.edu/~mleone/language-research.html</li>
         </ul>
       </li>
-      <li>software engineering
-        <ul>
-          <li>enterprise application development
-            <ul>
-              <li>It’s 2018. CRUD should be generated.
-                <ul>
-                  <li>https://news.ycombinator.com/item?id=15429616</li>
-                  <li>http://isis.apache.org/</li>
-                  <li>other tools?</li>
-                </ul>
-              </li>
-              <li>feature-oriented software development
-                <ul>
-                  <li>https://en.wikipedia.org/wiki/FOSD_program_cubes</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
     </ul>
   </li>
   <li>category theory and programming languages
     <ul>
+      <li>Category-theoretic model of functional programming languages
+        <ul>
+          <li>Every functional programming language L can be modeled by a category C(L) whose objects are the types of L and arrows are the function expressions of L.</li>
+        </ul>
+      </li>
       <li>categorical programming (what is this?)
         <ul>
           <li>2000, PhD thesis, “Categorical programming with inductive and coinductive types” https://kodu.ut.ee/~varmo/papers/thesis.pdf</li>
@@ -314,88 +308,6 @@
               <li>Call-by-name</li>
             </ul>
           </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>syntax, grammar, parsing, pretty-printing
-    <ul>
-      <li>Parsing is the act of modifying the <em>state</em> of the parser.
-        <ul>
-          <li>2017, <a href="https://www.cl.cam.ac.uk/~nk480/parsing.pdf">“A Typed, Algebraic Approach to Parsing”</a>
-            <ul>
-              <li>“[…] we extend the notion of Brzozowski derivative from regular expressions to the typed context-free expressions.”</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>Unparsing is the linearization (serialization) of a tree.</li>
-      <li>Parsing is the treeization (delinearization, deserialization) of a line.</li>
-      <li>Parsing is String -&gt; Maybe Tree.</li>
-      <li>Unparsing is Tree -&gt; String.</li>
-      <li>Can we make parsing truly one-to-one? String -&gt; Tree. CST = AST. Very rigid syntax. Forbid whitespace freedom.</li>
-      <li>Why lex (lexical analysis / tokenization)?
-        <ul>
-          <li>Cleaner grammar (no need to mention whitespaces in the grammar).
-            <ul>
-              <li>Example:
-                <ul>
-                  <li>With lexing: <code class="highlighter-rouge">exp ::= exp "+" exp</code></li>
-                  <li>Without lexing: <code class="highlighter-rouge">exp ::= exp white "+" white exp</code>.</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li>https://en.wikibooks.org/wiki/Compiler_Construction/Lexical_analysis
-            <ul>
-              <li>“Strictly speaking, tokenization may be handled by the parser. The reason why we tend to bother with tokenising in practice is that it makes the parser simpler,
-  and decouples it from the character encoding used for the source code.”</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>given grammar, generate both parser and unparser/pretty-printer
-        <ul>
-          <li>http://www.semdesigns.com/Products/DMS/DMSPrettyPrinters.html?Home=DMSToolkit</li>
-          <li>https://hackage.haskell.org/package/invertible-syntax-0.2.1/src/Example.lhs</li>
-          <li>https://hackage.haskell.org/package/invertible-syntax</li>
-          <li><a href="http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf">Tillmann Rendel and Klaus Ostermann. “Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing”. In Proc. of Haskell Symposium, 2010.</a></li>
-          <li>http://jssst.or.jp/files/user/taikai/2016/PPL/ppl1-1.pdf</li>
-        </ul>
-      </li>
-      <li>Parsing Expression Grammar (PEG)
-        <ul>
-          <li>https://github.com/harc/ohm/
-            <ul>
-              <li>https://ohmlang.github.io/
-                <ul>
-                  <li>https://harc.ycr.org/project/ohm/</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li>Packrat</li>
-        </ul>
-      </li>
-      <li>2015, <a href="https://arxiv.org/abs/1511.08307">Nez: practical open grammar language</a></li>
-      <li>algebra of pretty-printing
-        <ul>
-          <li>1995, Hughes, “The design of a pretty-printing library”</li>
-          <li>1998, Wadler, “A prettier printer”</li>
-          <li>Hughes, Peyton-Jones, et al., http://hackage.haskell.org/package/pretty-1.1.3.6/docs/Text-PrettyPrint-HughesPJ.html</li>
-        </ul>
-      </li>
-      <li><a href="https://www.cs.kent.ac.uk/people/staff/oc/pretty.html">Efficient simple pretty printing combinators</a></li>
-      <li>Earley parser
-        <ul>
-          <li>https://en.wikipedia.org/wiki/Earley_parser</li>
-          <li>https://hackage.haskell.org/package/Earley</li>
-        </ul>
-      </li>
-      <li>https://github.com/Gabriel439/post-rfc/blob/master/sotu.md#parsing–pretty-printing
-        <ul>
-          <li>https://hackage.haskell.org/package/trifecta</li>
-          <li>https://hackage.haskell.org/package/parsers</li>
         </ul>
       </li>
     </ul>
@@ -752,37 +664,6 @@ Things that I think are wrong in 2018.
       </li>
     </ul>
   </li>
-  <li>Making compilers
-    <ul>
-      <li>From grammar description, the machine should generate both a parser and a pretty-printer.
-        <ul>
-          <li><a href="http://lambda-the-ultimate.org/node/4191">LTU: Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing</a></li>
-          <li><a href="http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf">Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing</a></li>
-        </ul>
-      </li>
-      <li>Syntax analysis (parsing)
-        <ul>
-          <li>Brzozowski quotients.
-            <ul>
-              <li><a href="https://arxiv.org/abs/1010.5023">Yacc is dead</a></li>
-              <li>“Parsing with derivatives”</li>
-            </ul>
-          </li>
-          <li>What is an/the inverse of parsing?
-            <ul>
-              <li>Inverse of parsing is generation? From grammar, generate all possible strings and their syntax trees.</li>
-              <li>Inverse of analytical grammar is generative grammar?</li>
-              <li>Parser is syntax analyzer.</li>
-              <li>Analysis is the opposite of synthesis?</li>
-              <li>What is syntax synthesizer?</li>
-              <li>Inverse of parsing is pretty-printing?</li>
-              <li>If matching is analogous to subtraction, then what is analogous to multiplication? Generation?</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
   <li>Supercompilation
     <ul>
       <li><a href="http://lambda-the-ultimate.org/node/2739">LTU: Ongoing work on Supercompilation of Java code (or supercompilation in general)?</a></li>
@@ -869,7 +750,7 @@ functional languages for systems programming?
           <li>2005, article, “Software engineering ontologies and their implementation”, <a href="https://espace.curtin.edu.au/bitstream/handle/20.500.11937/9549/19598_downloaded_stream_116.pdf">pdf</a>, <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.86.5585&amp;rep=rep1&amp;type=pdf">pdf copy</a></li>
         </ul>
       </li>
-      <li>People who share a subset of the vision; they don’t go far enough
+      <li>People who share some of the vision but don’t go far enough
         <ul>
           <li>XForms
             <ul>
@@ -878,6 +759,7 @@ functional languages for systems programming?
             </ul>
           </li>
           <li>2007, workshop, <a href="https://www.w3.org/2007/02/dmdwa-ws/">Declarative Models of Distributed Web Applications</a></li>
+          <li><a href="http://www.proglangdesign.net/">#proglangdesign</a></li>
           <li>IDE (integrated development environment), editor
             <ul>
               <li>Given a grammar, the computer should generate an IDE for us.
@@ -911,7 +793,11 @@ functional languages for systems programming?
                   </li>
                 </ul>
               </li>
-              <li><a href="http://thyer.name/phd-thesis/thesis-thyer.pdf">Thyer’s PhD thesis “Lazy specialization”</a> has an accessible introduction to lambda calculus in Chapter 2.</li>
+              <li><a href="http://thyer.name/phd-thesis/thesis-thyer.pdf">Thyer’s PhD thesis “Lazy specialization”</a> has an accessible introduction to lambda calculus in Chapter 2.
+                <ul>
+                  <li>“Tower of interpreters” test</li>
+                </ul>
+              </li>
               <li>1991, “A partial evaluator for the untyped lambda-calculus”, <a href="https://www.cambridge.org/core/journals/journal-of-functional-programming/article/a-partial-evaluator-for-the-untyped-lambda-calculus/EE324F936F0A009B6766B13FF6755DFC">paywall</a>
                 <ul>
                   <li>related: semantic-directed code generation?</li>
@@ -932,7 +818,7 @@ functional languages for systems programming?
           </li>
         </ul>
       </li>
-      <li>Turn an interpreter into a compiler for free!</li>
+      <li><a href="http://wiki.c2.com/?QuestForThePerfectLanguage">Quest For The Perfect Language</a></li>
     </ul>
   </li>
   <li>2017, article, <a href="https://arxiv.org/abs/1707.00024">[1707.00024] A Formalized General Theory of Syntax with Bindings</a></li>
@@ -1135,31 +1021,6 @@ functional languages for systems programming?
   <li><a href="https://pchiusano.github.io/2017-01-20/why-not-haskell.html">Paul Chiusano: If Haskell is so great, why hasn’t it taken over the world? And the curious case of Go.</a>
     <ul>
       <li>Unison programming language</li>
-    </ul>
-  </li>
-  <li><a href="http://www.haskellforall.com/2014/09/morte-intermediate-language-for-super.html">Morte: an intermediate language for super-optimizing functional programs</a> - Incremental λ-Calculus</li>
-  <li>Parsing
-    <ul>
-      <li>Can we parse incrementally?
-        <ul>
-          <li>Differentiating Parsers
-  Automatic derivation of incremental parser from a grammar or a non-incremental parser?
-  Like automatic differentiation but generalized to any program?
-  http://lambda-the-ultimate.org/node/3704</li>
-          <li>http://matt.might.net/articles/implementation-of-regular-expression-matching-in-scheme-with-derivatives/</li>
-          <li>Parsing with derivatives?
-  https://hackage.haskell.org/package/derp
-  https://arxiv.org/abs/1010.5023
-  http://matt.might.net/articles/parsing-with-derivatives/ “Yacc is dead”</li>
-          <li>Type-directed automatic incrementalization
-  http://www.cs.cmu.edu/~joshuad/papers/incr/</li>
-          <li>https://en.wikipedia.org/wiki/Incremental_computing
-  https://inc-lc.github.io/</li>
-          <li>http://okmij.org/ftp/continuations/differentiating-parsers.html</li>
-          <li>https://hackage.haskell.org/package/incremental-parser</li>
-          <li>Brzozowski quotient</li>
-        </ul>
-      </li>
     </ul>
   </li>
   <li>Elixir has gradual static typing via Erlang Dialyzer.
@@ -1723,6 +1584,39 @@ functional languages for systems programming?
   <li>GHC woes
     <ul>
       <li>Profiling requires recompiling all transitive dependencies if they happen to be compiled without profiling.</li>
+    </ul>
+  </li>
+  <li>What is a type?
+    <ul>
+      <li>Mathematically, A type is a set whose membership is syntactically decidable.</li>
+      <li>Engineeringly, A type gives meaning to bit patterns.
+  A type encodes meaning into bit patterns.
+        <ul>
+          <li>For example, consider the bit pattern 11111111.
+            <ul>
+              <li>It means -1 as an int8.</li>
+              <li>It means 127 as an uint8.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Every type checking algorithm is unification (logic programming).
+    <ul>
+      <li>If the programmer annotates a term, use that annotation.</li>
+      <li>If the a term is not annotated, annotate that term with a freshly generated variable.</li>
+      <li>Unify everything according to the typing rules.</li>
+      <li>See Algorithm W in <a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system">WP:Hindley–Milner type system</a>.</li>
+    </ul>
+  </li>
+  <li><a href="https://stackoverflow.com/questions/50490883/why-is-ml-called-meta-language">metaprogramming - Why is ML called Meta-Language? - Stack Overflow</a></li>
+  <li>What is incremental lambda-calculus, and (automatic) differentiation of algebraic data types?</li>
+  <li>“Purely functional lazy nondeterministic programming”, <a href="https://www.cambridge.org/core/journals/journal-of-functional-programming/article/purely-functional-lazy-nondeterministic-programming/1E8BA117E549A9612BC4AF9804E5507A">paywall</a></li>
+  <li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/8vcrzb/what_are_some_interesting_language_features_that/">What are some interesting language features that may not be well known? : ProgrammingLanguages</a></li>
+  <li><a href="https://blog.acolyer.org/2018/01/26/a-practitioners-guide-to-reading-programming-languages-papers/">A practitioner’s guide to reading programming languages papers</a>
+    <ul>
+      <li>from <a href="https://www.reddit.com/r/ProgrammingLanguages/top/">top scoring links : ProgrammingLanguages</a></li>
     </ul>
   </li>
   <li>Obscure things. Much marketing, little technical detail.
