@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Are all approximations truncation?</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/atrunc.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
+  </div>
+</header>
+
+
+    
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\abs[1]{\left|#1\right|}
+\newcommand\dom{\textrm{dom}}
+\newcommand\cod{\textrm{cod}}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Are all approximations truncation?</h1>
+  </header>
+
+  <div class="post-content">
+    <p>We can approximate a series by <em>truncating</em> it.</p>
+
+<p>Suppose that the series \( y = x_0 + x_1 + \ldots \) converges.</p>
+
+<p>Suppose that the sequence \( \langle x_0, x_1, \ldots \rangle \) converges to zero.</p>
+
+<p>Pick where to cut.
+Pick a natural number \( n \).</p>
+
+<p>Then the series \( x_0 + \ldots + x_n \) approximates the series \( y \).
+We cut its tail.
+We take finitely many summands from the beginning.</p>
+
+<p>Here come examples: Truncate all the series!</p>
+
+<h2 id="power-series-truncation">Power series truncation</h2>
+
+<p>Below we truncate a power series.</p>
+
+<p>Decimal truncation: \( 1.2 \) approximates \( 1.23 \).
+Remember that a decimal number is a series.
+For example, the number \( 1.23 \) is the power series
+\[ \ldots 01.230 \ldots = \ldots + 0 \cdot 10^1 + 1 \cdot 10^0 + 2 \cdot 10^{-1} + 3 \cdot 10^{-2} + 0 \cdot 10^{-3} + \ldots. \]</p>
+
+<p>Polynomial truncation: \( 1 + x \) approximates \( 1 + x + x^2 \) for \( x \) near zero.</p>
+
+<p>Taylor series truncation: \( 1 + x + \frac{x^2}{2} \) approximates \( e^x \) for \( x \) near zero.
+Remember the Taylor series expansion \( e^x = \sum_{n \in \Nat} \frac{x^n}{n!} \).</p>
+
+<p>Below we truncate the ratio of two power series.</p>
+
+<p>Rational truncation: \( 12/23 \) approximates \( 123/234 \).</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Pad%C3%A9_approximant">WP:Padé approximation</a> is a truncation of a ratio of series.</p>
+
+<p>Fourier series truncation: The <a href="https://en.wikipedia.org/wiki/Fourier_series#Example_1:_a_simple_Fourier_series">Wikipedia example</a> animates how a Fourier series converges to the sawtooth function as more terms are added.</p>
+
+<p>Digression: Is a (complex) Fourier series a power series?
+Reminder: A Fourier series looks like \( \sum_{k=0}^{\infty} c_k e^{ikt} \).</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Laurent_series">WP:Laurent series</a> truncation?</p>
+
+<h3 id="digression-what-is-an-analytic-function">Digression: What is an analytic function?</h3>
+
+<p>A function is <em>analytic</em> iff it can be represented by power series.</p>
+
+<p>Formally, a function \( f \) is <em>analytic</em> iff for every \( x \in \dom(f) \), we can write \( f(x) \) as a power series.</p>
+
+<p>See also <a href="https://en.wikipedia.org/wiki/Power_series#Analytic_functions">WP:Definition of “analytic function”</a>.</p>
+
+<p>Taylor series expansion is illustrated in the 2015 slides “Taylor Series: Expansions, Approximations and Error” (<a href="https://relate.cs.illinois.edu/course/cs357-f15/file-version/2978ddd5db9824a374db221c47a33f437f2df1da/media/cs357-slides6.pdf">pdf</a>)</p>
+
+<h3 id="digression-what-is-the-relationship-between-polynomial-and-power-series">Digression: What is the relationship between polynomial and power series?</h3>
+
+<p>A polynomial is an algebraic expression. It is not a function.</p>
+
+<p>Power series is a kind of infinite polynomial.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Formal_power_series">WP:Formal power series</a>: “A formal power series is a generalization of a polynomial, where the number of terms is allowed to be infinite.”</p>
+
+<h2 id="iteration-truncation">Iteration truncation</h2>
+
+<ul>
+  <li><a href="https://en.wikipedia.org/wiki/Iterated_function">WP:Iterated function</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Iterative_method">WP:Iterative method</a></li>
+  <li><a href="http://mathworld.wolfram.com/NewtonsIteration.html">Newton’s Iteration</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method">WP:Methods of computing square roots, the Babylonian method</a></li>
+  <li>An iteration converges to an attractive fixed point.</li>
+</ul>
+
+<p>Example:
+Let \( f(x) = x + \frac{1}{x} \).</p>
+
+<p>Continued fraction truncation:
+We know that \[ 1 + \frac{1}{1 + \frac{1}{1 + \ldots}} = \frac{1 + \sqrt{5}}{2} = \Phi. \]
+We can truncate that continued fraction to approximate \( \Phi \).</p>
+
+<p>Seeing those examples makes me wonder whether all approximations are truncation.</p>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/atrunc.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/atrunc.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-08-17 22:52 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

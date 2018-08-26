@@ -115,17 +115,46 @@ MathJax.Hub.Config({
   </header>
 
   <div class="post-content">
-    <ul>
-  <li>Why are we interested in approximation theory?
-    <ul>
-      <li>Because we want to justify how neural networks work.
-        <ul>
-          <li>2016, article, “Deep vs. shallow networks: An approximation theory perspective”, <a href="https://arxiv.org/abs/1608.03287">pdf available</a></li>
-          <li><a href="https://en.wikipedia.org/wiki/Explainable_Artificial_Intelligence">WP:Explainable Artificial Intelligence</a></li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+    <p>We are interested in approximation theory because we want to justify how neural networks work.</p>
+
+<ul>
+  <li>2016, article, “Deep vs. shallow networks: An approximation theory perspective”, <a href="https://arxiv.org/abs/1608.03287">pdf available</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Explainable_Artificial_Intelligence">WP:Explainable Artificial Intelligence</a></li>
+</ul>
+
+<p>We should begin by skimming the 1998 book “A Short Course on Approximation Theory” by N. L. Carothers (<a href="http://fourier.math.uoc.gr/~mk/approx1011/carothers.pdf">pdf</a>).
+Then we should skim the 2017 lecture notes “Lectures on multivariate polynomial approximation” (<a href="http://www.math.unipd.it/~demarchi/MultInterp/LectureNotesMI.pdf">pdf</a>).</p>
+
+<p>The phrase “x <em>approximates</em> y” means “x is <em>close</em> to y”, which implies distance, which implies metric space.</p>
+
+<p>How close is the approximation?
+Suppose that the function \( g \) approximates the function \( f \) in interval \( I \).
+Then:</p>
+
+<ul>
+  <li>The “approximation error at \( x \)” is \( g(x) - f(x) \).</li>
+  <li>The “maximum absolute error” is \( \max_{x \in I} \abs{g(x) - f(x)} \).</li>
+</ul>
+
+<p>How do we measure the distance between two \( \Real \to \Real \) functions \( f \) and \( g \)?
+There are several ways.
+Which should we use?</p>
+
+<ul>
+  <li>The maximum norm, in interval \( I \) is \( \max_{x \in I} \abs{f(x) - g(x)} \).
+This norm is also called uniform norm, supremum norm, Chebyshev norm, infinity norm, norm-infinity, \( L_\infty \)-norm.
+Why is it called “uniform”?
+<a href="https://en.wikipedia.org/wiki/Uniform_norm">WP:Uniform norm</a>.</li>
+  <li>What is this norm called? \( \int_{x \in I} [f(x)-g(x)]^2 ~ dx \).</li>
+</ul>
+
+<p><a href="/atrunc.html">Are all approximations truncation?</a>
+Are there other approximation schemes beside series truncation?
+Are probabilistic approximations such as Monte Carlo approximations also truncation?</p>
+
+<h2 id="other">Other</h2>
+
+<ul>
   <li>Courses
     <ul>
       <li>2017, <a href="https://www.nada.kth.se/~olofr/Approx/">Approximation Theory, 7.5 ECTS</a></li>
@@ -153,34 +182,6 @@ MathJax.Hub.Config({
   </li>
   <li>Overview
     <ul>
-      <li>What does “to approximate” mean?
-        <ul>
-          <li>The phrase “x <em>approximates</em> y” means “x is <em>close</em> to y”.</li>
-          <li>“Close” implies distance which implies metric space.</li>
-        </ul>
-      </li>
-      <li>How close is the approximation?
-        <ul>
-          <li>Suppose that the function \( g \) approximates the function \( f \) in interval \( I \).
-            <ul>
-              <li>The “approximation error at \( x \)” is \( g(x) - f(x) \).</li>
-              <li>The “maximum absolute error” is \( \max_{x \in I} \abs{g(x) - f(x)} \).</li>
-            </ul>
-          </li>
-          <li>How do we measure the distance between two \( \Real \to \Real \) functions \( f \) and \( g \)?
-            <ul>
-              <li>The maximum norm, in interval \( I \) is \( \max_{x \in I} \abs{f(x) - g(x)} \).
-                <ul>
-                  <li>Other names: uniform norm, supremum norm, Chebyshev norm, infinity norm, norm-infinity, \( L_\infty \)-norm</li>
-                  <li><a href="https://en.wikipedia.org/wiki/Uniform_norm">WP:Uniform norm</a></li>
-                  <li>Why is it called “uniform”?</li>
-                </ul>
-              </li>
-              <li>What is this norm called? \( \int_{x \in I} [f(x)-g(x)]^2 ~ dx \).</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
       <li>What is a multivariate polynomial?</li>
       <li>Commonly conflated concepts
         <ul>
@@ -203,101 +204,6 @@ MathJax.Hub.Config({
   <li>The <em>uniform norm</em> is …</li>
   <li>Best approximation is …</li>
   <li>Uniform approximation is best approximation in uniform norm.</li>
-  <li>Hypothesis: Approximation is truncation.
-    <ul>
-      <li>We can approximate a series by <em>truncating</em> it.</li>
-      <li>Suppose that the series \( y = x_0 + x_1 + \ldots \) converges.</li>
-      <li>Suppose that the sequence \( \langle x_0, x_1, \ldots \rangle \) converges to zero.</li>
-      <li>Pick where to cut.
-        <ul>
-          <li>Pick a natural number \( n \).</li>
-        </ul>
-      </li>
-      <li>Then the series \( x_0 + \ldots + x_n \) approximates the series \( y \).
-        <ul>
-          <li>We cut its tail.
-  We take finitely many summands from the beginning.</li>
-        </ul>
-      </li>
-      <li>Examples: Truncate all the series!
-        <ul>
-          <li>decimal truncation: \( 1.2 \) approximates \( 1.23 \).</li>
-          <li>rational truncation:
-            <ul>
-              <li>\( 12/23 \) approximates \( 123/234 \).</li>
-              <li><a href="https://en.wikipedia.org/wiki/Pad%C3%A9_approximant">WP:Padé approximation</a> is a truncation of a ratio of sums.</li>
-            </ul>
-          </li>
-          <li>polynomial truncation: \( 1 + x \) approximates \( 1 + x + x^2 \) for \( x \) near zero.</li>
-          <li>power series truncation:
-            <ul>
-              <li>Taylor series truncation: \( 1 + x + \frac{x^2}{2} \) approximates \( e^x \) for \( x \) near zero.
-  Remember the Taylor series expansion \( e^x = \sum_{n \in \Nat} \frac{x^n}{n!} \).
-                <ul>
-                  <li><a href="https://en.wikipedia.org/wiki/Power_series#Analytic_functions">WP:Definition of “analytic function”</a>.
-                    <ul>
-                      <li>A function is <em>analytic</em> iff it can be represented by power series.
-                        <ul>
-                          <li>A function \( f \) is <em>analytic</em> iff for every \( x \in \dom(f) \), we can write \( f(x) \) as a power series.</li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>For illustrations of Taylor series expansion, see:
-                    <ul>
-                      <li>2015, slides, “Taylor Series: Expansions, Approximations and Error”, <a href="https://relate.cs.illinois.edu/course/cs357-f15/file-version/2978ddd5db9824a374db221c47a33f437f2df1da/media/cs357-slides6.pdf">pdf</a></li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-              <li>Digression: What is the relationship between polynomial and power series?
-                <ul>
-                  <li>A polynomial is an algebraic expression. It is not a function.</li>
-                  <li>Power series is a kind of infinite polynomial.
-                    <ul>
-                      <li><a href="https://en.wikipedia.org/wiki/Formal_power_series">WP:Formal power series</a>: “A formal power series is a generalization of a polynomial, where the number of terms is allowed to be infinite.”</li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-              <li>Fourier series truncation: The <a href="https://en.wikipedia.org/wiki/Fourier_series#Example_1:_a_simple_Fourier_series">Wikipedia example</a> animates how a Fourier series converges to the sawtooth function as more terms are added.
-                <ul>
-                  <li>Digression: Is a (complex) Fourier series a power series?
-                    <ul>
-                      <li>Reminder: A Fourier series looks like \( \sum_{k=0}^{\infty} c_k e^{ikt} \).</li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li><a href="https://en.wikipedia.org/wiki/Laurent_series">WP:Laurent series</a> truncation?</li>
-          <li>iteration truncation
-            <ul>
-              <li><a href="https://en.wikipedia.org/wiki/Iterated_function">WP:Iterated function</a></li>
-              <li><a href="https://en.wikipedia.org/wiki/Iterative_method">WP:Iterative method</a></li>
-              <li><a href="http://mathworld.wolfram.com/NewtonsIteration.html">Newton’s Iteration</a></li>
-              <li><a href="https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method">WP:Methods of computing square roots, the Babylonian method</a></li>
-              <li>An iteration converges to an attractive fixed point.</li>
-              <li>Example:
-                <ul>
-                  <li>Let \( f(x) = x + \frac{1}{x} \).</li>
-                </ul>
-              </li>
-              <li>continued fraction truncation:
-                <ul>
-                  <li>We know that \[ 1 + \frac{1}{1 + \frac{1}{1 + \ldots}} = \frac{1 + \sqrt{5}}{2} = \Phi. \]
-  We can truncate that continued fraction to approximate \( \Phi \).</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li>probabilistic approximation? Monte Carlo approximation?</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Are there other approximation schemes beside series truncation?</li>
   <li>https://en.wikipedia.org/wiki/Approximation_theory#Remez’s_algorithm
     <ul>
       <li>https://en.wikipedia.org/wiki/Remez_algorithm
@@ -387,9 +293,7 @@ Is it even possible to approximate arbitrary functions?
     <ul>
       <li>Very likely
         <ul>
-          <li>2017, lecture notes, “Lectures on multivariate polynomial approximation”, <a href="http://www.math.unipd.it/~demarchi/MultInterp/LectureNotesMI.pdf">pdf</a></li>
           <li>2015, slides, “Best polynomial approximation: multidimensional case”, <a href="https://carma.newcastle.edu.au/meetings/spcom/talks/Sukhorukova-SPCOM_2015.pdf">pdf</a></li>
-          <li>1998, book, “A Short Course on Approximation Theory”, N. L. Carothers, <a href="http://fourier.math.uoc.gr/~mk/approx1011/carothers.pdf">pdf</a></li>
           <li>https://en.wikipedia.org/wiki/Bernstein_polynomial#Approximating_continuous_functions
             <ul>
               <li>https://en.wikipedia.org/wiki/Pointwise_convergence</li>

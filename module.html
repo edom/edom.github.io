@@ -55,127 +55,91 @@
   </header>
 
   <div class="post-content">
-    <ul>
-  <li>A program is a big lambda expression. Why do we need modules?</li>
-  <li>How do we organize programs?
-    <ul>
-      <li>The smallest unit for this discussion is a machine instruction.</li>
-      <li>A subroutine is a collection of instructions.</li>
-      <li>A library is a collection of subroutines.</li>
-      <li>A program is a collection of libraries and an entry point.</li>
-      <li>History
-        <ul>
-          <li>The initial motivation was to reuse.
-            <ul>
-              <li>Reduce development cost.</li>
-            </ul>
-          </li>
-          <li>The next motivation was to reduce disk and memory usage.</li>
-        </ul>
-      </li>
-      <li>The essence of programming-in-the-large is Don’t Repeat Yourself?</li>
-    </ul>
-  </li>
-  <li>What is a module?
-    <ul>
-      <li>“What is a module?” = “How do we decompose a program?”</li>
-      <li>What do others say?
-        <ul>
-          <li><a href="https://en.wikipedia.org/wiki/Module">Wikipedia</a></li>
-          <li><a href="https://en.wiktionary.org/wiki/module">Wiktionary</a></li>
-          <li><a href="https://www.dictionary.com/browse/module">dictionary.com</a></li>
-        </ul>
-      </li>
-      <li>What are the properties of a module?</li>
-      <li>What are its relationships with other things?
-        <ul>
-          <li>interchangeability</li>
-        </ul>
-      </li>
-      <li>A module groups things.
-        <ul>
-          <li>Is this essential or accidental?
-  Is it made for grouping?
-  Is grouping only a side-effect?</li>
-        </ul>
-      </li>
-      <li>What can we do with modules?
-        <ul>
-          <li>We can combine modules.</li>
-          <li>We can shadow modules.</li>
-          <li>We can link modules.</li>
-          <li>We can embed/inline modules.</li>
-        </ul>
-      </li>
-      <li>A module is an incomplete/dependent piece of functionality/code.
-        <ul>
-          <li>A module may have unresolved symbols?</li>
-        </ul>
-      </li>
-      <li>A module is a decomposition of a program?</li>
-      <li>Module is about reusability?</li>
-      <li>A program is a module and a starting point.</li>
-      <li>A module specifies a contract.
-  A module can be swapped with another module that satisfies the same contract without changing the correctness of the program.</li>
-      <li>A module is a bunch of imports and exports?</li>
-      <li>A module is smallest unit of reuse? Isn’t that function?</li>
-      <li>A module is smallest unit of compilation? Isn’t that function?</li>
-    </ul>
-  </li>
-  <li>Module is second-order logic programming?
-Note below, that the same <code class="highlighter-rouge">Plus</code> is used as both a variable and a predicate.</li>
-</ul>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export(module_name, type, name, value).
-
-export(prelude, int, plus, Plus) |- export(my_module, int, three, Plus(1, 2)).
-</code></pre></div></div>
+    <p>What is a module?
+Or, should we be asking these questions instead?</p>
 
 <ul>
-  <li>Who uses module?
-Human and computer.
+  <li>How do we decompose a program? (I think David Parnas has answered this.)</li>
+  <li>Why do we need modules?</li>
+  <li>How do we organize programs?</li>
+</ul>
+
+<p>Modules reduce complexity by partitioning and independence.
+See <a href="http://www.computing.dcu.ie/~renaat/ca2/ca214/ca214vii.html">Three Universal methods of reducing complexity</a>
+from the course <a href="http://www.computing.dcu.ie/~renaat/ca2/ca214over.html">CA214 Systems Analysis and Design Page</a>.</p>
+
+<p>What do others say?</p>
+
+<ul>
+  <li><a href="https://en.wikipedia.org/wiki/Module">Wikipedia</a></li>
+  <li>According to <a href="https://en.wiktionary.org/wiki/module">Wiktionary</a>:
     <ul>
-      <li>Human uses modules for organizing things.</li>
-      <li>Computer uses modules to separate compilation, to speed up recompilation, to enable partial recompilation.</li>
+      <li>The word “module” is from Latin “modulus” that means “a small measure”.</li>
+      <li>A module is “a self-contained component of a system, often interchangeable, which has a well-defined interface to the other components”.</li>
     </ul>
   </li>
+  <li><a href="https://www.dictionary.com/browse/module">dictionary.com</a></li>
+</ul>
+
+<p>What do we infer?</p>
+
+<ul>
+  <li>We can develop different modules at the same time.</li>
+</ul>
+
+<h2 id="philosophical-investigation">Philosophical investigation</h2>
+
+<ul>
+  <li>What are the properties of a module?</li>
+  <li>What are its relationships with other things?
+    <ul>
+      <li>interchangeability</li>
+    </ul>
+  </li>
+  <li>A module groups things.
+    <ul>
+      <li>Is this essential or accidental?
+  Is it made for grouping?
+  Is grouping only a side-effect?</li>
+    </ul>
+  </li>
+  <li>What can we do with modules?
+    <ul>
+      <li>We can combine modules.</li>
+      <li>We can shadow modules.</li>
+      <li>We can link modules.</li>
+      <li>We can embed/inline modules.</li>
+    </ul>
+  </li>
+  <li>A module is an incomplete/dependent piece of functionality/code.
+    <ul>
+      <li>A module may have unresolved symbols?</li>
+    </ul>
+  </li>
+  <li>A module is a decomposition of a program?</li>
+  <li>Module is about reusability?</li>
+  <li>A program is a module and a starting point.</li>
+  <li>A module specifies a contract.
+A module can be swapped with another module that satisfies the same contract without changing the correctness of the program.</li>
+  <li>A module is a bunch of imports and exports?</li>
+  <li>A module is smallest unit of reuse? Isn’t that function?</li>
+  <li>A module is smallest unit of compilation? Isn’t that function?</li>
+</ul>
+
+<h2 id="modules-are-for-humans">Modules are for humans</h2>
+
+<p>Computers don’t need modules.
+All it needs is a sequence of machine codes.</p>
+
+<p>A program is a lambda expression.
+A big program is a big lambda expression.
+Given enough memory, a computer can handle arbitrarily big lambda expressions.</p>
+
+<p>Human uses modules for organizing things.
+Human uses modules to make machines separate compilation, speed up recompilation, and recompile a part of the program.</p>
+
+<ul>
   <li>Does a module have to coincide with a compilation unit?</li>
-  <li>How do other languages deal with modules?
-    <ul>
-      <li><a href="https://github.com/dhall-lang/dhall-lang/issues/182">dhall modules · Issue #182 · dhall-lang/dhall-lang</a></li>
-      <li><a href="https://futhark-lang.org/blog/2017-01-25-futhark-module-system.html">Futhark</a></li>
-      <li><a href="https://elixir-lang.org/getting-started/modules-and-functions.html">Elixir</a></li>
-      <li>Racket
-        <ul>
-          <li>2011, article, “Languages as Libraries”, <a href="http://www.cs.utah.edu/plt/publications/pldi11-tscff.pdf">pdf</a></li>
-        </ul>
-      </li>
-      <li>Scheme R7RS, Common Lisp, Clojure</li>
-      <li>Java, Scala, Kotlin, Go, C, C++
-        <ul>
-          <li>C ABI
-            <ul>
-              <li>A module is an ELF shared object file (SO file).</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>Pascal, Ada, Oberon, Algol, Fortran</li>
-      <li>JavaScript, TypeScript, ECMAScript</li>
-      <li>Standard ML, Caml, OCaml, MLTON, SML/NJ, F#
-        <ul>
-          <li>2000, “A modular module system”, <a href="https://hal.inria.fr/hal-01499946/document">pdf</a></li>
-        </ul>
-      </li>
-      <li>Haskell has underpowered module system.</li>
-      <li>book, “Advanced topics in types and programming languages”, part IV, programming in the large, <a href="http://camlunity.ru/swap/Functional%20Programming/Type%20Systems/Pierce/Advanced%20Topics%20in%20Types%20and%20Programming%20Languages.pdf">pdf</a>
-        <ul>
-          <li>book, “Types and programming languages”, <a href="https://www.asc.ohio-state.edu/pollard.4/type/books/pierce-tpl.pdf">pdf</a></li>
-        </ul>
-      </li>
-      <li><a href="https://en.wikipedia.org/wiki/Modular_programming">WP:Modular programming</a></li>
-    </ul>
-  </li>
   <li>Basic module functions?
     <ul>
       <li>How does a code describe its dependencies?</li>
@@ -184,48 +148,144 @@ Human and computer.
   Version describes semantics.</li>
     </ul>
   </li>
-  <li>Key idea: A module is just a lambda abstraction that returns a record (tuple whose components are named), in a dependently-typed language.
+</ul>
+
+<p>Module is second-order logic programming?
+Note below, that the same <code class="highlighter-rouge">Plus</code> is used as both a variable and a predicate.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export(module_name, type, name, value).
+
+export(prelude, int, plus, Plus) |- export(my_module, int, three, Plus(1, 2)).
+</code></pre></div></div>
+
+<ul>
+  <li>The smallest unit for this discussion is a machine instruction.</li>
+  <li>A subroutine is a collection of instructions.</li>
+  <li>A library is a collection of subroutines.</li>
+  <li>A program is a collection of libraries and an entry point.</li>
+  <li>History
     <ul>
-      <li>Module = lambda-calculus + dictionary</li>
-      <li>This idea is similar to Nix and JavaScript modules.</li>
-      <li><code class="highlighter-rouge">type Module = Map Name Decl -&gt; Map Name Decl</code></li>
-      <li>A module translates into a lambda-calculus expression.</li>
-      <li>An import translates to an entry in the input kvm.
+      <li>The initial motivation was to reuse.
         <ul>
-          <li>kvm = key-value map, look-up table, dictionary</li>
+          <li>Reduce development cost.
+            <ul>
+              <li>Humans have always been looking for easier ways to live.
+  This “laziness” (the ability to get bored repeating something) is the source of all human technology.</li>
+            </ul>
+          </li>
         </ul>
       </li>
-      <li>An export translates to an entry in the output kvm.</li>
-      <li>Example:</li>
+      <li>The next motivation was to reduce disk and memory usage.</li>
     </ul>
+  </li>
+  <li>The essence of programming-in-the-large is Don’t Repeat Yourself?</li>
+</ul>
 
-    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  module {
-      import add mul Int32;
-      export f g T;
-      f = add;
-      g = mul;
-      T = Int32;
-  };
+<h2 id="comparing-existing-module-systems">Comparing existing module systems</h2>
 
-  -- The expression above translates to:
+<p>How do programming languages deal with modules?</p>
 
-  \ {add; mul; Int32; ...} -&gt; {
-      f = add;
-      g = mul;
-      T = Int32;
-  };
-</code></pre></div>    </div>
-
+<ul>
+  <li><a href="https://github.com/dhall-lang/dhall-lang/issues/182">dhall modules · Issue #182 · dhall-lang/dhall-lang</a></li>
+  <li><a href="https://futhark-lang.org/blog/2017-01-25-futhark-module-system.html">Futhark</a></li>
+  <li><a href="https://elixir-lang.org/getting-started/modules-and-functions.html">Elixir</a>
     <ul>
-      <li>Key ideas of that example:
+      <li><a href="https://hexdocs.pm/elixir/Module.html">Module – Elixir v1.7.2</a></li>
+    </ul>
+  </li>
+  <li>Racket
+    <ul>
+      <li>2011, article, “Languages as Libraries”, <a href="http://www.cs.utah.edu/plt/publications/pldi11-tscff.pdf">pdf</a></li>
+    </ul>
+  </li>
+  <li>Scheme R7RS, Common Lisp, Clojure</li>
+  <li>Java, Scala, Kotlin, Go, C, C++
+    <ul>
+      <li>C ABI
         <ul>
-          <li>Dictionary pattern matching simulates row polymorphism.</li>
-          <li><code class="highlighter-rouge">{a;b;c;}</code> is shorthand for <code class="highlighter-rouge">{a:a; b:b; c:c;}</code>.</li>
-          <li><a href="https://blog.robphoenix.com/elixir/notes-on-elixir-pattern-matching-maps/">Notes on Elixir: Pattern-Matching Maps · Rob Phoenix</a></li>
+          <li>A module is an ELF shared object file (SO file).</li>
         </ul>
       </li>
     </ul>
   </li>
+  <li>Pascal, Ada, Oberon, Algol, Fortran</li>
+  <li>JavaScript, TypeScript, ECMAScript</li>
+  <li>Standard ML, Caml, OCaml, MLTON, SML/NJ, F#
+    <ul>
+      <li>2000, “A modular module system”, <a href="https://hal.inria.fr/hal-01499946/document">pdf</a></li>
+    </ul>
+  </li>
+  <li>Haskell has underpowered module system.</li>
+  <li>book, “Advanced topics in types and programming languages”, part IV, programming in the large, <a href="http://camlunity.ru/swap/Functional%20Programming/Type%20Systems/Pierce/Advanced%20Topics%20in%20Types%20and%20Programming%20Languages.pdf">pdf</a>
+    <ul>
+      <li>book, “Types and programming languages”, <a href="https://www.asc.ohio-state.edu/pollard.4/type/books/pierce-tpl.pdf">pdf</a></li>
+    </ul>
+  </li>
+  <li><a href="https://en.wikipedia.org/wiki/Modular_programming">WP:Modular programming</a></li>
+</ul>
+
+<h2 id="key-idea-module--dictionary---dictionary">Key idea: Module = Dictionary -&gt; Dictionary</h2>
+
+<p>Assume a dependently-typed language.</p>
+
+<p>Recall some terminologies:</p>
+
+<ul>
+  <li>A record is a tuple whose components are named.</li>
+  <li>A dictionary is also known as key-value map or look-up table.</li>
+</ul>
+
+<p>Then a module is a lambda abstraction that takes a record and gives a record.</p>
+
+<p>A module is a lambda abstraction.</p>
+
+<p>This idea is similar to Nix and JavaScript modules.</p>
+
+<p><code class="highlighter-rouge">type Module = Map Name Decl -&gt; Map Name Decl</code></p>
+
+<p>A module translates into a lambda-calculus expression.
+An import translates to an entry in the input dictionary.
+An export translates to an entry in the output dictionary.
+Example:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>module {
+    import add mul Int32;
+    export f g T;
+    f = add;
+    g = mul;
+    T = Int32;
+};
+
+-- The expression above translates to:
+
+\ {add; mul; Int32; ...} -&gt; {
+    f = add;
+    g = mul;
+    T = Int32;
+};
+</code></pre></div></div>
+
+<ul>
+  <li>Key ideas of that example:
+    <ul>
+      <li>Dictionary pattern matching simulates row polymorphism.</li>
+      <li><code class="highlighter-rouge">{a;b;c;}</code> is shorthand for <code class="highlighter-rouge">{a:a; b:b; c:c;}</code>.</li>
+      <li><a href="https://blog.robphoenix.com/elixir/notes-on-elixir-pattern-matching-maps/">Notes on Elixir: Pattern-Matching Maps · Rob Phoenix</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>What we are doing here is also known as “blurring the phase distinction”.
+See <a href="https://futhark-lang.org/blog/2017-01-25-futhark-module-system.html#modules-versus-higher-order-functions">“Modules versus Higher-Order Functions” in Futhark blog post</a>:
+“A module can be viewed as nothing but a record containing types and values.”</p>
+
+<p>A problem: compilation may fail to terminate.
+No big deal.
+Set a time-out.</p>
+
+<h2 id="what">what</h2>
+
+<ul>
   <li>Hypothesis: Lazy evaluation solves the partial query problem elegantly.</li>
   <li>What are some cool ideas?
     <ul>
@@ -340,6 +400,24 @@ Human and computer.
       <li>Haskell: Cabal, Stack</li>
       <li>F#: Paket? NuGet?</li>
       <li>C/C++: conan? chocolate? vcpkg?</li>
+    </ul>
+  </li>
+  <li>Formally adding modules to lambda calculus
+    <ul>
+      <li>What is module calculus?
+        <ul>
+          <li>2017 article “Modules, Abstraction, and Parametric Polymorphism” <a href="https://www.cs.cmu.edu/~crary/papers/2017/mapp.pdf">pdf</a></li>
+          <li>2003 article “A Type System for Higher-Order Modules” <a href="http://www.cs.cmu.edu/~rwh/papers/thoms/tr2.pdf">pdf</a></li>
+          <li>2001 article “A Calculus of Module Systems” <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.22.5407">pdf available</a></li>
+          <li>2012 course notes “Types for Module Systems” <a href="http://www.ccs.neu.edu/home/amal/course/7480-s12/modules-notes.pdf">pdf</a>
+  from <a href="http://www.ccs.neu.edu/home/amal/course/7480-s12/">CS7480 Type Systems (Spring 2012)</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Ignored undocumented code sketches
+    <ul>
+      <li><a href="https://github.com/jordanlewis/simple-module-system">jordanlewis/simple-module-system: Adding modules to a polymorphic lambda calculus</a>, code in SML/NJ.</li>
     </ul>
   </li>
 </ul>
