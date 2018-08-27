@@ -55,70 +55,100 @@
   </header>
 
   <div class="post-content">
+    <ul id="markdown-toc">
+  <li><a href="#goal" id="markdown-toc-goal">Goal</a></li>
+  <li><a href="#what-is-a-program" id="markdown-toc-what-is-a-program">What is a program?</a></li>
+  <li><a href="#how-do-we-increase-language-adoption" id="markdown-toc-how-do-we-increase-language-adoption">How do we increase language adoption?</a></li>
+  <li><a href="#where-shall-we-start" id="markdown-toc-where-shall-we-start">Where shall we start?</a></li>
+  <li><a href="#functional-programming" id="markdown-toc-functional-programming">Functional programming?</a></li>
+  <li><a href="#extending-lambda-calculus-with-various-bells-and-whistles" id="markdown-toc-extending-lambda-calculus-with-various-bells-and-whistles">Extending lambda-calculus with various bells and whistles</a></li>
+  <li><a href="#where-to-find-recent-programming-language-research" id="markdown-toc-where-to-find-recent-programming-language-research">Where to find recent programming language research?</a></li>
+  <li><a href="#what" id="markdown-toc-what">what</a></li>
+  <li><a href="#justifying-the-creation-of-yet-another-programming-language" id="markdown-toc-justifying-the-creation-of-yet-another-programming-language">Justifying the creation of yet another programming language</a></li>
+  <li><a href="#design-mistakes" id="markdown-toc-design-mistakes">Design mistakes</a>    <ul>
+      <li><a href="#common-design-mistakes" id="markdown-toc-common-design-mistakes">Common design mistakes</a>        <ul>
+          <li><a href="#dynamic-typing" id="markdown-toc-dynamic-typing">Dynamic typing</a></li>
+          <li><a href="#lack-of-metaprogramming-support" id="markdown-toc-lack-of-metaprogramming-support">Lack of metaprogramming support</a></li>
+          <li><a href="#mutable-by-default" id="markdown-toc-mutable-by-default">Mutable by default</a></li>
+          <li><a href="#non-first-class-constructs" id="markdown-toc-non-first-class-constructs">Non-first-class constructs</a></li>
+        </ul>
+      </li>
+      <li><a href="#java" id="markdown-toc-java">Java</a></li>
+      <li><a href="#c-and-c" id="markdown-toc-c-and-c">C and C++</a></li>
+      <li><a href="#haskell" id="markdown-toc-haskell">Haskell</a></li>
+    </ul>
+  </li>
+  <li><a href="#what-1" id="markdown-toc-what-1">what</a></li>
+</ul>
+
+<h2 id="goal">Goal</h2>
+
+<p>The goal is to make <em>the</em> programming language.</p>
+
+<p>A goal of programming language research is to make a better programming language (if not the best).
+Do more with less.</p>
+
+<p><em>The</em> ultimate best programming language?</p>
+
+<h2 id="what-is-a-program">What is a program?</h2>
+
+<p>A program (software) is an executable formal system.</p>
+
+<p>Can we formalize this using Grue’s map theory?</p>
+
+<ul>
+  <li>How is “false” represented?</li>
+  <li>How is “true” represented?</li>
+  <li>How is “conjunction” represented?</li>
+</ul>
+
+<h2 id="how-do-we-increase-language-adoption">How do we increase language adoption?</h2>
+
+<p>In order for a language to be adopted, people must perceive its risk as low.</p>
+
+<p>The language must work with existing codebases.</p>
+
+<p>The language designer must think from the language user’s point of view.
+Let’s say I have 100,000 lines of Java that I’ve been writing and testing for the past 5 years.
+Are you expecting me throw away all of them?</p>
+
+<p>Thus the language must work with C, C++, C#, Java, Go, JavaScript, Python, Ruby, and everything else.
+This should be possible because the essence of all programming languages is the same: every programming language is a formal system.
+It should be possible to translate a program P1 in language L1 to program P2 in language L2 with the same semantics.</p>
+
+<p>Improve/enhance, not supersede.</p>
+
+<p>Mixing languages should be easy.</p>
+
+<p>2013, article, “Empirical analysis of programming language adoption”, <a href="http://sns.cs.princeton.edu/docs/asr-oopsla13.pdf">pdf</a></p>
+
+<p>The language must be suitable for systems programming.</p>
+<ul>
+  <li>System programming is hardware-aware programming.
+Application programming assumes abstract machine, infinite memory, and all convenience provided by the operating system.
     <ul>
-  <li>The goal is to make <em>the</em> programming language.</li>
-  <li>What are the criteria for a language to be adopted?
-    <ul>
-      <li>In order for a language to be adopted, people must perceive its risk as low.
-        <ul>
-          <li>The language must work with existing codebases.
-            <ul>
-              <li>The language designer must think from the language user’s point of view.
-                <ul>
-                  <li>Let’s say I have 100,000 lines of Java that I’ve been writing and testing for the past 5 years.
-  Are you expecting me throw away all of them?</li>
-                </ul>
-              </li>
-              <li>Thus the language must work with C, C++, C#, Java, Go, JavaScript, Python, Ruby, and everything else.
-  This should be possible because the essence of all programming languages is the same: every programming language is a formal system.
-  It should be possible to translate a program P1 in language L1 to program P2 in language L2 with the same semantics.</li>
-              <li>Improve/enhance, not supersede.</li>
-            </ul>
-          </li>
-          <li>Mixing the old and new languages should be easy.</li>
-          <li>2013, article, “Empirical analysis of programming language adoption”, <a href="http://sns.cs.princeton.edu/docs/asr-oopsla13.pdf">pdf</a></li>
-        </ul>
-      </li>
-      <li>The language must be suitable for systems programming.
-        <ul>
-          <li>System programming is hardware-aware programming.
-  Application programming assumes abstract machine, infinite memory, and all convenience provided by the operating system.
-            <ul>
-              <li>Why do we make this distinction?</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>The language must facilitate metaprogramming.
-  Everything must be a first-class citizen.
-  It has to have EVAL.
-  The language must provide a way for interpreting/compiling/loading a program at runtime.
-  The compiler becomes a part of every program.
-        <ul>
-          <li>What is the reason for the name “metacircular evaluator”?
-  What is circular?
-  What is metacircular?</li>
-        </ul>
-      </li>
-      <li>To make syntax first-class, we need QUOTE and UNQUOTE (such as in Lisp/Scheme)?</li>
-      <li>To prevent syntax flamewar, we should define the canonical linearization of the abstract syntax tree.
-  Go does this with <code class="highlighter-rouge">go fmt</code>.
-  I think that is wise.</li>
+      <li>Why do we make this distinction?</li>
     </ul>
   </li>
 </ul>
 
-<p>The problem with current programming methodologies is that they don’t capture the higher-level properties of software, such as the architecture.
-For example, how do we write, in a way that the computer can exploit, this statement:
-“The fields of class C correspond one-to-one with the columns of database table T.”?</p>
+<p>The language must facilitate metaprogramming.
+Everything must be a first-class citizen.
+It has to have EVAL.
+The language must provide a way for interpreting/compiling/loading a program at runtime.
+The compiler becomes a part of every program.</p>
+
+<p>What is the reason for the name “metacircular evaluator”?
+What is circular?
+What is metacircular?</p>
+
+<p>To make syntax first-class, we need QUOTE and UNQUOTE (such as in Lisp/Scheme)?</p>
+
+<p>To prevent syntax flamewar, we should define the canonical linearization of the abstract syntax tree.
+Go does this with <code class="highlighter-rouge">go fmt</code>.
+I think that is wise.</p>
 
 <ul>
-  <li>A goal of programming language research is to make a better programming language (if not the best).
-    <ul>
-      <li>Do more with less.</li>
-      <li><em>The</em> ultimate best programming language?</li>
-    </ul>
-  </li>
   <li>Basic assumptions
     <ul>
       <li>Computer (machine) is embodied formal system.
@@ -129,53 +159,60 @@ For example, how do we write, in a way that the computer can exploit, this state
       <li>Software is executable mathematics.</li>
     </ul>
   </li>
-  <li>Where shall we start?
+</ul>
+
+<h2 id="where-shall-we-start">Where shall we start?</h2>
+
+<p>These languages are interesting starting points:</p>
+
+<ul>
+  <li><a href="https://github.com/ollef/sixten">Sixten</a></li>
+  <li>Dhall</li>
+  <li><a href="http://www.haskellforall.com/2014/09/morte-intermediate-language-for-super.html">Morte: an intermediate language for super-optimizing functional programs</a></li>
+</ul>
+
+<h2 id="functional-programming">Functional programming?</h2>
+
+<p>Every functional programming language is lambda calculus plus plus.</p>
+
+<p>I thought lambda calculus could be summarized in one page, but Henk Barendregt wrote hundreds of pages about it. Is there more to lambda calculus than it seems?</p>
+
+<ul>
+  <li>1994, 50 pages, <a href="http://www.nyu.edu/projects/barker/Lambda/barendregt.94.pdf">pdf</a></li>
+  <li>1991, 190 pages, <a href="https://people.mpi-sws.org/~dreyer/tor/papers/barendregt.pdf">pdf</a></li>
+</ul>
+
+<h2 id="extending-lambda-calculus-with-various-bells-and-whistles">Extending lambda-calculus with various bells and whistles</h2>
+
+<ul>
+  <li>Vectorial lambda-calculus
     <ul>
-      <li>These languages are interesting starting points:
-        <ul>
-          <li><a href="https://github.com/ollef/sixten">Sixten</a></li>
-          <li>Dhall</li>
-          <li><a href="http://www.haskellforall.com/2014/09/morte-intermediate-language-for-super.html">Morte: an intermediate language for super-optimizing functional programs</a></li>
-        </ul>
-      </li>
+      <li>The 2013 article “The Vectorial Lambda-Calculus” <a href="https://who.rocq.inria.fr/Alejandro.Diaz-Caro/TheVectorialCalculus.pdf">pdf</a> adds vectors and matrices and their types to lambda calculus.</li>
+      <li>The 2010 article “Semantics of a Typed Algebraic Lambda-Calculus” <a href="https://arxiv.org/abs/1006.1433">pdf available</a> also mentions “vectorial”.</li>
     </ul>
   </li>
-  <li>Every functional programming language is lambda calculus plus plus.
+</ul>
+
+<h2 id="where-to-find-recent-programming-language-research">Where to find recent programming language research?</h2>
+
+<ul>
+  <li>meetings, conferences, symposiums
     <ul>
-      <li>I thought lambda calculus could be summarized in one page, but Henk Barendregt wrote hundreds of pages about it. Is there more to lambda calculus than it seems?
-        <ul>
-          <li>1994, 50 pages, <a href="http://www.nyu.edu/projects/barker/Lambda/barendregt.94.pdf">pdf</a></li>
-          <li>1991, 190 pages, <a href="https://people.mpi-sws.org/~dreyer/tor/papers/barendregt.pdf">pdf</a></li>
-        </ul>
-      </li>
-      <li>unknown-year lecture notes “Lambda Calculus as a Programming Language” <a href="http://andrei.clubcisco.ro/cursuri/2pp/01.Lambda_prog.pdf">pdf</a></li>
-      <li>Extending lambda-calculus with various bells and whistles
-        <ul>
-          <li>Vectorial lambda-calculus
-            <ul>
-              <li>The 2013 article “The Vectorial Lambda-Calculus” <a href="https://who.rocq.inria.fr/Alejandro.Diaz-Caro/TheVectorialCalculus.pdf">pdf</a> adds vectors and matrices and their types to lambda calculus.</li>
-              <li>The 2010 article “Semantics of a Typed Algebraic Lambda-Calculus” <a href="https://arxiv.org/abs/1006.1433">pdf available</a> also mentions “vectorial”.</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Where to find recent programming language research?
-    <ul>
-      <li>meetings, conferences, symposiums
-        <ul>
-          <li><a href="https://twitter.com/poplconf?lang=en">POPL on Twitter</a>.
+      <li><a href="https://twitter.com/poplconf?lang=en">POPL on Twitter</a>.
   Its full name is “ACM SIGPLAN Symposium on Principles of Programming Languages”.</li>
-        </ul>
-      </li>
-      <li>collections, links, aggregators
-        <ul>
-          <li>https://www.cs.cmu.edu/~mleone/language-research.html</li>
-        </ul>
-      </li>
     </ul>
   </li>
+  <li>collections, links, aggregators
+    <ul>
+      <li>https://www.cs.cmu.edu/~mleone/language-research.html</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="what">what</h2>
+
+<ul>
+  <li>unknown-year lecture notes “Lambda Calculus as a Programming Language” <a href="http://andrei.clubcisco.ro/cursuri/2pp/01.Lambda_prog.pdf">pdf</a></li>
   <li>category theory and programming languages
     <ul>
       <li>Category-theoretic model of functional programming languages
@@ -220,11 +257,6 @@ For example, how do we write, in a way that the computer can exploit, this state
       </li>
     </ul>
   </li>
-  <li>2018, “Collapsing towers of interpreters” http://lampwww.epfl.ch/~amin/pub/collapsing-towers.pdf
-    <ul>
-      <li>“It is well known that <em>staging</em> an interpreter – making it generate code whenever it would normally interpret an expression – yields a compiler […]”</li>
-    </ul>
-  </li>
   <li>What already exists?
     <ul>
       <li><a href="https://tomassetti.me/resources-create-programming-languages/">68 Resources on creating programming languages</a></li>
@@ -242,18 +274,6 @@ For example, how do we write, in a way that the computer can exploit, this state
     </ul>
   </li>
   <li>Safely Composable Type-Specific Languages https://www.cs.cmu.edu/~aldrich/papers/ecoop14-tsls.pdf</li>
-  <li>A program is an executable formal system.
-    <ul>
-      <li>Can we formalize this using Grue’s map theory?
-        <ul>
-          <li>Could this be as revolutionary as types-as-propositions (Curry-Howard correspondence) that enables proof assistants?</li>
-          <li>How is “false” represented?</li>
-          <li>How is “true” represented?</li>
-          <li>How is “conjunction” represented?</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
   <li>foundation of mathematics
     <ul>
       <li>set theories, such as ZF, ZFC, NBG, etc.
@@ -338,43 +358,17 @@ For example, how do we write, in a way that the computer can exploit, this state
       </li>
     </ul>
   </li>
-  <li>Big names in programming language research, and their contributions
+  <li>https://en.wikipedia.org/wiki/Programming_language_theory</li>
+  <li>https://en.wikipedia.org/wiki/John_C._Reynolds
     <ul>
-      <li>This list is incomplete.</li>
-      <li>See also:
+      <li>2014, <a href="http://www.cs.bham.ac.uk/~udr/papers/EssenceOfReynolds.pdf">The essence of Reynolds</a>
         <ul>
-          <li>https://en.wikipedia.org/wiki/Programming_language_theory</li>
+          <li>1998, Reynolds, “Theories of programming languages”</li>
         </ul>
       </li>
-      <li>https://en.wikipedia.org/wiki/John_C._Reynolds
-        <ul>
-          <li>2014, <a href="http://www.cs.bham.ac.uk/~udr/papers/EssenceOfReynolds.pdf">The essence of Reynolds</a>
-            <ul>
-              <li>1998, Reynolds, “Theories of programming languages”</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>Henk Barendregt, wrote books on lambda calculus</li>
-      <li>Thierry Coquand, invented calculus of constructions, Coq</li>
-      <li>Philip Wadler</li>
-      <li>Jean-Yves Girard</li>
-      <li>Steele, Sussman, Felleisen, Barzilay, etc. (Scheme guys, PLT Scheme guys)
-        <ul>
-          <li>1999, Steele, “Growing a language”
-            <ul>
-              <li>http://www.catonmat.net/blog/growing-a-language-by-guy-steele/</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>Simon Peyton-Jones, etc. (Haskell guys)</li>
-      <li>Oleg Kiselyov</li>
-      <li>Edward Kmett</li>
-      <li>Adam Chlipala</li>
-      <li>a list http://www.angelfire.com/tx4/cus/people/index.html</li>
     </ul>
   </li>
+  <li>a list of people http://www.angelfire.com/tx4/cus/people/index.html</li>
   <li>paradigm, approach, viewpoint, worldview
     <ul>
       <li>graph programming languages
@@ -480,11 +474,6 @@ For example, how do we write, in a way that the computer can exploit, this state
       </li>
     </ul>
   </li>
-  <li>Other people’s experiences
-    <ul>
-      <li>https://www.quora.com/If-you-were-to-design-a-programming-language-what-other-programming-language-would-it-evolve-from-and-what-aspect-of-that-language-would-you-do-differently</li>
-    </ul>
-  </li>
   <li>2017, PhD thesis, <a href="http://tomasp.net/academic/theses/coeffects/">“Context-aware programming languages”</a>
     <ul>
       <li><a href="http://tomasp.net/coeffects/">amazingly empathic considerate presentation that has the audience in mind</a>
@@ -518,136 +507,6 @@ For example, how do we write, in a way that the computer can exploit, this state
         </ul>
       </li>
       <li><a href="https://2017.programmingconference.org/track/refuses-2017">Salon des Refusés 2017</a></li>
-    </ul>
-  </li>
-  <li>Commentary on existing programming languages.
-Things that I think are wrong in 2018.
-    <ul>
-      <li>Java
-        <ul>
-          <li>What I think Java gets wrong
-            <ul>
-              <li>JVM does too much.
-                <ul>
-                  <li>JVM bytecode verification
-                    <ul>
-                      <li>It’s the compiler’s job, not the VM’s.</li>
-                      <li>Does it even add any security?
-                        <ul>
-                          <li>Isn’t JNI a bigger security hole?</li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li>What others think Java gets wrong
-            <ul>
-              <li>http://tech.jonathangardner.net/wiki/Why_Java_Sucks</li>
-            </ul>
-          </li>
-          <li>What I’m not sure about Java
-            <ul>
-              <li>Why type erasure?
-                <ul>
-                  <li>C# 2.0 introduced generics, without type erasure, while maintaining backward compatibility.
-                    <ul>
-                      <li>Duplicating everything in System.Collections to System.Collections.Generic is ugly, but it’s less ugly than type erasure.</li>
-                      <li>https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-version-history</li>
-                      <li>https://stackoverflow.com/questions/11436802/how-are-c-sharp-generics-implemented
-                        <ul>
-                          <li>https://blogs.msdn.microsoft.com/ericlippert/2009/07/30/whats-the-difference-part-one-generics-are-not-templates/</li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>What I think every procedural programming language (Java, C, C++, Go, Python, Ruby) gets wrong, except JavaScript
-        <ul>
-          <li>Functions should be first-class. Methods should not exist. Fields are enough.</li>
-          <li>It should be possible to assign to methods.</li>
-          <li><code class="highlighter-rouge">a.b()</code> should not mean “call method b of object a”</li>
-          <li><code class="highlighter-rouge">a.b()</code> should mean “get the function a.b, then call it”.</li>
-          <li><code class="highlighter-rouge">a.b()</code> should mean <code class="highlighter-rouge">(a.b)()</code>.
-            <ul>
-              <li><code class="highlighter-rouge">m = a.b; m();</code> should mean the same as <code class="highlighter-rouge">a.b()</code>.</li>
-            </ul>
-          </li>
-          <li>JavaScript does this right.</li>
-          <li>What JavaScript does wrong, TypeScript does right.</li>
-        </ul>
-      </li>
-      <li>What I think C and C++ got right but get wrong
-        <ul>
-          <li>In the 1970s these were tolerable (memory was limited; tools didn’t exist). In 2018 these aren’t tolerable.
-            <ul>
-              <li>Writing header files manually (should be generated from C files instead)</li>
-              <li>Preprocessor that works on text, not on C/C++ AST</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>What I think Haskell gets wrong
-        <ul>
-          <li>Template Haskell
-            <ul>
-              <li>Instead, we should have a metaprogramming library, and generate hs files.</li>
-            </ul>
-          </li>
-          <li>Build is too slow.
-            <ul>
-              <li>Where should we fix this? GHC? Cabal?</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>What I think every imperative programming language gets wrong
-        <ul>
-          <li>Statements vs expressions
-            <ul>
-              <li>Statement should not exist. Only expressions should.
-                <ul>
-                  <li>Xtend and Haxe do this right.
-                    <ul>
-                      <li>https://www.eclipse.org/xtend/documentation/203_xtend_expressions.html</li>
-                      <li>https://code.haxe.org/category/principles/everything-is-an-expression.html</li>
-                    </ul>
-                  </li>
-                  <li>We can use lambda calculus for imperative programming.
-                    <ul>
-                      <li>Treat the statement separator (here we use semicolon <code class="highlighter-rouge">;</code>)
-  as an operator (function with infix syntax)
-  that sequences the effects of two expressions.
-                        <ul>
-                          <li>For example:
-                            <ul>
-                              <li>Let <code class="highlighter-rouge">a</code> be an expression.</li>
-                              <li>Let <code class="highlighter-rouge">b</code> be an expression.</li>
-                              <li>Thus <code class="highlighter-rouge">a;b</code> is an expression.</li>
-                              <li>The value of <code class="highlighter-rouge">a;b</code> is the value of <code class="highlighter-rouge">b</code>.</li>
-                              <li>The effect of <code class="highlighter-rouge">a;b</code> is the effect of <code class="highlighter-rouge">a</code> followed by the effect of <code class="highlighter-rouge">b</code>.</li>
-                            </ul>
-                          </li>
-                          <li>Semicolon is associative: <code class="highlighter-rouge">(a;b);c = a;(b;c)</code>. This also holds for the effects.</li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>Can we replace statements with expressions in existing imperative languages without breaking backward compatibility?</li>
-                </ul>
-              </li>
-              <li>But C has https://en.wikipedia.org/wiki/Comma_operator</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
     </ul>
   </li>
   <li>2002, article collection, “Recent advances in Java technology: theory, application, implementation” http://www.cs.nuim.ie/~jpower/Research/Papers/2002/power-raijt-toc.pdf</li>
@@ -822,6 +681,11 @@ functional languages for systems programming?
               <li><a href="http://thyer.name/phd-thesis/thesis-thyer.pdf">Thyer’s PhD thesis “Lazy specialization”</a> has an accessible introduction to lambda calculus in Chapter 2.
                 <ul>
                   <li>“Tower of interpreters” test</li>
+                  <li>2018, “Collapsing towers of interpreters” http://lampwww.epfl.ch/~amin/pub/collapsing-towers.pdf
+                    <ul>
+                      <li>“It is well known that <em>staging</em> an interpreter – making it generate code whenever it would normally interpret an expression – yields a compiler […]”</li>
+                    </ul>
+                  </li>
                 </ul>
               </li>
               <li>1991, “A partial evaluator for the untyped lambda-calculus”, <a href="https://www.cambridge.org/core/journals/journal-of-functional-programming/article/a-partial-evaluator-for-the-untyped-lambda-calculus/EE324F936F0A009B6766B13FF6755DFC">paywall</a>
@@ -1696,6 +1560,185 @@ Perhaps related to data modeling.
   <li>Functional Payout Framework http://lambda-the-ultimate.org/node/3331</li>
   <li><a href="https://nikita-volkov.github.io/if-haskell-were-strict/">If Haskell were strict, what would the laziness be like?</a></li>
   <li>http://homepages.inf.ed.ac.uk/wadler/papers/free-rectypes/free-rectypes.txt</li>
+</ul>
+
+<h2 id="justifying-the-creation-of-yet-another-programming-language">Justifying the creation of yet another programming language</h2>
+
+<p>A new programming language should fix unforeseen design mistakes in existing programming languages.
+It should not repeat their design mistakes.
+Therefore we should collect the design mistakes so that we can avoid repeating them.</p>
+
+<h2 id="design-mistakes">Design mistakes</h2>
+
+<p>What is a mistake?
+How do we know it’s a mistake?</p>
+
+<p>We realize something is a mistake when we find a better way.</p>
+
+<h3 id="common-design-mistakes">Common design mistakes</h3>
+
+<h4 id="dynamic-typing">Dynamic typing</h4>
+
+<p>Dynamic typing is a design mistake.
+Type inference goes back to 1958.
+ML has type inference since 1973.
+It’s 2018.
+There is no excuse for ignoring 60 years of research.
+See <a href="https://en.wikipedia.org/wiki/Type_inference#Hindley%E2%80%93Milner_type_inference_algorithm">WP1</a>,
+<a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system#History_of_type_inference">WP2</a>.</p>
+
+<h4 id="lack-of-metaprogramming-support">Lack of metaprogramming support</h4>
+
+<p>Lack of metaprogramming support is a design mistake.</p>
+
+<h4 id="mutable-by-default">Mutable by default</h4>
+
+<p>Having variables mutable by default is a design mistake.</p>
+
+<h4 id="non-first-class-constructs">Non-first-class constructs</h4>
+
+<p>Object-oriented programming is a design mistake.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">a.b()</code> should not mean “call method b of object a”</li>
+  <li><code class="highlighter-rouge">a.b()</code> should mean “get the function a.b, then call it”.</li>
+  <li><code class="highlighter-rouge">a.b()</code> should mean <code class="highlighter-rouge">(a.b)()</code>.
+    <ul>
+      <li><code class="highlighter-rouge">m = a.b; m();</code> should mean the same as <code class="highlighter-rouge">a.b()</code>.</li>
+      <li>Functions should be first-class.
+  Methods should not exist.
+  Fields are enough (with function types).
+  It should be possible to assign to methods.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Statements are a design mistake.
+They should not exist.
+Only expressions should.
+Xtend and Haxe do this right.</p>
+<ul>
+  <li>https://www.eclipse.org/xtend/documentation/203_xtend_expressions.html</li>
+  <li>https://code.haxe.org/category/principles/everything-is-an-expression.html</li>
+  <li>Can we replace statements with expressions in existing imperative languages without breaking backward compatibility?</li>
+  <li>But C has https://en.wikipedia.org/wiki/Comma_operator</li>
+  <li>We can use lambda calculus for imperative programming.
+    <ul>
+      <li>Treat the statement separator (here we use semicolon <code class="highlighter-rouge">;</code>)
+  as an operator (function with infix syntax)
+  that sequences the effects of two expressions.
+        <ul>
+          <li>For example:
+            <ul>
+              <li>Let <code class="highlighter-rouge">a</code> be an expression.</li>
+              <li>Let <code class="highlighter-rouge">b</code> be an expression.</li>
+              <li>Thus <code class="highlighter-rouge">a;b</code> is an expression.</li>
+              <li>The value of <code class="highlighter-rouge">a;b</code> is the value of <code class="highlighter-rouge">b</code>.</li>
+              <li>The effect of <code class="highlighter-rouge">a;b</code> is the effect of <code class="highlighter-rouge">a</code> followed by the effect of <code class="highlighter-rouge">b</code>.</li>
+            </ul>
+          </li>
+          <li>Semicolon is associative: <code class="highlighter-rouge">(a;b);c = a;(b;c)</code>. This also holds for the effects.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="java">Java</h3>
+
+<p>JVM does too much.
+JVM bytecode verification is the compiler’s job, not the VM’s.
+Does JVM bytecode verification even add any security?
+Isn’t JNI a bigger security hole?</p>
+
+<ul>
+  <li>Assuming that programmers are untrustworthy idiots.
+Programmers make mistakes, but they aren’t idiots.
+    <ul>
+      <li>https://www.reddit.com/r/programming/comments/utqb/ask_reddit_why_do_so_many_reddit_users_hate_java/cutv1/
+        <ul>
+          <li>“Java’s solution to the problem of C++ allowing you to blow your foot off was to chop off your legs.”</li>
+        </ul>
+      </li>
+      <li>Forbidding multiple inheritance.</li>
+      <li>Java interfaces.
+  See 2015 Robert C. Martin article <a href="http://blog.cleancoder.com/uncle-bob/2015/01/08/InterfaceConsideredHarmful.html">Java interface considered harmful</a>.</li>
+      <li>Implementing generics too late.</li>
+      <li>Implementing generics with type erasure.
+  C# 2.0 introduced generics, without type erasure, while maintaining backward compatibility,
+  by duplicating everything in System.Collections to System.Collections.Generic.
+  This is ugly, but less ugly than type erasure.
+        <ul>
+          <li>https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-version-history</li>
+          <li>https://stackoverflow.com/questions/11436802/how-are-c-sharp-generics-implemented
+            <ul>
+              <li>https://blogs.msdn.microsoft.com/ericlippert/2009/07/30/whats-the-difference-part-one-generics-are-not-templates/</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Checked exceptions don’t play nice with java.util.Stream.
+  Either checked exception or java.util.Stream is a design mistake.
+        <ul>
+          <li>https://en.wikipedia.org/wiki/Effect_system</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>What others think Java gets wrong
+    <ul>
+      <li>http://tech.jonathangardner.net/wiki/Why_Java_Sucks</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="c-and-c">C and C++</h3>
+
+<p>In the 1970s these were tolerable: memory was limited, tools didn’t exist.
+In 2018 these aren’t tolerable.</p>
+
+<ul>
+  <li>No C++ compiler follows the standard 100%.</li>
+  <li>Parsing requires symbol resolution and type checking.</li>
+  <li>Header files. They should be automatically generated from C files instead.</li>
+  <li>Preprocessor works on text, not on C/C++ AST.</li>
+</ul>
+
+<h3 id="haskell">Haskell</h3>
+
+<ul>
+  <li>What I think Haskell gets wrong
+    <ul>
+      <li>Template Haskell
+        <ul>
+          <li>Instead, we should have a metaprogramming library, and generate hs files.</li>
+        </ul>
+      </li>
+      <li>Build is too slow.</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="what-1">what</h2>
+
+<p>A problem with current programming methodologies is that they don’t capture the higher-level properties of software, such as the architecture.
+For example, how do we write, in a way that the computer can exploit, this statement:
+“The fields of class C correspond one-to-one with the columns of database table T.”?</p>
+
+<ul>
+  <li>Other people’s experiences
+    <ul>
+      <li>https://www.quora.com/If-you-were-to-design-a-programming-language-what-other-programming-language-would-it-evolve-from-and-what-aspect-of-that-language-would-you-do-differently</li>
+      <li><a href="http://beza1e1.tuxen.de/articles/proglang_mistakes.html">5 Mistakes in Programming Language Design ― Andreas Zwinkau</a>
+        <ul>
+          <li><a href="https://news.ycombinator.com/item?id=1500665">Mistakes in programming language design | Hacker News</a></li>
+        </ul>
+      </li>
+      <li><a href="https://softwareengineering.stackexchange.com/questions/55047/what-is-the-greatest-design-flaw-you-have-faced-in-any-programming-language">What is the greatest design flaw you have faced in any programming language? - Software Engineering Stack Exchange</a></li>
+      <li><a href="http://www.inquisition.ca/en/info/gepsypl/rules.htm">Programming Language Design Rules</a></li>
+      <li>1999 Steele article “Growing a language” <a href="http://www.catonmat.net/blog/growing-a-language-by-guy-steele/">html</a></li>
+    </ul>
+  </li>
 </ul>
 
   </div>

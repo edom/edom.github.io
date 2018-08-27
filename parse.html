@@ -32,6 +32,31 @@
   
 
   
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
 </head>
 
 
@@ -45,6 +70,41 @@
 
 
     
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\abs[1]{\left|#1\right|}
+\newcommand\dom{\textrm{dom}}
+\newcommand\cod{\textrm{cod}}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
@@ -55,158 +115,269 @@
   </header>
 
   <div class="post-content">
+    <p>I expect the computer to infer a parser and a pretty-printer from the same grammar.
+Parser generators only give half of what I want.</p>
+
+<ul id="markdown-toc">
+  <li><a href="#what-is-parsing" id="markdown-toc-what-is-parsing">What is parsing?</a>    <ul>
+      <li><a href="#lexical-analysis" id="markdown-toc-lexical-analysis">Lexical analysis</a></li>
+    </ul>
+  </li>
+  <li><a href="#what-is-the-inverse-of-parsing" id="markdown-toc-what-is-the-inverse-of-parsing">What is the inverse of parsing?</a></li>
+  <li><a href="#how-should-parsing-be-done" id="markdown-toc-how-should-parsing-be-done">How should parsing be done?</a></li>
+  <li><a href="#incrementalonline-parsing" id="markdown-toc-incrementalonline-parsing">Incremental/online parsing</a></li>
+  <li><a href="#parsing-with-brzozowski-quotients" id="markdown-toc-parsing-with-brzozowski-quotients">Parsing with Brzozowski quotients</a></li>
+  <li><a href="#history-of-parsing" id="markdown-toc-history-of-parsing">History of parsing</a></li>
+  <li><a href="#what" id="markdown-toc-what">What</a></li>
+</ul>
+
+<h2 id="what-is-parsing">What is parsing?</h2>
+
+<p>Parsing is also called “syntax analysis” (analysis = breakdown, syntax = put together).</p>
+
+<p>Parsing is the act of modifying the <em>state</em> of the parser.
+This is the operational view.</p>
+
+<p>Parsing is converting a sequence to a tree.
+This is the data view.</p>
+
+<p>Trees are graphs. Why stop at trees? Why not graphs?</p>
+
+<ul>
+  <li><a href="https://en.wikipedia.org/wiki/Graph_rewriting">WP:Graph rewriting</a></li>
+  <li>2015 slides “Graph grammars” <a href="http://www.its.caltech.edu/~matilde/GraphGrammarsLing.pdf">pdf</a></li>
+  <li>1993 article “A Graph Parsing Algorithm and Implementation” <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.612.9698&amp;rep=rep1&amp;type=pdf">pdf</a></li>
+  <li>1990 article “A Graph Parsing Algorithm” <a href="https://dl.acm.org/citation.cfm?id=859753">paywall</a></li>
+</ul>
+
+<p>What is the difference between syntax and grammar?</p>
+
+<h3 id="lexical-analysis">Lexical analysis</h3>
+
+<p>We lex (perform lexical analysis / tokenization) to clean up the grammar (no need to mention whitespaces in the grammar).
+For example:</p>
+
+<ul>
+  <li>With lexing:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>exp ::= exp PLUS exp
+</code></pre></div></div>
+
+<ul>
+  <li>Without lexing:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>white ::= ...
+exp ::= exp white "+" white exp
+</code></pre></div></div>
+
+<p>“Strictly speaking, tokenization may be handled by the parser.
+The reason why we tend to bother with tokenising in practice is that it makes the parser simpler,
+and decouples it from the character encoding used for the source code.”
+(<a href="https://en.wikibooks.org/wiki/Compiler_Construction/Lexical_analysis">Wikibooks:Compiler construction</a>)</p>
+
+<h2 id="what-is-the-inverse-of-parsing">What is the inverse of parsing?</h2>
+
+<p>Unparsing?</p>
+
+<p>Parsing is the treeization (delinearization, deserialization) of a line.
+Unparsing is the linearization (serialization) of a tree.</p>
+
+<p>Parsing is String -&gt; Maybe Tree.
+Unparsing is Tree -&gt; String.</p>
+
+<p>Can we make parsing truly one-to-one?
+String -&gt; Tree.
+CST = AST.
+Very rigid syntax.
+Forbid whitespace freedom.</p>
+
+<p>Another possibility: Inverse of parsing is anti-parsing (generation)?
+From grammar, generate all possible strings and their syntax trees.</p>
+
+<p>Inverse of analytical grammar is generative grammar?</p>
+
+<ul>
+  <li>https://en.wikipedia.org/wiki/Generative_grammar</li>
+  <li>https://en.wikipedia.org/wiki/Formal_grammar#Analytic_grammars</li>
+</ul>
+
+<p>Parser is syntax analyzer.
+Analysis is the opposite of synthesis?
+What is syntax synthesizer?</p>
+
+<p>Inverse of parsing is pretty-printing?</p>
+
+<p>If matching is analogous to subtraction, then what is analogous to multiplication?
+Generation?</p>
+
+<ul>
+  <li>algebra of pretty-printing
     <ul>
+      <li>1995, Hughes, “The design of a pretty-printing library”</li>
+      <li>1998, Wadler, “A prettier printer”</li>
+      <li>Hughes, Peyton-Jones, et al., http://hackage.haskell.org/package/pretty-1.1.3.6/docs/Text-PrettyPrint-HughesPJ.html</li>
+    </ul>
+  </li>
+  <li><a href="https://www.cs.kent.ac.uk/people/staff/oc/pretty.html">Efficient simple pretty printing combinators</a></li>
+</ul>
+
+<h2 id="how-should-parsing-be-done">How should parsing be done?</h2>
+
+<p>From grammar description, the machine should generate both a parser and a pretty-printer.</p>
+
+<p>Given grammar, generate both parser and unparser/pretty-printer.</p>
+<ul>
+  <li>http://www.semdesigns.com/Products/DMS/DMSPrettyPrinters.html?Home=DMSToolkit</li>
+  <li>https://hackage.haskell.org/package/invertible-syntax-0.2.1/src/Example.lhs</li>
+  <li>https://hackage.haskell.org/package/invertible-syntax</li>
+  <li><a href="http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf">Tillmann Rendel and Klaus Ostermann. “Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing”. In Proc. of Haskell Symposium, 2010.</a></li>
+  <li>http://jssst.or.jp/files/user/taikai/2016/PPL/ppl1-1.pdf</li>
+  <li><a href="http://lambda-the-ultimate.org/node/4191">LTU: Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing</a></li>
+  <li><a href="http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf">Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing</a></li>
+</ul>
+
+<p>Some parsing techniques:</p>
+
+<ul>
+  <li>recursive descent parser (writing a parser manually)</li>
+  <li>parser generators: Happy (Haskell), Bison (with Yacc)</li>
+  <li>parser combinators: Parsec (Haskell)</li>
+  <li>PEG (parsing expression grammar)</li>
+  <li>Brzozowski quotient</li>
+  <li>binary-parser description languages: ASN.1, Google Protobuf, Apache Thrift, Apache Avro</li>
+  <li>invertible parsing?</li>
+  <li>https://en.wikipedia.org/wiki/Chart_parser</li>
+</ul>
+
+<h2 id="incrementalonline-parsing">Incremental/online parsing</h2>
+
+<p>Incremental parsing is parsing as input becomes available (without waiting for the whole input to become available).</p>
+
+<ul>
+  <li>Type-directed automatic incrementalization
+    <ul>
+      <li>http://www.cs.cmu.edu/~joshuad/papers/incr/</li>
+    </ul>
+  </li>
+  <li>https://en.wikipedia.org/wiki/Incremental_computing
+    <ul>
+      <li>https://inc-lc.github.io/</li>
+    </ul>
+  </li>
+  <li>https://hackage.haskell.org/package/incremental-parser</li>
+  <li><a href="https://yi-editor.github.io/posts/2014-09-04-incremental-parsing/">incremental/online parsing</a></li>
+</ul>
+
+<h2 id="parsing-with-brzozowski-quotients">Parsing with Brzozowski quotients</h2>
+
+<p>Brzozowski quotient is like quotient in integer division, but for strings.
+(Formal definition?)</p>
+
+<p>Why is Brzozowski quotient called Brzozowski derivative?</p>
+
+<ul>
+  <li><a href="https://en.wikipedia.org/wiki/Quotient_of_a_formal_language">Quotient of a formal language</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Brzozowski_derivative">Brzozowski derivative</a>
+    <ul>
+      <li><a href="https://arxiv.org/find/cs/1/au:+Brzozowski_J/0/1/0/all/0/1">Janusz Brzozowski et al. on arxiv</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>The <em>multiplication</em> of two strings \( x \) and \( y \) is the concatenation \( x \cdot y = x y \).</p>
+
+<p>Multiplication is associative: \( (xy)z = x(yz) \).</p>
+
+<p>The <em>inverse</em> of a string \( x \) is written \( x^{-1} \).
+It’s hypothetical.
+It’s pure symbolic manipulation.
+Don’t imagine what it looks like.
+Do care about its properties:</p>
+
+<ul>
+  <li>We define \( x^{-1} x = \epsilon \).</li>
+  <li>We define \( x x^{-1} = \epsilon \).</li>
+  <li>We define \( (x y)^{-1} = x^{-1} y^{-1} \).</li>
+</ul>
+
+<p>The <em>left division</em> of a string \( x \) by divisor \( y \) is \( y^{-1} x \).</p>
+
+<p>The <em>right division</em> of a string \( x \) by divisor \( y \) is \( x y^{-1} \).</p>
+
+<p>How do we define quotient and remainder?</p>
+
+<p>Perhaps Brzozowski’s paper describes why it’s called a derivative?</p>
+
+<p>The multiplication of two languages \( A \) and \( B \) is the Cartesian product \( AB = \{ ab ~|~ a \in A, b \in B \} \).</p>
+
+<ul>
+  <li>Differentiating Parsers
+Automatic derivation of incremental parser from a grammar or a non-incremental parser?
+Like automatic differentiation but generalized to any program?
+http://lambda-the-ultimate.org/node/3704</li>
+  <li>http://matt.might.net/articles/implementation-of-regular-expression-matching-in-scheme-with-derivatives/</li>
+  <li>http://okmij.org/ftp/continuations/differentiating-parsers.html</li>
+  <li>Parsing with derivatives?
+    <ul>
+      <li>https://hackage.haskell.org/package/derp</li>
+      <li>https://arxiv.org/abs/1010.5023</li>
+      <li>http://matt.might.net/articles/parsing-with-derivatives/ “Yacc is dead”</li>
+    </ul>
+  </li>
+  <li>Brzozowski quotients.
+    <ul>
+      <li><a href="https://arxiv.org/abs/1010.5023">Yacc is dead</a></li>
+      <li>“Parsing with derivatives”</li>
+    </ul>
+  </li>
+  <li>2017, <a href="https://www.cl.cam.ac.uk/~nk480/parsing.pdf">“A Typed, Algebraic Approach to Parsing”</a>
+    <ul>
+      <li>“[…] we extend the notion of Brzozowski derivative from regular expressions to the typed context-free expressions.”</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="history-of-parsing">History of parsing</h2>
+
+<ul>
   <li><a href="https://jeffreykegler.github.io/personal/timeline_v3">Parsing: a timeline – V3.0</a>: 2012 article about a history of parsing.
     <ul>
       <li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/8cz97n/parsing_a_timeline_hopefully_this_puts_parsing_is/">Parsing: a timeline. Hopefully this puts “Parsing is a solved problem” to rest. : ProgrammingLanguages</a></li>
       <li><a href="http://jeffreykegler.github.io/Ocean-of-Awareness-blog/individual/2018/05/knuth_1965.html">Why is parsing considered solved?</a></li>
     </ul>
   </li>
-  <li>syntax, grammar, parsing, pretty-printing
+</ul>
+
+<h2 id="what">What</h2>
+
+<ul>
+  <li>Parsing Expression Grammar (PEG)
     <ul>
-      <li>Parsing is the act of modifying the <em>state</em> of the parser.
+      <li>https://github.com/harc/ohm/
         <ul>
-          <li>2017, <a href="https://www.cl.cam.ac.uk/~nk480/parsing.pdf">“A Typed, Algebraic Approach to Parsing”</a>
+          <li>https://ohmlang.github.io/
             <ul>
-              <li>“[…] we extend the notion of Brzozowski derivative from regular expressions to the typed context-free expressions.”</li>
+              <li>https://harc.ycr.org/project/ohm/</li>
             </ul>
           </li>
         </ul>
       </li>
-      <li>Unparsing is the linearization (serialization) of a tree.</li>
-      <li>Parsing is the treeization (delinearization, deserialization) of a line.</li>
-      <li>Parsing is String -&gt; Maybe Tree.</li>
-      <li>Unparsing is Tree -&gt; String.</li>
-      <li>Can we make parsing truly one-to-one? String -&gt; Tree. CST = AST. Very rigid syntax. Forbid whitespace freedom.</li>
-      <li>Why lex (lexical analysis / tokenization)?
-        <ul>
-          <li>Cleaner grammar (no need to mention whitespaces in the grammar).
-            <ul>
-              <li>Example:
-                <ul>
-                  <li>With lexing: <code class="highlighter-rouge">exp ::= exp "+" exp</code></li>
-                  <li>Without lexing: <code class="highlighter-rouge">exp ::= exp white "+" white exp</code>.</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li>https://en.wikibooks.org/wiki/Compiler_Construction/Lexical_analysis
-            <ul>
-              <li>“Strictly speaking, tokenization may be handled by the parser. The reason why we tend to bother with tokenising in practice is that it makes the parser simpler,
-  and decouples it from the character encoding used for the source code.”</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>given grammar, generate both parser and unparser/pretty-printer
-        <ul>
-          <li>http://www.semdesigns.com/Products/DMS/DMSPrettyPrinters.html?Home=DMSToolkit</li>
-          <li>https://hackage.haskell.org/package/invertible-syntax-0.2.1/src/Example.lhs</li>
-          <li>https://hackage.haskell.org/package/invertible-syntax</li>
-          <li><a href="http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf">Tillmann Rendel and Klaus Ostermann. “Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing”. In Proc. of Haskell Symposium, 2010.</a></li>
-          <li>http://jssst.or.jp/files/user/taikai/2016/PPL/ppl1-1.pdf</li>
-        </ul>
-      </li>
-      <li>Parsing Expression Grammar (PEG)
-        <ul>
-          <li>https://github.com/harc/ohm/
-            <ul>
-              <li>https://ohmlang.github.io/
-                <ul>
-                  <li>https://harc.ycr.org/project/ohm/</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li>Packrat</li>
-        </ul>
-      </li>
-      <li>2015, <a href="https://arxiv.org/abs/1511.08307">Nez: practical open grammar language</a></li>
-      <li>algebra of pretty-printing
-        <ul>
-          <li>1995, Hughes, “The design of a pretty-printing library”</li>
-          <li>1998, Wadler, “A prettier printer”</li>
-          <li>Hughes, Peyton-Jones, et al., http://hackage.haskell.org/package/pretty-1.1.3.6/docs/Text-PrettyPrint-HughesPJ.html</li>
-        </ul>
-      </li>
-      <li><a href="https://www.cs.kent.ac.uk/people/staff/oc/pretty.html">Efficient simple pretty printing combinators</a></li>
-      <li>Earley parser
-        <ul>
-          <li>https://en.wikipedia.org/wiki/Earley_parser</li>
-          <li>https://hackage.haskell.org/package/Earley</li>
-        </ul>
-      </li>
-      <li>https://github.com/Gabriel439/post-rfc/blob/master/sotu.md#parsing–pretty-printing
-        <ul>
-          <li>https://hackage.haskell.org/package/trifecta</li>
-          <li>https://hackage.haskell.org/package/parsers</li>
-        </ul>
-      </li>
+      <li>Packrat</li>
     </ul>
   </li>
-  <li><a href="https://yi-editor.github.io/posts/2014-09-04-incremental-parsing/">incremental/online parsing</a></li>
-  <li>Making compilers
+  <li>2015, <a href="https://arxiv.org/abs/1511.08307">Nez: practical open grammar language</a></li>
+  <li>Earley parser
     <ul>
-      <li>From grammar description, the machine should generate both a parser and a pretty-printer.
-        <ul>
-          <li><a href="http://lambda-the-ultimate.org/node/4191">LTU: Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing</a></li>
-          <li><a href="http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf">Invertible Syntax Descriptions: Unifying Parsing and Pretty Printing</a></li>
-        </ul>
-      </li>
-      <li>Syntax analysis (parsing)
-        <ul>
-          <li>Brzozowski quotients.
-            <ul>
-              <li><a href="https://arxiv.org/abs/1010.5023">Yacc is dead</a></li>
-              <li>“Parsing with derivatives”</li>
-            </ul>
-          </li>
-          <li>What is an/the inverse of parsing?
-            <ul>
-              <li>Inverse of parsing is generation? From grammar, generate all possible strings and their syntax trees.</li>
-              <li>Inverse of analytical grammar is generative grammar?</li>
-              <li>Parser is syntax analyzer.</li>
-              <li>Analysis is the opposite of synthesis?</li>
-              <li>What is syntax synthesizer?</li>
-              <li>Inverse of parsing is pretty-printing?</li>
-              <li>If matching is analogous to subtraction, then what is analogous to multiplication? Generation?</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
+      <li>https://en.wikipedia.org/wiki/Earley_parser</li>
+      <li>https://hackage.haskell.org/package/Earley</li>
     </ul>
   </li>
-  <li>Parsing
+  <li>https://github.com/Gabriel439/post-rfc/blob/master/sotu.md#parsing–pretty-printing
     <ul>
-      <li>Can we parse incrementally?
-        <ul>
-          <li>Differentiating Parsers
-  Automatic derivation of incremental parser from a grammar or a non-incremental parser?
-  Like automatic differentiation but generalized to any program?
-  http://lambda-the-ultimate.org/node/3704</li>
-          <li>http://matt.might.net/articles/implementation-of-regular-expression-matching-in-scheme-with-derivatives/</li>
-          <li>Parsing with derivatives?
-            <ul>
-              <li>https://hackage.haskell.org/package/derp</li>
-              <li>https://arxiv.org/abs/1010.5023</li>
-              <li>http://matt.might.net/articles/parsing-with-derivatives/ “Yacc is dead”</li>
-            </ul>
-          </li>
-          <li>Type-directed automatic incrementalization
-            <ul>
-              <li>http://www.cs.cmu.edu/~joshuad/papers/incr/</li>
-            </ul>
-          </li>
-          <li>https://en.wikipedia.org/wiki/Incremental_computing
-            <ul>
-              <li>https://inc-lc.github.io/</li>
-            </ul>
-          </li>
-          <li>http://okmij.org/ftp/continuations/differentiating-parsers.html</li>
-          <li>https://hackage.haskell.org/package/incremental-parser</li>
-          <li>Brzozowski quotient</li>
-        </ul>
-      </li>
+      <li>https://hackage.haskell.org/package/trifecta</li>
+      <li>https://hackage.haskell.org/package/parsers</li>
     </ul>
   </li>
 </ul>
