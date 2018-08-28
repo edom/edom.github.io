@@ -64,21 +64,7 @@
   <li><a href="#extending-lambda-calculus-with-various-bells-and-whistles" id="markdown-toc-extending-lambda-calculus-with-various-bells-and-whistles">Extending lambda-calculus with various bells and whistles</a></li>
   <li><a href="#where-to-find-recent-programming-language-research" id="markdown-toc-where-to-find-recent-programming-language-research">Where to find recent programming language research?</a></li>
   <li><a href="#what" id="markdown-toc-what">what</a></li>
-  <li><a href="#justifying-the-creation-of-yet-another-programming-language" id="markdown-toc-justifying-the-creation-of-yet-another-programming-language">Justifying the creation of yet another programming language</a></li>
-  <li><a href="#design-mistakes" id="markdown-toc-design-mistakes">Design mistakes</a>    <ul>
-      <li><a href="#common-design-mistakes" id="markdown-toc-common-design-mistakes">Common design mistakes</a>        <ul>
-          <li><a href="#dynamic-typing" id="markdown-toc-dynamic-typing">Dynamic typing</a></li>
-          <li><a href="#lack-of-metaprogramming-support" id="markdown-toc-lack-of-metaprogramming-support">Lack of metaprogramming support</a></li>
-          <li><a href="#mutable-by-default" id="markdown-toc-mutable-by-default">Mutable by default</a></li>
-          <li><a href="#non-first-class-constructs" id="markdown-toc-non-first-class-constructs">Non-first-class constructs</a></li>
-        </ul>
-      </li>
-      <li><a href="#java" id="markdown-toc-java">Java</a></li>
-      <li><a href="#c-and-c" id="markdown-toc-c-and-c">C and C++</a></li>
-      <li><a href="#haskell" id="markdown-toc-haskell">Haskell</a></li>
-    </ul>
-  </li>
-  <li><a href="#what-1" id="markdown-toc-what-1">what</a></li>
+  <li><a href="#designing-programming-languages" id="markdown-toc-designing-programming-languages">Designing programming languages</a></li>
 </ul>
 
 <h2 id="goal">Goal</h2>
@@ -1491,7 +1477,7 @@ functional languages for systems programming?
     </ul>
   </li>
   <li><a href="https://stackoverflow.com/questions/50490883/why-is-ml-called-meta-language">metaprogramming - Why is ML called Meta-Language? - Stack Overflow</a></li>
-  <li>What is incremental lambda-calculus, and (automatic) differentiation of algebraic data types?</li>
+  <li>What is the relationship between incremental lambda-calculus and automatic differentiation of programs (or of algebraic data types)?</li>
   <li>“Purely functional lazy nondeterministic programming”, <a href="https://www.cambridge.org/core/journals/journal-of-functional-programming/article/purely-functional-lazy-nondeterministic-programming/1E8BA117E549A9612BC4AF9804E5507A">paywall</a></li>
   <li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/8vcrzb/what_are_some_interesting_language_features_that/">What are some interesting language features that may not be well known? : ProgrammingLanguages</a></li>
   <li><a href="https://blog.acolyer.org/2018/01/26/a-practitioners-guide-to-reading-programming-languages-papers/">A practitioner’s guide to reading programming languages papers</a>
@@ -1562,183 +1548,17 @@ Perhaps related to data modeling.
   <li>http://homepages.inf.ed.ac.uk/wadler/papers/free-rectypes/free-rectypes.txt</li>
 </ul>
 
-<h2 id="justifying-the-creation-of-yet-another-programming-language">Justifying the creation of yet another programming language</h2>
-
-<p>A new programming language should fix unforeseen design mistakes in existing programming languages.
-It should not repeat their design mistakes.
-Therefore we should collect the design mistakes so that we can avoid repeating them.</p>
-
-<h2 id="design-mistakes">Design mistakes</h2>
-
-<p>What is a mistake?
-How do we know it’s a mistake?</p>
-
-<p>We realize something is a mistake when we find a better way.</p>
-
-<h3 id="common-design-mistakes">Common design mistakes</h3>
-
-<h4 id="dynamic-typing">Dynamic typing</h4>
-
-<p>Dynamic typing is a design mistake.
-Type inference goes back to 1958.
-ML has type inference since 1973.
-It’s 2018.
-There is no excuse for ignoring 60 years of research.
-See <a href="https://en.wikipedia.org/wiki/Type_inference#Hindley%E2%80%93Milner_type_inference_algorithm">WP1</a>,
-<a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system#History_of_type_inference">WP2</a>.</p>
-
-<h4 id="lack-of-metaprogramming-support">Lack of metaprogramming support</h4>
-
-<p>Lack of metaprogramming support is a design mistake.</p>
-
-<h4 id="mutable-by-default">Mutable by default</h4>
-
-<p>Having variables mutable by default is a design mistake.</p>
-
-<h4 id="non-first-class-constructs">Non-first-class constructs</h4>
-
-<p>Object-oriented programming is a design mistake.</p>
+<h2 id="designing-programming-languages">Designing programming languages</h2>
 
 <ul>
-  <li><code class="highlighter-rouge">a.b()</code> should not mean “call method b of object a”</li>
-  <li><code class="highlighter-rouge">a.b()</code> should mean “get the function a.b, then call it”.</li>
-  <li><code class="highlighter-rouge">a.b()</code> should mean <code class="highlighter-rouge">(a.b)()</code>.
-    <ul>
-      <li><code class="highlighter-rouge">m = a.b; m();</code> should mean the same as <code class="highlighter-rouge">a.b()</code>.</li>
-      <li>Functions should be first-class.
-  Methods should not exist.
-  Fields are enough (with function types).
-  It should be possible to assign to methods.</li>
-    </ul>
-  </li>
-</ul>
-
-<p>Statements are a design mistake.
-They should not exist.
-Only expressions should.
-Xtend and Haxe do this right.</p>
-<ul>
-  <li>https://www.eclipse.org/xtend/documentation/203_xtend_expressions.html</li>
-  <li>https://code.haxe.org/category/principles/everything-is-an-expression.html</li>
-  <li>Can we replace statements with expressions in existing imperative languages without breaking backward compatibility?</li>
-  <li>But C has https://en.wikipedia.org/wiki/Comma_operator</li>
-  <li>We can use lambda calculus for imperative programming.
-    <ul>
-      <li>Treat the statement separator (here we use semicolon <code class="highlighter-rouge">;</code>)
-  as an operator (function with infix syntax)
-  that sequences the effects of two expressions.
-        <ul>
-          <li>For example:
-            <ul>
-              <li>Let <code class="highlighter-rouge">a</code> be an expression.</li>
-              <li>Let <code class="highlighter-rouge">b</code> be an expression.</li>
-              <li>Thus <code class="highlighter-rouge">a;b</code> is an expression.</li>
-              <li>The value of <code class="highlighter-rouge">a;b</code> is the value of <code class="highlighter-rouge">b</code>.</li>
-              <li>The effect of <code class="highlighter-rouge">a;b</code> is the effect of <code class="highlighter-rouge">a</code> followed by the effect of <code class="highlighter-rouge">b</code>.</li>
-            </ul>
-          </li>
-          <li>Semicolon is associative: <code class="highlighter-rouge">(a;b);c = a;(b;c)</code>. This also holds for the effects.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="java">Java</h3>
-
-<p>JVM does too much.
-JVM bytecode verification is the compiler’s job, not the VM’s.
-Does JVM bytecode verification even add any security?
-Isn’t JNI a bigger security hole?</p>
-
-<ul>
-  <li>Assuming that programmers are untrustworthy idiots.
-Programmers make mistakes, but they aren’t idiots.
-    <ul>
-      <li>https://www.reddit.com/r/programming/comments/utqb/ask_reddit_why_do_so_many_reddit_users_hate_java/cutv1/
-        <ul>
-          <li>“Java’s solution to the problem of C++ allowing you to blow your foot off was to chop off your legs.”</li>
-        </ul>
-      </li>
-      <li>Forbidding multiple inheritance.</li>
-      <li>Java interfaces.
-  See 2015 Robert C. Martin article <a href="http://blog.cleancoder.com/uncle-bob/2015/01/08/InterfaceConsideredHarmful.html">Java interface considered harmful</a>.</li>
-      <li>Implementing generics too late.</li>
-      <li>Implementing generics with type erasure.
-  C# 2.0 introduced generics, without type erasure, while maintaining backward compatibility,
-  by duplicating everything in System.Collections to System.Collections.Generic.
-  This is ugly, but less ugly than type erasure.
-        <ul>
-          <li>https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-version-history</li>
-          <li>https://stackoverflow.com/questions/11436802/how-are-c-sharp-generics-implemented
-            <ul>
-              <li>https://blogs.msdn.microsoft.com/ericlippert/2009/07/30/whats-the-difference-part-one-generics-are-not-templates/</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>Checked exceptions don’t play nice with java.util.Stream.
-  Either checked exception or java.util.Stream is a design mistake.
-        <ul>
-          <li>https://en.wikipedia.org/wiki/Effect_system</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>What others think Java gets wrong
-    <ul>
-      <li>http://tech.jonathangardner.net/wiki/Why_Java_Sucks</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="c-and-c">C and C++</h3>
-
-<p>In the 1970s these were tolerable: memory was limited, tools didn’t exist.
-In 2018 these aren’t tolerable.</p>
-
-<ul>
-  <li>No C++ compiler follows the standard 100%.</li>
-  <li>Parsing requires symbol resolution and type checking.</li>
-  <li>Header files. They should be automatically generated from C files instead.</li>
-  <li>Preprocessor works on text, not on C/C++ AST.</li>
-</ul>
-
-<h3 id="haskell">Haskell</h3>
-
-<ul>
-  <li>What I think Haskell gets wrong
-    <ul>
-      <li>Template Haskell
-        <ul>
-          <li>Instead, we should have a metaprogramming library, and generate hs files.</li>
-        </ul>
-      </li>
-      <li>Build is too slow.</li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="what-1">what</h2>
-
-<p>A problem with current programming methodologies is that they don’t capture the higher-level properties of software, such as the architecture.
-For example, how do we write, in a way that the computer can exploit, this statement:
-“The fields of class C correspond one-to-one with the columns of database table T.”?</p>
-
-<ul>
-  <li>Other people’s experiences
-    <ul>
-      <li>https://www.quora.com/If-you-were-to-design-a-programming-language-what-other-programming-language-would-it-evolve-from-and-what-aspect-of-that-language-would-you-do-differently</li>
-      <li><a href="http://beza1e1.tuxen.de/articles/proglang_mistakes.html">5 Mistakes in Programming Language Design ― Andreas Zwinkau</a>
-        <ul>
-          <li><a href="https://news.ycombinator.com/item?id=1500665">Mistakes in programming language design | Hacker News</a></li>
-        </ul>
-      </li>
-      <li><a href="https://softwareengineering.stackexchange.com/questions/55047/what-is-the-greatest-design-flaw-you-have-faced-in-any-programming-language">What is the greatest design flaw you have faced in any programming language? - Software Engineering Stack Exchange</a></li>
-      <li><a href="http://www.inquisition.ca/en/info/gepsypl/rules.htm">Programming Language Design Rules</a></li>
-      <li>1999 Steele article “Growing a language” <a href="http://www.catonmat.net/blog/growing-a-language-by-guy-steele/">html</a></li>
-    </ul>
-  </li>
+  <li>2018 article “Interdisciplinary Programming Language Design” <a href="http://www.cs.cmu.edu/~mcoblenz/HCPLD-preprint.pdf">pdf</a></li>
+  <li>2018 article “A Programmable Programming Language” <a href="http://silo.cs.indiana.edu:8346/c211/impatient/cacm-draft.pdf">pdf</a></li>
+  <li>2018 article “Combining Model Checking and Testing” <a href="https://www.cis.upenn.edu/~alur/CIS673/testing.pdf">pdf</a></li>
+  <li>2013 article “Idris, a General Purpose Dependently Typed Programming Language: Design and Implementation” <a href="https://eb.host.cs.st-andrews.ac.uk/drafts/impldtp.pdf">pdf</a></li>
+  <li>2007 article “Position Paper: Thoughts on Programming with Proof Assistants” <a href="https://ac.els-cdn.com/S1571066107002502/1-s2.0-S1571066107002502-main.pdf?_tid=19c6192b-ca57-4ef0-9403-1cfb624c817c&amp;acdnat=1535488824_78a2c31f390f3a1fb72f0c31024f2495">pdf</a></li>
+  <li>1996 article “Seven Deadly Sins of Introductory Programming Language Design” <a href="https://pdfs.semanticscholar.org/d314/78c5b95c399b6418b41011debefbc699c633.pdf">pdf</a></li>
+  <li>1996 book “Advanced programming language design” <a href="https://www.researchgate.net/profile/Raphael_Finkel/publication/220692467_Advanced_programming_language_design/links/0c96052af3e324bf31000000/Advanced-programming-language-design.pdf">pdf</a></li>
+  <li>1973 article “Hints on Programming Language Design” <a href="http://www.dtic.mil/dtic/tr/fulltext/u2/773391.pdf">pdf</a></li>
 </ul>
 
   </div>
