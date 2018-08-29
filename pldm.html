@@ -66,16 +66,21 @@
       <li><a href="#mutable-by-default" id="markdown-toc-mutable-by-default">Mutable by default</a></li>
       <li><a href="#non-first-class-constructs" id="markdown-toc-non-first-class-constructs">Non-first-class constructs</a></li>
       <li><a href="#virtual-machines" id="markdown-toc-virtual-machines">Virtual machines</a></li>
+      <li><a href="#more-than-one-way-to-do-something" id="markdown-toc-more-than-one-way-to-do-something">More than one way to do something</a></li>
     </ul>
   </li>
   <li><a href="#java" id="markdown-toc-java">Java</a>    <ul>
       <li><a href="#overcomplicated-java-virtual-machine" id="markdown-toc-overcomplicated-java-virtual-machine">Overcomplicated Java Virtual Machine</a></li>
       <li><a href="#working-against-programmers" id="markdown-toc-working-against-programmers">Working against programmers</a></li>
       <li><a href="#throwing-away-the-good-parts-of-c" id="markdown-toc-throwing-away-the-good-parts-of-c">Throwing away the good parts of C++</a></li>
+      <li><a href="#weak-functional-programming-allowing-partial-functions" id="markdown-toc-weak-functional-programming-allowing-partial-functions">Weak functional programming (allowing partial functions)</a></li>
     </ul>
   </li>
   <li><a href="#c-and-c" id="markdown-toc-c-and-c">C and C++</a></li>
-  <li><a href="#haskell" id="markdown-toc-haskell">Haskell</a></li>
+  <li><a href="#haskell" id="markdown-toc-haskell">Haskell</a>    <ul>
+      <li><a href="#not-leveraging-user-defined-isomorphisms" id="markdown-toc-not-leveraging-user-defined-isomorphisms">Not leveraging user-defined isomorphisms</a></li>
+    </ul>
+  </li>
   <li><a href="#what" id="markdown-toc-what">what</a></li>
 </ul>
 
@@ -184,6 +189,10 @@ do this right.</p>
 <p>Virtual machines are a design mistake.
 Instead, do semantic mapping: map a program in language A to an equivalent program in language B while preserving the meaning.</p>
 
+<h3 id="more-than-one-way-to-do-something">More than one way to do something</h3>
+
+<p><a href="https://en.wikipedia.org/wiki/There%27s_more_than_one_way_to_do_it">“There is more than one way to do it”</a> is a design mistake.</p>
+
 <h2 id="java">Java</h2>
 
 <ul>
@@ -214,7 +223,7 @@ Isn’t JNI a bigger security hole?</p>
 <p>Programmers make mistakes, but they aren’t idiots.</p>
 
 <ul>
-  <li>https://www.reddit.com/r/programming/comments/utqb/ask_reddit_why_do_so_many_reddit_users_hate_java/cutv1/
+  <li><a href="https://www.reddit.com/r/programming/comments/utqb/ask_reddit_why_do_so_many_reddit_users_hate_java/cutv1/">Ask Reddit: Why do so many reddit users hate java? : programming</a>
     <ul>
       <li>“Java’s solution to the problem of C++ allowing you to blow your foot off was to chop off your legs.”</li>
     </ul>
@@ -241,6 +250,10 @@ This is ugly, but less ugly than type erasure.
     </ul>
   </li>
 </ul>
+
+<h3 id="weak-functional-programming-allowing-partial-functions">Weak functional programming (allowing partial functions)</h3>
+
+<p>Allowing partial functions is a design mistake.</p>
 
 <h2 id="c-and-c">C and C++</h2>
 
@@ -275,7 +288,41 @@ In 2018 these aren’t tolerable.</p>
   <li>Haskell compilation is slow.</li>
   <li>Haskell module system is a design mistake.</li>
   <li>GHC: If A depends on B, and B changes without changing API, then A still requires recompilation.</li>
+  <li>Bottom inhabits every type including the supposedly empty type <code class="highlighter-rouge">data Void</code>.</li>
 </ul>
+
+<h3 id="not-leveraging-user-defined-isomorphisms">Not leveraging user-defined isomorphisms</h3>
+
+<p>I want this:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data A = A0 | A1
+data B = B0 | B1
+
+isomorphism "iso" between A and B is
+    A0 ~ B0
+    A1 ~ B1
+</code></pre></div></div>
+
+<p>instead of this:</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">data</span> <span class="kt">Iso</span> <span class="n">a</span> <span class="n">b</span> <span class="o">=</span> <span class="kt">MkIso</span> <span class="p">{</span>
+        <span class="n">fwd</span> <span class="o">::</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span>
+        <span class="p">,</span> <span class="n">rev</span> <span class="o">::</span> <span class="n">b</span> <span class="o">-&gt;</span> <span class="n">a</span>
+    <span class="p">}</span>
+
+<span class="n">iso</span> <span class="o">::</span> <span class="kt">Iso</span> <span class="n">a</span> <span class="n">b</span>
+<span class="n">iso</span> <span class="o">=</span> <span class="kt">MkIso</span> <span class="n">ab</span> <span class="n">ba</span> <span class="kr">where</span>
+
+    <span class="n">ab</span> <span class="o">::</span> <span class="kt">A</span> <span class="o">-&gt;</span> <span class="kt">B</span>
+    <span class="n">ab</span> <span class="kt">A0</span> <span class="o">=</span> <span class="kt">B0</span>
+    <span class="n">ab</span> <span class="kt">A1</span> <span class="o">=</span> <span class="kt">B1</span>
+
+    <span class="n">ba</span> <span class="o">::</span> <span class="kt">B</span> <span class="o">-&gt;</span> <span class="kt">A</span>
+    <span class="n">ba</span> <span class="kt">B0</span> <span class="o">=</span> <span class="kt">A0</span>
+    <span class="n">ba</span> <span class="kt">B1</span> <span class="o">=</span> <span class="kt">A1</span>
+</code></pre></div></div>
+
+<p>Explicit isomorphism may help reduce newtype boilerplate.</p>
 
 <h2 id="what">what</h2>
 
