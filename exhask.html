@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Extending Haskell</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/exhask.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Extending Haskell</h1>
+  </header>
+
+  <div class="post-content">
+    <ul id="markdown-toc">
+  <li><a href="#open-adts-algebraic-data-types" id="markdown-toc-open-adts-algebraic-data-types">Open ADTs (algebraic data types)</a></li>
+  <li><a href="#can-we-extend-haskell-to-auto-fmap" id="markdown-toc-can-we-extend-haskell-to-auto-fmap">Can we extend Haskell to “auto-fmap”?</a></li>
+  <li><a href="#auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances" id="markdown-toc-auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">Auto-lifting (and therefore sequencing) of function application involving Monad instances</a></li>
+  <li><a href="#library-writing-backward-compatibility-dependency-management-and-empathy" id="markdown-toc-library-writing-backward-compatibility-dependency-management-and-empathy">Library-writing, backward compatibility, dependency management, and empathy</a></li>
+  <li><a href="#equirecursive-types" id="markdown-toc-equirecursive-types">Equirecursive types?</a></li>
+</ul>
+
+<h2 id="open-adts-algebraic-data-types">Open ADTs (algebraic data types)</h2>
+
+<ul>
+  <li>“Closed” means “defined in one place”.</li>
+  <li>Open ADTs don’t mix with exhaustive case analysis (function totality).
+    <ul>
+      <li>https://stackoverflow.com/questions/870919/why-are-haskell-algebraic-data-types-closed</li>
+      <li>But what if functions are “open” too?
+        <ul>
+          <li>https://www.andres-loeh.de/OpenDatatypes.pdf</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>If <code class="highlighter-rouge">f : a -&gt; b</code>, then the compiler should infer <code class="highlighter-rouge">lift f : (Monad m) =&gt; m a -&gt; m b</code>.</li>
+</ul>
+
+<h2 id="can-we-extend-haskell-to-auto-fmap">Can we extend Haskell to “auto-fmap”?</h2>
+
+<ul>
+  <li>Possibilities:
+    <ul>
+      <li>Add rewrite rules so that the compiler “recovers” from some type “errors”.</li>
+      <li>Extend the syntax and semantics of function application.</li>
+    </ul>
+  </li>
+  <li>Related
+    <ul>
+      <li>1989, article, Wadler, “Theorems for free!”</li>
+      <li>The Haskell Djinn can, given a type T, infer/construct a term having type T.</li>
+    </ul>
+  </li>
+  <li>Recovering from some type errors
+    <ul>
+      <li>Idea
+        <ul>
+          <li>Extend Haskell with “implicit injections”.</li>
+          <li>The compiler should try in-scope injections automatically when there is a typing error, before quitting with a type error.
+            <ul>
+              <li>Isn’t this similar to Scala implicits and implicit conversion?
+                <ul>
+                  <li>I forgot who, but I think somebody on the Internet said that Scala implicits are a way for the compiler to recover from type errors.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>Can we do this on GHC?
+            <ul>
+              <li>https://ghc.haskell.org/trac/ghc/wiki/Commentary/Compiler/TypeChecker
+                <ul>
+                  <li>GHC typechecker works on Haskell before it’s transformed to Core.</li>
+                </ul>
+              </li>
+              <li>Write a plugin for GHC?
+                <ul>
+                  <li>Can a GHC modify the syntax tree on type error?</li>
+                </ul>
+              </li>
+              <li>Use GHC as library?</li>
+              <li>We can’t use GHC rewrite rules because they are only applied when optimization is enabled.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Define the concept of “expected type”.</li>
+      <li>Let <code class="highlighter-rouge">e</code> be an expression.</li>
+      <li>Let <code class="highlighter-rouge">f : a -&gt; b</code>.</li>
+      <li>Let <code class="highlighter-rouge">m</code> be an instance of Monad.</li>
+      <li>If <code class="highlighter-rouge">e</code> has type <code class="highlighter-rouge">a</code>, but the compiler expects <code class="highlighter-rouge">e</code> to have type <code class="highlighter-rouge">m a</code>, then the compiler shall rewrite <code class="highlighter-rouge">e</code> to <code class="highlighter-rouge">return e</code>.</li>
+      <li>If <code class="highlighter-rouge">e</code> has type <code class="highlighter-rouge">m a</code>, then the compiler rewrites <code class="highlighter-rouge">f e</code> to <code class="highlighter-rouge">map f e</code>.</li>
+    </ul>
+  </li>
+  <li>If <code class="highlighter-rouge">x</code> is a Monad, then these are two <em>different</em> things: <code class="highlighter-rouge">x : a</code> and <code class="highlighter-rouge">return x</code>, but they are related, in the sense that they are equivalent, in the sense that one is trivially computable/derivable from the other.</li>
+  <li>Can Strathclyde Haskell Enhancement (SHE) do this?
+    <ul>
+      <li>It has idiom brackets.
+  It translates <code class="highlighter-rouge">(| f a1 ... an |)</code> to <code class="highlighter-rouge">pure f &lt;*&gt; a1 &lt;*&gt; ... &lt;*&gt; an</code>.
+        <ul>
+          <li>https://personal.cis.strath.ac.uk/conor.mcbride/pub/she/idiom.html</li>
+        </ul>
+      </li>
+      <li>Enhancement to SHE https://github.com/bezirg/she
+        <ul>
+          <li>http://blog.bezirg.net/posts/2013-08-03-enhancement-to-the-strathclyde-haskell-enhancement.html</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>https://en.wikipedia.org/wiki/Bidirectional_transformation
+    <ul>
+      <li>https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">Auto-lifting (and therefore sequencing) of function application involving Monad instances</h2>
+
+<ul>
+  <li>The standard rule is:
+    <ul>
+      <li>If <code class="highlighter-rouge">x : a</code> and <code class="highlighter-rouge">f : a -&gt; b</code>, then <code class="highlighter-rouge">f x : b</code>.</li>
+    </ul>
+  </li>
+  <li>Suppose that <code class="highlighter-rouge">m</code> has a Monad instance.
+    <ul>
+      <li>If <code class="highlighter-rouge">x : m a</code> and <code class="highlighter-rouge">f : a -&gt; b</code>, then should the compiler silently translate <code class="highlighter-rouge">f x</code> to <code class="highlighter-rouge">x &gt;&gt;= return . f</code>?
+        <ul>
+          <li>Isn’t it the only desirable way of putting together <code class="highlighter-rouge">f</code> and <code class="highlighter-rouge">x</code>?
+            <ul>
+              <li>Monad class requires that <code class="highlighter-rouge">x &gt;&gt;= return . f</code> be equivalent to <code class="highlighter-rouge">fmap f x</code>.
+                <ul>
+                  <li>So there is really only one way to do it, isn’t it?</li>
+                </ul>
+              </li>
+              <li>Examples of non-desirable ways: <code class="highlighter-rouge">unsafeCoerce</code>, <code class="highlighter-rouge">undefined</code>.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Should the compiler also appropriately translate <code class="highlighter-rouge">f x</code> for all these combinations?
+        <ul>
+          <li>Possibilities for the type of <code class="highlighter-rouge">x</code>:
+            <ul>
+              <li><code class="highlighter-rouge">a</code></li>
+              <li><code class="highlighter-rouge">m a</code></li>
+            </ul>
+          </li>
+          <li>Possibilities for the type of <code class="highlighter-rouge">f</code>:
+            <ul>
+              <li><code class="highlighter-rouge">a -&gt; b</code></li>
+              <li><code class="highlighter-rouge">a -&gt; m b</code></li>
+              <li><code class="highlighter-rouge">m (a -&gt; b)</code></li>
+              <li><code class="highlighter-rouge">m a -&gt; m b</code></li>
+              <li><code class="highlighter-rouge">m a -&gt; b</code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>At first glance it seems convenient, but what are the consequences?
+    <ul>
+      <li>Some I can think of
+        <ul>
+          <li>Confusing error message
+            <ul>
+              <li>Suppose:
+                <ul>
+                  <li>The programmer makes a typing mistake.</li>
+                  <li>The compiler infers the wrong type.</li>
+                  <li>The compiler performs translation based on the wrongly inferred type.</li>
+                  <li>The compiler produces a confusing error message.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="library-writing-backward-compatibility-dependency-management-and-empathy">Library-writing, backward compatibility, dependency management, and empathy</h2>
+
+<p>This crosscuts so many issues that I’m perplexed where to put this.</p>
+
+<p><a href="https://wiki.haskell.org/The_Monad.Reader/Issue2/EternalCompatibilityInTheory">Eternal compatibility in theory</a>
+applies to all software, not only Haskell ones.</p>
+
+<p><a href="https://gist.github.com/snoyberg/f6f10cdbea4b9e22d1b83e490ec59a10">Michael Snoyman’s personal take on PVP version upper bounds</a>.</p>
+
+<h2 id="equirecursive-types">Equirecursive types?</h2>
+
+<p>Haskell has isorecursive types.
+Can we make it use equirecursive types?</p>
+
+<ul>
+  <li>Can we make it automatically insert roll-unroll/fold-unfold/In-out?</li>
+  <li>How do we compose monads seamlessly?
+    <ul>
+      <li>Isorecursive types?</li>
+      <li>True sum types (untagged unions)?</li>
+    </ul>
+  </li>
+  <li>See also the reference to the 2016 article “System F-omega with Equirecursive Types for Datatype-Generic Programming” in <a href="/lambda.html">Extending lambda calculus</a>.</li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/exhask.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/exhask.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-07-22 02:45 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>
