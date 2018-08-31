@@ -55,59 +55,95 @@
   </header>
 
   <div class="post-content">
+    <ul id="markdown-toc">
+  <li><a href="#setting-up-development-environment" id="markdown-toc-setting-up-development-environment">Setting up development environment</a>    <ul>
+      <li><a href="#my-incoherent-rambling" id="markdown-toc-my-incoherent-rambling">My incoherent rambling</a></li>
+    </ul>
+  </li>
+  <li><a href="#hackage-outages" id="markdown-toc-hackage-outages">Hackage outages</a></li>
+  <li><a href="#haskell-in-2018" id="markdown-toc-haskell-in-2018">Haskell in 2018</a></li>
+  <li><a href="#using-ghc" id="markdown-toc-using-ghc">Using GHC</a></li>
+  <li><a href="#what" id="markdown-toc-what">what</a></li>
+  <li><a href="#finding-a-haskell-ide" id="markdown-toc-finding-a-haskell-ide">Finding a Haskell IDE</a></li>
+  <li><a href="#what-1" id="markdown-toc-what-1">what</a></li>
+  <li><a href="#what-2" id="markdown-toc-what-2">what</a></li>
+  <li><a href="#curating-libraries" id="markdown-toc-curating-libraries">Curating libraries</a></li>
+  <li><a href="#what-3" id="markdown-toc-what-3">what</a></li>
+  <li><a href="#haskell-woes" id="markdown-toc-haskell-woes">Haskell woes</a></li>
+  <li><a href="#ghc-woes" id="markdown-toc-ghc-woes">GHC woes</a>    <ul>
+      <li><a href="#working-on-ghc" id="markdown-toc-working-on-ghc">Working on GHC</a></li>
+    </ul>
+  </li>
+  <li><a href="#people-who-have-too-much-time" id="markdown-toc-people-who-have-too-much-time">People who have too much time</a></li>
+</ul>
+
+<h2 id="setting-up-development-environment">Setting up development environment</h2>
+
+<ul>
+  <li>Duplicate intersecting efforts?
+Too many choices?
     <ul>
-  <li>Setting up development environment
-    <ul>
-      <li>Duplicate intersecting efforts?
-  Too many choices?
+      <li>Why is there Haskell Platform and Haskell Stack?</li>
+      <li>Which should we use?</li>
+      <li>Why is there haskell-lang.org and haskell.org?
         <ul>
-          <li>Why is there Haskell Platform and Haskell Stack?</li>
-          <li>Which should we use?</li>
-          <li>Why is there haskell-lang.org and haskell.org?
-            <ul>
-              <li>https://news.ycombinator.com/item?id=12054690</li>
-            </ul>
-          </li>
-          <li>Why should I use Platform if there is Stack?</li>
-          <li>Why should I use Stack if there is Cabal new-style?</li>
-          <li>Why Stack?
-            <ul>
-              <li>Vetted packages?</li>
-            </ul>
-          </li>
-          <li>http://www.haskellforall.com/2018/05/how-i-evaluate-haskell-packages.html</li>
+          <li>https://news.ycombinator.com/item?id=12054690</li>
         </ul>
       </li>
-      <li>Install the Haskell <code class="highlighter-rouge">stack</code> tool.
+      <li>Why should I use Platform if there is Stack?</li>
+      <li>Why should I use Stack if there is Cabal new-style?</li>
+      <li>Why Stack?
         <ul>
-          <li>I use the <a href="https://docs.haskellstack.org/en/stable/install_and_upgrade/#linux">manual download</a>.
-            <ul>
-              <li>If you want to make sure that the download isn’t corrupted, check the corresponding sha256sum from <a href="https://github.com/commercialhaskell/stack/releases/">GitHub releases page</a>.</li>
-              <li>If you don’t mind sudoing, use the installer script in the <a href="https://docs.haskellstack.org/en/stable/README/">documentation</a>.</li>
-            </ul>
-          </li>
-          <li>Then I check the archive contents using <code class="highlighter-rouge">tar tzf</code>.</li>
-          <li>If there’s no weird paths, I extract the archive with <code class="highlighter-rouge">tar xzf</code>.</li>
-          <li>Then I make the symbolic link <code class="highlighter-rouge">~/.local/bin/stack</code>.</li>
-          <li>If you use the manual download, you may have to install some operating system packages.
-            <ul>
-              <li>The list is on the <a href="https://get.haskellstack.org/">install script</a>.
+          <li>Vetted packages?</li>
+        </ul>
+      </li>
+      <li>http://www.haskellforall.com/2018/05/how-i-evaluate-haskell-packages.html</li>
+    </ul>
+  </li>
+  <li>cabal new-build obviates stack?
+    <ul>
+      <li>http://coldwa.st/e/blog/2017-09-09-Cabal-2-0.html</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="my-incoherent-rambling">My incoherent rambling</h3>
+
+<p>My old way: stack.
+My new way: cabal new-style.
+It may change again.</p>
+
+<ul>
+  <li>Install the Haskell <code class="highlighter-rouge">stack</code> tool.
+    <ul>
+      <li>I use the <a href="https://docs.haskellstack.org/en/stable/install_and_upgrade/#linux">manual download</a>.
+        <ul>
+          <li>If you want to make sure that the download isn’t corrupted, check the corresponding sha256sum from <a href="https://github.com/commercialhaskell/stack/releases/">GitHub releases page</a>.</li>
+          <li>If you don’t mind sudoing, use the installer script in the <a href="https://docs.haskellstack.org/en/stable/README/">documentation</a>.</li>
+        </ul>
+      </li>
+      <li>Then I check the archive contents using <code class="highlighter-rouge">tar tzf</code>.</li>
+      <li>If there’s no weird paths, I extract the archive with <code class="highlighter-rouge">tar xzf</code>.</li>
+      <li>Then I make the symbolic link <code class="highlighter-rouge">~/.local/bin/stack</code>.</li>
+      <li>If you use the manual download, you may have to install some operating system packages.
+        <ul>
+          <li>The list is on the <a href="https://get.haskellstack.org/">install script</a>.
   Search for <code class="highlighter-rouge">install_dependencies</code> for your distro.</li>
-            </ul>
-          </li>
         </ul>
       </li>
-      <li>Choose a Stack solver.
+    </ul>
+  </li>
+  <li>Choose a Stack solver.
+    <ul>
+      <li>Forget it. Just install GHC to home.
         <ul>
-          <li>Forget it. Just install GHC to home.
-            <ul>
-              <li><code class="highlighter-rouge">./configure --prefix ~/.local</code></li>
-              <li><code class="highlighter-rouge">make -j4 install</code></li>
-            </ul>
-          </li>
+          <li><code class="highlighter-rouge">./configure --prefix ~/.local</code></li>
+          <li><code class="highlighter-rouge">make -j4 install</code></li>
         </ul>
       </li>
-      <li>Which version of GHC should I use?
+    </ul>
+  </li>
+  <li>Which version of GHC should I use?
       - The one that is supported by
       <a href="http://hackage.haskell.org/package/HaRe">HaRe</a> (Haskell refactoring tool) and
       <a href="https://github.com/leksah/leksah">Leksah</a>.
@@ -116,89 +152,18 @@
               - HaRe supports ghc &lt;= 8.0.2.
               - GHC 8.0 is unacceptably slow.
                   - Forget HaRe. We’ll go with Leksah. Use GHC 8.4.3.
-        <ul>
-          <li>The widely supported GHC version lags very much behind the latest stable GHC version.
+    <ul>
+      <li>The widely supported GHC version lags very much behind the latest stable GHC version.
   I think this may be because the GHC team is rolling out lots of breaking changes in the parser because they are working on the “Trees that grow” proposal.</li>
-          <li>Which Stackage LTS version should I use?
+      <li>Which Stackage LTS version should I use?
+        <ul>
+          <li><a href="https://www.stackage.org/lts-6.35">LTS 6.35</a> if GHC 7.10.3?
             <ul>
-              <li><a href="https://www.stackage.org/lts-6.35">LTS 6.35</a> if GHC 7.10.3?
-                <ul>
-                  <li>It also hosts a hoogle search for searching Haskell program elements.</li>
-                </ul>
-              </li>
+              <li>It also hosts a hoogle search for searching Haskell program elements.</li>
             </ul>
           </li>
         </ul>
       </li>
-      <li>unread, Stephen Diehl
-        <ul>
-          <li>http://www.stephendiehl.com/posts/vim_2016.html</li>
-          <li>http://www.stephendiehl.com/posts/vim_haskell.html</li>
-          <li>http://www.stephendiehl.com/posts/haskell_2018.html</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Haskell in 2018
-    <ul>
-      <li>https://www.reddit.com/r/haskell/comments/7wmhyi/an_opinionated_guide_to_haskell_in_2018/</li>
-      <li>https://github.com/Gabriel439/post-rfc/blob/master/sotu.md</li>
-      <li>https://www.reddit.com/r/haskell/comments/54fv8b/what_is_the_state_of_haskell/</li>
-      <li>https://lexi-lambda.github.io/blog/2018/02/10/an-opinionated-guide-to-haskell-in-2018/</li>
-      <li><a href="https://eta-lang.org/">Eta: Haskell on JVM</a></li>
-    </ul>
-  </li>
-  <li>Development workflow and tools
-    <ul>
-      <li>2018
-        <ul>
-          <li>IDE (integrated development environment)
-            <ul>
-              <li>Visual Studio Code</li>
-              <li>Leksah</li>
-              <li>others?</li>
-              <li>https://github.com/haskell/haskell-ide-engine</li>
-              <li>wasted efforts?
-                <ul>
-                  <li><a href="https://github.com/JPMoresmau/eclipsefp">EclipseFP</a>, no longer developed since 2015
-                    <ul>
-                      <li>http://jpmoresmau.blogspot.com/2015/05/eclipsefp-end-of-life-from-me-at-least.html
-                        <ul>
-                          <li>He got tired of working alone.
-  He pointed us to <a href="https://www.fpcomplete.com/blog/2015/03/announce-ide-backend">FPComplete ide-backend</a>.
-                            <ul>
-                              <li><a href="https://github.com/fpco/ide-backend">ide-backend</a> seems dead; last activity is in 2016.</li>
-                            </ul>
-                          </li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li>cabal new-style</li>
-        </ul>
-      </li>
-      <li>2016, http://www.stephendiehl.com/posts/vim_2016.html
-        <ul>
-          <li>2015 (?), http://www.stephendiehl.com/posts/vim_haskell.html</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Haskell woes?
-    <ul>
-      <li>Exceptions?
-        <ul>
-          <li>http://hackage.haskell.org/package/safe-exceptions</li>
-          <li>https://www.fpcomplete.com/blog/2016/11/exceptions-best-practices-haskell</li>
-          <li>https://www.reddit.com/r/haskell/comments/589fkg/haskell_and_the_no_runtime_exception_claim_95_of/</li>
-        </ul>
-      </li>
-      <li>Module system</li>
-      <li><code class="highlighter-rouge">Read(read)</code> should be renamed to <code class="highlighter-rouge">CoShow(coshow)</code>.</li>
     </ul>
   </li>
   <li>How to get started?
@@ -251,6 +216,74 @@
       </li>
     </ul>
   </li>
+</ul>
+
+<h2 id="hackage-outages">Hackage outages</h2>
+
+<p>Hackage is Haskell package repository.
+Sometimes it goes down.</p>
+
+<ul>
+  <li>How to tell Cabal to use a Hackage mirror?
+An instruction is on the Internet; I forgot where.</li>
+  <li>2018-04-13: <a href="https://blog.hackage.haskell.org/posts/2018-04-26-downtime.html">Hackage goes down for about a day</a></li>
+</ul>
+
+<h2 id="haskell-in-2018">Haskell in 2018</h2>
+
+<ul>
+  <li>unread, Stephen Diehl
+    <ul>
+      <li>http://www.stephendiehl.com/posts/vim_2016.html</li>
+      <li>http://www.stephendiehl.com/posts/vim_haskell.html</li>
+      <li>http://www.stephendiehl.com/posts/haskell_2018.html</li>
+      <li>https://www.reddit.com/r/haskell/comments/7wmhyi/an_opinionated_guide_to_haskell_in_2018/</li>
+      <li>https://github.com/Gabriel439/post-rfc/blob/master/sotu.md</li>
+      <li>https://www.reddit.com/r/haskell/comments/54fv8b/what_is_the_state_of_haskell/</li>
+      <li>https://lexi-lambda.github.io/blog/2018/02/10/an-opinionated-guide-to-haskell-in-2018/</li>
+      <li><a href="https://eta-lang.org/">Eta: Haskell on JVM</a></li>
+    </ul>
+  </li>
+  <li>Development workflow and tools
+    <ul>
+      <li>2018
+        <ul>
+          <li>IDE (integrated development environment)
+            <ul>
+              <li>Visual Studio Code</li>
+              <li>Leksah</li>
+              <li>others?</li>
+              <li>https://github.com/haskell/haskell-ide-engine</li>
+              <li>wasted efforts?
+                <ul>
+                  <li><a href="https://github.com/JPMoresmau/eclipsefp">EclipseFP</a>, no longer developed since 2015
+                    <ul>
+                      <li>http://jpmoresmau.blogspot.com/2015/05/eclipsefp-end-of-life-from-me-at-least.html
+                        <ul>
+                          <li>He got tired of working alone.
+  He pointed us to <a href="https://www.fpcomplete.com/blog/2015/03/announce-ide-backend">FPComplete ide-backend</a>.
+                            <ul>
+                              <li><a href="https://github.com/fpco/ide-backend">ide-backend</a> seems dead; last activity is in 2016.</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>cabal new-style</li>
+        </ul>
+      </li>
+      <li>2016, http://www.stephendiehl.com/posts/vim_2016.html
+        <ul>
+          <li>2015 (?), http://www.stephendiehl.com/posts/vim_haskell.html</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
   <li>Companies using Haskell
     <ul>
       <li>https://www.reddit.com/r/haskell/comments/4jo2da/fp_shops/</li>
@@ -265,14 +298,6 @@
         </ul>
       </li>
       <li>IOHK</li>
-    </ul>
-  </li>
-  <li>Hackage outages
-    <ul>
-      <li>Sometimes Hackage goes down.</li>
-      <li>How to tell Cabal to use a Hackage mirror?
-  An instruction is on the Internet; I forgot where.</li>
-      <li>2018-04-13: <a href="https://blog.hackage.haskell.org/posts/2018-04-26-downtime.html">Hackage goes down for about a day</a></li>
     </ul>
   </li>
   <li>Unread
@@ -291,12 +316,12 @@
       <li>https://haskell.libhunt.com/newsletter/6</li>
     </ul>
   </li>
-  <li>Cabal description field pitfall
-    <ul>
-      <li>http://michael.orlitzky.com/articles/using_haddock_markup_in_a_cabal_file.xhtml</li>
-    </ul>
-  </li>
-  <li>ghci
+</ul>
+
+<h2 id="using-ghc">Using GHC</h2>
+
+<ul>
+  <li>Using GHCI
     <ul>
       <li>https://www.reddit.com/r/haskell/comments/5su9ag/reload_run_expressions_in_ghci_with_a_single/</li>
     </ul>
@@ -304,6 +329,11 @@
   <li>https://rybczak.net/2016/03/26/how-to-reduce-compilation-times-of-haskell-projects/</li>
   <li>https://stackoverflow.com/questions/15662984/speed-up-compilation-in-ghc?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa</li>
   <li>https://www.reddit.com/r/haskell/comments/45q90s/is_anything_being_done_to_remedy_the_soul/</li>
+</ul>
+
+<h2 id="what">what</h2>
+
+<ul>
   <li><a href="https://www.haskell.org/haddock/doc/html/ch03s08.html">Haddock markup syntax</a></li>
   <li>metaprogramming from Haskell to Haskell
     <ul>
@@ -321,51 +351,27 @@
       <li>https://news.ycombinator.com/item?id=12056169</li>
     </ul>
   </li>
-  <li>The alternative to Cabal PVP is compile error, or, even worse, logic error and runtime failure?
-    <ul>
-      <li>Cabal PVP depends on library authors/maintainers to test and update their dependency bounds.</li>
-      <li>It’s not only Haskell, but all programming.
-  Every library author must thoughtfully maintain backward compatibility and can’t just make arbitrary changes and break things.
-        <ul>
-          <li>https://plan99.net/~mike/writing-shared-libraries.html</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
   <li>Will Eta kill <a href="https://github.com/Frege/frege">Frege</a>?
 It’s sad to see works thrown away.</li>
-  <li>Finding the Haskell IDE.
-    <ul>
-      <li><a href="https://www.reddit.com/r/haskell/comments/5lgtb1/what_ideeditor_do_you_use_for_haskell_development/">what IDE/editor do you use for Haskell development? : haskell</a></li>
-      <li><a href="https://www.quora.com/What-are-powerful-Haskell-IDEs">What are powerful Haskell IDEs? - Quora</a></li>
-      <li><a href="https://www.quora.com/What-is-the-best-IDE-for-programming-in-Haskell">What is the best IDE for programming in Haskell? - Quora</a></li>
-      <li><a href="https://www.reddit.com/r/haskell/comments/86bmpu/haskell_ides/">Haskell ides? : haskell</a></li>
-      <li>Leksah-nix fails to build on my machine (Ubuntu 14.04).
-  There are no prebuilt binaries.
-  Must compile from source from <a href="https://github.com/leksah/leksah/wiki/download">Hackage</a> using Cabal.</li>
-    </ul>
-  </li>
-  <li>GHC
-    <ul>
-      <li>Beginning to work on GHC
-        <ul>
-          <li>Please see the <a href="https://ghc.haskell.org/trac/ghc/wiki/Newcomers">newcomers guide</a> first.</li>
-        </ul>
-      </li>
-      <li>GHC TDNR (type-directed name resolution)
-        <ul>
-          <li>https://ghc.haskell.org/trac/ghc/ticket/4479</li>
-          <li>https://ghc.haskell.org/trac/ghc/wiki/Records/OverloadedRecordFields</li>
-          <li>https://stackoverflow.com/questions/22417063/current-state-of-record-types-and-subtyping-in-haskell</li>
-          <li>https://en.wikipedia.org/wiki/Subtyping#Record_types
-            <ul>
-              <li>Width and depth subtyping</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+</ul>
+
+<h2 id="finding-a-haskell-ide">Finding a Haskell IDE</h2>
+
+<p>I haven’t found a convincing IDE for Haskell.</p>
+
+<ul>
+  <li><a href="https://www.reddit.com/r/haskell/comments/5lgtb1/what_ideeditor_do_you_use_for_haskell_development/">what IDE/editor do you use for Haskell development? : haskell</a></li>
+  <li><a href="https://www.quora.com/What-are-powerful-Haskell-IDEs">What are powerful Haskell IDEs? - Quora</a></li>
+  <li><a href="https://www.quora.com/What-is-the-best-IDE-for-programming-in-Haskell">What is the best IDE for programming in Haskell? - Quora</a></li>
+  <li><a href="https://www.reddit.com/r/haskell/comments/86bmpu/haskell_ides/">Haskell ides? : haskell</a></li>
+  <li>Leksah-nix fails to build on my machine (Ubuntu 14.04).
+There are no prebuilt binaries.
+Must compile from source from <a href="https://github.com/leksah/leksah/wiki/download">Hackage</a> using Cabal.</li>
+</ul>
+
+<h2 id="what-1">what</h2>
+
+<ul>
   <li>Enterprise Haskell?
     <ul>
       <li>https://wiki.haskell.org/Enterprise_Haskell</li>
@@ -378,25 +384,15 @@ It’s sad to see works thrown away.</li>
       <li>https://github.com/transient-haskell/transient</li>
     </ul>
   </li>
-  <li><a href="https://github.com/HuwCampbell/grenade">HuwCampbell/grenade: Deep Learning in Haskell</a></li>
-  <li><a href="http://www.randomhacks.net/2007/03/03/smart-classification-with-haskell/">Smart classification using Bayesian monads in Haskell - Random Hacks</a></li>
-  <li>someone has too much time
-    <ul>
-      <li>https://hackage.haskell.org/package/ImperativeHaskell</li>
-      <li>just for curiosity https://github.com/edwinb/idris-php</li>
-    </ul>
-  </li>
-  <li>https://chrisdone.com/posts/haskell-constraint-trick</li>
+</ul>
+
+<h2 id="what-2">what</h2>
+
+<ul>
+  <li>useful trick, especially helpful when abusing type classes: https://chrisdone.com/posts/haskell-constraint-trick</li>
   <li>https://chrisdone.com/posts/twitter-problem-loeb</li>
   <li>http://blog.sigfpe.com/2006/11/from-l-theorem-to-spreadsheet.html</li>
   <li>http://blog.sigfpe.com/2007/02/comonads-and-reading-from-future.html</li>
-  <li>haskell for devops
-    <ul>
-      <li>https://www.reddit.com/r/haskell/comments/31vnos/neil_mitchell_devops_with_haskell/</li>
-      <li>https://github.com/commercialhaskell/commercialhaskell/blob/master/taskforce/devops.md</li>
-      <li><a href="http://hackage.haskell.org/package/azubi">azubi: A simple DevOps tool which will never “reach” enterprice level.</a></li>
-    </ul>
-  </li>
   <li>Components for publish-subscribe in Haskell?
     <ul>
       <li>https://www.stackage.org/lts-6.35/package/broadcast-chan-0.1.1</li>
@@ -422,13 +418,19 @@ It’s sad to see works thrown away.</li>
       <li><a href="https://github.com/PatrickMaier/HdpH">PatrickMaier/HdpH: Haskell distributed parallel Haskell</a></li>
     </ul>
   </li>
-  <li>curation
-    <ul>
-      <li>https://www.reddit.com/r/haskell/comments/4ggt05/best_underrated_haskell_libraries/</li>
-      <li>https://wiki.haskell.org/Applications_and_libraries</li>
-      <li>https://stackoverflow.com/questions/9286799/haskell-libraries-overview-and-their-quality</li>
-    </ul>
-  </li>
+</ul>
+
+<h2 id="curating-libraries">Curating libraries</h2>
+
+<ul>
+  <li>https://www.reddit.com/r/haskell/comments/4ggt05/best_underrated_haskell_libraries/</li>
+  <li>https://wiki.haskell.org/Applications_and_libraries</li>
+  <li>https://stackoverflow.com/questions/9286799/haskell-libraries-overview-and-their-quality</li>
+</ul>
+
+<h2 id="what-3">what</h2>
+
+<ul>
   <li>unread
     <ul>
       <li>servant web framework</li>
@@ -440,6 +442,66 @@ It’s sad to see works thrown away.</li>
       <li><a href="https://gist.github.com/puffnfresh/6222797">Haskell partiality monad</a></li>
     </ul>
   </li>
+  <li>https://stackoverflow.com/questions/5770168/templating-packages-for-haskell</li>
+  <li>Hoogle vs Hayoo?
+    <ul>
+      <li>The hoogle on stackage.org top right text bar seems to be most complete
+        <ul>
+          <li>https://www.stackage.org/</li>
+        </ul>
+      </li>
+      <li>https://mail.haskell.org/pipermail/haskell-cafe/2013-August/109945.html</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="haskell-woes">Haskell woes</h2>
+
+<ul>
+  <li>Exceptions?
+    <ul>
+      <li>http://hackage.haskell.org/package/safe-exceptions</li>
+      <li>https://www.fpcomplete.com/blog/2016/11/exceptions-best-practices-haskell</li>
+      <li>https://www.reddit.com/r/haskell/comments/589fkg/haskell_and_the_no_runtime_exception_claim_95_of/</li>
+    </ul>
+  </li>
+  <li>Module system</li>
+  <li><code class="highlighter-rouge">Read(read)</code> should be renamed to <code class="highlighter-rouge">CoShow(coshow)</code>.</li>
+</ul>
+
+<h2 id="ghc-woes">GHC woes</h2>
+
+<ul>
+  <li>Profiling requires recompiling all transitive dependencies if they happen to be compiled without profiling.</li>
+</ul>
+
+<h3 id="working-on-ghc">Working on GHC</h3>
+
+<ul>
+  <li>Beginning to work on GHC
+    <ul>
+      <li>Please see the <a href="https://ghc.haskell.org/trac/ghc/wiki/Newcomers">newcomers guide</a> first.</li>
+    </ul>
+  </li>
+  <li>GHC TDNR (type-directed name resolution)
+    <ul>
+      <li>https://ghc.haskell.org/trac/ghc/ticket/4479</li>
+      <li>https://ghc.haskell.org/trac/ghc/wiki/Records/OverloadedRecordFields</li>
+      <li>https://stackoverflow.com/questions/22417063/current-state-of-record-types-and-subtyping-in-haskell</li>
+      <li>https://en.wikipedia.org/wiki/Subtyping#Record_types
+        <ul>
+          <li>Width and depth subtyping</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="people-who-have-too-much-time">People who have too much time</h2>
+
+<ul>
+  <li>https://hackage.haskell.org/package/ImperativeHaskell</li>
+  <li>just for curiosity https://github.com/edwinb/idris-php</li>
 </ul>
 
   </div>

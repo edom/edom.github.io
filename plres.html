@@ -32,6 +32,31 @@
   
 
   
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
 </head>
 
 
@@ -45,6 +70,41 @@
 
 
     
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\abs[1]{\left|#1\right|}
+\newcommand\dom{\textrm{dom}}
+\newcommand\cod{\textrm{cod}}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
@@ -57,7 +117,13 @@
   <div class="post-content">
     <ul id="markdown-toc">
   <li><a href="#goal" id="markdown-toc-goal">Goal</a></li>
+  <li><a href="#subtopics" id="markdown-toc-subtopics">Subtopics</a></li>
   <li><a href="#what-is-a-program" id="markdown-toc-what-is-a-program">What is a program?</a></li>
+  <li><a href="#what-should-we-know-before-creating-a-programming-language" id="markdown-toc-what-should-we-know-before-creating-a-programming-language">What should we know before creating a programming language?</a></li>
+  <li><a href="#what-are-some-interesting-programming-languages" id="markdown-toc-what-are-some-interesting-programming-languages">What are some interesting programming languages?</a>    <ul>
+      <li><a href="#do-we-really-have-to-read-these-fragmented-sources" id="markdown-toc-do-we-really-have-to-read-these-fragmented-sources">Do we really have to read these fragmented sources?</a></li>
+    </ul>
+  </li>
   <li><a href="#increasing-language-adoption" id="markdown-toc-increasing-language-adoption">Increasing language adoption</a></li>
   <li><a href="#finding-giants-whose-shoulders-we-want-to-stand-on" id="markdown-toc-finding-giants-whose-shoulders-we-want-to-stand-on">Finding giants whose shoulders we want to stand on</a>    <ul>
       <li><a href="#people-who-share-the-vision-for-the-programming-language" id="markdown-toc-people-who-share-the-vision-for-the-programming-language">People who share the vision for <em>the</em> programming language</a></li>
@@ -66,14 +132,21 @@
   </li>
   <li><a href="#category-theory-and-programming-languages" id="markdown-toc-category-theory-and-programming-languages">Category theory and programming languages?</a></li>
   <li><a href="#making-compilers" id="markdown-toc-making-compilers">Making compilers?</a></li>
-  <li><a href="#foundation-of-mathematics" id="markdown-toc-foundation-of-mathematics">Foundation of mathematics?</a></li>
+  <li><a href="#foundation-of-mathematics-especially-for-programming" id="markdown-toc-foundation-of-mathematics-especially-for-programming">Foundation of mathematics especially for programming?</a></li>
   <li><a href="#paradigm-approach-viewpoint-worldview" id="markdown-toc-paradigm-approach-viewpoint-worldview">Paradigm, approach, viewpoint, worldview?</a></li>
   <li><a href="#toward-a-language-with-first-class-syntax" id="markdown-toc-toward-a-language-with-first-class-syntax">Toward a language with first-class syntax?</a></li>
   <li><a href="#type-systems-and-type-theory" id="markdown-toc-type-systems-and-type-theory">Type systems and type theory?</a>    <ul>
+      <li><a href="#what-is-a-type" id="markdown-toc-what-is-a-type">What is a type?</a></li>
+      <li><a href="#type-checking" id="markdown-toc-type-checking">Type-checking</a></li>
       <li><a href="#algebraic-subtyping" id="markdown-toc-algebraic-subtyping">Algebraic subtyping?</a></li>
     </ul>
   </li>
   <li><a href="#drinking-from-the-firehose" id="markdown-toc-drinking-from-the-firehose">Drinking from the firehose</a></li>
+  <li><a href="#enabling-metaprogramming" id="markdown-toc-enabling-metaprogramming">Enabling metaprogramming</a></li>
+  <li><a href="#automatic-program-differentiation" id="markdown-toc-automatic-program-differentiation">Automatic (program) differentiation</a></li>
+  <li><a href="#extending-functions" id="markdown-toc-extending-functions">Extending functions</a></li>
+  <li><a href="#low-code-programming-for-the-masses" id="markdown-toc-low-code-programming-for-the-masses">Low-code? Programming for the masses?</a></li>
+  <li><a href="#old-content-to-be-reorganized" id="markdown-toc-old-content-to-be-reorganized">Old content to be reorganized</a></li>
   <li><a href="#probably-irrelevant-to-our-goal" id="markdown-toc-probably-irrelevant-to-our-goal">Probably irrelevant to our goal</a></li>
 </ul>
 
@@ -86,21 +159,87 @@ Do more with less.</p>
 
 <p><em>The</em> ultimate best programming language?</p>
 
-<h2 id="what-is-a-program">What is a program?</h2>
-
-<p>A program (software) is an executable formal system.</p>
-
-<p>Can we formalize this using Grue’s map theory?</p>
+<h2 id="subtopics">Subtopics</h2>
 
 <ul>
-  <li>How is “false” represented?</li>
-  <li>How is “true” represented?</li>
-  <li>How is “conjunction” represented?</li>
+  <li><a href="/lambda.html">Extending lambda calculus</a></li>
+  <li><a href="/optlam.html">Optimizing lambda calculus</a></li>
+  <li><a href="/exhask.html">Extending Haskell</a></li>
+  <li><a href="/pldm.html">Programming language design mistakes</a></li>
+  <li><a href="/markup.html">Designing markup languages</a></li>
+  <li><a href="/conflang.html">Designing configuration languages</a></li>
+  <li>Making interpreters/translators/compilers
+    <ul>
+      <li>Don’t make a compiler?
+  Make an interpreter instead, and stage it?
+  Turn an interpreter into a compiler for free?</li>
+      <li><a href="/parse.html">Parsing</a></li>
+    </ul>
+  </li>
 </ul>
+
+<h2 id="what-is-a-program">What is a program?</h2>
+
+<p>A program is an executable formal system.</p>
 
 <p>Every functional programming language is lambda calculus plus plus.</p>
 
 <p>Functional programming is lambda calculus plus plus.</p>
+
+<h2 id="what-should-we-know-before-creating-a-programming-language">What should we know before creating a programming language?</h2>
+
+<ul>
+  <li>2015 dissertation “Evidence-based programming language design: a philosophical and methodological exploration”,
+<a href="https://jyx.jyu.fi/handle/123456789/47698">abstract</a>,
+<a href="https://jyx.jyu.fi/bitstream/handle/123456789/47698/978-951-39-6388-0_vaitos04122015.pdf">pdf</a></li>
+  <li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/8vcrzb/what_are_some_interesting_language_features_that/">What are some interesting language features that may not be well known? : ProgrammingLanguages</a></li>
+  <li><a href="https://blog.acolyer.org/2018/01/26/a-practitioners-guide-to-reading-programming-languages-papers/">A practitioner’s guide to reading programming languages papers</a>
+    <ul>
+      <li>from <a href="https://www.reddit.com/r/ProgrammingLanguages/top/">top scoring links : ProgrammingLanguages</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="what-are-some-interesting-programming-languages">What are some interesting programming languages?</h2>
+
+<ul>
+  <li>Interesting functional programming languages tailored for web programming.
+Perhaps related to data modeling.
+    <ul>
+      <li>Ur/Web
+        <ul>
+          <li><a href="http://www.impredicative.com/ur/faq.html">FAQ</a>
+            <ul>
+              <li>“Why would I prefer to use Ur/Web over OPA?”</li>
+            </ul>
+          </li>
+          <li><a href="http://www.impredicative.com/ur/resources.html">How to Get Started Learning Ur/Web</a></li>
+        </ul>
+      </li>
+      <li><a href="http://links-lang.org/">The Links Programming Language</a></li>
+      <li><a href="http://opalang.org/">The Opa Language</a></li>
+    </ul>
+  </li>
+  <li>Moving logic into SQL stored procedures
+    <ul>
+      <li><a href="https://sivers.org/pg">Simplify: move code into database functions | Derek Sivers</a>
+        <ul>
+          <li>A legitimate concern: How do we version-control (and release, and rollback) stored procedures, triggers, and other database logics?</li>
+        </ul>
+      </li>
+      <li><a href="https://news.ycombinator.com/item?id=11802917">Andl, a relational language that is not SQL, is coming to Postgres | Hacker News</a></li>
+    </ul>
+  </li>
+  <li>https://www.microsoft.com/en-us/research/publication/convenient-explicit-effects-using-type-inference-with-subeffects/</li>
+  <li><a href="https://nikita-volkov.github.io/if-haskell-were-strict/">If Haskell were strict, what would the laziness be like?</a></li>
+  <li>http://homepages.inf.ed.ac.uk/wadler/papers/free-rectypes/free-rectypes.txt</li>
+</ul>
+
+<h3 id="do-we-really-have-to-read-these-fragmented-sources">Do we really have to read these fragmented sources?</h3>
+
+<ul>
+  <li><a href="http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-12.html">Lecture 12: Design and Evolution of Programming Languages</a></li>
+</ul>
 
 <h2 id="increasing-language-adoption">Increasing language adoption</h2>
 
@@ -430,7 +569,7 @@ Is there a compiler that doesn’t do that?
   </li>
 </ul>
 
-<h2 id="foundation-of-mathematics">Foundation of mathematics?</h2>
+<h2 id="foundation-of-mathematics-especially-for-programming">Foundation of mathematics especially for programming?</h2>
 
 <ul>
   <li>set theories, such as ZF, ZFC, NBG, etc.
@@ -464,10 +603,19 @@ Is there a compiler that doesn’t do that?
               <li>equational programming</li>
             </ul>
           </li>
+          <li>2016 reformulation article “A synthetic axiomatization of Map Theory” <a href="https://hal.archives-ouvertes.fr/hal-00678410v3">pdf available</a></li>
         </ul>
       </li>
     </ul>
   </li>
+</ul>
+
+<p>Can we formalize “a program is an executable formal system” using Grue’s map theory?</p>
+
+<ul>
+  <li>How is “false” represented?</li>
+  <li>How is “true” represented?</li>
+  <li>How is “conjunction” represented?</li>
 </ul>
 
 <h2 id="paradigm-approach-viewpoint-worldview">Paradigm, approach, viewpoint, worldview?</h2>
@@ -513,6 +661,20 @@ Is there a compiler that doesn’t do that?
     </ul>
   </li>
   <li>2002, article, <a href="http://www.cs.tufts.edu/comp/150PP/archive/norman-ramsey/pmonad.pdf">“Stochastic Lambda Calculus and Monads of Probability Distributions”</a></li>
+  <li>“Purely functional lazy nondeterministic programming”, <a href="https://www.cambridge.org/core/journals/journal-of-functional-programming/article/purely-functional-lazy-nondeterministic-programming/1E8BA117E549A9612BC4AF9804E5507A">paywall</a></li>
+  <li>relational programming (pure logic programming?)
+    <ul>
+      <li>miniKanren
+        <ul>
+          <li>Byrd PhD thesis https://scholarworks.iu.edu/dspace/bitstream/handle/2022/8777/Byrd_indiana_0093A_10344.pdf
+            <ul>
+              <li>mentions other programming languages: Prolog, Mercury, Curry</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
 
 <h2 id="toward-a-language-with-first-class-syntax">Toward a language with first-class syntax?</h2>
@@ -603,6 +765,41 @@ Is there a compiler that doesn’t do that?
       <li><code class="highlighter-rouge">Fix F = F (Fix F)</code> is the least fixed point of F.</li>
     </ul>
   </li>
+  <li>Why should we care about parametricity?
+    <ul>
+      <li><a href="https://bartoszmilewski.com/2014/09/22/parametricity-money-for-nothing-and-theorems-for-free/">Parametricity: Money for Nothing and Theorems for Free - Bartosz Milewski’s Programming Cafe</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="what-is-a-type">What is a type?</h3>
+
+<ul>
+  <li>Mathematically, A type is a set whose membership is syntactically decidable.</li>
+  <li>Engineeringly, A type gives meaning to bit patterns.
+A type encodes meaning into bit patterns.
+    <ul>
+      <li>For example, consider the bit pattern 11111111.
+        <ul>
+          <li>It means -1 as an int8.</li>
+          <li>It means 127 as an uint8.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="type-checking">Type-checking</h3>
+
+<ul>
+  <li>Every type checking algorithm is unification (logic programming).
+    <ul>
+      <li>If the programmer annotates a term, use that annotation.</li>
+      <li>If the a term is not annotated, annotate that term with a freshly generated variable.</li>
+      <li>Unify everything according to the typing rules.</li>
+      <li>See Algorithm W in <a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system">WP:Hindley–Milner type system</a>.</li>
+    </ul>
+  </li>
 </ul>
 
 <h3 id="algebraic-subtyping">Algebraic subtyping?</h3>
@@ -666,15 +863,6 @@ Does it mean “X is a subclass of Y” or “X is an instance of Y”?</li>
   </li>
   <li>2002, article collection, “Recent advances in Java technology: theory, application, implementation” http://www.cs.nuim.ie/~jpower/Research/Papers/2002/power-raijt-toc.pdf</li>
   <li>1985, article, “Automatic synthesis of typed Λ-programs on term algebras” https://www.sciencedirect.com/science/article/pii/0304397585901355</li>
-  <li>Metaprogramming
-    <ul>
-      <li>http://kaitai.io/
-        <ul>
-          <li>from description, generate parsers for binary data (as opposed to text data)</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
   <li>2015, article, “Dynamically Composing Languages in a Modular Way: Supporting C Extensions for Dynamic Languages”, <a href="https://chrisseaton.com/rubytruffle/modularity15/rubyextensions.pdf">pdf</a></li>
   <li>https://github.com/nim-lang/Nim</li>
   <li>2016, article, “Towards Ontology-Based Program Analysis”, <a href="http://drops.dagstuhl.de/opus/volltexte/2016/6120/pdf/LIPIcs-ECOOP-2016-26.pdf">pdf</a>
@@ -712,23 +900,6 @@ functional languages for systems programming?
   <li><a href="http://www.pl-enthusiast.net/2015/05/27/what-is-pl-research-and-how-is-it-useful/">What is PL research and how is it useful? - The PL Enthusiast</a></li>
   <li>2014, article, <a href="https://arxiv.org/abs/1410.1776">Ontology-based Representation and Reasoning on Process Models: A Logic Programming Approach</a></li>
   <li>1994, article, “Formalizing architectural connection”, <a href="http://web.cs.wpi.edu/~cs562/s98/pdf/wright-icse16.pdf">pdf</a></li>
-  <li>Aspect-oriented programming is a restricted form of metaprogramming.
-    <ul>
-      <li>relationship between Aspect-Oriented Programming and Functional Programming
-        <ul>
-          <li>2009, article, “What Does Aspect-Oriented Programming Mean for Functional Programmers?”, <a href="https://www.cs.ox.ac.uk/files/2282/wgp14-wang.pdf">pdf</a></li>
-          <li>2008, article, “On Feature Orientation and Functional Programming”, <a href="https://pdfs.semanticscholar.org/522e/b6c2ea910ed074a13fe21767c9fa070fb685.pdf">pdf</a></li>
-          <li>2016, article, “Realtime collaborative editor. Algebraic properties of the problem.”, <a href="http://blog.haskell-exists.com/yuras/posts/realtime-collaborative-editor.html">html</a>
-            <ul>
-              <li>see also Darcs patch theory</li>
-            </ul>
-          </li>
-          <li>2008, PhD thesis, “An Integrated System to Manage Crosscutting Concerns in Source Code”, <a href="http://wwwtmp.st.ewi.tudelft.nl/arie/phds/Marin.pdf">pdf</a></li>
-          <li>2003, article, “Language-independent aspect-oriented programming”, <a href="http://www.tara.tcd.ie/handle/2262/32627">pdf available</a></li>
-        </ul>
-      </li>
-    </ul>
-  </li>
   <li><a href="https://2015.splashcon.org/track/nool2015#event-overview">NOOL 2015 accepted papers - SPLASH 2015</a> (“New Object Oriented Languages”)
     <ul>
       <li>“Classes Considered Harmful”, <a href="http://web.cecs.pdx.edu/~black/publications/ClassesHarmful.pdf">pdf</a></li>
@@ -881,77 +1052,6 @@ functional languages for systems programming?
       </li>
     </ul>
   </li>
-  <li>Java metaprogramming
-    <ul>
-      <li>Similar products
-        <ul>
-          <li>libraries
-            <ul>
-              <li><a href="https://github.com/INRIA/spoon">INRIA Spoon</a></li>
-              <li>The <code class="highlighter-rouge">javax.lang.model</code> package of the Java standard library, but it does not model method bodies.</li>
-            </ul>
-          </li>
-          <li>environments
-            <ul>
-              <li><a href="http://www.eclipse.org/modeling/emf/">Eclipse Modeling Framework (EMF)</a></li>
-              <li><a href="https://www.jetbrains.com/mps/">JetBrains MPS (Meta Programming System)</a></li>
-              <li><a href="http://strategoxt.org/">Stratego/XT</a></li>
-              <li>TXL</li>
-              <li><a href="http://www.eclipse.org/Xtext/">Eclipse Xtext</a> and <a href="http://www.eclipse.org/xtend/">Eclipse Xtend</a></li>
-            </ul>
-          </li>
-          <li>programming languages
-            <ul>
-              <li>Eclipse Xtend</li>
-            </ul>
-          </li>
-          <li>parser generators
-            <ul>
-              <li><a href="https://en.wikipedia.org/wiki/Compiler-compiler">WP:Compiler-compiler</a></li>
-              <li><a href="https://en.wikipedia.org/wiki/Comparison_of_parser_generators">WP:Comparison of parser generators</a></li>
-              <li><a href="http://www.antlr.org/">ANTLR (Another Tool for Language Recognition)</a></li>
-              <li><a href="https://javacc.org/">JavaCC</a></li>
-              <li>YACC, Bison; with Lex, Flex</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>Related concepts
-        <ul>
-          <li>Model-driven development</li>
-          <li>Model-driven architecture</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Old content to be reorganized
-    <ul>
-      <li><a href="/functional_programming.html">Functional programming research</a>
-        <ul>
-          <li>Functional programming in the real world
-            <ul>
-              <li>Philip Wadler’s list <a href="http://homepages.inf.ed.ac.uk/wadler/realworld/">Functional Programming in the Real World</a></li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li><a href="/abdullah.html">Joint research with Abdullah</a></li>
-      <li><a href="/programming.html">Programming</a></li>
-    </ul>
-  </li>
-  <li>relational programming (pure logic programming?)
-    <ul>
-      <li>miniKanren
-        <ul>
-          <li>Byrd PhD thesis https://scholarworks.iu.edu/dspace/bitstream/handle/2022/8777/Byrd_indiana_0093A_10344.pdf
-            <ul>
-              <li>mentions other programming languages: Prolog, Mercury, Curry</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
   <li>John Hughes, “Deriving combinator implementations”, lecture 4, “Designing and using combinators” http://www.cse.chalmers.se/~rjmh/Combinators/DerivingCombinators/sld001.htm</li>
   <li>http://matt.might.net/articles/best-programming-languages/</li>
   <li>http://matt.might.net/articles/compiling-to-java/</li>
@@ -1075,18 +1175,6 @@ functional languages for systems programming?
       </li>
     </ul>
   </li>
-  <li>cabal new-build obviates stack?
-    <ul>
-      <li>http://coldwa.st/e/blog/2017-09-09-Cabal-2-0.html</li>
-    </ul>
-  </li>
-  <li>https://stackoverflow.com/questions/5770168/templating-packages-for-haskell</li>
-  <li>concept
-    <ul>
-      <li>https://en.wikipedia.org/wiki/End-user_development</li>
-      <li>https://en.wikipedia.org/wiki/Low-code_development_platforms</li>
-    </ul>
-  </li>
   <li>For JDBC URL see
     <ul>
       <li>https://jdbc.postgresql.org/documentation/80/connect.html</li>
@@ -1095,12 +1183,6 @@ functional languages for systems programming?
   <li>similar
     <ul>
       <li>https://medium.com/airbnb-engineering/react-native-at-airbnb-f95aa460be1c</li>
-    </ul>
-  </li>
-  <li>related?
-    <ul>
-      <li>https://github.com/PostgREST/postgrest</li>
-      <li>http://rosecompiler.org/</li>
     </ul>
   </li>
   <li>some requirement?
@@ -1180,88 +1262,135 @@ functional languages for systems programming?
       </li>
     </ul>
   </li>
-  <li>Hoogle vs Hayoo?
-    <ul>
-      <li>The hoogle on stackage.org top right text bar seems to be most complete
-        <ul>
-          <li>https://www.stackage.org/</li>
-        </ul>
-      </li>
-      <li>https://mail.haskell.org/pipermail/haskell-cafe/2013-August/109945.html</li>
-    </ul>
-  </li>
-  <li>GHC woes
-    <ul>
-      <li>Profiling requires recompiling all transitive dependencies if they happen to be compiled without profiling.</li>
-    </ul>
-  </li>
-  <li>What is a type?
-    <ul>
-      <li>Mathematically, A type is a set whose membership is syntactically decidable.</li>
-      <li>Engineeringly, A type gives meaning to bit patterns.
-  A type encodes meaning into bit patterns.
-        <ul>
-          <li>For example, consider the bit pattern 11111111.
-            <ul>
-              <li>It means -1 as an int8.</li>
-              <li>It means 127 as an uint8.</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Every type checking algorithm is unification (logic programming).
-    <ul>
-      <li>If the programmer annotates a term, use that annotation.</li>
-      <li>If the a term is not annotated, annotate that term with a freshly generated variable.</li>
-      <li>Unify everything according to the typing rules.</li>
-      <li>See Algorithm W in <a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system">WP:Hindley–Milner type system</a>.</li>
-    </ul>
-  </li>
+</ul>
+
+<h2 id="enabling-metaprogramming">Enabling metaprogramming</h2>
+
+<ul>
   <li><a href="https://stackoverflow.com/questions/50490883/why-is-ml-called-meta-language">metaprogramming - Why is ML called Meta-Language? - Stack Overflow</a></li>
-  <li>What is the relationship between incremental lambda-calculus and automatic differentiation of programs (or of algebraic data types)?</li>
-  <li>“Purely functional lazy nondeterministic programming”, <a href="https://www.cambridge.org/core/journals/journal-of-functional-programming/article/purely-functional-lazy-nondeterministic-programming/1E8BA117E549A9612BC4AF9804E5507A">paywall</a></li>
-  <li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/8vcrzb/what_are_some_interesting_language_features_that/">What are some interesting language features that may not be well known? : ProgrammingLanguages</a></li>
-  <li><a href="https://blog.acolyer.org/2018/01/26/a-practitioners-guide-to-reading-programming-languages-papers/">A practitioner’s guide to reading programming languages papers</a>
+  <li>related?
     <ul>
-      <li>from <a href="https://www.reddit.com/r/ProgrammingLanguages/top/">top scoring links : ProgrammingLanguages</a></li>
+      <li>https://github.com/PostgREST/postgrest</li>
+      <li>http://rosecompiler.org/</li>
     </ul>
   </li>
-  <li>Why should we care about parametricity?
+  <li>Metaprogramming
     <ul>
-      <li><a href="https://bartoszmilewski.com/2014/09/22/parametricity-money-for-nothing-and-theorems-for-free/">Parametricity: Money for Nothing and Theorems for Free - Bartosz Milewski’s Programming Cafe</a></li>
-    </ul>
-  </li>
-  <li>Interesting functional programming languages tailored for web programming.
-Perhaps related to data modeling.
-    <ul>
-      <li>Ur/Web
+      <li>http://kaitai.io/
         <ul>
-          <li><a href="http://www.impredicative.com/ur/faq.html">FAQ</a>
+          <li>from description, generate parsers for binary data (as opposed to text data)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Aspect-oriented programming is a restricted form of metaprogramming.
+    <ul>
+      <li>relationship between Aspect-Oriented Programming and Functional Programming
+        <ul>
+          <li>2009, article, “What Does Aspect-Oriented Programming Mean for Functional Programmers?”, <a href="https://www.cs.ox.ac.uk/files/2282/wgp14-wang.pdf">pdf</a></li>
+          <li>2008, article, “On Feature Orientation and Functional Programming”, <a href="https://pdfs.semanticscholar.org/522e/b6c2ea910ed074a13fe21767c9fa070fb685.pdf">pdf</a></li>
+          <li>2016, article, “Realtime collaborative editor. Algebraic properties of the problem.”, <a href="http://blog.haskell-exists.com/yuras/posts/realtime-collaborative-editor.html">html</a>
             <ul>
-              <li>“Why would I prefer to use Ur/Web over OPA?”</li>
+              <li>see also Darcs patch theory</li>
+            </ul>
+          </li>
+          <li>2008, PhD thesis, “An Integrated System to Manage Crosscutting Concerns in Source Code”, <a href="http://wwwtmp.st.ewi.tudelft.nl/arie/phds/Marin.pdf">pdf</a></li>
+          <li>2003, article, “Language-independent aspect-oriented programming”, <a href="http://www.tara.tcd.ie/handle/2262/32627">pdf available</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Java metaprogramming
+    <ul>
+      <li>Similar products
+        <ul>
+          <li>libraries
+            <ul>
+              <li><a href="https://github.com/INRIA/spoon">INRIA Spoon</a></li>
+              <li>The <code class="highlighter-rouge">javax.lang.model</code> package of the Java standard library, but it does not model method bodies.</li>
+            </ul>
+          </li>
+          <li>environments
+            <ul>
+              <li><a href="http://www.eclipse.org/modeling/emf/">Eclipse Modeling Framework (EMF)</a></li>
+              <li><a href="https://www.jetbrains.com/mps/">JetBrains MPS (Meta Programming System)</a></li>
+              <li><a href="http://strategoxt.org/">Stratego/XT</a></li>
+              <li>TXL</li>
+              <li><a href="http://www.eclipse.org/Xtext/">Eclipse Xtext</a> and <a href="http://www.eclipse.org/xtend/">Eclipse Xtend</a></li>
+            </ul>
+          </li>
+          <li>programming languages
+            <ul>
+              <li>Eclipse Xtend</li>
+            </ul>
+          </li>
+          <li>parser generators
+            <ul>
+              <li><a href="https://en.wikipedia.org/wiki/Compiler-compiler">WP:Compiler-compiler</a></li>
+              <li><a href="https://en.wikipedia.org/wiki/Comparison_of_parser_generators">WP:Comparison of parser generators</a></li>
+              <li><a href="http://www.antlr.org/">ANTLR (Another Tool for Language Recognition)</a></li>
+              <li><a href="https://javacc.org/">JavaCC</a></li>
+              <li>YACC, Bison; with Lex, Flex</li>
             </ul>
           </li>
         </ul>
       </li>
-      <li><a href="http://links-lang.org/">The Links Programming Language</a></li>
-      <li><a href="http://opalang.org/">The Opa Language</a></li>
-    </ul>
-  </li>
-  <li>Moving logic into SQL stored procedures
-    <ul>
-      <li><a href="https://sivers.org/pg">Simplify: move code into database functions | Derek Sivers</a>
+      <li>Related concepts
         <ul>
-          <li>A legitimate concern: How do we version-control (and release, and rollback) stored procedures, triggers, and other database logics?</li>
+          <li>Model-driven development</li>
+          <li>Model-driven architecture</li>
         </ul>
       </li>
-      <li><a href="https://news.ycombinator.com/item?id=11802917">Andl, a relational language that is not SQL, is coming to Postgres | Hacker News</a></li>
     </ul>
   </li>
-  <li>https://www.microsoft.com/en-us/research/publication/convenient-explicit-effects-using-type-inference-with-subeffects/</li>
-  <li><a href="https://nikita-volkov.github.io/if-haskell-were-strict/">If Haskell were strict, what would the laziness be like?</a></li>
-  <li>http://homepages.inf.ed.ac.uk/wadler/papers/free-rectypes/free-rectypes.txt</li>
+</ul>
+
+<h2 id="automatic-program-differentiation">Automatic (program) differentiation</h2>
+
+<ul>
+  <li>What is the relationship between incremental lambda-calculus and automatic differentiation of programs (or of algebraic data types)?</li>
+</ul>
+
+<h2 id="extending-functions">Extending functions</h2>
+
+<p>Not only classes, but also functions, should be extensible.</p>
+
+<p>“To extend the function \( f : A \to B \) to the function \( f’ : A’ \to B’ \)” means:</p>
+
+<ul>
+  <li>For every \( x \in A \), we have \( f(x) = f’(x) \).</li>
+  <li>\( A \subseteq A’ \).</li>
+  <li>\( B \subseteq B’ \).</li>
+</ul>
+
+<p>A consequence:
+Every occurrence of \( f \) can be replaced with \( f’ \) while preserving the meaning of the containing expression.</p>
+
+<h2 id="low-code-programming-for-the-masses">Low-code? Programming for the masses?</h2>
+
+<p>Limited programming?</p>
+
+<p>What can we assume about the user’s skill/knowledge/background?</p>
+
+<ul>
+  <li>https://en.wikipedia.org/wiki/End-user_development</li>
+  <li>https://en.wikipedia.org/wiki/Low-code_development_platforms</li>
+</ul>
+
+<h2 id="old-content-to-be-reorganized">Old content to be reorganized</h2>
+
+<ul>
+  <li><a href="/functional_programming.html">Functional programming research</a>
+    <ul>
+      <li>Functional programming in the real world
+        <ul>
+          <li>Philip Wadler’s list <a href="http://homepages.inf.ed.ac.uk/wadler/realworld/">Functional Programming in the Real World</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="/abdullah.html">Joint research with Abdullah</a></li>
+  <li><a href="/programming.html">Programming</a></li>
 </ul>
 
 <h2 id="probably-irrelevant-to-our-goal">Probably irrelevant to our goal</h2>
