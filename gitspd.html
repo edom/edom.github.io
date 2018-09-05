@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Speeding up Git</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/gitspd.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Speeding up Git</h1>
+  </header>
+
+  <div class="post-content">
+    <ul id="markdown-toc">
+  <li><a href="#the-problem" id="markdown-toc-the-problem">The problem</a></li>
+  <li><a href="#hypothesis-how-git-rebase-works" id="markdown-toc-hypothesis-how-git-rebase-works">Hypothesis: How git rebase works</a></li>
+  <li><a href="#the-plan" id="markdown-toc-the-plan">The plan</a></li>
+</ul>
+
+<h2 id="the-problem">The problem</h2>
+
+<p>I have a repository with 100,000 files and 1,000,000 objects.
+Git rebase is slow.
+Git interactive rebase is even slower.</p>
+
+<h2 id="hypothesis-how-git-rebase-works">Hypothesis: How git rebase works</h2>
+
+<p>I guess <code class="highlighter-rouge">git rebase --onto TARGET BASE MOVE</code> works like this:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout --orphan TARGET --
+git cherry-pick &lt;all commits from BASE to MOVE, excluding BASE, including MOVE&gt;
+git checkout -B MOVE
+</code></pre></div></div>
+
+<p>Cherry-pick is also slow.
+I guess that speeding up cherry-pick will also speed up rebase.</p>
+
+<p>Checkout is also slow.
+I guess that speeding up checkout will also speed up cherry-pick.</p>
+
+<p>It seems that <code class="highlighter-rouge">commit</code> and <code class="highlighter-rouge">write-tree</code> are slow.</p>
+
+<h2 id="the-plan">The plan</h2>
+
+<ul>
+  <li><a href="https://www.atlassian.com/blog/git/handle-big-repositories-git">atlassian.com: How to manage big Git repositories</a>
+    <ul>
+      <li>Try git sparse checkout?
+  It seems that sparse-checkout and rebase doesn’t mix.</li>
+    </ul>
+  </li>
+  <li>Not recommended: <code class="highlighter-rouge">git gc --aggressive</code> (doesn’t do what we think it would do).</li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/gitspd.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/gitspd.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-09-05 23:44 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

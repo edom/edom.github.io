@@ -57,6 +57,10 @@
   <div class="post-content">
     <ul id="markdown-toc">
   <li><a href="#probably-relevant-twitters" id="markdown-toc-probably-relevant-twitters">Probably relevant Twitters</a></li>
+  <li><a href="#bash-pitfalls" id="markdown-toc-bash-pitfalls">Bash pitfalls</a>    <ul>
+      <li><a href="#local-variable-definition-ignores-command-substitution-result" id="markdown-toc-local-variable-definition-ignores-command-substitution-result">Local variable definition ignores command substitution result</a></li>
+    </ul>
+  </li>
 </ul>
 
 <ul>
@@ -176,6 +180,40 @@ Why is security not the default?</li>
 <ul>
   <li><a href="https://twitter.com/nixcraft">nixcraft</a>: some humor, some important</li>
 </ul>
+
+<h2 id="bash-pitfalls">Bash pitfalls</h2>
+
+<p>This is bash version <code class="highlighter-rouge">GNU bash, version 4.3.11(1)-release (x86_64-pc-linux-gnu)</code> that comes with Ubuntu 14.04.</p>
+
+<h3 id="local-variable-definition-ignores-command-substitution-result">Local variable definition ignores command substitution result</h3>
+
+<p>At first this seems like an unexpected interaction between function, <code class="highlighter-rouge">local</code> variable, <code class="highlighter-rouge">set -e (set -o errexit)</code>, and command substitution <code class="highlighter-rouge">$(cmd)</code>.</p>
+
+<p>The word <code class="highlighter-rouge">local</code> is a shell command that has an exit status, not a keyword like <code class="highlighter-rouge">var</code> in JavaScript.
+Bash is behaving as documented.
+See the documentation for <code class="highlighter-rouge">local</code> in <code class="highlighter-rouge">man bash</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fun_0<span class="o">()</span> <span class="o">{</span>
+    <span class="nb">local </span>var
+    <span class="nv">var</span><span class="o">=</span><span class="k">$(</span><span class="nb">false</span><span class="k">)</span>
+    <span class="nb">echo </span>fun_0
+<span class="o">}</span>
+
+fun_1<span class="o">()</span> <span class="o">{</span>
+    <span class="nb">local </span><span class="nv">var</span><span class="o">=</span><span class="k">$(</span><span class="nb">false</span><span class="k">)</span>
+    <span class="nb">echo </span>fun_1
+<span class="o">}</span>
+
+fun_2<span class="o">()</span> <span class="o">{</span>
+    <span class="nb">local </span><span class="nv">var</span><span class="o">=</span><span class="nv">$1</span>
+    <span class="nb">echo </span>fun_2
+<span class="o">}</span>
+
+<span class="nb">echo</span> <span class="k">$(</span><span class="nb">set</span> <span class="nt">-o</span> errexit<span class="p">;</span> fun_0<span class="k">)</span> <span class="c"># Expected: This doesn't print fun_0.</span>
+<span class="nb">echo</span> <span class="k">$(</span><span class="nb">set</span> <span class="nt">-o</span> errexit<span class="p">;</span> fun_1<span class="k">)</span> <span class="c"># PITFALL: This prints fun_1 !!!</span>
+<span class="nb">echo</span> <span class="k">$(</span><span class="nb">set</span> <span class="nt">-o</span> nounset<span class="p">;</span> fun_2<span class="k">)</span> <span class="c"># Pitfall: This doesn't print fun_2, and aborts with "bash: $1: unbound variable".</span>
+
+</code></pre></div></div>
 
   </div>
 
