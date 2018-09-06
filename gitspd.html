@@ -59,6 +59,8 @@
   <li><a href="#the-problem" id="markdown-toc-the-problem">The problem</a></li>
   <li><a href="#hypothesis-how-git-rebase-works" id="markdown-toc-hypothesis-how-git-rebase-works">Hypothesis: How git rebase works</a></li>
   <li><a href="#the-plan" id="markdown-toc-the-plan">The plan</a></li>
+  <li><a href="#plan-make-a-rebase-that-uses-only-trees-and-not-indexes" id="markdown-toc-plan-make-a-rebase-that-uses-only-trees-and-not-indexes">Plan: Make a rebase that uses only trees and not indexes</a></li>
+  <li><a href="#plan-just-use-subtrees-and-keep-the-repository-small" id="markdown-toc-plan-just-use-subtrees-and-keep-the-repository-small">Plan: Just use subtrees and keep the repository small</a></li>
 </ul>
 
 <h2 id="the-problem">The problem</h2>
@@ -84,6 +86,15 @@ I guess that speeding up checkout will also speed up cherry-pick.</p>
 
 <p>It seems that <code class="highlighter-rouge">commit</code> and <code class="highlighter-rouge">write-tree</code> are slow.</p>
 
+<ul>
+  <li><a href="https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables">Git - Environment Variables</a>
+    <ul>
+      <li><code class="highlighter-rouge">GIT_TRACE_PERFORMANCE=true</code> has no effect.
+  Which git version is it for?</li>
+    </ul>
+  </li>
+</ul>
+
 <h2 id="the-plan">The plan</h2>
 
 <ul>
@@ -95,6 +106,14 @@ I guess that speeding up checkout will also speed up cherry-pick.</p>
   </li>
   <li>Not recommended: <code class="highlighter-rouge">git gc --aggressive</code> (doesn’t do what we think it would do).</li>
 </ul>
+
+<h2 id="plan-make-a-rebase-that-uses-only-trees-and-not-indexes">Plan: Make a rebase that uses only trees and not indexes</h2>
+
+<p>If a tree changes, all its ancestors have to be rewritten.</p>
+
+<h2 id="plan-just-use-subtrees-and-keep-the-repository-small">Plan: Just use subtrees and keep the repository small</h2>
+
+<p>I think this is the least-effort solution that solves (works around) the problem.</p>
 
   </div>
 

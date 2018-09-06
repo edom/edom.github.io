@@ -59,6 +59,7 @@
   <li><a href="#mental-model" id="markdown-toc-mental-model">Mental model</a></li>
   <li><a href="#more-information" id="markdown-toc-more-information">More information</a></li>
   <li><a href="#things-to-write" id="markdown-toc-things-to-write">Things to write?</a></li>
+  <li><a href="#git-hash-collisions" id="markdown-toc-git-hash-collisions">Git hash collisions</a></li>
   <li><a href="#related-tools" id="markdown-toc-related-tools">Related tools</a></li>
 </ul>
 
@@ -139,6 +140,20 @@ or the <a href="https://git-scm.com/docs">manpages</a> (<code class="highlighter
   </li>
   <li><a href="https://manishearth.github.io/blog/2017/03/05/understanding-git-filter-branch/">Understanding Git Filter-branch and the Git Storage Model</a></li>
 </ul>
+
+<h2 id="git-hash-collisions">Git hash collisions</h2>
+
+<p>Git hash collision may occur albeit extremely unlikely.
+Git assumes that if two objects have the same hash, then they are the same object.
+This is false; the converse is true: if two objects are the same, then they have the same hash.
+When hash collision occur, Git may silently lose data.
+Git is an example of software that is incorrect but works for the use cases it was designed for (source code versioning).
+Git is not meant to be used as an arbitrary database.</p>
+
+<p>Other softwares are incorrect as well.
+We routinely make software that assumes that there will never be more than 2^64 rows in a database table.</p>
+
+<p>Is it even possible to write correct software at all?</p>
 
 <h2 id="related-tools">Related tools</h2>
 

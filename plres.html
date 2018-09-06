@@ -136,7 +136,7 @@ MathJax.Hub.Config({
   <li><a href="#paradigm-approach-viewpoint-worldview" id="markdown-toc-paradigm-approach-viewpoint-worldview">Paradigm, approach, viewpoint, worldview?</a></li>
   <li><a href="#toward-a-language-with-first-class-syntax" id="markdown-toc-toward-a-language-with-first-class-syntax">Toward a language with first-class syntax?</a></li>
   <li><a href="#type-systems-and-type-theory" id="markdown-toc-type-systems-and-type-theory">Type systems and type theory?</a>    <ul>
-      <li><a href="#what-is-a-type" id="markdown-toc-what-is-a-type">What is a type?</a></li>
+      <li><a href="#what-is-a-type-understanding-what-a-type-is-from-how-it-is-used" id="markdown-toc-what-is-a-type-understanding-what-a-type-is-from-how-it-is-used">What is a type? Understanding what a type is from how it is used</a></li>
       <li><a href="#type-checking" id="markdown-toc-type-checking">Type-checking</a></li>
       <li><a href="#algebraic-subtyping" id="markdown-toc-algebraic-subtyping">Algebraic subtyping?</a></li>
     </ul>
@@ -149,6 +149,9 @@ MathJax.Hub.Config({
   <li><a href="#old-content-to-be-reorganized" id="markdown-toc-old-content-to-be-reorganized">Old content to be reorganized</a></li>
   <li><a href="#probably-irrelevant-to-our-goal" id="markdown-toc-probably-irrelevant-to-our-goal">Probably irrelevant to our goal</a></li>
   <li><a href="#is-inheritance-subtyping" id="markdown-toc-is-inheritance-subtyping">Is inheritance subtyping?</a></li>
+  <li><a href="#maximum-polymorphism" id="markdown-toc-maximum-polymorphism">Maximum polymorphism?</a></li>
+  <li><a href="#typing-records" id="markdown-toc-typing-records">Typing records</a></li>
+  <li><a href="#polymorphism-is-code-generation" id="markdown-toc-polymorphism-is-code-generation">Polymorphism is code generation</a></li>
 </ul>
 
 <h2 id="goal">Goal</h2>
@@ -773,7 +776,7 @@ Is there a compiler that doesn’t do that?
   </li>
 </ul>
 
-<h3 id="what-is-a-type">What is a type?</h3>
+<h3 id="what-is-a-type-understanding-what-a-type-is-from-how-it-is-used">What is a type? Understanding what a type is from how it is used</h3>
 
 <ul>
   <li>Mathematically, A type is a set whose membership is syntactically decidable.</li>
@@ -789,6 +792,17 @@ A type encodes meaning into bit patterns.
     </ul>
   </li>
 </ul>
+
+<p>A type defines the memory layout (bit pattern) of its values.</p>
+
+<p>A type constrains values and expressions.</p>
+
+<p>A type determines what values a function can take/give.</p>
+
+<p>There are also other uses of types.</p>
+
+<p>The question is: What is a type?
+What principles should we follow when we design a language?</p>
 
 <h3 id="type-checking">Type-checking</h3>
 
@@ -1444,6 +1458,35 @@ Every occurrence of \( f \) can be replaced with \( f’ \) while preserving the
   <li><a href="https://www.cmi.ac.in/~madhavan/courses/pl2009/lecturenotes/lecture-notes/node28.html">Subtyping vs inheritance</a>
     <ul>
       <li>Subtyping and inheritance are orthogonal concepts.</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="maximum-polymorphism">Maximum polymorphism?</h2>
+
+<ul>
+  <li>Read this: <a href="https://blog.inf.ed.ac.uk/apl16/archives/178/comment-page-1">Lecture 4: Higher Polymorphism | Advances in Programming Languages</a></li>
+  <li><a href="https://github.com/lampepfl/dotty/issues/1886">Rethink Structural Types · Issue #1886 · lampepfl/dotty</a>
+    <ul>
+      <li>“However, there is another area where statically-typed languages are often more awkward than dynamically-typed ones: database access.”</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="typing-records">Typing records</h2>
+
+<p>A record type can be thought as a product type whose components are named.</p>
+
+<p>If each value <code class="highlighter-rouge">valN</code> has type <code class="highlighter-rouge">typN</code>, then the record <code class="highlighter-rouge">{key1=val1; key2=val2; ...;}</code> has type <code class="highlighter-rouge">{key1:typ1; key2:typ2; ...;}</code>.
+For example, the record <code class="highlighter-rouge">{name="John"; age=20}</code> has type <code class="highlighter-rouge">{name:String; age:Int;}</code>.</p>
+
+<h2 id="polymorphism-is-code-generation">Polymorphism is code generation</h2>
+
+<ul>
+  <li>Consider translating <code class="highlighter-rouge">id : a -&gt; a</code> to assembly.
+    <ul>
+      <li>If types define memory layout (bit representation), then the compiler must generate an <code class="highlighter-rouge">id</code> function for every <code class="highlighter-rouge">a</code>.</li>
+      <li>If the language uses runtime type tagging, then there doesn’t have to be more than one<code class="highlighter-rouge">id</code> functions.</li>
     </ul>
   </li>
 </ul>
