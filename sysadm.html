@@ -56,6 +56,7 @@
 
   <div class="post-content">
     <ul id="markdown-toc">
+  <li><a href="#sudo-security-hole-mitigation-dont-reuse-the-terminal-you-use-for-sudo" id="markdown-toc-sudo-security-hole-mitigation-dont-reuse-the-terminal-you-use-for-sudo">sudo security hole mitigation: Don’t reuse the terminal you use for sudo.</a></li>
   <li><a href="#probably-relevant-twitters" id="markdown-toc-probably-relevant-twitters">Probably relevant Twitters</a></li>
 </ul>
 
@@ -169,6 +170,35 @@ Why is security not the default?</li>
   </li>
   <li><a href="https://linux.die.net/man/1/pv">pv(1): monitor progress of data through pipe - Linux man page</a></li>
   <li><a href="https://stedolan.github.io/jq/">jq</a>, <a href="https://en.wikipedia.org/wiki/Jq_(programming_language)">WP:jq (programming language)</a></li>
+</ul>
+
+<h2 id="sudo-security-hole-mitigation-dont-reuse-the-terminal-you-use-for-sudo">sudo security hole mitigation: Don’t reuse the terminal you use for sudo.</h2>
+
+<p>The problem:
+If you run sudo in a terminal,
+then every program you run in the same terminal shortly after can become root without asking for your password,
+(You may not have this problem if your system disables credential caching.)</p>
+
+<p>To see how, save this into <code class="highlighter-rouge">evil.sh</code>, and then <code class="highlighter-rouge">chmod 755 evil.sh</code>, and then <code class="highlighter-rouge">sudo echo login</code>, and then <code class="highlighter-rouge">./evil.sh</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="c"># If you run this script not long after sudoing in the same terminal,</span>
+<span class="c"># then this script can become root without prompting for your password.</span>
+<span class="nb">sudo echo </span>PWNED <span class="c"># could be a malicious program</span>
+</code></pre></div></div>
+
+<p>The security hole is by design for convenience because people don’t like typing their passwords.
+This hole is not fatal; the user can control this.
+It seems that this hole won’t be closed;
+there doesn’t seem to be any way of closing this hole without annoying the user.</p>
+
+<p>The mitigation is simple disciplined behavior:</p>
+
+<ul>
+  <li>Do as few things as necessary in an elevated terminal.</li>
+  <li>Run only trusted programs and scripts.</li>
+  <li>Close the terminal as soon as possible.
+Alternatively, you can also run <code class="highlighter-rouge">sudo -K</code> to remove the cache.</li>
 </ul>
 
 <h2 id="probably-relevant-twitters">Probably relevant Twitters</h2>

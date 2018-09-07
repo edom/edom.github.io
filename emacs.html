@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using Emacs</title>
+  <meta name="description" content="Personal website">
+
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/emacs.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
+
+  
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Using Emacs</h1>
+  </header>
+
+  <div class="post-content">
+    <ul id="markdown-toc">
+  <li><a href="#install-ubuntu-1404" id="markdown-toc-install-ubuntu-1404">Install Ubuntu 14.04</a>    <ul>
+      <li><a href="#install-emacs" id="markdown-toc-install-emacs">Install Emacs</a></li>
+      <li><a href="#fixing-misbehaviors" id="markdown-toc-fixing-misbehaviors">Fixing misbehaviors</a></li>
+    </ul>
+  </li>
+  <li><a href="#basics" id="markdown-toc-basics">Basics</a>    <ul>
+      <li><a href="#key-notation" id="markdown-toc-key-notation">Key notation</a></li>
+      <li><a href="#common-keys" id="markdown-toc-common-keys">Common keys</a></li>
+      <li><a href="#customizing-the-themecolor" id="markdown-toc-customizing-the-themecolor">Customizing the theme/color</a></li>
+      <li><a href="#the-emacs-tutorial-that-comes-with-emacs" id="markdown-toc-the-emacs-tutorial-that-comes-with-emacs">The Emacs tutorial that comes with Emacs</a></li>
+    </ul>
+  </li>
+  <li><a href="#using-buffers-and-windows" id="markdown-toc-using-buffers-and-windows">Using buffers and windows</a></li>
+  <li><a href="#setting-a-desktopsession-so-that-emacs-continues-where-you-left-off" id="markdown-toc-setting-a-desktopsession-so-that-emacs-continues-where-you-left-off">Setting a desktop/session so that emacs continues where you left off</a></li>
+  <li><a href="#searching" id="markdown-toc-searching">Searching</a></li>
+  <li><a href="#basic-motions" id="markdown-toc-basic-motions">Basic motions</a>    <ul>
+      <li><a href="#moving-by-a-character-or-a-line" id="markdown-toc-moving-by-a-character-or-a-line">Moving by a character or a line</a></li>
+      <li><a href="#moving-by-a-screen" id="markdown-toc-moving-by-a-screen">Moving by a screen</a></li>
+    </ul>
+  </li>
+  <li><a href="#using-dired-to-navigate-the-file-system" id="markdown-toc-using-dired-to-navigate-the-file-system">Using dired to navigate the file system</a></li>
+  <li><a href="#getting-started-with-org-mode" id="markdown-toc-getting-started-with-org-mode">Getting started with org-mode</a>    <ul>
+      <li><a href="#how-do-people-use-org-mode" id="markdown-toc-how-do-people-use-org-mode">How do people use org-mode?</a></li>
+      <li><a href="#entering-org-mode" id="markdown-toc-entering-org-mode">Entering org mode</a></li>
+      <li><a href="#reading-the-manual" id="markdown-toc-reading-the-manual">Reading the manual</a>        <ul>
+          <li><a href="#navigating-an-info-document" id="markdown-toc-navigating-an-info-document">Navigating an info document</a></li>
+        </ul>
+      </li>
+      <li><a href="#inserting-lists" id="markdown-toc-inserting-lists">Inserting lists</a></li>
+    </ul>
+  </li>
+  <li><a href="#unanswered-questions" id="markdown-toc-unanswered-questions">Unanswered questions</a></li>
+  <li><a href="#for-vi-users" id="markdown-toc-for-vi-users">For vi users</a>    <ul>
+      <li><a href="#evil-mode-vile-viper" id="markdown-toc-evil-mode-vile-viper">Evil mode? Vile? VIPER?</a></li>
+    </ul>
+  </li>
+  <li><a href="#going-deeper" id="markdown-toc-going-deeper">Going deeper</a></li>
+  <li><a href="#going-even-deeper" id="markdown-toc-going-even-deeper">Going even deeper</a></li>
+  <li><a href="#resources" id="markdown-toc-resources">Resources</a></li>
+  <li><a href="#other-things-i-havent-tried" id="markdown-toc-other-things-i-havent-tried">Other things I haven’t tried</a>    <ul>
+      <li><a href="#emacs-stuffs-that-may-be-related-to-org-mode" id="markdown-toc-emacs-stuffs-that-may-be-related-to-org-mode">Emacs stuffs that may be related to org-mode</a></li>
+      <li><a href="#other-editors" id="markdown-toc-other-editors">Other editors</a></li>
+    </ul>
+  </li>
+  <li><a href="#what" id="markdown-toc-what">what</a></li>
+</ul>
+
+<h2 id="install-ubuntu-1404">Install Ubuntu 14.04</h2>
+
+<h3 id="install-emacs">Install Emacs</h3>
+
+<p>On 2018-09-07, the command
+<code class="highlighter-rouge">sudo apt-get install emacs magit org-mode</code>
+on Ubuntu 14.04 will install:</p>
+
+<ul>
+  <li>emacs 24.3.1</li>
+  <li>magit 1.2.0</li>
+  <li>org-mode 8.2.4</li>
+</ul>
+
+<p>Org Mode is the gateway drug to Emacs.</p>
+
+<h3 id="fixing-misbehaviors">Fixing misbehaviors</h3>
+
+<p>If Emacs is misbehaving (and if you are an Emacs beginner who have no idea why), try nuking the file <code class="highlighter-rouge">~/.emacs</code> and the directory <code class="highlighter-rouge">~/.emacs.d</code>.
+But you will lose all customizations you have made.</p>
+
+<p>If you are an advanced Emacs user,
+you may want to commit your modifications to your personal Git repository,
+and make <code class="highlighter-rouge">~/.emacs</code> a symbolic link.
+Unfortunately, we don’t always want this because
+that file may contain sensitive data (such as IRC passwords).</p>
+
+<h2 id="basics">Basics</h2>
+
+<h3 id="key-notation">Key notation</h3>
+
+<p><code class="highlighter-rouge">C-a</code> means hold Ctrl and press the A key.</p>
+
+<p><code class="highlighter-rouge">M-a</code> means hold Meta (Alt) and press the A key.</p>
+
+<p><code class="highlighter-rouge">S-a</code> means hold Shift and press the A key.</p>
+
+<p><code class="highlighter-rouge">RET</code> means press the Return/Enter key.</p>
+
+<p><code class="highlighter-rouge">LEFT</code> means press the Left Arrow key.</p>
+
+<p><code class="highlighter-rouge">BKSP</code> means the Backspace key.
+Emacs calls this key <code class="highlighter-rouge">DEL</code>.</p>
+
+<p><code class="highlighter-rouge">SPC</code> means the Space key.</p>
+
+<p><code class="highlighter-rouge">C-a C-b</code> means <code class="highlighter-rouge">C-a</code> and then <code class="highlighter-rouge">C-b</code>.</p>
+
+<p><code class="highlighter-rouge">M-x help</code> means press <code class="highlighter-rouge">M-x</code> and then type <code class="highlighter-rouge">help</code> (and press Enter if necessary).</p>
+
+<h3 id="common-keys">Common keys</h3>
+
+<p>To exit Emacs, <code class="highlighter-rouge">C-x C-c</code>.</p>
+
+<p>To cancel a long-running action, or exit a prompt, press <code class="highlighter-rouge">C-g</code>.</p>
+
+<p>To start/open/visit a file, <code class="highlighter-rouge">C-x C-f</code>.
+The file doesn’t have to exist.</p>
+
+<p>To autocomplete (where a file name or command name is expected), press <code class="highlighter-rouge">TAB</code>.</p>
+
+<h3 id="customizing-the-themecolor">Customizing the theme/color</h3>
+
+<p><code class="highlighter-rouge">M-x customize-themes</code>.</p>
+
+<h3 id="the-emacs-tutorial-that-comes-with-emacs">The Emacs tutorial that comes with Emacs</h3>
+
+<p>Follow the emacs tutorial <code class="highlighter-rouge">C-h t</code>.</p>
+
+<p>Read the emacs manual <code class="highlighter-rouge">C-h r</code>.</p>
+
+<h2 id="using-buffers-and-windows">Using buffers and windows</h2>
+
+<ul>
+  <li><code class="highlighter-rouge">C-x C-f</code> opens a file or directory into a buffer</li>
+  <li><code class="highlighter-rouge">C-x C-b</code> lists buffers in the other window</li>
+  <li><code class="highlighter-rouge">C-x 1</code> delete other windows (all windows except the focused one)</li>
+  <li><code class="highlighter-rouge">C-x C-LEFT</code> goes to previous buffer</li>
+  <li><code class="highlighter-rouge">C-x C-RIGHT</code> goes to next buffer</li>
+  <li><code class="highlighter-rouge">C-x k</code> kills a buffer</li>
+  <li><code class="highlighter-rouge">C-x s</code> saves some buffers</li>
+  <li><code class="highlighter-rouge">C-x b</code> switches buffers</li>
+</ul>
+
+<h2 id="setting-a-desktopsession-so-that-emacs-continues-where-you-left-off">Setting a desktop/session so that emacs continues where you left off</h2>
+
+<h2 id="searching">Searching</h2>
+
+<ul>
+  <li><code class="highlighter-rouge">C-s</code> forward incremental search</li>
+  <li><code class="highlighter-rouge">C-r</code> reverse incremental search</li>
+  <li>While in incremental search prompt:
+    <ul>
+      <li><code class="highlighter-rouge">C-s</code> go to next occurrence</li>
+      <li><code class="highlighter-rouge">C-r</code> go to previous occurrence</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="basic-motions">Basic motions</h2>
+
+<h3 id="moving-by-a-character-or-a-line">Moving by a character or a line</h3>
+
+<ul>
+  <li>horizontally/characterwise
+    <ul>
+      <li><code class="highlighter-rouge">C-b</code> moves the cursor back to the previous character</li>
+      <li><code class="highlighter-rouge">C-f</code> moves the cursor forward to the next character</li>
+      <li><code class="highlighter-rouge">C-a</code> moves the cursor to the beginning of line</li>
+      <li><code class="highlighter-rouge">C-e</code> moves the cursor to the ending of line</li>
+    </ul>
+  </li>
+  <li>vertically/linewise
+    <ul>
+      <li><code class="highlighter-rouge">C-n</code> moves the cursor down to the next line</li>
+      <li><code class="highlighter-rouge">C-p</code> moves the cursor up to the previous line</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="moving-by-a-screen">Moving by a screen</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">M-v</code> goes up a screen</li>
+  <li><code class="highlighter-rouge">C-v</code> goes down a screen</li>
+  <li><code class="highlighter-rouge">C-M-v</code> goes down a screen in the other window</li>
+  <li><code class="highlighter-rouge">C-M-S-v</code> goes up a screen in the other window</li>
+</ul>
+
+<p>(Emacs call scroll-<em>up</em>-command for what I think as going <em>down</em> a screen.
+Emacs thinks about moving the text.
+I think about moving the viewport.)</p>
+
+<h2 id="using-dired-to-navigate-the-file-system">Using dired to navigate the file system</h2>
+
+<p>Input <code class="highlighter-rouge">C-x C-f</code>, input a directory path, and press Enter.
+Emacs opens Dired (directory edit) mode.</p>
+
+<ul>
+  <li>Navigating:
+    <ul>
+      <li><code class="highlighter-rouge">BKSP</code> moves the cursor up one item.</li>
+      <li><code class="highlighter-rouge">SPC</code> moves the cursor down one item.</li>
+      <li><code class="highlighter-rouge">l</code> (small L) refreshes the display.</li>
+    </ul>
+  </li>
+  <li>Opening:
+    <ul>
+      <li><code class="highlighter-rouge">RET</code> opens the item in the current window.
+  If it’s a directory, emacs opens another dired.
+  If it’s a file, emacs opens the editor.</li>
+      <li><code class="highlighter-rouge">o</code> (small O) opens the item in the other window.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Use <code class="highlighter-rouge">M-x describe-mode</code> to get some help.</p>
+
+<h2 id="getting-started-with-org-mode">Getting started with org-mode</h2>
+
+<h3 id="how-do-people-use-org-mode">How do people use org-mode?</h3>
+
+<ul>
+  <li><a href="http://doc.norang.ca/org-mode.html">Org Mode - Organize Your Life In Plain Text!</a></li>
+</ul>
+
+<h3 id="entering-org-mode">Entering org mode</h3>
+
+<p>Visit a file with <code class="highlighter-rouge">.org</code> extension.
+Alternatively, <code class="highlighter-rouge">M-x org-mode</code>.</p>
+
+<h3 id="reading-the-manual">Reading the manual</h3>
+
+<p>Read the manual with <code class="highlighter-rouge">M-x org-info</code>.</p>
+
+<p>A shorter HTML version is available online: <a href="https://orgmode.org/guide/">the compact org-mode guide</a>.
+However, I find that it’s more convenient to browse the info document in emacs.</p>
+
+<h4 id="navigating-an-info-document">Navigating an info document</h4>
+
+<ul>
+  <li><code class="highlighter-rouge">q</code> quits the info viewer</li>
+  <li><code class="highlighter-rouge">RET</code> follows the link under cursor</li>
+  <li><code class="highlighter-rouge">TAB</code> moves the cursor to the next link</li>
+  <li><code class="highlighter-rouge">S-TAB</code> moves the cursor to the previous link</li>
+  <li><code class="highlighter-rouge">l</code> (small L) goes back to the previous page in your browsing history</li>
+  <li><code class="highlighter-rouge">u</code> goes up to the parent page (of the current page)</li>
+  <li><code class="highlighter-rouge">n</code> goes to the next page</li>
+  <li><code class="highlighter-rouge">p</code> goes to the previous page</li>
+  <li><code class="highlighter-rouge">h</code> brings up help about how to use the info viewer</li>
+</ul>
+
+<h3 id="inserting-lists">Inserting lists</h3>
+
+<p>Begin the line with a hyphen (<code class="highlighter-rouge">-</code>).</p>
+
+<p><code class="highlighter-rouge">M-RET</code> to enter the next item.</p>
+
+<p><code class="highlighter-rouge">RET</code> to end the list.</p>
+
+<p><code class="highlighter-rouge">TAB</code> to indent the current item one level inward.</p>
+
+<p><code class="highlighter-rouge">S-TAB</code> to unindent the current item one level outward.</p>
+
+<h2 id="unanswered-questions">Unanswered questions</h2>
+
+<ul>
+  <li>What is the Emacs equivalent of VSCode Ctrl+P (open file fuzzy search / approximate string matching / subsequence matching)?</li>
+</ul>
+
+<h2 id="for-vi-users">For vi users</h2>
+
+<ul>
+  <li><a href="/emacsvi.html">Emacs-Vi correspondence table</a></li>
+</ul>
+
+<h3 id="evil-mode-vile-viper">Evil mode? Vile? VIPER?</h3>
+
+<p>How do I install evil-mode (vi keybindings for emacs)?
+Should I?
+It’s not on GNU ELPA.</p>
+
+<ul>
+  <li><a href="https://emacs.stackexchange.com/questions/10500/do-i-still-need-gnu-elpa-if-i-have-melpa">package - Do I still need GNU ELPA if I have MELPA? - Emacs Stack Exchange</a></li>
+  <li><a href="https://www.reddit.com/r/emacs/comments/6ej18a/is_evilmode_too_evil/">Is evil-mode too evil? : emacs</a></li>
+</ul>
+
+<p>There is a “vile” (vi-like emacs) package on Ubuntu 14.04.</p>
+
+<p>Emacs 24 FAQ recommends VIPER for people who want vim’s <code class="highlighter-rouge">.</code> command.</p>
+
+<h2 id="going-deeper">Going deeper</h2>
+
+<ul>
+  <li>Read the emacs manual in emacs.</li>
+  <li>magit: <a href="https://magit.vc/">It’s Magit! A Git Porcelain inside Emacs</a>
+    <ul>
+      <li>vs git-el?</li>
+    </ul>
+  </li>
+  <li>erc: IRC with emacs</li>
+  <li>opening PDF with emacs</li>
+  <li>browsing the Internet with emacs</li>
+  <li>icicles: “emacs library that enhances minibuffer/input completion”</li>
+  <li>programming: paredit, haskell-mode, golang-mode, etc.</li>
+</ul>
+
+<h2 id="going-even-deeper">Going even deeper</h2>
+
+<ul>
+  <li>Write an Emacs Lisp program</li>
+  <li>Compare Emacs Lisp and Vim Script</li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="http://blog.vivekhaldar.com/post/3996068979/the-levels-of-emacs-proficiency">Vivek Haldar — The levels of Emacs proficiency</a></li>
+  <li><a href="https://orgmode.org/">Org mode for Emacs – Your Life in Plain Text</a></li>
+  <li><a href="http://ergoemacs.org/emacs/emacs.html">Xah Lee’s Emacs tutorial</a></li>
+</ul>
+
+<h2 id="other-things-i-havent-tried">Other things I haven’t tried</h2>
+
+<h3 id="emacs-stuffs-that-may-be-related-to-org-mode">Emacs stuffs that may be related to org-mode</h3>
+
+<ul>
+  <li>“BHL is an Emacs mode that enables you to convert text files into HTML, LaTeX and SGML files.”</li>
+  <li>“Howm(Hitori Otegaru Wiki Modoki) is a note-taking tool on Emacs.”</li>
+  <li>emacs-wiki</li>
+  <li>mhc: schedule management tool for emacsen</li>
+  <li>muse-el: Author and publish projects using Wiki-like markup</li>
+  <li>smartdoc-elisp: emacs mode for smartdoc</li>
+  <li>sisu: documents - structuring, publishing in multiple formats and search</li>
+</ul>
+
+<h3 id="other-editors">Other editors</h3>
+
+<ul>
+  <li><a href="http://diakonos.pist0s.ca/">Diakonos - a linux editor for the masses</a></li>
+  <li>Spacemacs</li>
+  <li>non-free
+    <ul>
+      <li><a href="https://www.sublimetext.com/">Sublime Text - A sophisticated text editor for code, markup and prose</a></li>
+    </ul>
+  </li>
+  <li>TeX/LaTeX
+    <ul>
+      <li>GNU TeXmacs</li>
+      <li>WhizzyTeX</li>
+    </ul>
+  </li>
+  <li>XEmacs? emacs-lucid?
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/XEmacs#History">WP:XEmacs history</a></li>
+      <li><a href="http://ergoemacs.org/emacs/emacs_vs_xemacs.html">Xah Lee: My Experience of Emacs vs XEmacs</a>
+        <ul>
+          <li><a href="http://ergoemacs.org/emacs/gnu_emacs_xemacs_schism_Ben_Wing.html">Ben Wing: GNU Emacs and XEmacs Schism</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="what">what</h2>
+
+<ul>
+  <li>remembrance-agent: Emacs mode to help find relevant texts</li>
+  <li>twittering-mode: Twitter client for Emacs</li>
+  <li><a href="http://ergoemacs.org/emacs/emacs_hand_pain_celebrity.html">Famous Programers with Repetitive Strain Injury</a></li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/emacs.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/emacs.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-09-07 16:11 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>

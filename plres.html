@@ -152,6 +152,7 @@ MathJax.Hub.Config({
   <li><a href="#maximum-polymorphism" id="markdown-toc-maximum-polymorphism">Maximum polymorphism?</a></li>
   <li><a href="#typing-records" id="markdown-toc-typing-records">Typing records</a></li>
   <li><a href="#polymorphism-is-code-generation" id="markdown-toc-polymorphism-is-code-generation">Polymorphism is code generation</a></li>
+  <li><a href="#fixed-points-and-recursive-types" id="markdown-toc-fixed-points-and-recursive-types">Fixed points and recursive types</a></li>
 </ul>
 
 <h2 id="goal">Goal</h2>
@@ -1462,6 +1463,35 @@ Every occurrence of \( f \) can be replaced with \( f’ \) while preserving the
   </li>
 </ul>
 
+<p>My conclusion is:
+A language should provide both nominal and structural subtyping.</p>
+
+<p>We can define structural subtyping for C structs.</p>
+
+<p>We can define layout types (almost like ASN.1):</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>layout {
+    at byte 0;
+    def var0 : little_endian int32;
+    at byte 4;
+    def var1 : big_endian int32;
+    reserve 8 byte;
+    skip 4 byte; -- synonym for reserve
+    def var2 : int8;
+    def var3 : array of 4 int8;
+    align 16;
+    def var4 : layout {
+        reserve 16 byte;
+        def var1 : int8;
+        align 32;
+    };
+}
+</code></pre></div></div>
+
+<p>We can define intersection, union, concatenation, and composition/nesting of two layout types.</p>
+
+<p>Why don’t we just build ASN.1 into the language?</p>
+
 <h2 id="maximum-polymorphism">Maximum polymorphism?</h2>
 
 <ul>
@@ -1490,6 +1520,26 @@ For example, the record <code class="highlighter-rouge">{name="John"; age=20}</c
     </ul>
   </li>
 </ul>
+
+<h2 id="fixed-points-and-recursive-types">Fixed points and recursive types</h2>
+
+<p>A thing \( x \) is a <em>fixed point</em> of function \( f \) iff \( f(x) = x \).</p>
+
+<p>A function may have zero, one, or many fixed points.</p>
+
+<p>A thing \( x : A \) is a <em>least fixed point</em> of function \( f : A \to A \) iff
+\( x \) is a minimum of the set of the fixed points of \( f \).
+The words “least” and “minimum” assume an ordering \( \le \).
+This ordering should be clear from context.</p>
+
+<p>If \( f \) has exactly one least fixed point \( x \) with respect to ordering \( \le \), then we write \( \mu_\le(f) = x \).</p>
+
+<p>The syntax \( \mu a. b \) means \( \mu_\le(\lambda a. b) \).
+The syntax \( \mu a. b \) is analogous to lambda expression syntax \( \lambda a. b \).</p>
+
+<p>What is the ordering used in formulating the least fixed point of a recursive algebraic data type?</p>
+
+<p>todo: equirecursive types and isorecursive types</p>
 
   </div>
 
