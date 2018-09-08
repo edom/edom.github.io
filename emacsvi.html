@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Emacs-Vi correspondence table</title>
+  <title>Emacs for vi users</title>
   <meta name="description" content="Personal website">
 
   <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&amp;subset=latin-ext" rel="stylesheet">
@@ -51,13 +51,42 @@
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Emacs-Vi correspondence table</h1>
+    <h1 class="post-title">Emacs for vi users</h1>
   </header>
 
   <div class="post-content">
     <ul id="markdown-toc">
+  <li><a href="#which-emacs-package" id="markdown-toc-which-emacs-package">Which emacs package?</a></li>
   <li><a href="#feature-correspondence-table" id="markdown-toc-feature-correspondence-table">Feature correspondence table</a></li>
   <li><a href="#other-similar-tables" id="markdown-toc-other-similar-tables">Other similar tables</a></li>
+</ul>
+
+<h2 id="which-emacs-package">Which emacs package?</h2>
+
+<p>Spacemacs uses evil-mode.</p>
+
+<p>Emacs 24 FAQ recommends VIPER for people who want vim’s <code class="highlighter-rouge">.</code> command.
+There are also other packages such as VI, VIP, evil-mode, and vile.
+There is a “vile” (vi-like emacs) package on Ubuntu 14.04.</p>
+
+<p>Deal breaker?
+It seems that Ubuntu 14.04 VIPER doesn’t have <code class="highlighter-rouge">*</code> and visual mode.</p>
+
+<p>To enter viper mode, <code class="highlighter-rouge">M-x viper-mode</code>.</p>
+
+<p>To exit viper mode, <code class="highlighter-rouge">M-x viper-go-away</code>.</p>
+
+<p>To toggle viper mode, <code class="highlighter-rouge">M-x toggle-viper-mode</code>.</p>
+
+<p>To change viper level, <code class="highlighter-rouge">M-x viper-set-expert-level</code>.</p>
+
+<p>How do I install evil-mode (vi keybindings for emacs)?
+Should I?
+It’s not on GNU ELPA.</p>
+
+<ul>
+  <li><a href="https://emacs.stackexchange.com/questions/10500/do-i-still-need-gnu-elpa-if-i-have-melpa">package - Do I still need GNU ELPA if I have MELPA? - Emacs Stack Exchange</a></li>
+  <li><a href="https://www.reddit.com/r/emacs/comments/6ej18a/is_evilmode_too_evil/">Is evil-mode too evil? : emacs</a></li>
 </ul>
 
 <h2 id="feature-correspondence-table">Feature correspondence table</h2>
@@ -82,6 +111,11 @@ The more often a command is used, the shorter it should be.</p>
       <td>quit the editor</td>
       <td>:q</td>
       <td>C-x C-c</td>
+    </tr>
+    <tr>
+      <td>abort a command</td>
+      <td>ESC ESC</td>
+      <td>C-g / ESC ESC ESC</td>
     </tr>
     <tr>
       <td><strong>motion</strong></td>
@@ -111,12 +145,17 @@ The more often a command is used, the shorter it should be.</p>
     <tr>
       <td>go to beginning of buffer</td>
       <td>gg</td>
-      <td> </td>
+      <td>M-&lt;</td>
     </tr>
     <tr>
       <td>go to end of buffer</td>
       <td>G</td>
-      <td> </td>
+      <td>M-&gt;</td>
+    </tr>
+    <tr>
+      <td>go to line number</td>
+      <td>&lt;number&gt;G</td>
+      <td>M-g g</td>
     </tr>
     <tr>
       <td>go to previous position in jumplist</td>
@@ -132,6 +171,21 @@ The more often a command is used, the shorter it should be.</p>
       <td>go to matching bracket</td>
       <td>%</td>
       <td> </td>
+    </tr>
+    <tr>
+      <td>go to beginning of next word</td>
+      <td>w / W</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>go to beginning of previous word</td>
+      <td>b / B</td>
+      <td>M-b</td>
+    </tr>
+    <tr>
+      <td>go to ending of this word or next word</td>
+      <td>e / E</td>
+      <td>M-f</td>
     </tr>
     <tr>
       <td><strong>file system</strong></td>
@@ -325,6 +379,11 @@ The more often a command is used, the shorter it should be.</p>
     </tr>
     <tr>
       <td>delete from cursor to end of word</td>
+      <td> </td>
+      <td>M-d</td>
+    </tr>
+    <tr>
+      <td>delete from cursor to just before next word</td>
       <td>dw</td>
       <td> </td>
     </tr>
@@ -334,14 +393,34 @@ The more often a command is used, the shorter it should be.</p>
       <td>C-k</td>
     </tr>
     <tr>
+      <td>delete character under cursor</td>
+      <td>x</td>
+      <td>C-d</td>
+    </tr>
+    <tr>
       <td><strong>find, search</strong></td>
       <td> </td>
       <td> </td>
     </tr>
     <tr>
-      <td>find text</td>
+      <td>incremental search forward</td>
       <td>/&lt;text&gt;</td>
-      <td> </td>
+      <td>C-s</td>
+    </tr>
+    <tr>
+      <td>incremental search backward</td>
+      <td>/?<text></text></td>
+      <td>C-r</td>
+    </tr>
+    <tr>
+      <td>find next occurrence</td>
+      <td>n</td>
+      <td>C-s</td>
+    </tr>
+    <tr>
+      <td>find previous occurrence</td>
+      <td>N</td>
+      <td>C-r</td>
     </tr>
     <tr>
       <td>find next occurrence of word under cursor</td>
@@ -351,16 +430,6 @@ The more often a command is used, the shorter it should be.</p>
     <tr>
       <td>find previous occurrence of word under cursor</td>
       <td>#</td>
-      <td> </td>
-    </tr>
-    <tr>
-      <td>find next occurrence</td>
-      <td>n</td>
-      <td> </td>
-    </tr>
-    <tr>
-      <td>find previous occurrence</td>
-      <td>N</td>
       <td> </td>
     </tr>
     <tr>
@@ -377,6 +446,11 @@ The more often a command is used, the shorter it should be.</p>
       <td>redo</td>
       <td>C-r</td>
       <td> </td>
+    </tr>
+    <tr>
+      <td>emacs undo/redo</td>
+      <td> </td>
+      <td>C-/ | C-_ | C-x u</td>
     </tr>
   </tbody>
 </table>
