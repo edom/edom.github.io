@@ -67,7 +67,7 @@
       <li><a href="#getting-help" id="markdown-toc-getting-help">Getting help</a></li>
       <li><a href="#autocompleting" id="markdown-toc-autocompleting">Autocompleting</a></li>
       <li><a href="#searching" id="markdown-toc-searching">Searching</a></li>
-      <li><a href="#marking-and-jumping" id="markdown-toc-marking-and-jumping">Marking and jumping</a></li>
+      <li><a href="#marking-jumping-copying-cutting-and-pasting" id="markdown-toc-marking-jumping-copying-cutting-and-pasting">Marking, jumping, copying, cutting, and pasting</a></li>
     </ul>
   </li>
   <li><a href="#basic-motions" id="markdown-toc-basic-motions">Basic motions</a>    <ul>
@@ -76,7 +76,10 @@
     </ul>
   </li>
   <li><a href="#navigating-the-file-system-using-dired" id="markdown-toc-navigating-the-file-system-using-dired">Navigating the file system using dired</a></li>
-  <li><a href="#emacs-lisp" id="markdown-toc-emacs-lisp">Emacs Lisp</a></li>
+  <li><a href="#programming-in-emacs-lisp" id="markdown-toc-programming-in-emacs-lisp">Programming in Emacs Lisp</a>    <ul>
+      <li><a href="#suggested-workflow" id="markdown-toc-suggested-workflow">Suggested workflow</a></li>
+    </ul>
+  </li>
   <li><a href="#going-deeper" id="markdown-toc-going-deeper">Going deeper</a></li>
 </ul>
 
@@ -122,6 +125,8 @@ on Ubuntu 14.04 will install:</p>
 
 <p>Org Mode is the gateway drug to Emacs.</p>
 
+<p>If you want Emacs 26 on Ubuntu 14.04, try <a href="http://ergoemacs.org/emacs/building_emacs_on_linux.html">How to Build Emacs on Linux</a>.</p>
+
 <h2 id="launching-emacs">Launching Emacs</h2>
 
 <p>Launch emacs from your terminal in your working directory.
@@ -132,13 +137,15 @@ Use <code class="highlighter-rouge">emacs -mm</code> to start emacs maximized.</
 
 <p>Save a desktop/session so that emacs continues where you left off:
 <code class="highlighter-rouge">M-x desktop-save</code>.
-See also “Saving Emacs Sessions” in the Emacs manual.</p>
+See also “Saving Emacs Sessions” in the Emacs manual.
+Unfortunately Emacs 24.3 doesn’t save the frames and windows.</p>
 
-<p>Set up your emacs initialization file <code class="highlighter-rouge">~/.emacs</code>.
+<p>Set up your emacs initialization file <code class="highlighter-rouge">~/.emacs.d/init.el</code>.
+Make sure that the file <code class="highlighter-rouge">~/.emacs</code> does not exist;
+otherwise Emacs won’t read <code class="highlighter-rouge">~/.emacs.d/init.el</code>.
 Copy others’ emacs init file, or use pre-configured Emacs derivatives such as Spacemacs.
-You can also copy <a href="https://github.com/edom/work/blob/master/etc/emacs.el">my emacs init file</a>.
 You may want to commit your modifications to your personal Git repository,
-and make <code class="highlighter-rouge">~/.emacs</code> a symbolic link.
+and make <code class="highlighter-rouge">~/.emacs.d</code> a symbolic link.
 Make sure that it doesn’t contain sensitive data (such as IRC passwords).</p>
 
 <p>If Emacs is misbehaving (and you have no idea why), try nuking the file <code class="highlighter-rouge">~/.emacs</code> and the directory <code class="highlighter-rouge">~/.emacs.d</code>.
@@ -155,6 +162,8 @@ But you will lose all your customizations.</p>
 <p>To find/start/open/visit a file, <code class="highlighter-rouge">C-x C-f</code>.
 The file doesn’t have to exist.</p>
 
+<p>To open a file in the other window, <code class="highlighter-rouge">C-x 4 C-f</code>.</p>
+
 <p>To autocomplete (where a file name or command name is expected), press <code class="highlighter-rouge">TAB</code>.</p>
 
 <p>To start a shell, <code class="highlighter-rouge">M-x shell</code>.</p>
@@ -170,7 +179,11 @@ The file doesn’t have to exist.</p>
       <li><code class="highlighter-rouge">C-x C-RIGHT</code> goes to next buffer</li>
       <li><code class="highlighter-rouge">C-x k</code> kills a buffer</li>
       <li><code class="highlighter-rouge">C-x s</code> saves some buffers</li>
-      <li><code class="highlighter-rouge">C-x b</code> switches to another buffer, or opens a new buffer</li>
+      <li><code class="highlighter-rouge">C-x b</code> switches to another buffer, or opens a new buffer
+        <ul>
+          <li><code class="highlighter-rouge">C-x 4 b</code> the same, but in the other window</li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li>windows
@@ -227,7 +240,7 @@ The file doesn’t have to exist.</p>
   <li><code class="highlighter-rouge">M-%</code> query replace</li>
 </ul>
 
-<h3 id="marking-and-jumping">Marking and jumping</h3>
+<h3 id="marking-jumping-copying-cutting-and-pasting">Marking, jumping, copying, cutting, and pasting</h3>
 
 <ul>
   <li>rapidly moving between two locations
@@ -240,11 +253,15 @@ The file doesn’t have to exist.</p>
     <ul>
       <li>cutting
         <ul>
-          <li><code class="highlighter-rouge">C-w</code> kill region</li>
+          <li><code class="highlighter-rouge">C-w</code> kill region (cut it into clipboard)</li>
+          <li><code class="highlighter-rouge">M-w</code> copy region into clipboard</li>
         </ul>
       </li>
     </ul>
   </li>
+  <li><code class="highlighter-rouge">C-k</code> kill the rest of current line</li>
+  <li><code class="highlighter-rouge">C-y</code> paste from clipboard</li>
+  <li><code class="highlighter-rouge">C-S-BKSP</code> kill entire line</li>
 </ul>
 
 <p>Some commands set the mark.</p>
@@ -310,15 +327,94 @@ Emacs opens Dired (directory edit) mode.</p>
 
 <p>Use <code class="highlighter-rouge">C-h m</code> or <code class="highlighter-rouge">M-x describe-mode</code> to get some help.</p>
 
-<p>Unanswered question:
-What is the Emacs equivalent of VSCode Ctrl+P (open file fuzzy search / approximate string matching / subsequence matching)?</p>
+<ul>
+  <li>Unanswered question:
+    <ul>
+      <li>What is the Emacs equivalent of VSCode Ctrl+P (open file fuzzy search / approximate string matching / subsequence matching)?
+        <ul>
+          <li>Completion styles.
+            <ul>
+              <li><a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Completion-Styles.html">Completion Styles - GNU Emacs Manual</a></li>
+            </ul>
+          </li>
+          <li>arcane stuffs
+            <ul>
+              <li><a href="https://emacs.stackexchange.com/questions/13500/fuzzy-completion-style">minibuffer - fuzzy completion-style - Emacs Stack Exchange</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
 
-<h2 id="emacs-lisp">Emacs Lisp</h2>
+<h2 id="programming-in-emacs-lisp">Programming in Emacs Lisp</h2>
 
 <ul>
-  <li><code class="highlighter-rouge">C-M-x</code> eval defun</li>
+  <li><code class="highlighter-rouge">M-\</code> delete all spaces and tabs around point</li>
+  <li><code class="highlighter-rouge">C-M-k</code> kill s-expression</li>
   <li><code class="highlighter-rouge">C-x C-e</code> eval last s-expression before point</li>
-  <li><code class="highlighter-rouge">M-x eval-region</code></li>
+  <li>indenting/formatting
+    <ul>
+      <li><code class="highlighter-rouge">C-M-\</code> indent region</li>
+      <li><code class="highlighter-rouge">M-x indent-sexp</code></li>
+    </ul>
+  </li>
+  <li>partial reloading
+    <ul>
+      <li><code class="highlighter-rouge">C-M-x</code> or <code class="highlighter-rouge">M-x eval-defun</code></li>
+      <li><code class="highlighter-rouge">M-x eval-region</code></li>
+    </ul>
+  </li>
+  <li>setq</li>
+  <li>add-to-list</li>
+  <li>load</li>
+  <li>load-path</li>
+  <li>funcall</li>
+</ul>
+
+<p>For someone used to Scheme, Emacs Lisp is unpleasant.</p>
+
+<ul>
+  <li>How do I define a local function?
+    <ul>
+      <li>You define it with let and lambda, as in Scheme.
+  But you call it by prepending funcall.
+  If in Scheme you write <code class="highlighter-rouge">(f a b)</code>,
+  then in Emacs Lisp you write <code class="highlighter-rouge">(funcall f a b)</code>.
+        <ul>
+          <li>Why do I need this funcall noise?
+  Because it’s Lisp-2.
+  If you don’t like that, and you don’t mind depending on the <code class="highlighter-rouge">cl</code> package,
+  then you can use <code class="highlighter-rouge">flet</code> as described in <a href="https://www.emacswiki.org/emacs/LocalFunctions">EmacsWiki: Local Functions</a>.
+  However, <code class="highlighter-rouge">cl</code> is a big package; it’s a waste of dependencies if you only use <code class="highlighter-rouge">flet</code>.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Warts for historical reasons
+    <ul>
+      <li>Lexical scoping is not the default.</li>
+      <li>Emacs Lisp doesn’t have proper tail calls.</li>
+    </ul>
+  </li>
+  <li>Contentious
+    <ul>
+      <li>Lisp macro is simpler than Scheme macro, but Lisp macro is unhygienic.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="suggested-workflow">Suggested workflow</h3>
+
+<p>This example is for developing org mode:</p>
+
+<p>Run several emacs processes:</p>
+
+<ul>
+  <li>In workspace 1, run <code class="highlighter-rouge">emacs -mm</code> for writing Emacs Lisp code.</li>
+  <li>In workspace 2, run <code class="highlighter-rouge">emacs -fh --no-desktop --visit ORGFILE</code> for testing. We’ll often restart this instance.</li>
+  <li>In workspace 2, run <code class="highlighter-rouge">emacs -Q -fh --eval '(info "/usr/share/info/org.gz")'</code> for reading the org mode manual.</li>
 </ul>
 
 <h2 id="going-deeper">Going deeper</h2>
