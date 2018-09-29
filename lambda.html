@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Extending lambda-calculus</title>
+  <title>Using lambda calculus</title>
   <meta name="description" content="Personal website">
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -31,6 +31,31 @@
   
 
   
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
+  
 </head>
 
 
@@ -44,87 +69,1095 @@
 
 
     
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\abs[1]{\left|#1\right|}
+\newcommand\dom{\textrm{dom}}
+\newcommand\cod{\textrm{cod}}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Extending lambda-calculus</h1>
+    <h1 class="post-title">Using lambda calculus</h1>
   </header>
 
   <div class="post-content">
-    <ul id="markdown-toc">
-  <li><a href="#introduction" id="markdown-toc-introduction">Introduction?</a></li>
-  <li><a href="#extending-lambda-calculus-with-various-bells-and-whistles" id="markdown-toc-extending-lambda-calculus-with-various-bells-and-whistles">Extending lambda-calculus with various bells and whistles</a></li>
-  <li><a href="#lambda-calculus-semantics" id="markdown-toc-lambda-calculus-semantics">Lambda calculus semantics?</a></li>
-</ul>
-
-<h2 id="introduction">Introduction?</h2>
-
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
 <ul>
-  <li>unknown-year lecture notes “Lambda Calculus as a Programming Language” <a href="http://andrei.clubcisco.ro/cursuri/2pp/01.Lambda_prog.pdf">pdf</a></li>
-</ul>
-
-<p>I thought lambda calculus could be summarized in one page, but Henk Barendregt wrote hundreds of pages about it. Is there more to lambda calculus than it seems?</p>
-
+<li><a href="#org8ec71a5">1. Introduction</a>
 <ul>
-  <li>1994, 50 pages, <a href="http://www.nyu.edu/projects/barker/Lambda/barendregt.94.pdf">pdf</a></li>
-  <li>1991, 190 pages, <a href="https://people.mpi-sws.org/~dreyer/tor/papers/barendregt.pdf">pdf</a></li>
+<li><a href="#org0e7becf">1.1. Goal</a></li>
+<li><a href="#org025681b">1.2. Examples of extending lambda calculus</a></li>
 </ul>
-
-<h2 id="extending-lambda-calculus-with-various-bells-and-whistles">Extending lambda-calculus with various bells and whistles</h2>
-
+</li>
+<li><a href="#org807a64b">2. Lambda calculus</a>
 <ul>
-  <li>Vectorial lambda-calculus
-    <ul>
-      <li>The 2013 article “The Vectorial Lambda-Calculus” <a href="https://who.rocq.inria.fr/Alejandro.Diaz-Caro/TheVectorialCalculus.pdf">pdf</a> adds vectors and matrices and their types to lambda calculus.</li>
-      <li>The 2010 article “Semantics of a Typed Algebraic Lambda-Calculus” <a href="https://arxiv.org/abs/1006.1433">pdf available</a> also mentions “vectorial”.</li>
-    </ul>
-  </li>
-  <li>2016 article “System F-omega with Equirecursive Types for Datatype-Generic Programming” <a href="http://ps.informatik.uni-tuebingen.de/research/functors/equirecursion-fomega-popl16.pdf">pdf</a></li>
+<li><a href="#org1782f15">2.1. Beta-reduction</a></li>
 </ul>
-
-<h2 id="lambda-calculus-semantics">Lambda calculus semantics?</h2>
-
+</li>
+<li><a href="#orgb9d5139">3. Strings, especially of characters</a>
 <ul>
-  <li>https://en.wikipedia.org/wiki/Lambda_calculus#Semantics
-    <ul>
-      <li>“In the 1970s, Dana Scott showed that, if only continuous functions were considered,
-  a set or domain D with the required property could be found, thus providing a model for the lambda calculus.”
-        <ul>
-          <li>1982, <a href="https://www.sciencedirect.com/science/article/pii/S0019995882800879">“What is a model of lambda calculus?”</a></li>
-          <li>2008, PhD thesis, <a href="https://tel.archives-ouvertes.fr/tel-00715207/document">“Models and theories of lambda calculus”</a>
-            <ul>
-              <li>2009, <a href="https://arxiv.org/abs/0904.4756">summary</a></li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Paul Hudak, lecture notes, <a href="http://www.cs.yale.edu/homes/hudak/CS430F07/LectureSlides/Reynolds-ch10.pdf">The Lambda Calculus</a>
-    <ul>
-      <li>“The Greatest Thing Since Sliced Bread™, or maybe even before it”</li>
-    </ul>
-  </li>
-  <li>The operational semantics of lambda calculus depends on the evaluation strategy?
-    <ul>
-      <li>What-reduction?
-        <ul>
-          <li>Normal-order reduction</li>
-          <li>Applicative-order reduction</li>
-        </ul>
-      </li>
-      <li>Call-by-what?
-        <ul>
-          <li>Call-by-value</li>
-          <li>Call-by-name</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+<li><a href="#org62fd1cc">3.1. Escape sequences</a></li>
+<li><a href="#orgc824d3a">3.2. Characters</a></li>
 </ul>
+</li>
+<li><a href="#org114b6d3">4. Macro, reflection, reification, quoting</a></li>
+<li><a href="#org162e44e">5. What program, execution, and termination mean in declarative paradigms</a></li>
+<li><a href="#orga7864f1">6. Records, also for namespaces and modules</a>
+<ul>
+<li><a href="#org0c87d4a">6.1. Do we want to represent records as functions?</a></li>
+<li><a href="#org7b849e3">6.2. Modules as record functions</a></li>
+<li><a href="#org281df13">6.3. Record expressions</a></li>
+<li><a href="#org331cf0f">6.4. Labels</a></li>
+</ul>
+</li>
+<li><a href="#org96b220a">7. Annotations: user-defined metadata attached to concrete syntax tree nodes</a>
+<ul>
+<li><a href="#org481e8f8">7.1. Annotation is not type</a></li>
+</ul>
+</li>
+<li><a href="#org43130a0">8. Let-expressions</a>
+<ul>
+<li><a href="#orgaa18222">8.1. let-expressions may recur</a></li>
+</ul>
+</li>
+<li><a href="#org017b8e9">9. Sharing, laziness, full laziness, complete laziness, and optimal reduction</a>
+<ul>
+<li><a href="#org5132b1c">9.1. Sharing</a></li>
+<li><a href="#org0b1091e">9.2. Example of sharing</a></li>
+</ul>
+</li>
+<li><a href="#org79c3220">10. Currying is not compatible with vararg and named parameters?</a></li>
+<li><a href="#orgf7fa4a7">11. Modeling all data</a>
+<ul>
+<li><a href="#orgbebe429">11.1. Hypothesis: data = ADTs + records + row polymorphism</a></li>
+<li><a href="#org4add78c">11.2. Church-representation of products, sums, and algebraic data types in general</a></li>
+<li><a href="#orgcf6597b">11.3. Reverse semantics</a></li>
+<li><a href="#org8acc6f3">11.4. Self-interpreter</a></li>
+</ul>
+</li>
+<li><a href="#org5da9077">12. Representing knowledge; logic programming; symbolic AI</a></li>
+<li><a href="#org9585da3">13. Dynamic binding, contextual holes</a></li>
+<li><a href="#org74025a4">14. Semantics (should we worry about this earlier?)</a>
+<ul>
+<li><a href="#org3d18798">14.1. Cost model</a></li>
+<li><a href="#org050a61d">14.2. Denotational semantics</a>
+<ul>
+<li><a href="#org879a8b0">14.2.1. Intro to denotational semantics</a></li>
+<li><a href="#org2b7c65c">14.2.2. <span class="todo TODO">TODO</span> Does lambda calculus have a semantics that doesn't depend on reduction strategy?</a></li>
+</ul>
+</li>
+<li><a href="#org1e0acc6">14.3. Operational semantics and evaluation/reduction strategy</a></li>
+</ul>
+</li>
+<li><a href="#orgd6e23d6">15. Overloadable function application?</a></li>
+<li><a href="#org83e9c10">16. Interpreters: Giving different meanings to the same syntax</a></li>
+<li><a href="#org2259302">17. System F, System F with subtyping, System F-omega</a></li>
+<li><a href="#org36e87a3">18. Lambda-prolog?</a></li>
+<li><a href="#org328b5fd">19. Imperative subset</a></li>
+<li><a href="#org0ac2f1e">20. Introduction?</a></li>
+<li><a href="#org47b0a1b">21. Extending lambda-calculus with various bells and whistles</a></li>
+<li><a href="#org4b001b0">22. Lambda calculus semantics?</a></li>
+<li><a href="#org4d0be0a">23. When should we introduce a type system?</a></li>
+<li><a href="#org992f090">24. Optimizing lambda calculus?</a></li>
+<li><a href="#org4fad088">25. Begin with an interpreter, not a compiler</a></li>
+<li><a href="#org5dd6033">26. Foreign function interface: working with C</a></li>
+<li><a href="#org544fa3d">27. Ocaml</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8ec71a5" class="outline-2">
+<h2 id="org8ec71a5"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org0e7becf" class="outline-3">
+<h3 id="org0e7becf"><span class="section-number-3">1.1</span> Goal</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+The goal is to build a usable formal language up from lambda calculus.
+</p>
+
+<p>
+A <i>formal human language</i> is a formal language that humans use to precisely (unambiguously) communicate technicalities to other humans
+in a way that is also feasible to machine translation using classical compiler techniques.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org025681b" class="outline-3">
+<h3 id="org025681b"><span class="section-number-3">1.2</span> Examples of extending lambda calculus</h3>
+<div class="outline-text-3" id="text-1-2">
+<ul class="org-ul">
+<li><a href="https://sites.ualberta.ca/~jhoover/325/CourseNotes/section/UntypedLambda.htm">Functional Programming - 12. The Extended Untyped lambda Calculus</a></li>
+<li>STLC = simply-typed lambda calculus</li>
+<li><a href="https://softwarefoundations.cis.upenn.edu/plf-current/MoreStlc.html">Extending STLC</a></li>
+<li>1982 article "A consistent extension of the lambda-calculus as a base for functional programming languages", <a href="https://www.sciencedirect.com/science/article/pii/S0019995882904582">https://www.sciencedirect.com/science/article/pii/S0019995882904582</a></li>
+<li>"Extending the Lambda Calculus: An Eager Functional Language", <a href="http://www.cs.yale.edu/homes/hudak/CS430F07/LectureSlides/Reynolds-ch11.pdf">pdf slides</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org807a64b" class="outline-2">
+<h2 id="org807a64b"><span class="section-number-2">2</span> Lambda calculus</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Lambda calculus formalizes binding and substitution.
+</p>
+
+<p>
+Follow <a href="https://crypto.stanford.edu/~blynn/lambda/">Ben Lynn's lambda-calculus tutorial</a>:
+</p>
+
+<ul class="org-ul">
+<li>why use lambda calculus as theoretical basis (cool reasons!)</li>
+</ul>
+</div>
+
+<div id="outline-container-org1782f15" class="outline-3">
+<h3 id="org1782f15"><span class="section-number-3">2.1</span> Beta-reduction</h3>
+<div class="outline-text-3" id="text-2-1">
+<ul class="org-ul">
+<li>reduce : E -&gt; E</li>
+<li>reduce ((\ x -&gt; y) p) = reduce (y[x:=p])
+<ul class="org-ul">
+<li>y[x:=p] means y but with every bound occurence of x replaced with p)</li>
+</ul></li>
+<li>reduce x = x otherwise</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb9d5139" class="outline-2">
+<h2 id="orgb9d5139"><span class="section-number-2">3</span> Strings, especially of characters</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+A <i>string</i> is a homogenous sequence.
+</p>
+
+<p>
+A string has a beginning, and may have an ending.
+A string may be finite.
+</p>
+
+<p>
+A <i>byte string</i> is a sequence of bytes.
+</p>
+
+<p>
+An <i>ASCII string</i> is a byte string.
+</p>
+
+<p>
+A <i>character string</i> is a sequence of characters.
+</p>
+
+<p>
+Unqualified "string" usually means "character string".
+</p>
+
+<p>
+A <i>character string literal</i> is surrounded with quotes.
+</p>
+</div>
+
+<div id="outline-container-org62fd1cc" class="outline-3">
+<h3 id="org62fd1cc"><span class="section-number-3">3.1</span> Escape sequences</h3>
+</div>
+
+<div id="outline-container-orgc824d3a" class="outline-3">
+<h3 id="orgc824d3a"><span class="section-number-3">3.2</span> Characters</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+What is Unicode's definition of "character"?
+Is that definition sane?
+</p>
+
+<p>
+Issues: ordering/collation, capitalization, combination, halfwidthization, ligature, etc.
+</p>
+
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/String_(computer_science)">https://en.wikipedia.org/wiki/String_(computer_science)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Character_(computing)">https://en.wikipedia.org/wiki/Character_(computing)</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org114b6d3" class="outline-2">
+<h2 id="org114b6d3"><span class="section-number-2">4</span> Macro, reflection, reification, quoting</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+The language should be a model of itself.
+</p>
+
+<p>
+The language should be able to describe itself.
+</p>
+
+<p>
+Does that cause a paradox?
+</p>
+</div>
+</div>
+
+<div id="outline-container-org162e44e" class="outline-2">
+<h2 id="org162e44e"><span class="section-number-2">5</span> What program, execution, and termination mean in declarative paradigms</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+In functional paradigm:
+</p>
+
+<ul class="org-ul">
+<li>The program is a big lambda expression.</li>
+<li>Execution is beta-reduction / term-rewriting.</li>
+<li>Execution terminates when the program reaches normal form (is no longer beta-reducible).</li>
+</ul>
+
+<p>
+In satisfying-logic paradigm:
+</p>
+
+<ul class="org-ul">
+<li>The program is a big logic formula.</li>
+<li>Execution is trying to satisfy the formula.</li>
+<li>Execution terminates when satisfiability is determined.</li>
+</ul>
+
+<p>
+In theorem-proving paradigm:
+</p>
+
+<ul class="org-ul">
+<li>The program is a big logic formula, presumably in conjunctive-normal form.</li>
+<li>Execution is trying to prove the main(world) goal.</li>
+<li>Execution terminates when the goal is proved or disproved.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orga7864f1" class="outline-2">
+<h2 id="orga7864f1"><span class="section-number-2">6</span> Records, also for namespaces and modules</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+We want records because <i>records obviate namespaces and modules</i>.
+</p>
+
+<p>
+We want namespaces and modules because they are necessary for humans to manage large programs.
+</p>
+</div>
+
+<div id="outline-container-org0c87d4a" class="outline-3">
+<h3 id="org0c87d4a"><span class="section-number-3">6.1</span> Do we want to represent records as functions?</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+A record r is a function r : string -&gt; expression.
+</p>
+
+<p>
+Record access is function application.
+To get the field <code>fld</code> or record <code>rec</code>, evaluate <code>rec fld</code>.
+</p>
+
+<p>
+The record <code>rec</code> with the the field <code>fld</code> updated to <code>new</code> is the expression <code>\ name -&gt; IF name = fld THEN new ELSE rec fld</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7b849e3" class="outline-3">
+<h3 id="org7b849e3"><span class="section-number-3">6.2</span> Modules as record functions</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+A module is a function taking a record and giving a record.
+The input is called <i>imports</i> or <i>dependencies</i>.
+The output is called <i>exports</i>.
+</p>
+
+<p>
+Example:
+</p>
+
+<pre class="example">
+\ { add; } -&gt; { add_one: \ x -&gt; add x 1; }
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org281df13" class="outline-3">
+<h3 id="org281df13"><span class="section-number-3">6.3</span> Record expressions</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+We add these expression syntax rules:
+</p>
+
+<ul class="org-ul">
+<li>If each of x1,&#x2026;,xn is a label and each of e1,&#x2026;,en is an expression, then <code>{x1:e1; ...; xn:en;}</code> is a <i>record expression</i>.</li>
+<li><code>union R S</code> is a <i>record union expression</i>.</li>
+<li>record update expression (should be polymorphic)</li>
+<li>record filtering/selection/intersection expression</li>
+</ul>
+
+<p>
+An example of a record expression is <code>{id: \ x -&gt; x; app: \ f x -&gt; f x;}</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org331cf0f" class="outline-3">
+<h3 id="org331cf0f"><span class="section-number-3">6.4</span> Labels</h3>
+<div class="outline-text-3" id="text-6-4">
+<p>
+A <i>label</i> is a string.
+If the label doesn't contain funny characters, it doesn't have to be quoted.
+For example, <code>{"a":1;}</code> and <code>{a:1;}</code> are the same thing.
+</p>
+
+<p>
+Should we generalize label to expression?
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org96b220a" class="outline-2">
+<h2 id="org96b220a"><span class="section-number-2">7</span> Annotations: user-defined metadata attached to concrete syntax tree nodes</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+We add these expression syntax rules:
+</p>
+
+<ul class="org-ul">
+<li>If M is an expression and E is an expression, then <code>E : M</code> (read: data E annotated with metadata M) is an <i>annotated expression</i>.
+<ul class="org-ul">
+<li>Alternative syntax: <code>E : M</code> can also be written <code>meta M E</code>.</li>
+</ul></li>
+</ul>
+
+<p>
+This generalizes type systems.
+With type systems, you annotate an expression with a type expression.
+With general annotations, you annotate an expression with another expression (some of which are type expressions).
+</p>
+
+<p>
+We assume that the outermost metadata update wins:
+</p>
+
+<ul class="org-ul">
+<li>meta M (meta N E) = meta M E</li>
+</ul>
+
+<p>
+We add metadata extraction function symbol <code>meta-of</code>.
+</p>
+
+<p>
+We add these beta-reduction rules:
+</p>
+
+<ul class="org-ul">
+<li>reduce (meta M E) = reduce E</li>
+<li>reduce (meta-of (meta M E)) = reduce M</li>
+<li>reduce (meta-of E) = #&lt;empty-record&gt; (for expressions without metadata)</li>
+</ul>
+
+<p>
+This is like Java/C# annotation but more principled?
+</p>
+</div>
+
+<div id="outline-container-org481e8f8" class="outline-3">
+<h3 id="org481e8f8"><span class="section-number-3">7.1</span> Annotation is not type</h3>
+<div class="outline-text-3" id="text-7-1">
+<p>
+This is an example of type annotation that our annotation above can't handle: <code>\ (x : T) -&gt; y</code>,
+because <code>x</code> is not an expression.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org43130a0" class="outline-2">
+<h2 id="org43130a0"><span class="section-number-2">8</span> Let-expressions</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+The <i>let-expression</i> <code>let x1 = y1; ...; xn = yn; in z;</code> desugars to <code>(\ x1 ... xn -&gt; z) y1 ... yn</code>.
+</p>
+
+<p>
+Let-expressions is for readability by humans.
+</p>
+
+<p>
+Do we still need let-expressions if our program is well-factored?
+</p>
+</div>
+
+<div id="outline-container-orgaa18222" class="outline-3">
+<h3 id="orgaa18222"><span class="section-number-3">8.1</span> let-expressions may recur</h3>
+<div class="outline-text-3" id="text-8-1">
+<p>
+I think letrec is ugly.
+All let-expression should allow recursion, like Haskell's.
+</p>
+
+<p>
+<a href="https://stackoverflow.com/questions/28796904/whats-the-reason-of-let-rec-for-impure-functional-language-ocaml/28798040">https://stackoverflow.com/questions/28796904/whats-the-reason-of-let-rec-for-impure-functional-language-ocaml/28798040</a>
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org017b8e9" class="outline-2">
+<h2 id="org017b8e9"><span class="section-number-2">9</span> Sharing, laziness, full laziness, complete laziness, and optimal reduction</h2>
+<div class="outline-text-2" id="text-9">
+</div>
+<div id="outline-container-org5132b1c" class="outline-3">
+<h3 id="org5132b1c"><span class="section-number-3">9.1</span> Sharing</h3>
+<div class="outline-text-3" id="text-9-1">
+<ul class="org-ul">
+<li>Should the programmer care about sharing?</li>
+<li>sigma-calculus?</li>
+<li>Should the programmer decide whether to share or not?</li>
+<li>Is there a best sharing strategy?</li>
+<li>Should the machine guess by heuristics?</li>
+</ul>
+
+<p>
+Sharing affects performance, but does not change the result.
+Should we care?
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0b1091e" class="outline-3">
+<h3 id="org0b1091e"><span class="section-number-3">9.2</span> Example of sharing</h3>
+<div class="outline-text-3" id="text-9-2">
+<p>
+Consider the expression letexp defined as <code>let x = y in z;</code>.
+</p>
+
+<p>
+We want x to be shared iff doing so speeds up the reduction of letexp.
+</p>
+
+<p>
+This is always the case:
+</p>
+
+<ul class="org-ul">
+<li>If x occurs <i>at most once</i> in z, we always want x not shared.</li>
+</ul>
+
+<p>
+These depend on circumstances:
+</p>
+
+<ul class="org-ul">
+<li>If y is expensive, we want x shared.</li>
+<li>If y is cheap, we want x not shared.</li>
+</ul>
+
+<p>
+How do we define "expensive"?
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org79c3220" class="outline-2">
+<h2 id="org79c3220"><span class="section-number-2">10</span> Currying is not compatible with vararg and named parameters?</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+Vararg stands for "variable-length arguments".
+</p>
+
+<p>
+Do we want currying?
+</p>
+
+<p>
+Currying simplifies language user but complicates compiler writer.
+</p>
+
+<p>
+The problems:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://softwareengineering.stackexchange.com/questions/286231/is-it-possible-to-have-currying-and-variadic-function-at-the-same-time">https://softwareengineering.stackexchange.com/questions/286231/is-it-possible-to-have-currying-and-variadic-function-at-the-same-time</a></li>
+<li><a href="http://tolmasky.com/2016/03/24/generalizing-jsx/">http://tolmasky.com/2016/03/24/generalizing-jsx/</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgf7fa4a7" class="outline-2">
+<h2 id="orgf7fa4a7"><span class="section-number-2">11</span> Modeling all data</h2>
+<div class="outline-text-2" id="text-11">
+</div>
+<div id="outline-container-orgbebe429" class="outline-3">
+<h3 id="orgbebe429"><span class="section-number-3">11.1</span> Hypothesis: data = ADTs + records + row polymorphism</h3>
+<div class="outline-text-3" id="text-11-1">
+<p>
+Hypothesis: All data can be modeled by a combination of these:
+</p>
+
+<ul class="org-ul">
+<li>product (tuple)</li>
+<li>sum (alternative, union)</li>
+<li>record (tuple with named components)</li>
+<li>row polymorphism</li>
+</ul>
+
+<p>
+Can we use web standards to define an ontology (so we can use Protege to edit it)?
+<a href="https://protege.stanford.edu/">https://protege.stanford.edu/</a>
+</p>
+
+<ul class="org-ul">
+<li>Does Eclipse EMF have textual representation?</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4add78c" class="outline-3">
+<h3 id="org4add78c"><span class="section-number-3">11.2</span> Church-representation of products, sums, and algebraic data types in general</h3>
+<div class="outline-text-3" id="text-11-2">
+<p>
+<a href="https://en.wikipedia.org/wiki/Lambda_calculus#Pairs">https://en.wikipedia.org/wiki/Lambda_calculus#Pairs</a>
+</p>
+
+<p>
+Let [x] mean the <i>representation</i> of x.
+</p>
+
+<p>
+A <i>product</i> (a,b) can be represented as [(a,b)] = \ f -&gt; f [a] [b].
+</p>
+
+<p>
+The left projection p1 is represented as [p1] = \ p -&gt; p (\ a b -&gt; a).
+</p>
+
+<p>
+If we assume the sum type A + B, then:
+</p>
+
+<ul class="org-ul">
+<li>The choice inl a can be represented as [inl a] = \ f g -&gt; f [a].</li>
+<li>The choice inr b can be represented as [inr b] = \ f g -&gt; g [b].</li>
+</ul>
+
+<p>
+A recursive data type such as "stream a = (a, stream a)" can be represented as:
+</p>
+
+<ul class="org-ul">
+<li>[cons h t] = \ f -&gt; f [h] [t].</li>
+</ul>
+
+<p>
+Thus [a : b : c : &#x2026;] = \ f -&gt; f [a] (\ f -&gt; f [b] (\ f -&gt; f [c] &#x2026;)).
+</p>
+
+<p>
+A recursive data type such as "list a = nil | cons a (list a)" can be represented as:
+</p>
+
+<ul class="org-ul">
+<li>[nil] = \ f g -&gt; f.</li>
+<li>[cons x y] = \ f g -&gt; g [x] [y].</li>
+</ul>
+
+<p>
+Natural numbers "nat = z | s nat":
+</p>
+
+<ul class="org-ul">
+<li>[z] = \ f g -&gt; f.</li>
+<li>[s x] = \ f g -&gt; g [x].</li>
+</ul>
+
+<p>
+Thus:
+</p>
+
+<ul class="org-ul">
+<li>[s z] = \ f g -&gt; g (\ f g -&gt; f)</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgcf6597b" class="outline-3">
+<h3 id="orgcf6597b"><span class="section-number-3">11.3</span> Reverse semantics</h3>
+<div class="outline-text-3" id="text-11-3">
+<p>
+Semantics maps syntax to mathematical object.
+</p>
+
+<p>
+Reverse semantics maps mathematical object to syntax.
+Reverse semantics is representation.
+Reverse semantics is realization.
+</p>
+
+<p>
+Example of reverse semantics is representing the tuple <code>(x,y)</code> with the lambda abstraction <code>\ f -&gt; f [x] [y]</code> where <code>[x]</code> denotes the representation of x.
+</p>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/Realizability">https://en.wikipedia.org/wiki/Realizability</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8acc6f3" class="outline-3">
+<h3 id="org8acc6f3"><span class="section-number-3">11.4</span> Self-interpreter</h3>
+<div class="outline-text-3" id="text-11-4">
+<p>
+1994 article "Efficient Self-Interpretation in Lambda Calculus"
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5da9077" class="outline-2">
+<h2 id="org5da9077"><span class="section-number-2">12</span> Representing knowledge; logic programming; symbolic AI</h2>
+<div class="outline-text-2" id="text-12">
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Logic_programming#Knowledge_representation">https://en.wikipedia.org/wiki/Logic_programming#Knowledge_representation</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Knowledge_representation_and_reasoning">https://en.wikipedia.org/wiki/Knowledge_representation_and_reasoning</a></li>
+</ul>
+
+<p>
+Example: We encode "a todo item has an int64 id" as
+</p>
+
+<pre class="example">
+IF entity todo_app todo E THEN property E int64 id.
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org9585da3" class="outline-2">
+<h2 id="org9585da3"><span class="section-number-2">13</span> Dynamic binding, contextual holes</h2>
+<div class="outline-text-2" id="text-13">
+<ul class="org-ul">
+<li>1996 article "Enriching the lambda calculus with contexts: toward a theory of incremental program construction" <a href="https://dl.acm.org/citation.cfm?id=232652">https://dl.acm.org/citation.cfm?id=232652</a></li>
+<li>1998 article "A lambda-calculus for dynamic binding" <a href="https://core.ac.uk/download/pdf/82810390.pdf">https://core.ac.uk/download/pdf/82810390.pdf</a></li>
+<li>1998 article "Computing with Contexts: A simple approach" <a href="https://core.ac.uk/download/pdf/82065430.pdf">https://core.ac.uk/download/pdf/82065430.pdf</a></li>
+<li>2009 article "Two-level Lambda-calculus" <a href="https://www.sciencedirect.com/science/article/pii/S1571066109002400">https://www.sciencedirect.com/science/article/pii/S1571066109002400</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org74025a4" class="outline-2">
+<h2 id="org74025a4"><span class="section-number-2">14</span> Semantics (should we worry about this earlier?)</h2>
+<div class="outline-text-2" id="text-14">
+</div>
+<div id="outline-container-org3d18798" class="outline-3">
+<h3 id="org3d18798"><span class="section-number-3">14.1</span> Cost model</h3>
+<div class="outline-text-3" id="text-14-1">
+<ul class="org-ul">
+<li>"Cost models based on the lambda-calculus", <a href="http://www.cs.cmu.edu/~guyb/papers/lambdaInria.pdf">pdf slides</a>, from <a href="http://www.cs.cmu.edu/~guyb/">http://www.cs.cmu.edu/~guyb/</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org050a61d" class="outline-3">
+<h3 id="org050a61d"><span class="section-number-3">14.2</span> Denotational semantics</h3>
+<div class="outline-text-3" id="text-14-2">
+</div>
+<div id="outline-container-org879a8b0" class="outline-4">
+<h4 id="org879a8b0"><span class="section-number-4">14.2.1</span> Intro to denotational semantics</h4>
+<div class="outline-text-4" id="text-14-2-1">
+<ul class="org-ul">
+<li>1971, monograph, Dana Scott and Christopher Strachey, "Toward a mathematical semantics for computer languages", <a href="https://www.cs.ox.ac.uk/files/3228/PRG06.pdf">pdf</a></li>
+<li><a href="https://pdfs.semanticscholar.org/presentation/76cd/955ec6dafde3699d64e50882ec7fb4384803.pdf">pdf slides</a></li>
+<li><a href="https://www.seas.harvard.edu/courses/cs152/2016sp/sections/sec-2016-02-18-soln.pdf">Exercises</a> about denotational semantics and lambda calculus</li>
+<li>1997, book, "Denotational semantics: a methodology for language development", <a href="http://www.bcl.hamilton.ie/~barak/teach/F2008/NUIM/CS424/texts/ds.pdf">pdf</a></li>
+<li>1989, PhD thesis, Frank Steven Kent Silbermann, "A Denotational Semantics Approach to Functional and Logic Programming", chapter 3, <a href="http://www.cs.unc.edu/techreports/89-030.pdf">pdf</a>
+<ul class="org-ul">
+<li>"A novel approach is taken in constructing an operational semantics directly from the denotational description."</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2b7c65c" class="outline-4">
+<h4 id="org2b7c65c"><span class="section-number-4">14.2.2</span> <span class="todo TODO">TODO</span> Does lambda calculus have a semantics that doesn't depend on reduction strategy?</h4>
+</div>
+</div>
+
+<div id="outline-container-org1e0acc6" class="outline-3">
+<h3 id="org1e0acc6"><span class="section-number-3">14.3</span> Operational semantics and evaluation/reduction strategy</h3>
+<div class="outline-text-3" id="text-14-3">
+<p>
+Which one should we choose, and why?
+</p>
+
+<ul class="org-ul">
+<li>call-by-name</li>
+<li>call-by-value</li>
+<li>call-by-need</li>
+<li>what else?</li>
+</ul>
+
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-29&gt; </span></span> Wikipedia needs cleanup:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Reduction_strategy_(lambda_calculus)">https://en.wikipedia.org/wiki/Reduction_strategy_(lambda_calculus)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Lambda_calculus#Reduction_strategies">https://en.wikipedia.org/wiki/Lambda_calculus#Reduction_strategies</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Evaluation_strategy">https://en.wikipedia.org/wiki/Evaluation_strategy</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd6e23d6" class="outline-2">
+<h2 id="orgd6e23d6"><span class="section-number-2">15</span> Overloadable function application?</h2>
+</div>
+
+<div id="outline-container-org83e9c10" class="outline-2">
+<h2 id="org83e9c10"><span class="section-number-2">16</span> Interpreters: Giving different meanings to the same syntax</h2>
+<div class="outline-text-2" id="text-16">
+<p>
+Sometimes we want to interpret the same syntax (appearance, source code, text) differently.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2259302" class="outline-2">
+<h2 id="org2259302"><span class="section-number-2">17</span> System F, System F with subtyping, System F-omega</h2>
+<div class="outline-text-2" id="text-17">
+<p>
+<a href="https://en.wikipedia.org/wiki/System_F">https://en.wikipedia.org/wiki/System_F</a>
+</p>
+
+<p>
+"System F is rich enough that the self-application <code>\x.x x</code> is typable." <a href="https://crypto.stanford.edu/~blynn/lambda/systemf.html">https://crypto.stanford.edu/~blynn/lambda/systemf.html</a>
+</p>
+
+<p>
+Brown and Palsberg, "Breaking Through the Normalization Barrier: A Self-Interpreter for F-omega"
+</p>
+</div>
+</div>
+
+<div id="outline-container-org36e87a3" class="outline-2">
+<h2 id="org36e87a3"><span class="section-number-2">18</span> Lambda-prolog?</h2>
+<div class="outline-text-2" id="text-18">
+<ul class="org-ul">
+<li>lambda-prolog <a href="http://www.lix.polytechnique.fr/~dale/lProlog/">http://www.lix.polytechnique.fr/~dale/lProlog/</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org328b5fd" class="outline-2">
+<h2 id="org328b5fd"><span class="section-number-2">19</span> Imperative subset</h2>
+<div class="outline-text-2" id="text-19">
+<p>
+Haskell's ST monad enables us to embed a local imperative program in a functional program.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0ac2f1e" class="outline-2">
+<h2 id="org0ac2f1e"><span class="section-number-2">20</span> Introduction?</h2>
+<div class="outline-text-2" id="text-20">
+<ul class="org-ul">
+<li>unknown-year lecture notes "Lambda Calculus as a Programming Language" <a href="http://andrei.clubcisco.ro/cursuri/2pp/01.Lambda_prog.pdf">pdf</a></li>
+</ul>
+
+<p>
+I thought lambda calculus could be summarized in one page, but Henk Barendregt wrote hundreds of pages about it. Is there more to lambda calculus than it seems?
+</p>
+
+<ul class="org-ul">
+<li>1994, 50 pages, <a href="http://www.nyu.edu/projects/barker/Lambda/barendregt.94.pdf">pdf</a></li>
+<li>1991, 190 pages, <a href="https://people.mpi-sws.org/~dreyer/tor/papers/barendregt.pdf">pdf</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org47b0a1b" class="outline-2">
+<h2 id="org47b0a1b"><span class="section-number-2">21</span> Extending lambda-calculus with various bells and whistles</h2>
+<div class="outline-text-2" id="text-21">
+<ul class="org-ul">
+<li>Vectorial lambda-calculus
+
+<ul class="org-ul">
+<li>The 2013 article "The Vectorial Lambda-Calculus" <a href="https://who.rocq.inria.fr/Alejandro.Diaz-Caro/TheVectorialCalculus.pdf">pdf</a> adds vectors and matrices and their types to lambda calculus.</li>
+<li>The 2010 article "Semantics of a Typed Algebraic Lambda-Calculus" <a href="https://arxiv.org/abs/1006.1433">pdf available</a> also mentions "vectorial".</li>
+</ul></li>
+
+<li>2016 article "System F-omega with Equirecursive Types for Datatype-Generic Programming" <a href="http://ps.informatik.uni-tuebingen.de/research/functors/equirecursion-fomega-popl16.pdf">pdf</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4b001b0" class="outline-2">
+<h2 id="org4b001b0"><span class="section-number-2">22</span> Lambda calculus semantics?</h2>
+<div class="outline-text-2" id="text-22">
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Lambda_calculus#Semantics">https://en.wikipedia.org/wiki/Lambda_calculus#Semantics</a>
+
+<ul class="org-ul">
+<li>"In the 1970s, Dana Scott showed that, if only continuous functions were considered,
+a set or domain D with the required property could be found, thus providing a model for the lambda calculus."
+
+<ul class="org-ul">
+<li>1982, <a href="https://www.sciencedirect.com/science/article/pii/S0019995882800879">"What is a model of lambda calculus?"</a></li>
+<li>2008, PhD thesis, <a href="https://tel.archives-ouvertes.fr/tel-00715207/document">"Models and theories of lambda calculus"</a>
+
+<ul class="org-ul">
+<li>2009, <a href="https://arxiv.org/abs/0904.4756">summary</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li>Paul Hudak, lecture notes, <a href="http://www.cs.yale.edu/homes/hudak/CS430F07/LectureSlides/Reynolds-ch10.pdf">The Lambda Calculus</a>
+
+<ul class="org-ul">
+<li>"The Greatest Thing Since Sliced Bread™, or maybe even before it"</li>
+</ul></li>
+
+<li>The operational semantics of lambda calculus depends on the evaluation strategy?
+
+<ul class="org-ul">
+<li>What-reduction?
+
+<ul class="org-ul">
+<li>Normal-order reduction</li>
+<li>Applicative-order reduction</li>
+</ul></li>
+
+<li>Call-by-what?
+
+<ul class="org-ul">
+<li>Call-by-value</li>
+<li>Call-by-name</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4d0be0a" class="outline-2">
+<h2 id="org4d0be0a"><span class="section-number-2">23</span> When should we introduce a type system?</h2>
+<div class="outline-text-2" id="text-23">
+<ul class="org-ul">
+<li>2005 article "Introduction to Type Theory" <a href="http://www.cs.ru.nl/~erikb/onderwijs/sl2/materiaal/tt-sl2.pdf">pdf</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org992f090" class="outline-2">
+<h2 id="org992f090"><span class="section-number-2">24</span> Optimizing lambda calculus?</h2>
+<div class="outline-text-2" id="text-24">
+<ul class="org-ul">
+<li><a href="http://thyer.name/lambda-animator/">http://thyer.name/lambda-animator/</a></li>
+<li><a href="http://thyer.name/phd-thesis/">http://thyer.name/phd-thesis/</a></li>
+<li><a href="http://hackage.haskell.org/package/graph-rewriting-lambdascope">http://hackage.haskell.org/package/graph-rewriting-lambdascope</a></li>
+<li>partial evaluation
+
+<ul class="org-ul">
+<li>2010, slides, "O, partial evaluator, where art thou?", Lennart Augustsson, <a href="http://www.cse.chalmers.se/~palka/Lennarts_talk/PEPM-2010.pdf">pdf</a>
+
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Partial_evaluation">https://en.wikipedia.org/wiki/Partial_evaluation</a>
+
+<ul class="org-ul">
+<li>Futamura projection</li>
+</ul></li>
+</ul></li>
+
+<li>1997, article, "Distributed partial evaluation", <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.134.1238">citeseerx</a></li>
+</ul></li>
+
+<li>Lambda calculus
+
+<ul class="org-ul">
+<li>might be related to bottom-up beta substitution
+
+<ul class="org-ul">
+<li>Abdullah hinted that BUBS (bottom-up beta-substitution [Shivers2004])
+might be used to make a garbage-free or a fast interpreter.</li>
+<li><a href="https://en.wikipedia.org/wiki/Strict_programming_language">https://en.wikipedia.org/wiki/Strict_programming_language</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Lazy_evaluation">https://en.wikipedia.org/wiki/Lazy_evaluation</a></li>
+<li><a href="https://memo.barrucadu.co.uk/strict-vs-lazy.html">Strict-by-default vs Lazy-by-default</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Applicative_computing_systems">https://en.wikipedia.org/wiki/Applicative_computing_systems</a></li>
+<li>non-strict, beta reduction, normal order, applicative order</li>
+<li>The terms "lazy" and "strict" imply operational semantics.
+They are two strategies for beta-reduction.
+"Lazy" is normal-order.
+"Strict" is applicative-order.</li>
+<li><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.90.2386&amp;rep=rep1&amp;type=pdf">An Algorithm for Optimal Lambda Calculus Reduction, John Lamping</a></li>
+<li><a href="http://www.lsv.fr/Publis/PAPERS/PDF/sinot-wrs07.pdf">Complete Laziness: a Natural Semantics, François-Régis Sinot</a></li>
+<li><a href="http://rochel.info/">http://rochel.info/</a> graph-rewriting-lambdascope (screenshot): An implementation of an optimal evaluator for the λ-calculus, PDFLambdascope</li>
+</ul></li>
+
+<li>How is lambda calculus algebraic?
+
+<ul class="org-ul">
+<li><a href="https://www.mscs.dal.ca/~selinger/papers/combinatory.pdf">"The lambda calculus is algebraic", Peter Selinger</a>
+
+<ul class="org-ul">
+<li>"We argue that free variables should not be interpreted as elements in a model, as is usually done, but as indeterminates."</li>
+</ul></li>
+
+<li><a href="https://pdfs.semanticscholar.org/055d/69ee4dc95fbf6457419c90338493667478b1.pdf">"On the algebraic models of lambda calculus", Antonino Salibra</a>
+
+<ul class="org-ul">
+<li>"The variety (equational class) of lambda abstraction algebras was introduced
+to algebraize the untyped lambda calculus in the same way Boolean algebras algebraize the classical propositional calculus."
+Propositional logic is modeled by Boolean algebra.
+First-order logic is modeled by cylindric algebra?
+Lambda calculus is modeled by lambda abstraction algebra.
+Why algebra? Because it is equational?</li>
+</ul></li>
+
+<li><a href="https://en.wikipedia.org/wiki/Algebraic_logic">Wikipedia "algebraic logic"</a></li>
+<li><a href="https://pdfs.semanticscholar.org/7596/19f05a42ff3045bcf87fcaa3edbff01e1130.pdf">"The algebraic lambda-calculus", Lionel Vaux</a></li>
+<li><a href="https://pdfs.semanticscholar.org/44c9/2ad00b8ceba78319005db048b24d61a80748.pdf">"Lambda abstraction algebras: representation theorems", Don Pigozzi, Antonino Salibra</a></li>
+<li><a href="http://www.dsi.unive.it/~salibra/mainfinale.pdf">"Applying Universal Algebra to Lambda Calculus", Giulio Manzonetto, Antonino Salibra</a></li>
+</ul></li>
+
+<li>Dana Scott's PCF; also search the Internet for "the language pcf"
+<a href="http://www.cs.bham.ac.uk/~mhe/papers/RNC3.pdf">"Introduction to Real PCF (Notes)", Mart'in H"otzel Escard'o</a></li>
+<li>1993 John Launchbury <a href="https://pdfs.semanticscholar.org/492b/200419199892857faa6a6956614641ae9464.pdf">Lazy imperative programming</a></li>
+</ul></li>
+
+<li>lambda calculus
+
+<ul class="org-ul">
+<li>Church-encoding enables lambda calculus to represent conditionals and algebraic data types.</li>
+<li>Fixed-point combinators enables recursion and looping.</li>
+<li><a href="https://en.wikipedia.org/wiki/Lambda_cube">https://en.wikipedia.org/wiki/Lambda_cube</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Calculus_of_constructions">https://en.wikipedia.org/wiki/Calculus_of_constructions</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus">https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus</a>
+
+<ul class="org-ul">
+<li>"The simply typed lambda calculus [&#x2026;], a form of type theory,
+is a typed interpretation of the lambda calculus with only one type constructor: [&#x2026;] that builds function types."
+
+<ul class="org-ul">
+<li>What is an "interpretation of the lambda calculus"?</li>
+<li>What is "the lambda calculus"? Is there only one lambda calculus?</li>
+</ul></li>
+</ul></li>
+
+<li><a href="https://www.reddit.com/r/haskell/comments/8els6f/why_are_combinators_as_powerful_as_full/">https://www.reddit.com/r/haskell/comments/8els6f/why_are_combinators_as_powerful_as_full/</a></li>
+<li><a href="https://math.stackexchange.com/questions/5639/the-power-of-lambda-calculi">https://math.stackexchange.com/questions/5639/the-power-of-lambda-calculi</a></li>
+<li>Implement lambda calculus.
+
+<ul class="org-ul">
+<li>Without dynamic allocation / garbage collection.</li>
+<li>Translate lambda calculus to assembly
+
+<ul class="org-ul">
+<li>Basic idea:
+
+<ul class="org-ul">
+<li>Every expression translates to a subroutine.</li>
+<li>Calling the subroutine ~ evaluating the expression.</li>
+<li>Subroutine return value ~ value obtained by evaluating the expression.</li>
+</ul></li>
+
+<li>A lambda abstraction translates to a subroutine that accepts one parameter.</li>
+<li>An application translates to a subroutine call.</li>
+<li>An int value translates to what? Choice:
+
+<ul class="org-ul">
+<li>itself</li>
+<li>a subroutine that returns the int</li>
+</ul></li>
+</ul></li>
+
+<li>2012, article, <a href="https://arxiv.org/abs/1202.2924">"From Mathematics to Abstract Machine: A formal derivation of an executable Krivine machine"</a>
+
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Krivine_machine">https://en.wikipedia.org/wiki/Krivine_machine</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4fad088" class="outline-2">
+<h2 id="org4fad088"><span class="section-number-2">25</span> Begin with an interpreter, not a compiler</h2>
+<div class="outline-text-2" id="text-25">
+<ul class="org-ul">
+<li>Don't make a compiler?
+Make an interpreter instead, and stage it?
+Turn an interpreter into a compiler for free?</li>
+<li>"To stage an interpreter" is to add staging annotations to the code of the interpreter.</li>
+<li>Staging is similar to quoting in Lisp/Scheme.</li>
+<li>2004 article "A Gentle Introduction to Multi-stage Programming" <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.103.2543&amp;rep=rep1&amp;type=pdf">pdf</a>
+<ul class="org-ul">
+<li>Basic Problems in Building Program Generators</li>
+<li>part 2 <a href="https://pdfs.semanticscholar.org/aa3c/d4233f7c0db95e5c38d5b8fc1d199df21857.pdf">https://pdfs.semanticscholar.org/aa3c/d4233f7c0db95e5c38d5b8fc1d199df21857.pdf</a></li>
+</ul></li>
+<li>multi-stage programming for Scala <a href="https://scala-lms.github.io/">https://scala-lms.github.io/</a></li>
+<li>2006 article "A Verified Staged Interpreter is a Verified Compiler" <a href="https://www.researchgate.net/profile/Kevin_Hammond/publication/221108683_A_verified_staged_interpreter_is_a_verified_compiler/links/00b7d517ede725c057000000.pdf">pdf</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org5dd6033" class="outline-2">
+<h2 id="org5dd6033"><span class="section-number-2">26</span> Foreign function interface: working with C</h2>
+</div>
+
+<div id="outline-container-org544fa3d" class="outline-2">
+<h2 id="org544fa3d"><span class="section-number-2">27</span> Ocaml</h2>
+<div class="outline-text-2" id="text-27">
+<ul class="org-ul">
+<li><a href="https://ocaml.org/learn/">https://ocaml.org/learn/</a></li>
+</ul>
+</div>
+</div>
 
   </div>
 
