@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Using lambda calculus</title>
+  <title>Building a formal language from lambda calculus</title>
   <meta name="description" content="Personal website">
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -110,7 +110,7 @@ MathJax.Hub.Config({
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Using lambda calculus</h1>
+    <h1 class="post-title">Building a formal language from lambda calculus</h1>
   </header>
 
   <div class="post-content">
@@ -121,7 +121,20 @@ MathJax.Hub.Config({
 <li><a href="#org8ec71a5">1. Introduction</a>
 <ul>
 <li><a href="#org0e7becf">1.1. Goal</a></li>
-<li><a href="#org025681b">1.2. Examples of extending lambda calculus</a></li>
+<li><a href="#org025681b">1.2. Examples of extending lambda calculus</a>
+<ul>
+<li><a href="#orgdb0edf8">1.2.1. <span class="todo TODO">TODO</span> Study Caml Core</a></li>
+</ul>
+</li>
+<li><a href="#org663fba3">1.3. Alternative titles</a></li>
+<li><a href="#org1e37d71">1.4. Principles</a>
+<ul>
+<li><a href="#orga234d69">1.4.1. Refer to mathematics, logic, and English.</a></li>
+<li><a href="#orge535186">1.4.2. Solve the root cause; don't hack.</a></li>
+</ul>
+</li>
+<li><a href="#orgf9edae8">1.5. Other people's opinions about designing programming languages</a></li>
+<li><a href="#org4f28b74">1.6. Shopping for ideas</a></li>
 </ul>
 </li>
 <li><a href="#org807a64b">2. Lambda calculus</a>
@@ -139,10 +152,11 @@ MathJax.Hub.Config({
 <li><a href="#org162e44e">5. What program, execution, and termination mean in declarative paradigms</a></li>
 <li><a href="#orga7864f1">6. Records, also for namespaces and modules</a>
 <ul>
-<li><a href="#org0c87d4a">6.1. Do we want to represent records as functions?</a></li>
-<li><a href="#org7b849e3">6.2. Modules as record functions</a></li>
-<li><a href="#org281df13">6.3. Record expressions</a></li>
-<li><a href="#org331cf0f">6.4. Labels</a></li>
+<li><a href="#org02c2684">6.1. We don't want to represent records as functions.</a></li>
+<li><a href="#orge063deb">6.2. We want records to be applicable like lambda; we add a new beta-reduction rule for "applying" records.</a></li>
+<li><a href="#org7b849e3">6.3. Modules as record functions</a></li>
+<li><a href="#org281df13">6.4. Record expressions</a></li>
+<li><a href="#org331cf0f">6.5. Labels</a></li>
 </ul>
 </li>
 <li><a href="#org96b220a">7. Annotations: user-defined metadata attached to concrete syntax tree nodes</a>
@@ -159,6 +173,7 @@ MathJax.Hub.Config({
 <ul>
 <li><a href="#org5132b1c">9.1. Sharing</a></li>
 <li><a href="#org0b1091e">9.2. Example of sharing</a></li>
+<li><a href="#org4564c83">9.3. Lazy accumulation problem</a></li>
 </ul>
 </li>
 <li><a href="#org79c3220">10. Currying is not compatible with vararg and named parameters?</a></li>
@@ -197,6 +212,34 @@ MathJax.Hub.Config({
 <li><a href="#org4fad088">25. Begin with an interpreter, not a compiler</a></li>
 <li><a href="#org5dd6033">26. Foreign function interface: working with C</a></li>
 <li><a href="#org544fa3d">27. Ocaml</a></li>
+<li><a href="#orgebdc0d7">28. Reconciling functional and logic programming into declarative programming?</a>
+<ul>
+<li><a href="#orgf1349c8">28.1. Example: Representing a predicate in lambda calculus</a></li>
+<li><a href="#org7dbd533">28.2. Example: Representing a function in logic programming</a></li>
+<li><a href="#org16f155d">28.3. The "satisfy" function</a></li>
+<li><a href="#orgd0baf78">28.4. A function is a relation, a relation is a function, so what?</a></li>
+</ul>
+</li>
+<li><a href="#orgd00d2d7">29. Precise memory accounting</a></li>
+<li><a href="#org1349dfe">30. Logic programming vs theorem proving</a></li>
+<li><a href="#orge7656ec">31. Execution state reification, save states, saving and loading states, pausing and resuming computations</a></li>
+<li><a href="#org3aa49e7">32. Knowledge representation and software specification</a>
+<ul>
+<li><a href="#orgd70b023">32.1. Their relationships</a></li>
+<li><a href="#org993dda3">32.2. Executable specification?</a></li>
+</ul>
+</li>
+<li><a href="#org6185e17">33. Haskell woes</a>
+<ul>
+<li><a href="#orgab4aa73">33.1. Can't import type class instances explicitly</a></li>
+</ul>
+</li>
+<li><a href="#org4cc69b5">34. Monads, and Haskell type system limitations</a>
+<ul>
+<li><a href="#org045834e">34.1. Should Nat (the natural numbers) be a subtype of Int (the integers)?</a></li>
+<li><a href="#orgae8651e">34.2. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-01&gt; </span></span> @abdullah Signedness is a monad: conservatively extending naturals to integers</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -218,7 +261,6 @@ in a way that is also feasible to machine translation using classical compiler t
 </p>
 </div>
 </div>
-
 <div id="outline-container-org025681b" class="outline-3">
 <h3 id="org025681b"><span class="section-number-3">1.2</span> Examples of extending lambda calculus</h3>
 <div class="outline-text-3" id="text-1-2">
@@ -230,9 +272,66 @@ in a way that is also feasible to machine translation using classical compiler t
 <li>"Extending the Lambda Calculus: An Eager Functional Language", <a href="http://www.cs.yale.edu/homes/hudak/CS430F07/LectureSlides/Reynolds-ch11.pdf">pdf slides</a></li>
 </ul>
 </div>
+<div id="outline-container-orgdb0edf8" class="outline-4">
+<h4 id="orgdb0edf8"><span class="section-number-4">1.2.1</span> <span class="todo TODO">TODO</span> Study Caml Core</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<ul class="org-ul">
+<li><a href="https://caml.inria.fr/pub/docs/manual-ocaml/coreexamples.html">https://caml.inria.fr/pub/docs/manual-ocaml/coreexamples.html</a></li>
+<li><a href="https://caml.inria.fr/resources/doc/faq/core.en.html">https://caml.inria.fr/resources/doc/faq/core.en.html</a></li>
+</ul>
 </div>
 </div>
-
+</div>
+<div id="outline-container-org663fba3" class="outline-3">
+<h3 id="org663fba3"><span class="section-number-3">1.3</span> Alternative titles</h3>
+<div class="outline-text-3" id="text-1-3">
+<ul class="org-ul">
+<li>"How far can we push Scheme/Lisp?"</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org1e37d71" class="outline-3">
+<h3 id="org1e37d71"><span class="section-number-3">1.4</span> Principles</h3>
+<div class="outline-text-3" id="text-1-4">
+</div>
+<div id="outline-container-orga234d69" class="outline-4">
+<h4 id="orga234d69"><span class="section-number-4">1.4.1</span> Refer to mathematics, logic, and English.</h4>
+</div>
+<div id="outline-container-orge535186" class="outline-4">
+<h4 id="orge535186"><span class="section-number-4">1.4.2</span> Solve the root cause; don't hack.</h4>
+</div>
+</div>
+<div id="outline-container-orgf9edae8" class="outline-3">
+<h3 id="orgf9edae8"><span class="section-number-3">1.5</span> Other people's opinions about designing programming languages</h3>
+<div class="outline-text-3" id="text-1-5">
+<ul class="org-ul">
+<li><a href="http://www.inquisition.ca/en/info/gepsypl/rules.htm">http://www.inquisition.ca/en/info/gepsypl/rules.htm</a></li>
+<li>2015 dissertation "Evidence-based programming language design: a philosophical and methodological exploration",
+<a href="https://jyx.jyu.fi/handle/123456789/47698">abstract</a>,
+<a href="https://jyx.jyu.fi/bitstream/handle/123456789/47698/978-951-39-6388-0_vaitos04122015.pdf">pdf</a></li>
+<li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/9ep9xq/what_i_did_not_steal_from_perl_6/">https://www.reddit.com/r/ProgrammingLanguages/comments/9ep9xq/what_i_did_not_steal_from_perl_6/</a>
+<ul class="org-ul">
+<li>"What's a character?" <a href="https://www.perlmonks.org/?node_id=1214956">https://www.perlmonks.org/?node_id=1214956</a></li>
+</ul></li>
+<li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/9eqrfy/what_are_the_biggest_problems_with_programming/">https://www.reddit.com/r/ProgrammingLanguages/comments/9eqrfy/what_are_the_biggest_problems_with_programming/</a></li>
+<li>2017 article "The End of History? Using a Proof Assistant to Replace Language Design with Library Design" <a href="https://www.cs.purdue.edu/homes/bendy/Fiat/fiat-snapl.pdf">pdf</a></li>
+<li><a href="http://purduepl.github.io/index.html">Purdue university programming languages group</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org4f28b74" class="outline-3">
+<h3 id="org4f28b74"><span class="section-number-3">1.6</span> Shopping for ideas</h3>
+<div class="outline-text-3" id="text-1-6">
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/8vcrzb/what_are_some_interesting_language_features_that/">What are some interesting language features that may not be well known? : ProgrammingLanguages</a></li>
+<li><a href="https://softwareengineering.stackexchange.com/questions/55047/what-is-the-greatest-design-flaw-you-have-faced-in-any-programming-language">https://softwareengineering.stackexchange.com/questions/55047/what-is-the-greatest-design-flaw-you-have-faced-in-any-programming-language</a></li>
+<li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/9erq87/languages_with_separate_types_for_pointers_to_the/">https://www.reddit.com/r/ProgrammingLanguages/comments/9erq87/languages_with_separate_types_for_pointers_to_the/</a></li>
+<li><a href="http://math.andrej.com/2009/05/29/mathematically-structured-but-not-necessarily-functional-programming/">http://math.andrej.com/2009/05/29/mathematically-structured-but-not-necessarily-functional-programming/</a></li>
+<li>read, "true sums of products" <a href="http://hackage.haskell.org/package/generics-sop">http://hackage.haskell.org/package/generics-sop</a></li>
+</ul>
+</div>
+</div>
+</div>
 <div id="outline-container-org807a64b" class="outline-2">
 <h2 id="org807a64b"><span class="section-number-2">2</span> Lambda calculus</h2>
 <div class="outline-text-2" id="text-2">
@@ -248,7 +347,6 @@ Follow <a href="https://crypto.stanford.edu/~blynn/lambda/">Ben Lynn's lambda-ca
 <li>why use lambda calculus as theoretical basis (cool reasons!)</li>
 </ul>
 </div>
-
 <div id="outline-container-org1782f15" class="outline-3">
 <h3 id="org1782f15"><span class="section-number-3">2.1</span> Beta-reduction</h3>
 <div class="outline-text-3" id="text-2-1">
@@ -263,7 +361,6 @@ Follow <a href="https://crypto.stanford.edu/~blynn/lambda/">Ben Lynn's lambda-ca
 </div>
 </div>
 </div>
-
 <div id="outline-container-orgb9d5139" class="outline-2">
 <h2 id="orgb9d5139"><span class="section-number-2">3</span> Strings, especially of characters</h2>
 <div class="outline-text-2" id="text-3">
@@ -296,17 +393,19 @@ Unqualified "string" usually means "character string".
 A <i>character string literal</i> is surrounded with quotes.
 </p>
 </div>
-
 <div id="outline-container-org62fd1cc" class="outline-3">
 <h3 id="org62fd1cc"><span class="section-number-3">3.1</span> Escape sequences</h3>
 </div>
-
 <div id="outline-container-orgc824d3a" class="outline-3">
 <h3 id="orgc824d3a"><span class="section-number-3">3.2</span> Characters</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 What is Unicode's definition of "character"?
 Is that definition sane?
+</p>
+
+<p>
+Should Unicode normalization/canonicalization be built into the programming language?
 </p>
 
 <p>
@@ -320,7 +419,6 @@ Issues: ordering/collation, capitalization, combination, halfwidthization, ligat
 </div>
 </div>
 </div>
-
 <div id="outline-container-org114b6d3" class="outline-2">
 <h2 id="org114b6d3"><span class="section-number-2">4</span> Macro, reflection, reification, quoting</h2>
 <div class="outline-text-2" id="text-4">
@@ -337,7 +435,6 @@ Does that cause a paradox?
 </p>
 </div>
 </div>
-
 <div id="outline-container-org162e44e" class="outline-2">
 <h2 id="org162e44e"><span class="section-number-2">5</span> What program, execution, and termination mean in declarative paradigms</h2>
 <div class="outline-text-2" id="text-5">
@@ -385,13 +482,30 @@ We want namespaces and modules because they are necessary for humans to manage l
 </p>
 </div>
 
-<div id="outline-container-org0c87d4a" class="outline-3">
-<h3 id="org0c87d4a"><span class="section-number-3">6.1</span> Do we want to represent records as functions?</h3>
+<div id="outline-container-org02c2684" class="outline-3">
+<h3 id="org02c2684"><span class="section-number-3">6.1</span> We don't want to represent records as functions.</h3>
 <div class="outline-text-3" id="text-6-1">
 <p>
-A record r is a function r : string -&gt; expression.
+We can describe the semantics of a record r as a function r : string -&gt; expression.
 </p>
 
+<p>
+There are several options to pretty-print a record:
+</p>
+
+<ul class="org-ul">
+<li>Define a <code>show-record</code> function that is different from <code>show</code>.</li>
+<li>But we want polymorphic <code>show</code>. We want one <code>show</code> function to work for all things.</li>
+<li>If a record is represented by a lambda abstraction, then pretty-printing the record will pretty-print a lambda abstraction.
+We don't want that.
+We want pretty-printed records to look like how we write records.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orge063deb" class="outline-3">
+<h3 id="orge063deb"><span class="section-number-3">6.2</span> We want records to be applicable like lambda; we add a new beta-reduction rule for "applying" records.</h3>
+<div class="outline-text-3" id="text-6-2">
 <p>
 Record access is function application.
 To get the field <code>fld</code> or record <code>rec</code>, evaluate <code>rec fld</code>.
@@ -400,12 +514,26 @@ To get the field <code>fld</code> or record <code>rec</code>, evaluate <code>rec
 <p>
 The record <code>rec</code> with the the field <code>fld</code> updated to <code>new</code> is the expression <code>\ name -&gt; IF name = fld THEN new ELSE rec fld</code>.
 </p>
+
+<p>
+We add this beta-reduction rule:
+</p>
+
+<ul class="org-ul">
+<li>If X is a record, and Y is a string, then <code>X Y</code> reduces to <code>get X Y</code>.</li>
+</ul>
+
+<p>
+We want to pretend that records are functions.
+We want to use records as if they were functions.
+But we don't want records to be functions; we want to pretty-print records as records, not as lambda abstractions.
+</p>
 </div>
 </div>
 
 <div id="outline-container-org7b849e3" class="outline-3">
-<h3 id="org7b849e3"><span class="section-number-3">6.2</span> Modules as record functions</h3>
-<div class="outline-text-3" id="text-6-2">
+<h3 id="org7b849e3"><span class="section-number-3">6.3</span> Modules as record functions</h3>
+<div class="outline-text-3" id="text-6-3">
 <p>
 A module is a function taking a record and giving a record.
 The input is called <i>imports</i> or <i>dependencies</i>.
@@ -423,8 +551,8 @@ Example:
 </div>
 
 <div id="outline-container-org281df13" class="outline-3">
-<h3 id="org281df13"><span class="section-number-3">6.3</span> Record expressions</h3>
-<div class="outline-text-3" id="text-6-3">
+<h3 id="org281df13"><span class="section-number-3">6.4</span> Record expressions</h3>
+<div class="outline-text-3" id="text-6-4">
 <p>
 We add these expression syntax rules:
 </p>
@@ -443,8 +571,8 @@ An example of a record expression is <code>{id: \ x -&gt; x; app: \ f x -&gt; f 
 </div>
 
 <div id="outline-container-org331cf0f" class="outline-3">
-<h3 id="org331cf0f"><span class="section-number-3">6.4</span> Labels</h3>
-<div class="outline-text-3" id="text-6-4">
+<h3 id="org331cf0f"><span class="section-number-3">6.5</span> Labels</h3>
+<div class="outline-text-3" id="text-6-5">
 <p>
 A <i>label</i> is a string.
 If the label doesn't contain funny characters, it doesn't have to be quoted.
@@ -550,7 +678,14 @@ All let-expression should allow recursion, like Haskell's.
 <div id="outline-container-org017b8e9" class="outline-2">
 <h2 id="org017b8e9"><span class="section-number-2">9</span> Sharing, laziness, full laziness, complete laziness, and optimal reduction</h2>
 <div class="outline-text-2" id="text-9">
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/haskell/comments/3pa5ii/are_optimal_evaluators_actually_optimal/">https://www.reddit.com/r/haskell/comments/3pa5ii/are_optimal_evaluators_actually_optimal/</a>
+<ul class="org-ul">
+<li><a href="https://cstheory.stackexchange.com/questions/32850/are-optimal-evaluators-actually-optimal">https://cstheory.stackexchange.com/questions/32850/are-optimal-evaluators-actually-optimal</a></li>
+</ul></li>
+</ul>
 </div>
+
 <div id="outline-container-org5132b1c" class="outline-3">
 <h3 id="org5132b1c"><span class="section-number-3">9.1</span> Sharing</h3>
 <div class="outline-text-3" id="text-9-1">
@@ -600,6 +735,19 @@ These depend on circumstances:
 <p>
 How do we define "expensive"?
 </p>
+</div>
+</div>
+
+<div id="outline-container-org4564c83" class="outline-3">
+<h3 id="org4564c83"><span class="section-number-3">9.3</span> Lazy accumulation problem</h3>
+<div class="outline-text-3" id="text-9-3">
+<pre class="example">
+sum a 0 = a
+sum a
+
+sum 0 = 0
+sum n = n + sum (n - 1)
+</pre>
 </div>
 </div>
 </div>
@@ -1156,6 +1304,232 @@ Turn an interpreter into a compiler for free?</li>
 <ul class="org-ul">
 <li><a href="https://ocaml.org/learn/">https://ocaml.org/learn/</a></li>
 </ul>
+</div>
+</div>
+
+<div id="outline-container-orgebdc0d7" class="outline-2">
+<h2 id="orgebdc0d7"><span class="section-number-2">28</span> Reconciling functional and logic programming into declarative programming?</h2>
+<div class="outline-text-2" id="text-28">
+<p>
+1996 publication "A Note on Declarative Programming Paradigms and the Future of Definitional Programming" <a href="http://www.cse.chalmers.se/~oloft/Papers/wm96/wm96.html">html</a>
+</p>
+</div>
+
+<div id="outline-container-orgf1349c8" class="outline-3">
+<h3 id="orgf1349c8"><span class="section-number-3">28.1</span> Example: Representing a predicate in lambda calculus</h3>
+<div class="outline-text-3" id="text-28-1">
+<p>
+Lambda calculus with boolean logic extensions:
+</p>
+
+<pre class="example">
+p = \ x -&gt; x = "a" OR x = "b"
+</pre>
+
+<p>
+Prolog:
+</p>
+
+<pre class="example">
+p(a).
+p(b).
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org7dbd533" class="outline-3">
+<h3 id="org7dbd533"><span class="section-number-3">28.2</span> Example: Representing a function in logic programming</h3>
+<div class="outline-text-3" id="text-28-2">
+<pre class="example">
+inc(X, Y) :- X = Y + 1.
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org16f155d" class="outline-3">
+<h3 id="org16f155d"><span class="section-number-3">28.3</span> The "satisfy" function</h3>
+<div class="outline-text-3" id="text-28-3">
+<p>
+The expression "satisfy f" finds all x : a that satisfies f : a -&gt; bool.
+Thus the type of "satisfy" is "(a -&gt; bool) -&gt; list a".
+</p>
+
+<p>
+It is in principle possible to write such "satisfy" builtin for some lambda expressions.
+</p>
+
+<pre class="example">
+satisfy (\ x -&gt; x = "a" OR x = "b")
+=&gt; ["a","b"]
+
+satisfy (\ (x : int) -&gt; x &gt;= 10)
+=&gt; [10,11,12,...] -- an infinite list
+
+satisfy (\ (x : bool) -&gt; true)
+=&gt; [false,true]
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgd0baf78" class="outline-3">
+<h3 id="orgd0baf78"><span class="section-number-3">28.4</span> A function is a relation, a relation is a function, so what?</h3>
+<div class="outline-text-3" id="text-28-4">
+<p>
+A function \( (A,B,F) \) is trivially a relation.
+</p>
+
+<p>
+A relation \( (A,B,R) \) is a function \( (A,2^B,F) \) where \( F(x) = \{ y ~|~ (x,y) \in R \} \).
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd00d2d7" class="outline-2">
+<h2 id="orgd00d2d7"><span class="section-number-2">29</span> Precise memory accounting</h2>
+<div class="outline-text-2" id="text-29">
+<p>
+We want precise memory accounting to enable the runtime to limit memory usage.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1349dfe" class="outline-2">
+<h2 id="org1349dfe"><span class="section-number-2">30</span> Logic programming vs theorem proving</h2>
+<div class="outline-text-2" id="text-30">
+<ul class="org-ul">
+<li><a href="https://stackoverflow.com/questions/36335633/difference-between-logic-programming-and-automated-theorem-proving">https://stackoverflow.com/questions/36335633/difference-between-logic-programming-and-automated-theorem-proving</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Automated_theorem_proving">https://en.wikipedia.org/wiki/Automated_theorem_proving</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orge7656ec" class="outline-2">
+<h2 id="orge7656ec"><span class="section-number-2">31</span> Execution state reification, save states, saving and loading states, pausing and resuming computations</h2>
+<div class="outline-text-2" id="text-31">
+<p>
+We want execution state reification so that we can do live process migration.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3aa49e7" class="outline-2">
+<h2 id="org3aa49e7"><span class="section-number-2">32</span> Knowledge representation and software specification</h2>
+<div class="outline-text-2" id="text-32">
+</div>
+<div id="outline-container-orgd70b023" class="outline-3">
+<h3 id="orgd70b023"><span class="section-number-3">32.1</span> Their relationships</h3>
+<div class="outline-text-3" id="text-32-1">
+<ul class="org-ul">
+<li>2010, "Functional-Logic Programming Lecture Notes", Harold Boley, slides, <a href="http://www.cs.unb.ca/~boley/FLP/cs6905FLP.pdf">pdf</a>
+<ul class="org-ul">
+<li>Knowledge representation in AI roughly corresponds to software specification in software engineering.</li>
+<li>Declarative programs can be thought as executable specifications.</li>
+<li>Invertibility principle (slide 36)</li>
+<li>Nesting/conjunction principle (slide 46)</li>
+<li>Unification principle (slide 50)</li>
+<li>Amalgamation/integration principle (slide 55)</li>
+<li>That's a long deck: 270 slides.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org993dda3" class="outline-3">
+<h3 id="org993dda3"><span class="section-number-3">32.2</span> Executable specification?</h3>
+<div class="outline-text-3" id="text-32-2">
+<ul class="org-ul">
+<li>lightweight executable mathematics <a href="https://www.cl.cam.ac.uk/~pes20/lem/">https://www.cl.cam.ac.uk/~pes20/lem/</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org6185e17" class="outline-2">
+<h2 id="org6185e17"><span class="section-number-2">33</span> Haskell woes</h2>
+<div class="outline-text-2" id="text-33">
+<ul class="org-ul">
+<li><a href="https://news.ycombinator.com/item?id=5893442">Ask HN: Any downsides of programming in Haskell? | Hacker News</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/1gknfs/ask_hn_any_downsides_of_programming_in_haskell/">Ask HN: Any downsides of programming in Haskell? : haskell</a></li>
+</ul>
+</div>
+
+<div id="outline-container-orgab4aa73" class="outline-3">
+<h3 id="orgab4aa73"><span class="section-number-3">33.1</span> Can't import type class instances explicitly</h3>
+<div class="outline-text-3" id="text-33-1">
+<p>
+<a href="https://stackoverflow.com/questions/8728596/explicitly-import-instances">There is a reason</a>.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4cc69b5" class="outline-2">
+<h2 id="org4cc69b5"><span class="section-number-2">34</span> Monads, and Haskell type system limitations</h2>
+<div class="outline-text-2" id="text-34">
+<ul class="org-ul">
+<li>A monad is a way of <i>conservatively extending</i> all categories. (Abdullah, private correspondence)</li>
+<li><a href="https://www.reddit.com/r/haskell/comments/3h2aqg/can_someone_explain_the_monads_are_generalised/">https://www.reddit.com/r/haskell/comments/3h2aqg/can_someone_explain_the_monads_are_generalised/</a></li>
+</ul>
+</div>
+
+<div id="outline-container-org045834e" class="outline-3">
+<h3 id="org045834e"><span class="section-number-3">34.1</span> Should Nat (the natural numbers) be a subtype of Int (the integers)?</h3>
+<div class="outline-text-3" id="text-34-1">
+<p>
+Intuitively, yes.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgae8651e" class="outline-3">
+<h3 id="orgae8651e"><span class="section-number-3">34.2</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-01&gt; </span></span> @abdullah Signedness is a monad: conservatively extending naturals to integers</h3>
+<div class="outline-text-3" id="text-34-2">
+<p>
+I think this is what we mean when we say "integer is a monad".
+I think what we are really trying to say is "signedness is a monad", that is, "we can conservatively extend the naturals to the integers by using the Signed monad".
+</p>
+
+<p>
+We can write that in Haskell as follows (with some problems described later).
+</p>
+
+<pre class="example">
+data Nat = Zero | Succ Nat
+type Int = Signed Nat
+data Signed a = Positive a | Negative a
+
+instance Functor Signed ...
+instance Applicative Signed ...
+
+instance Monad Signed where
+    return = Positive
+    m &gt;&gt;= k = join_signed (fmap k m)
+
+join_signed :: Signed (Signed a) -&gt; Signed a
+join_signed mm = case mm of
+    Positive x -&gt; x
+    Negative x -&gt; negate_signed x
+
+negate_signed :: Signed a -&gt; Signed a
+negate_signed (Positive x) = Negative x
+negate_signed (Negative x) = Positive x
+
+f :: Nat -&gt; Nat
+f = ...
+
+f_int :: Int -&gt; Int
+f_int = fmap f
+</pre>
+
+<p>
+We can have Signed Char, Signed String, etc., but those may not make sense.
+</p>
+
+<p>
+The problem:
+Nat should be a subtype of Int, because everyone who knows arithmetics seems to think that way.
+We want f and f_int to be the <i>same</i> function.
+We don't want to type fmap, liftM2, and their ilk.
+</p>
+</div>
 </div>
 </div>
 
