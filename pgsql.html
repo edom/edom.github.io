@@ -54,52 +54,88 @@
   </header>
 
   <div class="post-content">
-    <ul>
-  <li>Questions
-    <ul>
-      <li>How do we find slow queries?</li>
-      <li>Which queries lock some tables or the database?</li>
-      <li>Is there a GUI or visualization tool?
-        <ul>
-          <li>There should already be a tool for visualizing such Postgresql statistics?</li>
-        </ul>
-      </li>
-      <li>Is autovacuum enabled on our RDS clusters? How do we know?</li>
-      <li>Do we need <a href="http://stackoverflow.com/questions/19135340/how-does-postgresql-perform-writes-so-much-faster-than-sqlite">reliability</a>?
-  If we can sacrifice reliability, we can speed things up by turning fsync off.</li>
-      <li>How much performance does RDS encryption cost?
-  <a href="http://blog.minjar.com/post/108724853340/rds-encryption-and-benchmarking-postgresql">Negligible, but with caveats.</a></li>
-    </ul>
-  </li>
-  <li>Answers looking for questions
-    <ul>
-      <li>There is a <a href="https://www.postgresql.org/docs/9.4/static/monitoring-stats.html">statistics collector</a>.</li>
-      <li><a href="https://wiki.postgresql.org/wiki/Logging_Difficult_Queries">Logging Difficult Queries</a></li>
-      <li><a href="https://www.postgresql.org/docs/9.4/static/maintenance.html">Postgresql needs regular maintenance</a>.
-  One critical maintenance task is to VACUUM the database;
-  the query planner relies on VACUUM ANALYZE.</li>
-      <li><a href="https://gist.github.com/chanks/7585810">Turning PostgreSQL into a queue serving 10,000 jobs per second</a></li>
-      <li><a href="http://pgeoghegan.blogspot.co.id/2012/06/towards-14000-write-transactions-on-my.html">Towards 14,000 write transactions on a laptop</a></li>
-      <li><a href="https://blogs.harvard.edu/philg/2011/01/10/how-many-updates-per-second-can-a-standard-rdbms-process/">How many updates per second can a standard RDBMS process?</a></li>
-    </ul>
-  </li>
-  <li>PostgreSQL tuning
-    <ul>
-      <li>http://madusudanan.com/blog/understanding-postgres-caching-in-depth/#CachePurpose</li>
-      <li>https://wiki.postgresql.org/wiki/Logging_Difficult_Queries</li>
-    </ul>
-  </li>
-  <li>2018-02-21
-    <ul>
-      <li><a href="https://www.postgresql.org/docs/devel/static/pgbench.html">pg_bench</a></li>
-      <li>IN is faster than VALUES in psql 9.3
-        <ul>
-          <li>select values &amp; join instead of in list https://wiki.postgresql.org/wiki/Sample_Databases</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgbafcde6">1. What</a></li>
+<li><a href="#org06baa41">2. Traps, pitfalls, gotchas</a>
+<ul>
+<li><a href="#orgcfe8d0e">2.1. PostgreSQL ALTER TABLE DROP COLUMN doesn't actually remove the column from disk</a></li>
 </ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgbafcde6" class="outline-2">
+<h2 id="orgbafcde6"><span class="section-number-2">1</span> What</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li>Questions
+
+<ul class="org-ul">
+<li>How do we find slow queries?</li>
+<li>Which queries lock some tables or the database?</li>
+<li>Is there a GUI or visualization tool?
+
+<ul class="org-ul">
+<li>There should already be a tool for visualizing such Postgresql statistics?</li>
+</ul></li>
+
+<li>Is autovacuum enabled on our RDS clusters? How do we know?</li>
+<li>Do we need <a href="http://stackoverflow.com/questions/19135340/how-does-postgresql-perform-writes-so-much-faster-than-sqlite">reliability</a>?
+If we can sacrifice reliability, we can speed things up by turning fsync off.</li>
+<li>How much performance does RDS encryption cost?
+<a href="http://blog.minjar.com/post/108724853340/rds-encryption-and-benchmarking-postgresql">Negligible, but with caveats.</a></li>
+</ul></li>
+
+<li>Answers looking for questions
+
+<ul class="org-ul">
+<li>There is a <a href="https://www.postgresql.org/docs/9.4/static/monitoring-stats.html">statistics collector</a>.</li>
+<li><a href="https://wiki.postgresql.org/wiki/Logging_Difficult_Queries">Logging Difficult Queries</a></li>
+<li><a href="https://www.postgresql.org/docs/9.4/static/maintenance.html">Postgresql needs regular maintenance</a>.
+One critical maintenance task is to VACUUM the database;
+the query planner relies on VACUUM ANALYZE.</li>
+<li><a href="https://gist.github.com/chanks/7585810">Turning PostgreSQL into a queue serving 10,000 jobs per second</a></li>
+<li><a href="http://pgeoghegan.blogspot.co.id/2012/06/towards-14000-write-transactions-on-my.html">Towards 14,000 write transactions on a laptop</a></li>
+<li><a href="https://blogs.harvard.edu/philg/2011/01/10/how-many-updates-per-second-can-a-standard-rdbms-process/">How many updates per second can a standard RDBMS process?</a></li>
+</ul></li>
+
+<li>PostgreSQL tuning
+
+<ul class="org-ul">
+<li><a href="http://madusudanan.com/blog/understanding-postgres-caching-in-depth/#CachePurpose">http://madusudanan.com/blog/understanding-postgres-caching-in-depth/#CachePurpose</a></li>
+<li><a href="https://wiki.postgresql.org/wiki/Logging_Difficult_Queries">https://wiki.postgresql.org/wiki/Logging_Difficult_Queries</a></li>
+</ul></li>
+
+<li>2018-02-21
+
+<ul class="org-ul">
+<li><a href="https://www.postgresql.org/docs/devel/static/pgbench.html">pg<sub>bench</sub></a></li>
+<li>IN is faster than VALUES in psql 9.3
+
+<ul class="org-ul">
+<li>select values &amp; join instead of in list <a href="https://wiki.postgresql.org/wiki/Sample_Databases">https://wiki.postgresql.org/wiki/Sample_Databases</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org06baa41" class="outline-2">
+<h2 id="org06baa41"><span class="section-number-2">2</span> Traps, pitfalls, gotchas</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgcfe8d0e" class="outline-3">
+<h3 id="orgcfe8d0e"><span class="section-number-3">2.1</span> PostgreSQL ALTER TABLE DROP COLUMN doesn't actually remove the column from disk</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+From <a href="https://nerderati.com/2017/01/03/postgresql-tables-can-have-at-most-1600-columns/">PostgreSQL Tables Can Only Have 1600 Columns, Ever. | Nerderati</a>.
+</p>
+</div>
+</div>
+</div>
 
   </div>
 
