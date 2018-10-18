@@ -303,6 +303,12 @@
 <li><a href="#org1c309e0">49.20. Accounting</a></li>
 </ul>
 </li>
+<li><a href="#org110838d">50. Measuring things to find bottlenecks (Linux, TCP, HTTP, network, CPU, disk, etc.)</a>
+<ul>
+<li><a href="#org5197afc">50.1. Linux TCP TIME<sub>WAIT</sub> exhaustion on busy server</a></li>
+</ul>
+</li>
+<li><a href="#org937fea7">51. The cause of unsustainability is our breaking of the Earth's chemical cycles.</a></li>
 </ul>
 </div>
 </div>
@@ -2610,6 +2616,83 @@ Browser fingerprinting
 <li>Are there open source enterprise accounting systems?</li>
 </ul>
 </div>
+</div>
+</div>
+<div id="outline-container-org110838d" class="outline-2">
+<h2 id="org110838d"><span class="section-number-2">50</span> Measuring things to find bottlenecks (Linux, TCP, HTTP, network, CPU, disk, etc.)</h2>
+<div class="outline-text-2" id="text-50">
+<ul class="org-ul">
+<li>How many empty TCP connections per second can a TCP endpoint accept?
+We don't want to measure transfer rate.
+We want to measure kernel bookkeeping overhead.
+<ul class="org-ul">
+<li>These can't do that:
+<ul class="org-ul">
+<li>iperf</li>
+</ul></li>
+<li>Can these do that?
+<ul class="org-ul">
+<li><a href="https://txlab.wordpress.com/2016/05/05/tcpkali-tcp-load-generator/">https://txlab.wordpress.com/2016/05/05/tcpkali-tcp-load-generator/</a></li>
+<li><a href="http://uperf.org/">http://uperf.org/</a></li>
+<li>qperf (ubuntu?)
+<ul class="org-ul">
+<li><a href="https://www.opsdash.com/blog/network-performance-linux.html">https://www.opsdash.com/blog/network-performance-linux.html</a></li>
+<li><a href="https://access.redhat.com/solutions/2122681">https://access.redhat.com/solutions/2122681</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>How many HTTP requests can it handle? Use ApacheBench. <code>sudo apt-get install apache2-utils</code>.</li>
+<li>How do we reduce the worst-case response time under high load?</li>
+<li>Is the Linux process scheduler fair?</li>
+<li>Is the Linux process scheduler time complexity O(1)?</li>
+<li><a href="https://medium.com/@oscar.eriks/case-study-network-bottlenecks-on-a-linux-server-part-2-the-kernel-88cf614aae70">https://medium.com/@oscar.eriks/case-study-network-bottlenecks-on-a-linux-server-part-2-the-kernel-88cf614aae70</a></li>
+<li>Which is better, select or epoll?</li>
+</ul>
+</div>
+<div id="outline-container-org5197afc" class="outline-3">
+<h3 id="org5197afc"><span class="section-number-3">50.1</span> Linux TCP TIME<sub>WAIT</sub> exhaustion on busy server</h3>
+<div class="outline-text-3" id="text-50-1">
+<ul class="org-ul">
+<li>What are my options?
+<ul class="org-ul">
+<li>Assign more IP addresses.</li>
+<li>Geographically distribute the application.
+Procure edge servers closer to the clients.
+But you can't do this if you are not a CDN or ISP.</li>
+<li>Reduce the TIME<sub>WAIT</sub> MSL (maximum segment lifetime)
+<ul class="org-ul">
+<li><a href="http://www.lognormal.com/blog/2012/09/27/linux-tcpip-tuning/">http://www.lognormal.com/blog/2012/09/27/linux-tcpip-tuning/</a></li>
+<li>This makes TCP incorrect, but in the case of a load balancer, the probability of the incorrectness is negligible (unless it's an attack, or it's behind a NAT).</li>
+<li><code>net.ipv4.netfilter.ip_conntrack_tcp_timeout_time_wait = 1</code></li>
+</ul></li>
+<li>Non-options
+<ul class="org-ul">
+<li><code>net.ipv4.tcp_tw_recycle</code> has been removed.</li>
+<li><code>net.ipv4.tcp_tw_reuse</code> doesn't work.</li>
+</ul></li>
+<li><a href="https://vincent.bernat.ch/en/blog/2014-tcp-time-wait-state-linux">https://vincent.bernat.ch/en/blog/2014-tcp-time-wait-state-linux</a>
+<ul class="org-ul">
+<li><a href="https://news.ycombinator.com/item?id=7684015">https://news.ycombinator.com/item?id=7684015</a></li>
+<li>"The universal solution is to <i>increase the number of possible quadruplets</i> by using, for example, more server ports."</li>
+<li>"Moreover, when designing protocols, <i>don’t let clients close first</i>."</li>
+</ul></li>
+</ul></li>
+<li>See the TCP protocol documentation.
+Where are the wait states?
+Who hold the wait states?
+The client?
+The server?
+The one who calls the <code>close</code> system call?</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org937fea7" class="outline-2">
+<h2 id="org937fea7"><span class="section-number-2">51</span> The cause of unsustainability is our breaking of the Earth's chemical cycles.</h2>
+<div class="outline-text-2" id="text-51">
+<p>
+We are part of the Earth nutrient/biogeochemical cycle.
+</p>
 </div>
 </div>
 
