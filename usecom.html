@@ -76,6 +76,15 @@
 <li><a href="#security">16. Security</a></li>
 <li><a href="#software">17. Software</a></li>
 <li><a href="#administering-a-computer">18. Administering a computer</a></li>
+<li><a href="#using-cabal">19. Using Cabal</a></li>
+<li><a href="#org661a9ea">20. Using Haskell</a></li>
+<li><a href="#using-kubernetes">21. Using Kubernetes</a></li>
+<li><a href="#making-a-personal-wiki">22. Making a personal wiki</a></li>
+<li><a href="#searching-the-internet">23. Searching the Internet</a></li>
+<li><a href="#using-trello">24. Using Trello</a></li>
+<li><a href="#contributing-to-wikipedia">25. Contributing to Wikipedia</a></li>
+<li><a href="#using-xml">26. Using XML</a></li>
+<li><a href="#orgf0e5225">27. Using PostgreSQL</a></li>
 </ul>
 </div>
 </div>
@@ -156,6 +165,59 @@
 <li><a href="#probably-relevant-twitters">18.2. Probably relevant Twitters</a></li>
 <li><a href="#building-software-for-old-ubuntu">18.3. Building software for old Ubuntu</a></li>
 <li><a href="#what">18.4. what</a></li>
+</ul>
+</li>
+<li><a href="#using-cabal">19. Using Cabal</a></li>
+<li><a href="#org661a9ea">20. Using Haskell</a>
+<ul>
+<li><a href="#org9e2ce21">20.1. Setting up development environment</a>
+<ul>
+<li><a href="#orge36688e">20.1.1. My incoherent rambling</a></li>
+</ul>
+</li>
+<li><a href="#org29c96eb">20.2. Hackage outages</a></li>
+<li><a href="#org9f6543a">20.3. Haskell in 2018</a></li>
+<li><a href="#orgc70ea0d">20.4. Using GHC</a></li>
+<li><a href="#orgf157ae5">20.5. what</a></li>
+<li><a href="#org4c08059">20.6. Finding a Haskell IDE</a></li>
+<li><a href="#org8ba929f">20.7. what</a></li>
+<li><a href="#org4f67e0d">20.8. what</a></li>
+<li><a href="#org49ccaa7">20.9. Curating libraries</a></li>
+<li><a href="#org90b949d">20.10. what</a></li>
+<li><a href="#org651fa7b">20.11. Haskell woes</a></li>
+<li><a href="#org500515e">20.12. GHC woes</a>
+<ul>
+<li><a href="#orgaf6894e">20.12.1. Working on GHC</a></li>
+</ul>
+</li>
+<li><a href="#orge74c5c8">20.13. People who have too much time</a></li>
+<li><a href="#org15c4a4d">20.14. What's hampering Haskell adoption?</a></li>
+</ul>
+</li>
+<li><a href="#using-kubernetes">21. Using Kubernetes</a></li>
+<li><a href="#making-a-personal-wiki">22. Making a personal wiki</a></li>
+<li><a href="#searching-the-internet">23. Searching the Internet</a></li>
+<li><a href="#using-trello">24. Using Trello</a></li>
+<li><a href="#contributing-to-wikipedia">25. Contributing to Wikipedia</a>
+<ul>
+<li><a href="#beginning-contributing-to-wikipedia">25.1. Beginning contributing to Wikipedia</a></li>
+<li><a href="#what-should-be-in-user-page">25.2. What should be in user page?</a></li>
+</ul>
+</li>
+<li><a href="#using-xml">26. Using XML</a>
+<ul>
+<li><a href="#finding-the-editor">26.1. Finding the editor</a></li>
+<li><a href="#using-schemas">26.2. Using schemas</a></li>
+<li><a href="#toward-markup-language-agnosticity">26.3. Toward markup language agnosticity</a></li>
+</ul>
+</li>
+<li><a href="#orgf0e5225">27. Using PostgreSQL</a>
+<ul>
+<li><a href="#org5c4f6b7">27.1. Traps, pitfalls, gotchas</a>
+<ul>
+<li><a href="#org379069c">27.1.1. PostgreSQL ALTER TABLE DROP COLUMN doesn't actually remove the column from disk</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1969,12 +2031,1375 @@ You can do that for other software, as long as they don't require dependencies t
 </div>
 </div>
 
-<div id="outline-container-orgf157ae5" class="outline-3">
-<h3 id="what"><a id="orgf157ae5"></a><span class="section-number-3">18.4</span> what</h3>
+<div id="outline-container-orga8319d0" class="outline-3">
+<h3 id="what"><a id="orga8319d0"></a><span class="section-number-3">18.4</span> what</h3>
 <div class="outline-text-3" id="text-what">
 <ul class="org-ul">
 <li><a href="https://medium.com/netflix-techblog/linux-performance-analysis-in-60-000-milliseconds-accc10403c55">https://medium.com/netflix-techblog/linux-performance-analysis-in-60-000-milliseconds-accc10403c55</a></li>
 </ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd87e75c" class="outline-2">
+<h2 id="using-cabal"><a id="orgd87e75c"></a><span class="section-number-2">19</span> Using Cabal</h2>
+<div class="outline-text-2" id="text-using-cabal">
+<ul class="org-ul">
+<li>Every package used by Setup.hs must have a vanilla version.
+
+<ul class="org-ul">
+<li>Why I encountered this error:
+
+<ul class="org-ul">
+<li>I set <code>library-vanilla</code> to <code>False</code> due to <a href="https://rybczak.net/2016/03/26/how-to-reduce-compilation-times-of-haskell-projects/">https://rybczak.net/2016/03/26/how-to-reduce-compilation-times-of-haskell-projects/</a></li>
+</ul></li>
+
+<li>How I encountered this error:
+
+<ul class="org-ul">
+<li>HDBC-postgresql-2.3.2.5 <code>Setup.hs</code> build fails due to linking error with <code>shared: True</code>.
+
+<ul class="org-ul">
+<li>The offending packages are <code>old-time</code> and <code>old-locale</code>.
+
+<ul class="org-ul">
+<li>It's OK if we build them as shared library, but we must also build their vanilla version.</li>
+</ul></li>
+
+<li>It's not the library content that fails to build. It's the Cabal Setup of the library that fails to link.</li>
+<li>GHC expects that <code>old-time</code> and <code>old-locale</code> are system libraries?</li>
+<li>GHC passes '-lHSold-time-VERSION-HASH.so'. It passes that in the -l switch to GCC.</li>
+<li>Cabal writes 'libHSold-time-VERSION-HASH-ghc-8.2.2.so'.
+
+<ul class="org-ul">
+<li>Note the <code>ghc-8.2.2</code> part isn't in the string passed by GHC to GCC.</li>
+</ul></li>
+
+<li>Can we solve this by <code>cabal install old-time old-locale</code>?</li>
+<li><a href="https://github.com/haskell/cabal/issues/1720">https://github.com/haskell/cabal/issues/1720</a>
+
+<ul class="org-ul">
+<li>Workaround: Add <code>--ghc-options</code>-dynamic= to cabal new-install</li>
+</ul></li>
+
+<li>How do we tell Cabal to use the version we installed with new-install?</li>
+<li>Where should we fix this? Cabal? GHC? HDBC-postgresql?</li>
+<li>Should we find another library? Hackage has a low-level libpgsql wrapper.</li>
+<li>Should we just disable HDBC-postgresql on meta?</li>
+</ul></li>
+</ul></li>
+
+<li><p>
+How I diagnosed it:
+</p>
+
+<ul class="org-ul">
+<li>Pass <code>-v</code> to GHC (create a bash script named <code>ghc</code> that calls <code>SOMEWHERE/ghc -v "$@"</code>, and put its directory in front of <code>PATH</code>).</li>
+<li>Add <code>-v</code> to <code>cabal</code>. Then look at this fragment. It's suspicious that <code>old-time</code> is the only package with a hash.</li>
+</ul>
+
+<pre class="example">
+package flags [-package-id Cabal-2.0.1.0{unit Cabal-2.0.1.0 True ([])},
+     -package-id array-0.5.2.0{unit array-0.5.2.0 True ([])},
+     -package-id base-4.10.1.0{unit base-4.10.1.0 True ([])},
+     -package-id binary-0.8.5.1{unit binary-0.8.5.1 True ([])},
+     -package-id bytestring-0.10.8.2{unit bytestring-0.10.8.2 True ([])},
+     -package-id containers-0.5.10.2{unit containers-0.5.10.2 True ([])},
+     -package-id deepseq-1.4.3.0{unit deepseq-1.4.3.0 True ([])},
+     -package-id directory-1.3.0.2{unit directory-1.3.0.2 True ([])},
+     -package-id filepath-1.4.1.2{unit filepath-1.4.1.2 True ([])},
+     -package-id ghc-prim-0.5.1.1{unit ghc-prim-0.5.1.1 True ([])},
+     -package-id old-time-1.1.0.3-8c2cc8e5fb3b424e71501141225064c5d9ee4eeba7f40b702227ad1c3ea2c5b7{unit old-time-1.1.0.3-8c2cc8e5fb3b424e71501141225064c5d9ee4eeba7f40b702227ad1c3ea2c5b7 True ([])},
+     -package-id pretty-1.1.3.3{unit pretty-1.1.3.3 True ([])},
+     -package-id process-1.6.1.0{unit process-1.6.1.0 True ([])},
+     -package-id template-haskell-2.12.0.0{unit template-haskell-2.12.0.0 True ([])},
+     -package-id time-1.8.0.2{unit time-1.8.0.2 True ([])},
+     -package-id transformers-0.5.2.0{unit transformers-0.5.2.0 True ([])},
+     -package-id unix-2.7.2.2{unit unix-2.7.2.2 True ([])}]
+</pre></li>
+
+<li>How I solved it:
+
+<ul class="org-ul">
+<li><p>
+I added this fragment to <code>cabal.project</code>:
+</p>
+<pre class="example">
+
+package old-time
+library-vanilla: True
+
+package old-locale
+library-vanilla: True
+</pre></li>
+
+<li>Related
+<ul class="org-ul">
+<li><a href="https://github.com/haskell/cabal/issues/4748">https://github.com/haskell/cabal/issues/4748</a></li>
+<li>[#3409 Can't use system GHC without static libraries at all](<a href="https://github.com/commercialhaskell/stack/issues/3409">https://github.com/commercialhaskell/stack/issues/3409</a>)</li>
+<li>[#1720 `executable-dynamic: True` should apply to `build-type: Custom` setup](<a href="https://github.com/haskell/cabal/issues/1720">https://github.com/haskell/cabal/issues/1720</a>)</li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li><a href="https://github.com/haskell/cabal/issues/4506">#4506 <code>new-haddock</code>'s file monitoring broken</a>
+
+<ul class="org-ul">
+<li><code>new-haddock</code> doesn't work after <code>new-build</code>.</li>
+</ul></li>
+
+<li><a href="https://github.com/haskell/cabal/issues/5290">#5290 new-build runs into internal error after deleting from store</a>
+
+<ul class="org-ul">
+<li>Solution: nuke the entire store: <code>rm -r ~/.cabal/store</code>.</li>
+</ul></li>
+
+<li>Non-problems
+
+<ul class="org-ul">
+<li><code>cabal new-build --disable-optimization</code> doesn't disable optimization of transitive dependencies.
+
+<ul class="org-ul">
+<li>Cannot reproduce this in cabal 2.3. Is this a 2.0.0.1 bug?</li>
+<li><code>$HOME/.cabal/config</code> has <code>optimization: False</code>.</li>
+<li>Is this a regression? Oversight? It works with <code>cabal install</code>.</li>
+<li>What I'm trying to do:
+
+<ul class="org-ul">
+<li>Build transitive dependencies with optimization disabled, for faster development.</li>
+</ul></li>
+
+<li>My guess:
+
+<ul class="org-ul">
+<li>There seems to be a problem in how the new code path plumbs down arguments.</li>
+<li><code>"Using internal setup method with build-type"</code> always gets argument <code>--enable-optimization</code>.
+
+<ul class="org-ul">
+<li>That message is printed by <code>./Distribution/Client/SetupWrapper.hs:418</code> <code>internalSetupMethod</code> if <code>cabal new-repl</code> is run with <code>--verbose</code>.</li>
+<li>Where does that <code>--enable-optimization</code> come from?</li>
+<li>Why isn't the <code>--disable-optimization</code> passed down?</li>
+</ul></li>
+</ul></li>
+
+<li>Related issues:
+
+<ul class="org-ul">
+<li><a href="https://github.com/haskell/cabal/issues/3720">#3720 Tracking bug for cabal.project semantics</a></li>
+<li><a href="https://github.com/haskell/cabal/issues/5353">#5353 cabal new-configure &#x2013;disable-optimization has no effect if ghc-options in cabal file contain optimization flag</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li>Cabal codebase
+
+<ul class="org-ul">
+<li>Seemingly minor codebase maintenance problems
+
+<ul class="org-ul">
+<li>Code duplication
+
+<ul class="org-ul">
+<li><code>CmdRepl.hs</code> seems to be copied from <code>CmdBuild.hs</code>.</li>
+</ul></li>
+
+<li><code>CmdBuild.hs</code> imports <code>...Orchestration</code> unqualified without explicit import list</li>
+</ul></li>
+</ul></li>
+
+<li>Cabal description field pitfall
+
+<ul class="org-ul">
+<li><a href="http://michael.orlitzky.com/articles/using_haddock_markup_in_a_cabal_file.xhtml">http://michael.orlitzky.com/articles/using_haddock_markup_in_a_cabal_file.xhtml</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org661a9ea" class="outline-2">
+<h2 id="org661a9ea"><span class="section-number-2">20</span> Using Haskell</h2>
+<div class="outline-text-2" id="text-20">
+</div>
+<div id="outline-container-org9e2ce21" class="outline-3">
+<h3 id="org9e2ce21"><span class="section-number-3">20.1</span> Setting up development environment</h3>
+<div class="outline-text-3" id="text-20-1">
+<ul class="org-ul">
+<li>Duplicate intersecting efforts?
+Too many choices?
+
+<ul class="org-ul">
+<li>Why is there Haskell Platform and Haskell Stack?</li>
+<li>Which should we use?</li>
+<li>Why is there haskell-lang.org and haskell.org?
+
+<ul class="org-ul">
+<li><a href="https://news.ycombinator.com/item?id=12054690">https://news.ycombinator.com/item?id=12054690</a></li>
+</ul></li>
+
+<li>Why should I use Platform if there is Stack?</li>
+<li>Why should I use Stack if there is Cabal new-style?</li>
+<li>Why Stack?
+
+<ul class="org-ul">
+<li>Vetted packages?</li>
+</ul></li>
+
+<li><a href="http://www.haskellforall.com/2018/05/how-i-evaluate-haskell-packages.html">http://www.haskellforall.com/2018/05/how-i-evaluate-haskell-packages.html</a></li>
+</ul></li>
+
+<li>cabal new-build obviates stack?
+
+<ul class="org-ul">
+<li><a href="http://coldwa.st/e/blog/2017-09-09-Cabal-2-0.html">http://coldwa.st/e/blog/2017-09-09-Cabal-2-0.html</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="outline-container-orge36688e" class="outline-4">
+<h4 id="orge36688e"><span class="section-number-4">20.1.1</span> My incoherent rambling</h4>
+<div class="outline-text-4" id="text-20-1-1">
+<p>
+My old way: stack.
+My new way: cabal new-style.
+It may change again.
+</p>
+
+<ul class="org-ul">
+<li>Install the Haskell <code>stack</code> tool.
+
+<ul class="org-ul">
+<li>I use the <a href="https://docs.haskellstack.org/en/stable/install_and_upgrade/#linux">manual download</a>.
+
+<ul class="org-ul">
+<li>If you want to make sure that the download isn't corrupted, check the corresponding sha256sum from <a href="https://github.com/commercialhaskell/stack/releases/">GitHub releases page</a>.</li>
+<li>If you don't mind sudoing, use the installer script in the <a href="https://docs.haskellstack.org/en/stable/README/">documentation</a>.</li>
+</ul></li>
+
+<li>Then I check the archive contents using <code>tar tzf</code>.</li>
+<li>If there's no weird paths, I extract the archive with <code>tar xzf</code>.</li>
+<li>Then I make the symbolic link <code>~/.local/bin/stack</code>.</li>
+<li>If you use the manual download, you may have to install some operating system packages.
+
+<ul class="org-ul">
+<li>The list is on the <a href="https://get.haskellstack.org/">install script</a>.
+Search for <code>install_dependencies</code> for your distro.</li>
+</ul></li>
+</ul></li>
+
+<li>Choose a Stack solver.
+
+<ul class="org-ul">
+<li>Forget it. Just install GHC to home.
+
+<ul class="org-ul">
+<li><code>./configure --prefix ~/.local</code></li>
+<li><code>make -j4 install</code></li>
+</ul></li>
+</ul></li>
+
+<li>Which version of GHC should I use? - The one that is supported by
+<a href="http://hackage.haskell.org/package/HaRe">HaRe</a> (Haskell refactoring tool) and
+<a href="https://github.com/leksah/leksah">Leksah</a>. - On 2018-08-20, this is 8.0.2. - Leksah requires ghc &gt;= 8.0.2. - HaRe supports ghc &lt;= 8.0.2. - GHC 8.0 is unacceptably slow. - Forget HaRe. We'll go with Leksah. Use GHC 8.4.3.
+
+<ul class="org-ul">
+<li>The widely supported GHC version lags very much behind the latest stable GHC version.
+I think this may be because the GHC team is rolling out lots of breaking changes in the parser because they are working on the "Trees that grow" proposal.</li>
+<li>Which Stackage LTS version should I use?
+
+<ul class="org-ul">
+<li><a href="https://www.stackage.org/lts-6.35">LTS 6.35</a> if GHC 7.10.3?
+
+<ul class="org-ul">
+<li>It also hosts a hoogle search for searching Haskell program elements.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li>How to get started?
+
+<ul class="org-ul">
+<li>Too many choices
+
+<ul class="org-ul">
+<li>install using the package manager that comes with your system
+
+<ul class="org-ul">
+<li>pros: least hassle</li>
+<li>cons: outdated software</li>
+</ul></li>
+
+<li>Stack</li>
+<li>Cabal</li>
+<li>Nix</li>
+<li>Haskell Platform</li>
+</ul></li>
+</ul></li>
+
+<li>What is your preferred way of installing Haskell?
+
+<ul class="org-ul">
+<li>Install <code>cabal-install</code>
+
+<ul class="org-ul">
+<li>Download the suitable <code>cabal-install</code> binary package from <a href="https://www.haskell.org/cabal/download.html">https://www.haskell.org/cabal/download.html</a></li>
+<li>Extract the <code>cabal</code> binary to <code>~/.local/bin</code></li>
+</ul></li>
+
+<li>Install current stable release of GHC
+
+<ul class="org-ul">
+<li>Download the current stable release of GHC from <a href="https://www.haskell.org/ghc/download.html">https://www.haskell.org/ghc/download.html</a></li>
+<li>Extract it somewhere</li>
+<li>Follow the instructions in INSTALL file:
+
+<ul class="org-ul">
+<li><code>./configure --prefix=$HOME/.local</code></li>
+<li><code>make -j4 install</code></li>
+</ul></li>
+</ul></li>
+
+<li>Modify <code>PATH</code> in <code>~/.basrhc</code>:
+
+<ul class="org-ul">
+<li>Ensure that the line <code>export PATH</code>"$PATH:$HOME/.local/bin"= is in <code>~/.bashrc</code>.</li>
+</ul></li>
+
+<li>For what is the hassle?
+
+<ul class="org-ul">
+<li>So that, if anything goes wrong, I can nuke it without nuking my whole operating system.</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org29c96eb" class="outline-3">
+<h3 id="org29c96eb"><span class="section-number-3">20.2</span> Hackage outages</h3>
+<div class="outline-text-3" id="text-20-2">
+<p>
+Hackage is Haskell package repository.
+Sometimes it goes down.
+</p>
+
+<ul class="org-ul">
+<li>How to tell Cabal to use a Hackage mirror?
+An instruction is on the Internet; I forgot where.</li>
+<li>2018-04-13: <a href="https://blog.hackage.haskell.org/posts/2018-04-26-downtime.html">Hackage goes down for about a day</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org9f6543a" class="outline-3">
+<h3 id="org9f6543a"><span class="section-number-3">20.3</span> Haskell in 2018</h3>
+<div class="outline-text-3" id="text-20-3">
+<ul class="org-ul">
+<li>unread, Stephen Diehl
+
+<ul class="org-ul">
+<li><a href="http://www.stephendiehl.com/posts/vim_2016.html">http://www.stephendiehl.com/posts/vim_2016.html</a></li>
+<li><a href="http://www.stephendiehl.com/posts/vim_haskell.html">http://www.stephendiehl.com/posts/vim_haskell.html</a></li>
+<li><a href="http://www.stephendiehl.com/posts/haskell_2018.html">http://www.stephendiehl.com/posts/haskell_2018.html</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/7wmhyi/an_opinionated_guide_to_haskell_in_2018/">https://www.reddit.com/r/haskell/comments/7wmhyi/an_opinionated_guide_to_haskell_in_2018/</a></li>
+<li><a href="https://github.com/Gabriel439/post-rfc/blob/master/sotu.md">https://github.com/Gabriel439/post-rfc/blob/master/sotu.md</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/54fv8b/what_is_the_state_of_haskell/">https://www.reddit.com/r/haskell/comments/54fv8b/what_is_the_state_of_haskell/</a></li>
+<li><a href="https://lexi-lambda.github.io/blog/2018/02/10/an-opinionated-guide-to-haskell-in-2018/">https://lexi-lambda.github.io/blog/2018/02/10/an-opinionated-guide-to-haskell-in-2018/</a></li>
+<li><a href="https://eta-lang.org/">Eta: Haskell on JVM</a></li>
+</ul></li>
+
+<li>Development workflow and tools
+
+<ul class="org-ul">
+<li>2018
+
+<ul class="org-ul">
+<li>IDE (integrated development environment)
+
+<ul class="org-ul">
+<li>Visual Studio Code</li>
+<li>Leksah</li>
+<li>others?</li>
+<li><a href="https://github.com/haskell/haskell-ide-engine">https://github.com/haskell/haskell-ide-engine</a></li>
+<li>wasted efforts?
+
+<ul class="org-ul">
+<li><a href="https://github.com/JPMoresmau/eclipsefp">EclipseFP</a>, no longer developed since 2015
+
+<ul class="org-ul">
+<li><a href="http://jpmoresmau.blogspot.com/2015/05/eclipsefp-end-of-life-from-me-at-least.html">http://jpmoresmau.blogspot.com/2015/05/eclipsefp-end-of-life-from-me-at-least.html</a>
+
+<ul class="org-ul">
+<li>He got tired of working alone.
+He pointed us to <a href="https://www.fpcomplete.com/blog/2015/03/announce-ide-backend">FPComplete ide-backend</a>.
+
+<ul class="org-ul">
+<li><a href="https://github.com/fpco/ide-backend">ide-backend</a> seems dead; last activity is in 2016.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li>cabal new-style</li>
+</ul></li>
+
+<li>2016, <a href="http://www.stephendiehl.com/posts/vim_2016.html">http://www.stephendiehl.com/posts/vim_2016.html</a>
+
+<ul class="org-ul">
+<li>2015 (?), <a href="http://www.stephendiehl.com/posts/vim_haskell.html">http://www.stephendiehl.com/posts/vim_haskell.html</a></li>
+</ul></li>
+</ul></li>
+
+<li>Companies using Haskell
+
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/haskell/comments/4jo2da/fp_shops/">https://www.reddit.com/r/haskell/comments/4jo2da/fp_shops/</a></li>
+</ul></li>
+
+<li>things hot in 2018
+
+<ul class="org-ul">
+<li><a href="https://cardanofoundation.org/">Cardano</a>
+
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/haskell/comments/73r861/cardano_next_generation_blockchain_platform/">https://www.reddit.com/r/haskell/comments/73r861/cardano_next_generation_blockchain_platform/</a></li>
+<li><a href="https://www.reddit.com/r/cardano/comments/8d87hf/haskell_cryptocurrencies/">https://www.reddit.com/r/cardano/comments/8d87hf/haskell_cryptocurrencies/</a></li>
+</ul></li>
+
+<li>IOHK</li>
+</ul></li>
+
+<li>Unread
+
+<ul class="org-ul">
+<li><a href="https://github.com/dhall-lang/dhall-lang">https://github.com/dhall-lang/dhall-lang</a></li>
+<li><a href="https://wiki.haskell.org/Haskell_Communities_and_Activities_Report">https://wiki.haskell.org/Haskell_Communities_and_Activities_Report</a></li>
+<li><a href="https://haskellweekly.news/">https://haskellweekly.news/</a>
+
+<ul class="org-ul">
+<li><a href="https://github.com/haskellweekly/haskellweekly.github.io">https://github.com/haskellweekly/haskellweekly.github.io</a>
+
+<ul class="org-ul">
+<li><a href="https://wiki.haskell.org/Haskell_Weekly_News">https://wiki.haskell.org/Haskell_Weekly_News</a></li>
+</ul></li>
+</ul></li>
+
+<li><a href="https://haskell.libhunt.com/newsletter/6">https://haskell.libhunt.com/newsletter/6</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgc70ea0d" class="outline-3">
+<h3 id="orgc70ea0d"><span class="section-number-3">20.4</span> Using GHC</h3>
+<div class="outline-text-3" id="text-20-4">
+<ul class="org-ul">
+<li>Using GHCI
+
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/haskell/comments/5su9ag/reload_run_expressions_in_ghci_with_a_single/">https://www.reddit.com/r/haskell/comments/5su9ag/reload_run_expressions_in_ghci_with_a_single/</a></li>
+</ul></li>
+
+<li><a href="https://rybczak.net/2016/03/26/how-to-reduce-compilation-times-of-haskell-projects/">https://rybczak.net/2016/03/26/how-to-reduce-compilation-times-of-haskell-projects/</a></li>
+<li><a href="https://stackoverflow.com/questions/15662984/speed-up-compilation-in-ghc?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa">https://stackoverflow.com/questions/15662984/speed-up-compilation-in-ghc?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/45q90s/is_anything_being_done_to_remedy_the_soul/">https://www.reddit.com/r/haskell/comments/45q90s/is_anything_being_done_to_remedy_the_soul/</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgf157ae5" class="outline-3">
+<h3 id="orgf157ae5"><span class="section-number-3">20.5</span> what</h3>
+<div class="outline-text-3" id="text-20-5">
+<ul class="org-ul">
+<li><a href="https://www.haskell.org/haddock/doc/html/ch03s08.html">Haddock markup syntax</a></li>
+<li>metaprogramming from Haskell to Haskell
+
+<ul class="org-ul">
+<li><a href="https://personal.cis.strath.ac.uk/conor.mcbride/pub/she/">Strathclyde Haskell Enhancement</a></li>
+<li>Template Haskell</li>
+<li><a href="https://wiki.haskell.org/Generics">https://wiki.haskell.org/Generics</a>
+
+<ul class="org-ul">
+<li>SYB (Scrap Your Boilerplate), uniplate, etc.</li>
+</ul></li>
+</ul></li>
+
+<li>What does "Avoid 'success at all costs'" mean?
+
+<ul class="org-ul">
+<li><a href="https://news.ycombinator.com/item?id=12056169">https://news.ycombinator.com/item?id=12056169</a></li>
+</ul></li>
+
+<li>Will Eta kill <a href="https://github.com/Frege/frege">Frege</a>?
+It's sad to see works thrown away.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4c08059" class="outline-3">
+<h3 id="org4c08059"><span class="section-number-3">20.6</span> Finding a Haskell IDE</h3>
+<div class="outline-text-3" id="text-20-6">
+<p>
+I haven't found a convincing IDE for Haskell.
+</p>
+
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/haskell/comments/5lgtb1/what_ideeditor_do_you_use_for_haskell_development/">what IDE/editor do you use for Haskell development? : haskell</a></li>
+<li><a href="https://www.quora.com/What-are-powerful-Haskell-IDEs">What are powerful Haskell IDEs? - Quora</a></li>
+<li><a href="https://www.quora.com/What-is-the-best-IDE-for-programming-in-Haskell">What is the best IDE for programming in Haskell? - Quora</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/86bmpu/haskell_ides/">Haskell ides? : haskell</a></li>
+<li>Leksah-nix fails to build on my machine (Ubuntu 14.04).
+There are no prebuilt binaries.
+Must compile from source from <a href="https://github.com/leksah/leksah/wiki/download">Hackage</a> using Cabal.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8ba929f" class="outline-3">
+<h3 id="org8ba929f"><span class="section-number-3">20.7</span> what</h3>
+<div class="outline-text-3" id="text-20-7">
+<ul class="org-ul">
+<li>Enterprise Haskell?
+
+<ul class="org-ul">
+<li><a href="https://wiki.haskell.org/Enterprise_Haskell">https://wiki.haskell.org/Enterprise_Haskell</a></li>
+<li>DSH: Database Supported Haskell <a href="https://hackage.haskell.org/package/DSH">https://hackage.haskell.org/package/DSH</a></li>
+</ul></li>
+
+<li id="[[<a href="http://yager.io/Distributed/Distributed.html">http://yager.io/Distributed/Distributed.html</a>][Distributed Systems in Haskell">Will Yager]]</li>
+<li>Alien technologies?
+
+<ul class="org-ul">
+<li><a href="https://github.com/transient-haskell/transient">https://github.com/transient-haskell/transient</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4f67e0d" class="outline-3">
+<h3 id="org4f67e0d"><span class="section-number-3">20.8</span> what</h3>
+<div class="outline-text-3" id="text-20-8">
+<ul class="org-ul">
+<li>useful trick, especially helpful when abusing type classes: <a href="https://chrisdone.com/posts/haskell-constraint-trick">https://chrisdone.com/posts/haskell-constraint-trick</a></li>
+<li><a href="https://chrisdone.com/posts/twitter-problem-loeb">https://chrisdone.com/posts/twitter-problem-loeb</a></li>
+<li><a href="http://blog.sigfpe.com/2006/11/from-l-theorem-to-spreadsheet.html">http://blog.sigfpe.com/2006/11/from-l-theorem-to-spreadsheet.html</a></li>
+<li><a href="http://blog.sigfpe.com/2007/02/comonads-and-reading-from-future.html">http://blog.sigfpe.com/2007/02/comonads-and-reading-from-future.html</a></li>
+<li>Components for publish-subscribe in Haskell?
+
+<ul class="org-ul">
+<li><a href="https://www.stackage.org/lts-6.35/package/broadcast-chan-0.1.1">https://www.stackage.org/lts-6.35/package/broadcast-chan-0.1.1</a></li>
+</ul></li>
+
+<li>Lennart Augustsson's <a href="http://augustss.blogspot.com/2008/12/somewhat-failed-adventure-in-haskell.html">Things that amuse me</a>, Haskell module overloading</li>
+<li><a href="http://hackage.haskell.org/package/lazy">lazy: Explicit laziness for Haskell</a>
+
+<ul class="org-ul">
+<li>"This library provides laziness as an abstraction with an explicit type-signature, and it so happens that this abstraction forms a monad!"</li>
+<li><a href="https://nikita-volkov.github.io/if-haskell-were-strict/">If Haskell were strict, what would the laziness be like?</a></li>
+<li>2014, article, <a href="https://pchiusano.github.io/2014-09-18/explicit-laziness.html">Paul Chiusano: An interesting variation on a strict by default language</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/36s0ii/how_do_we_all_feel_about_laziness/">How do we all feel about laziness? : haskell</a></li>
+</ul></li>
+
+<li>distributed functional programming?
+
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/MBrace">WP:MBrace</a>, F#</li>
+<li><a href="https://haskell-distributed.github.io/">Cloud Haskell</a>
+
+<ul class="org-ul">
+<li>has some academic papers <a href="https://wiki.haskell.org/Cloud_Haskell">https://wiki.haskell.org/Cloud_Haskell</a></li>
+</ul></li>
+
+<li><a href="https://github.com/PatrickMaier/HdpH">PatrickMaier/HdpH: Haskell distributed parallel Haskell</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org49ccaa7" class="outline-3">
+<h3 id="org49ccaa7"><span class="section-number-3">20.9</span> Curating libraries</h3>
+<div class="outline-text-3" id="text-20-9">
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/haskell/comments/4ggt05/best_underrated_haskell_libraries/">https://www.reddit.com/r/haskell/comments/4ggt05/best_underrated_haskell_libraries/</a></li>
+<li><a href="https://wiki.haskell.org/Applications_and_libraries">https://wiki.haskell.org/Applications_and_libraries</a></li>
+<li><a href="https://stackoverflow.com/questions/9286799/haskell-libraries-overview-and-their-quality">https://stackoverflow.com/questions/9286799/haskell-libraries-overview-and-their-quality</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org90b949d" class="outline-3">
+<h3 id="org90b949d"><span class="section-number-3">20.10</span> what</h3>
+<div class="outline-text-3" id="text-20-10">
+<ul class="org-ul">
+<li>unread
+
+<ul class="org-ul">
+<li>servant web framework</li>
+<li>Salsa Haskell .NET bridge
+
+<ul class="org-ul">
+<li><a href="https://wiki.haskell.org/Salsa">https://wiki.haskell.org/Salsa</a></li>
+</ul></li>
+
+<li><a href="https://gist.github.com/puffnfresh/6222797">Haskell partiality monad</a></li>
+</ul></li>
+
+<li><a href="https://stackoverflow.com/questions/5770168/templating-packages-for-haskell">https://stackoverflow.com/questions/5770168/templating-packages-for-haskell</a></li>
+<li>Hoogle vs Hayoo?
+
+<ul class="org-ul">
+<li>The hoogle on stackage.org top right text bar seems to be most complete
+
+<ul class="org-ul">
+<li><a href="https://www.stackage.org/">https://www.stackage.org/</a></li>
+</ul></li>
+
+<li><a href="https://mail.haskell.org/pipermail/haskell-cafe/2013-August/109945.html">https://mail.haskell.org/pipermail/haskell-cafe/2013-August/109945.html</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org651fa7b" class="outline-3">
+<h3 id="org651fa7b"><span class="section-number-3">20.11</span> Haskell woes</h3>
+<div class="outline-text-3" id="text-20-11">
+<ul class="org-ul">
+<li>Exceptions?
+
+<ul class="org-ul">
+<li><a href="http://hackage.haskell.org/package/safe-exceptions">http://hackage.haskell.org/package/safe-exceptions</a></li>
+<li><a href="https://www.fpcomplete.com/blog/2016/11/exceptions-best-practices-haskell">https://www.fpcomplete.com/blog/2016/11/exceptions-best-practices-haskell</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/589fkg/haskell_and_the_no_runtime_exception_claim_95_of/">https://www.reddit.com/r/haskell/comments/589fkg/haskell_and_the_no_runtime_exception_claim_95_of/</a></li>
+</ul></li>
+
+<li>Module system</li>
+<li><code>Read(read)</code> should be renamed to <code>CoShow(coshow)</code>.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org500515e" class="outline-3">
+<h3 id="org500515e"><span class="section-number-3">20.12</span> GHC woes</h3>
+<div class="outline-text-3" id="text-20-12">
+<ul class="org-ul">
+<li>Profiling requires recompiling all transitive dependencies if they happen to be compiled without profiling.</li>
+</ul>
+</div>
+<div id="outline-container-orgaf6894e" class="outline-4">
+<h4 id="orgaf6894e"><span class="section-number-4">20.12.1</span> Working on GHC</h4>
+<div class="outline-text-4" id="text-20-12-1">
+<ul class="org-ul">
+<li>Beginning to work on GHC
+
+<ul class="org-ul">
+<li>Please see the <a href="https://ghc.haskell.org/trac/ghc/wiki/Newcomers">newcomers guide</a> first.</li>
+</ul></li>
+
+<li>GHC TDNR (type-directed name resolution)
+
+<ul class="org-ul">
+<li><a href="https://ghc.haskell.org/trac/ghc/ticket/4479">https://ghc.haskell.org/trac/ghc/ticket/4479</a></li>
+<li><a href="https://ghc.haskell.org/trac/ghc/wiki/Records/OverloadedRecordFields">https://ghc.haskell.org/trac/ghc/wiki/Records/OverloadedRecordFields</a></li>
+<li><a href="https://stackoverflow.com/questions/22417063/current-state-of-record-types-and-subtyping-in-haskell">https://stackoverflow.com/questions/22417063/current-state-of-record-types-and-subtyping-in-haskell</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Subtyping#Record_types">https://en.wikipedia.org/wiki/Subtyping#Record_types</a>
+
+<ul class="org-ul">
+<li>Width and depth subtyping</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge74c5c8" class="outline-3">
+<h3 id="orge74c5c8"><span class="section-number-3">20.13</span> People who have too much time</h3>
+<div class="outline-text-3" id="text-20-13">
+<ul class="org-ul">
+<li><a href="https://hackage.haskell.org/package/ImperativeHaskell">https://hackage.haskell.org/package/ImperativeHaskell</a></li>
+<li>just for curiosity <a href="https://github.com/edwinb/idris-php">https://github.com/edwinb/idris-php</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org15c4a4d" class="outline-3">
+<h3 id="org15c4a4d"><span class="section-number-3">20.14</span> What's hampering Haskell adoption?</h3>
+<div class="outline-text-3" id="text-20-14">
+<ul class="org-ul">
+<li>GHC's aggressive intermodule optimization precludes prebuilt binaries.</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgcf00502" class="outline-2">
+<h2 id="using-kubernetes"><a id="orgcf00502"></a><span class="section-number-2">21</span> Using Kubernetes</h2>
+<div class="outline-text-2" id="text-using-kubernetes">
+<ul class="org-ul">
+<li><a href="https://kubernetes.io/">kubernetes.io</a>: "Production-Grade Container Orchestration"</li>
+<li>How do we control access to Kubernetes?
+
+<ul class="org-ul">
+<li><a href="https://stackoverflow.com/questions/42170380/how-to-add-users-to-kubernetes-kubectl">https://stackoverflow.com/questions/42170380/how-to-add-users-to-kubernetes-kubectl</a></li>
+<li><a href="https://kubernetes.io/docs/admin/authentication/">https://kubernetes.io/docs/admin/authentication/</a></li>
+<li><a href="https://kubernetes.io/docs/admin/accessing-the-api/">https://kubernetes.io/docs/admin/accessing-the-api/</a></li>
+<li>How do we add and remove users and roles to Kubernetes?</li>
+<li>Which is the most hassle-free future-proof minimal-maintenance way?</li>
+</ul></li>
+
+<li>Kubernetes security
+
+<ul class="org-ul">
+<li><a href="https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/">https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/administer-cluster/securing-a-cluster/">https://kubernetes.io/docs/tasks/administer-cluster/securing-a-cluster/</a></li>
+<li>Which document should we read? Overlapping? Confusing?
+
+<ul class="org-ul">
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/controlling-access/">https://kubernetes.io/docs/reference/access-authn-authz/controlling-access/</a></li>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/">https://kubernetes.io/docs/reference/access-authn-authz/authentication/</a></li>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/authorization/">https://kubernetes.io/docs/reference/access-authn-authz/authorization/</a></li>
+</ul></li>
+
+<li>What is Kubernetes's replacement of AWS security groups?
+
+<ul class="org-ul">
+<li>NetworkPolicy objects
+
+<ul class="org-ul">
+<li><a href="https://kubernetes.io/blog/2017/10/enforcing-network-policies-in-kubernetes/">https://kubernetes.io/blog/2017/10/enforcing-network-policies-in-kubernetes/</a></li>
+<li><a href="https://kubernetes.io/blog/2016/04/kubernetes-network-policy-apis/">https://kubernetes.io/blog/2016/04/kubernetes-network-policy-apis/</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li>How I think Kubernetes fits in Google's strategy
+
+<ul class="org-ul">
+<li>Kubernetes commoditizes IaaS providers.
+
+<ul class="org-ul">
+<li>It lowers the barrier of switching from any other cloud providers to GCE.
+
+<ul class="org-ul">
+<li>Examples of other cloud providers:
+Amazon Web Services (AWS), DigitalOcean, Alibaba Cloud (Aliyun), Microsoft Azure</li>
+</ul></li>
+
+<li>The same way Microsoft Windows commoditized PC hardware.</li>
+</ul></li>
+
+<li><a href="https://en.wikipedia.org/wiki/Commoditization">WP:Commoditization</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Infrastructure_as_a_service">WP:Infrastructure as a service</a></li>
+</ul></li>
+
+<li><a href="https://www.level-up.one/kubernetes-bible-beginners/">The Kubernetes Bible for Beginners &amp; Developers - Level UpLevel Up</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgcea789c" class="outline-2">
+<h2 id="making-a-personal-wiki"><a id="orgcea789c"></a><span class="section-number-2">22</span> Making a personal wiki</h2>
+<div class="outline-text-2" id="text-making-a-personal-wiki">
+<ul class="org-ul">
+<li>Selection criteria:
+
+<ul class="org-ul">
+<li>How many people are using it?</li>
+<li>How big can it grow without slowing down?</li>
+<li>How good is its markup?</li>
+<li>How long will it last?
+How long can it operate without being obsolete?
+How fast do the software dependencies rot?
+
+<ul class="org-ul">
+<li>How long does Ubuntu maintain the repository archive of old Ubuntu versions?
+
+<ul class="org-ul">
+<li><a href="http://old-releases.ubuntu.com/">http://old-releases.ubuntu.com/</a>
+
+<ul class="org-ul">
+<li>2018-08-06: It seems that Ubuntu maintains the repositories to as far back as 2006.</li>
+<li><a href="https://askubuntu.com/questions/91815/how-to-install-software-or-upgrade-from-an-old-unsupported-release">https://askubuntu.com/questions/91815/how-to-install-software-or-upgrade-from-an-old-unsupported-release</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li>Too many choices.
+
+<ul class="org-ul">
+<li><a href="http://wiki.c2.com/?PersonalWiki">http://wiki.c2.com/?PersonalWiki</a></li>
+<li><a href="http://wiki.c2.com/?WikiEngines">http://wiki.c2.com/?WikiEngines</a></li>
+<li><a href="https://www.quora.com/Whats-the-best-way-to-create-a-personal-wiki">https://www.quora.com/Whats-the-best-way-to-create-a-personal-wiki</a></li>
+<li><a href="https://www.wikimatrix.org/">wikimatrix.org: compare wiki softwares</a></li>
+<li>safety in numbers?
+
+<ul class="org-ul">
+<li>many users
+
+<ul class="org-ul">
+<li>Jekyll</li>
+<li><a href="http://moinmo.in/">http://moinmo.in/</a></li>
+<li><a href="https://gohugo.io/">https://gohugo.io/</a></li>
+</ul></li>
+
+<li>few users
+
+<ul class="org-ul">
+<li><a href="https://github.com/lotabout/static-wiki">https://github.com/lotabout/static-wiki</a></li>
+</ul></li>
+
+<li>unknown
+
+<ul class="org-ul">
+<li><a href="http://dynalon.github.io/mdwiki/#!index.md">http://dynalon.github.io/mdwiki/#!index.md</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li>Avoid accidental publishing.
+
+<ul class="org-ul">
+<li>Don't put anything you don't want to publish inside your Jekyll directory, no matter how convenient.
+Accidents happen.
+Humans make mistakes.
+Computer doesn't care.</li>
+</ul></li>
+
+<li><a href="https://www.labnol.org/internet/load-disqus-comments-on-click/28653/">How to Load Disqus Comments on Demand with JavaScript</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org523a9e6" class="outline-2">
+<h2 id="searching-the-internet"><a id="org523a9e6"></a><span class="section-number-2">23</span> Searching the Internet</h2>
+<div class="outline-text-2" id="text-searching-the-internet">
+<ul class="org-ul">
+<li>Example search: given a text description, find related images</li>
+<li>Example reverse search: given an image, describe it, or find its copies on the Internet</li>
+<li>Internet search tools in 2018
+
+<ul class="org-ul">
+<li><a href="https://duckduckgo.com/">duckduckgo.com</a>: privacy-focused search engine
+
+<ul class="org-ul">
+<li>less censored than Google</li>
+<li>no reverse search (yet?)</li>
+</ul></li>
+
+<li><a href="https://google.com/">google.com</a>: biggest Internet search engine in 2018
+
+<ul class="org-ul">
+<li>censored</li>
+<li>text search</li>
+<li>image search</li>
+<li>reverse image search</li>
+<li>Problems
+
+<ul class="org-ul">
+<li>Google should rank down Pinterest.
+
+<ul class="org-ul">
+<li>In my experience, Pinterest is never an authoritative nor original source.</li>
+<li>Google has ranked down Tumblr and Wikipedia.</li>
+</ul></li>
+
+<li>Example of Google censorship (compare with DuckDuckGo):
+
+<ul class="org-ul">
+<li>search terms related to pornography</li>
+<li>search terms related to the darknet (the hidden wiki, Tor websites)</li>
+<li>rhino poaching (Google favors contents against rhino poaching)</li>
+</ul></li>
+
+<li><a href="https://stallman.org/google.html">Richard Stallman's reasons not to use Google</a></li>
+</ul></li>
+</ul></li>
+
+<li><a href="https://www.bing.com/">bing.com</a>: Microsoft's answer to Google
+
+<ul class="org-ul">
+<li>text search</li>
+<li>reverse image search</li>
+<li><a href="https://stallman.org/microsoft.html">Richard Stallman's reasons not to use Microsoft</a></li>
+</ul></li>
+
+<li>searx?</li>
+<li>startpage?</li>
+<li>reverse search tools
+
+<ul class="org-ul">
+<li>Google and Bing have reverse image search</li>
+<li><a href="https://tineye.com/">tineye.com</a>: reverse image search</li>
+<li><a href="http://www.mooma.sh">moomash</a> (was "audentifi"), YouTube reverse audio search
+
+<ul class="org-ul">
+<li>2018: only works with some video formats; doesn't work for old videos</li>
+<li>2018-09-15: It have gone out of business, it seems.</li>
+</ul></li>
+
+<li>Shazam
+
+<ul class="org-ul">
+<li>Is there anything like Shazam that takes a YouTube URL, and doesn't require me to install anything?</li>
+</ul></li>
+
+<li><a href="http://whatpixel.com/original-source-image-search-tools/">http://whatpixel.com/original-source-image-search-tools/</a></li>
+<li><a href="https://saucenao.com/">saucenao.com</a>: reverse image search; I use it to find images stolen from pixiv</li>
+</ul></li>
+</ul></li>
+
+<li>The Internet is full of crap.
+
+<ul class="org-ul">
+<li>So are libraries.</li>
+<li>So is the world.</li>
+<li>So is this website.</li>
+<li>Thus, you must think for yourself.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgc3fc449" class="outline-2">
+<h2 id="using-trello"><a id="orgc3fc449"></a><span class="section-number-2">24</span> Using Trello</h2>
+<div class="outline-text-2" id="text-using-trello">
+<ul class="org-ul">
+<li>How should we best use Trello?
+
+<ul class="org-ul">
+<li>A card gathers people to help each other accomplish a common goal.</li>
+<li>A card disseminates information from the people who have it to the people who need it.</li>
+</ul></li>
+
+<li>Traps
+
+<ul class="org-ul">
+<li>Because Trello cannot collaborative edit, we must not write too long before we save. Two people must not edit the card at the same time.</li>
+</ul></li>
+
+<li>What do we use Trello for?
+
+<ul class="org-ul">
+<li>Prioritize what to do, starting with the highest velocity (value per effort)</li>
+<li>Give enough information for others to help us</li>
+</ul></li>
+
+<li>What Trello is not
+
+<ul class="org-ul">
+<li>A Trello column is not a mere to-do list.</li>
+<li>Milestone lists are better than to-do lists.
+Be declarative, not imperative. Describe what you want, not how you want to do it.</li>
+<li>If you can do it in a few hours, you don't need to make a Trello card for it.</li>
+<li>If you don't need help with something, don't write a Trello card for it.</li>
+</ul></li>
+
+<li>Our attitude towards Trello
+
+<ul class="org-ul">
+<li>We should consider the time spent on Trello as overhead.
+We should minimize the time we are editing, moving, arranging Trello cards.
+
+<ul class="org-ul">
+<li>Human nature trap: It's fun to look busy (over-organizing).</li>
+</ul></li>
+</ul></li>
+
+<li>When not Slack?
+
+<ul class="org-ul">
+<li>If you need to remember it later, use Trello or Confluence, not Slack.</li>
+<li>If a problem will take some time, don't waste your time typing on Slack.
+Put it in Trello, and assign it to the person who can fix it.</li>
+</ul></li>
+
+<li>What is in a card?
+
+<ul class="org-ul">
+<li>Write a card with the intention of helping everyone else help you.
+The card must answer "What can I help? How can I help?".</li>
+<li>A card contains information or will contain information.</li>
+<li>A person should be in the card if:
+
+<ul class="org-ul">
+<li>he person needs that information, or</li>
+<li>he can contribute that information (he may also contribute in a comment).</li>
+</ul></li>
+
+<li>No other person should care about that card.</li>
+</ul></li>
+
+<li>What is Trello?
+
+<ul class="org-ul">
+<li>To answer this, we answer these questions:
+
+<ul class="org-ul">
+<li>What does Trello make easy?</li>
+<li>What does Trello make hard?</li>
+<li>We seek an operational definition for Trello. We define something by what it do.</li>
+</ul></li>
+</ul></li>
+
+<li>What should we group together? Why?
+
+<ul class="org-ul">
+<li>A board is a list of a column.</li>
+<li>A column is a list of cards. Trello uses the term "list", but we use "column" to avoid confusion.</li>
+<li>A card has zero or more members.</li>
+<li>A card has zero or more labels.</li>
+<li>A label is like an atom in propositional logic.</li>
+<li>The filtering system is a limited form of propositional logic.</li>
+<li>A card is a way for several people to share information.</li>
+<li>If two people need the same information, they should subscribe to the same card.</li>
+<li>If we need two people to finish (archive) a card, then both of those people should be members of that card.</li>
+<li>What is a label?
+You give a label L to a card if and only if you often need to filter (select) all cards labeled L.</li>
+<li>Why are two cards in the same list?
+Because they have something in common. They share something. An aspect of them is equal.</li>
+<li>We group something in a list to minimize moving cards.</li>
+<li>What is that aspect? What irreplaceable advantage does it give us?</li>
+<li>Because they have the same members? (We can use filter for this.)
+Because they belong to the same team?
+Because they have the same due date? (We can use filter for this.)
+Because they are a part of the same user story?
+Navigating multiple boards is hard (big cognitive burden).</li>
+<li>Label is for filtering.</li>
+</ul></li>
+
+<li>What is easy to do in Trello?
+
+<ul class="org-ul">
+<li>Toggle any of the first 10 labels.</li>
+<li>Show cards assigned to me (the user who is logged in).</li>
+<li>Show cards by a conjunction or a disjunction of a Condition.</li>
+<li>Condition is an element of Conditions.</li>
+<li>Conditions is the union of all labels in a board and members of a board.</li>
+<li>Click on the due date in the card description to mark it complete.</li>
+<li>Read card comments in reverse chronological order (newer comments first).</li>
+<li>Move a card to the bottom of an adjacent list.</li>
+<li>See the number of checked items in a checklist in a card.</li>
+<li>In the comment of a card, add another card.</li>
+</ul></li>
+
+<li>Trello assumes that every checklist in the item has the same effort.
+Therefore we must make sure that every item in a checklist in the item has the same effort.</li>
+<li>What is a bit hard to do (because it cannot be done by keyboard alone):
+
+<ul class="org-ul">
+<li>Adding a check list in a card</li>
+<li>A card can have many checklists</li>
+<li>Marking a check list in a card</li>
+<li>Unmarking a check list in a card</li>
+<li>Filtering makes navigating a large board possible.</li>
+</ul></li>
+
+<li>What is hard to do in Trello:
+
+<ul class="org-ul">
+<li>Move from a board to another boards. (High cognitive load due to context switching.)</li>
+<li>One person should not be in more than one board.</li>
+<li>Move a card from a list to another list. It is easier to archive the list.</li>
+<li>Unarchive a card</li>
+</ul></li>
+
+<li>What is impossible (assuming no plugins):
+
+<ul class="org-ul">
+<li>See due dates in non-US format</li>
+<li>Use keyboard to move card up or down in a list</li>
+<li>Gantt chart</li>
+<li>Calendars</li>
+<li>Progress report</li>
+<li>Collaboratively edit a card description.
+Trello will only show the last saved description.
+The previous descriptions are not lost, but hardly accessible.
+The old description can be accessed by Exporting a card as JSON.</li>
+<li>In a card description, we can link to a board or a card, but not link to a list.</li>
+</ul></li>
+
+<li>Member vs subscribe:
+
+<ul class="org-ul">
+<li>If and only if you are a member of a card, it will show in 'my card' filter (Press Q)
+The members of a card are the people assigned to a card
+We must tailor our workflow so that we use only the easy things.</li>
+</ul></li>
+
+<li>Please read and memorize the Trello shortcut keys.
+
+<ul class="org-ul">
+<li>Also read <a href="https://help.trello.com/article/734-how-to-use-trello-like-a-pro">How to use Trello like a pro</a>.</li>
+<li>Those documents reflect what the Trello designer thinks Trello is best used for.</li>
+</ul></li>
+
+<li>In search of a Trello architecture
+
+<ul class="org-ul">
+<li>Fixed Pipeline / Mini waterfalls
+
+<ul class="org-ul">
+<li>Column = team, Card = product</li>
+<li>One column is assembly line.</li>
+<li>Cards move from left to right.</li>
+<li>Progress is sequential. Right column cannot start before left column finishes what it has to do with the card.</li>
+<li>Ideal for the same process that is repeated very many times.</li>
+<li>For example, in our case, the columns would be Requirement, UI, Database, Backend, Frontend, Done.</li>
+</ul></li>
+
+<li>Column = a rather big to-do, card = breakdown of the column
+
+<ul class="org-ul">
+<li>For example, in our case, each column would be "As a (who), I (do what)".</li>
+<li>A column is a work item and each card in the column is a breakdown of that item.</li>
+</ul></li>
+
+<li>Column = epic / bigger user story, card = smaller user story</li>
+<li>Column = milestone, card = breakdown of milestone</li>
+</ul></li>
+
+<li>Trello list hierarchy (a Trello account is a list of lists of &#x2026;)
+
+<ul class="org-ul">
+<li>A Trello account is a list of boards.</li>
+<li>A board is a list of columns.</li>
+<li>A column is a list of cards.</li>
+<li>A card is a list of checklists.</li>
+<li>A checklist is a list of checklist items.</li>
+<li>Therefore we can use Trello for work breakdown structure of perhaps at most 4 levels deep.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org6587278" class="outline-2">
+<h2 id="contributing-to-wikipedia"><a id="org6587278"></a><span class="section-number-2">25</span> Contributing to Wikipedia</h2>
+<div class="outline-text-2" id="text-contributing-to-wikipedia">
+</div>
+
+<div id="outline-container-org939f32c" class="outline-3">
+<h3 id="beginning-contributing-to-wikipedia"><a id="org939f32c"></a><span class="section-number-3">25.1</span> Beginning contributing to Wikipedia</h3>
+<div class="outline-text-3" id="text-beginning-contributing-to-wikipedia">
+<p>
+Don't publish anything you may regret later.
+Once it's on the Internet, it's forever.
+The Internet doesn't forget.
+Wikipedia is a highly crawled and archived site.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5833958" class="outline-3">
+<h3 id="what-should-be-in-user-page"><a id="org5833958"></a><span class="section-number-3">25.2</span> What should be in user page?</h3>
+<div class="outline-text-3" id="text-what-should-be-in-user-page">
+<p>
+Templates: User page, User in $country, Babel
+</p>
+
+<p>
+See <a href="https://en.wikipedia.org/wiki/Wikipedia:User_pages">WP:User pages</a>.
+</p>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/Wikipedia:Userboxes">WP:Userboxes</a>
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org258d446" class="outline-2">
+<h2 id="using-xml"><a id="org258d446"></a><span class="section-number-2">26</span> Using XML</h2>
+<div class="outline-text-2" id="text-using-xml">
+</div>
+
+<div id="outline-container-orgccd5c90" class="outline-3">
+<h3 id="finding-the-editor"><a id="orgccd5c90"></a><span class="section-number-3">26.1</span> Finding the editor</h3>
+<div class="outline-text-3" id="text-finding-the-editor">
+<p>
+List of editors:
+</p>
+
+<ul class="org-ul">
+<li>I have used
+
+<ul class="org-ul">
+<li>Vim</li>
+<li>IntelliJ IDEA</li>
+</ul></li>
+
+<li>I don't know
+
+<ul class="org-ul">
+<li>emacs nxml-mode</li>
+<li><a href="http://plugins.jedit.org/plugins/?XML">jEdit XML plugin</a></li>
+<li>QXMLEdit? Can it autocomplete?</li>
+<li>XML Notepad</li>
+</ul></li>
+</ul>
+
+<p>
+Sources:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/XML_Schema_Editor#cite_note-1">WP:XML Schema Editor</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Comparison_of_XML_editors">WP:Comparison of XML editors</a></li>
+</ul>
+
+<p>
+IntelliJ IDEA works fine, but I'd be happy if there is a lighter alternative.
+</p>
+
+<p>
+My criteria:
+</p>
+
+<ul class="org-ul">
+<li>open-source</li>
+<li>schema-aware, supports XML Schema Definition (XSD)</li>
+<li>autocompletion
+
+<ul class="org-ul">
+<li>2018-08-22</li>
+</ul></li>
+</ul>
+
+<p>
+Nice-to-have features:
+</p>
+
+<ul class="org-ul">
+<li>Automate closing tag.</li>
+<li>Editing an opening tag also edits the closing tag.</li>
+<li>Editing a closing tag also edits the opening tag.</li>
+<li>Any way to avoid memorizing and typing <code>xmlns:xsi</code>.</li>
+</ul>
+
+<p>
+Vim can semi-automate XML closing tag using Ctrl+P.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdf9f648" class="outline-3">
+<h3 id="using-schemas"><a id="orgdf9f648"></a><span class="section-number-3">26.2</span> Using schemas</h3>
+<div class="outline-text-3" id="text-using-schemas">
+<p>
+In principle, from a type defined in an XSD file, we can generate a Haskell module and a Java class.
+</p>
+
+<ul class="org-ul">
+<li><a href="http://www.kohsuke.org/xmlschema/XMLSchemaDOsAndDONTs.html">W3C XML Schema: DOs and DON'Ts</a></li>
+<li><a href="https://stackoverflow.com/questions/2014237/what-are-the-best-practices-for-versioning-xml-schemas">xsd - What are the best practices for versioning XML schemas? - Stack Overflow</a></li>
+<li><a href="https://www.webucator.com/tutorial/learn-xml-schema/XML-Schema-Keys.cfm">Tutorial: XML Schema Keys | XML Schema Tutorial | Webucator</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org44c5eb4" class="outline-3">
+<h3 id="toward-markup-language-agnosticity"><a id="org44c5eb4"></a><span class="section-number-3">26.3</span> Toward markup language agnosticity</h3>
+<div class="outline-text-3" id="text-toward-markup-language-agnosticity">
+<p>
+What is common between XML, JSON, and YAML?
+</p>
+
+<p>
+Can we map (interconvert) between XML and YAML?
+Approximate data model:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell">type Key = String
+type Atr = (Key, String)
+
+data Xml
+    = XText String
+    | XElem [Atr] Name [Xml]
+
+data Json
+    = JText String
+    | JMap [(Key, Json)]
+    | JList [Json]
+
+xj :: Xml -&gt; Json
+
+jx :: Json -&gt; Xml
+</pre>
+</div>
+
+<p>
+Can we use XML Schema to validate a JSON/YAML document?
+</p>
+
+<p>
+We can map a subset of XML to YAML using <a href="http://yaml.org/xml">YAXML, the (draft) XML Binding for YAML</a>.
+</p>
+
+<ul class="org-ul">
+<li><a href="https://www.quora.com/In-choosing-between-XML-and-YAML-what-are-advantages-and-more-natural-problem-domains-for-each-one">In choosing between XML and YAML, what are advantages and more natural problem domains for each one? - Quora</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf0e5225" class="outline-2">
+<h2 id="orgf0e5225"><span class="section-number-2">27</span> Using PostgreSQL</h2>
+<div class="outline-text-2" id="text-27">
+<ul class="org-ul">
+<li>Questions
+
+<ul class="org-ul">
+<li>How do we find slow queries?</li>
+<li>Which queries lock some tables or the database?</li>
+<li>Is there a GUI or visualization tool?
+
+<ul class="org-ul">
+<li>There should already be a tool for visualizing such Postgresql statistics?</li>
+</ul></li>
+
+<li>Is autovacuum enabled on our RDS clusters? How do we know?</li>
+<li>Do we need <a href="http://stackoverflow.com/questions/19135340/how-does-postgresql-perform-writes-so-much-faster-than-sqlite">reliability</a>?
+If we can sacrifice reliability, we can speed things up by turning fsync off.</li>
+<li>How much performance does RDS encryption cost?
+<a href="http://blog.minjar.com/post/108724853340/rds-encryption-and-benchmarking-postgresql">Negligible, but with caveats.</a></li>
+</ul></li>
+
+<li>Answers looking for questions
+
+<ul class="org-ul">
+<li>There is a <a href="https://www.postgresql.org/docs/9.4/static/monitoring-stats.html">statistics collector</a>.</li>
+<li><a href="https://wiki.postgresql.org/wiki/Logging_Difficult_Queries">Logging Difficult Queries</a></li>
+<li><a href="https://www.postgresql.org/docs/9.4/static/maintenance.html">Postgresql needs regular maintenance</a>.
+One critical maintenance task is to VACUUM the database;
+the query planner relies on VACUUM ANALYZE.</li>
+<li><a href="https://gist.github.com/chanks/7585810">Turning PostgreSQL into a queue serving 10,000 jobs per second</a></li>
+<li><a href="http://pgeoghegan.blogspot.co.id/2012/06/towards-14000-write-transactions-on-my.html">Towards 14,000 write transactions on a laptop</a></li>
+<li><a href="https://blogs.harvard.edu/philg/2011/01/10/how-many-updates-per-second-can-a-standard-rdbms-process/">How many updates per second can a standard RDBMS process?</a></li>
+</ul></li>
+
+<li>PostgreSQL tuning
+
+<ul class="org-ul">
+<li><a href="http://madusudanan.com/blog/understanding-postgres-caching-in-depth/#CachePurpose">http://madusudanan.com/blog/understanding-postgres-caching-in-depth/#CachePurpose</a></li>
+<li><a href="https://wiki.postgresql.org/wiki/Logging_Difficult_Queries">https://wiki.postgresql.org/wiki/Logging_Difficult_Queries</a></li>
+</ul></li>
+
+<li>2018-02-21
+
+<ul class="org-ul">
+<li><a href="https://www.postgresql.org/docs/devel/static/pgbench.html">pg<sub>bench</sub></a></li>
+<li>IN is faster than VALUES in psql 9.3
+
+<ul class="org-ul">
+<li>select values &amp; join instead of in list <a href="https://wiki.postgresql.org/wiki/Sample_Databases">https://wiki.postgresql.org/wiki/Sample_Databases</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="outline-container-org5c4f6b7" class="outline-3">
+<h3 id="org5c4f6b7"><span class="section-number-3">27.1</span> Traps, pitfalls, gotchas</h3>
+<div class="outline-text-3" id="text-27-1">
+</div>
+<div id="outline-container-org379069c" class="outline-4">
+<h4 id="org379069c"><span class="section-number-4">27.1.1</span> PostgreSQL ALTER TABLE DROP COLUMN doesn't actually remove the column from disk</h4>
+<div class="outline-text-4" id="text-27-1-1">
+<p>
+From <a href="https://nerderati.com/2017/01/03/postgresql-tables-can-have-at-most-1600-columns/">PostgreSQL Tables Can Only Have 1600 Columns, Ever. | Nerderati</a>.
+</p>
+</div>
 </div>
 </div>
 </div>
