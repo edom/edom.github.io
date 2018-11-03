@@ -142,6 +142,21 @@ MathJax.Hub.Config({
 <li><a href="#computational-complexity">10. Computational complexity</a></li>
 <li><a href="#org3e2e84d">11. What is a machine? What is the essence of a machine?</a></li>
 <li><a href="#org95a6307">12. Why do we use Turing machines instead of lambda calculus when discussing computational complexity?</a></li>
+<li><a href="#orga76bb5b">13. Theory of deciders?</a>
+<ul>
+<li><a href="#what-class-does-this-constrained-decider-correspond-to">13.1. What class does this constrained decider correspond to?</a></li>
+<li><a href="#finite">13.2. Finite</a></li>
+<li><a href="#relationship-with-predicates">13.3. Relationship with predicates</a></li>
+<li><a href="#logic-calculus-decider">13.4. Logic calculus decider</a></li>
+<li><a href="#decider">13.5. Decider</a>
+<ul>
+<li><a href="#logical-definition">13.5.1. Logical definition</a></li>
+</ul>
+</li>
+<li><a href="#descriptivealgorithmic-complexity">13.6. Descriptive/algorithmic complexity</a></li>
+<li><a href="#inefficientizing">13.7. Inefficientizing</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -1018,6 +1033,348 @@ but this is easier said than done.
 <ul class="org-ul">
 <li><a href="https://cstheory.stackexchange.com/questions/23798/p-and-np-classes-explanation-through-lambda-calculus">https://cstheory.stackexchange.com/questions/23798/p-and-np-classes-explanation-through-lambda-calculus</a></li>
 </ul>
+</div>
+</div>
+<div id="outline-container-orga76bb5b" class="outline-2">
+<h2 id="orga76bb5b"><span class="section-number-2">13</span> Theory of deciders?</h2>
+<div class="outline-text-2" id="text-13">
+<p>
+We explore the theory of <i>deciders</i>
+(which are just unary algebras).
+We try to describe computation without being tied to a machine model.
+We hope we can lower bound and upper bound of computation complexity.
+</p>
+
+<p>
+There are two ways to define a <i>decider</i>:
+the algebraic way and the logic way.
+The logic way naturally gives rise to graph.
+However, the following is the algebraic definition.
+</p>
+
+<p>
+$\newcommand\calR{\mathcal{R}} \newcommand\Bool{\mathbb{B}} \newcommand\fcost{\textsf{cost}} \newcommand\fspace{\textsf{space}} \newcommand\ftt{\textsf{tt}} \newcommand\ftime{\textsf{time}} \newcommand\calD{\mathcal{D}}$A <i>decider</i> \(\calD\) is an algebra \((S,f,0,1)\) satisfying these:
+</p>
+\begin{align*}
+f~0 = 0
+\\
+f~1 = 1
+\end{align*}
+<p>
+where the set \(S\) is the <i>underlying set</i>,
+the function \(f\) is the <i>transition function</i>,
+the element \(0\) is the <i>rejecting state</i>,
+and the element \(1\) is the <i>accepting state</i>.
+A <i>state</i> is an element of the underlying set.
+The accepting and rejecting state are collectively known as <i>terminal</i> states.
+</p>
+
+<p>
+Deciders and predicates are closely related:
+a decider with transition function \(f\) <i>computes</i> a predicate \(c~f\)
+satisfying these:
+</p>
+\begin{align*}
+c~f \circ f &= c~f
+\\ f \circ c~f &= c~f
+\end{align*}
+<p>
+where
+\(c : (S \to S) \to (S \to \{0,1\})\)
+is the <i>short-circuiting function</i>.
+The function \(c~f\) is also called the short-circuited \(f\).
+</p>
+
+<p>
+We want to <i>compose</i>, build deciders from deciders.
+Why?
+Finite primitives?
+</p>
+
+<p>
+\((A,f,0,1)\) becomes \((A, \neg f,1,0)\).
+</p>
+
+<p>
+\((A,f)\) and \((B,g)\) becomes \((2 \times A \times B, f \wedge g)\).
+Let \(h = f \wedge g\).
+</p>
+\begin{align*}
+h~0 = 0
+\\ h~1 = 1
+\\ h~1 = 1
+\end{align*}
+
+<p>
+$A$-deciders form a <i>Boolean algebra</i>,
+But why should we bother showing this?
+\((\neg f)~x = \neg~(f~x)\).
+\((f \wedge g)~x = f~x \wedge g~x\).
+\((f \vee g)~x = f~x \vee g~x\).
+</p>
+
+<p>
+A decider is too general,
+so we want to restrict it.
+</p>
+
+<p>
+The questions are:
+</p>
+
+<ul class="org-ul">
+<li>Does a restriction affect what the decider can compute?</li>
+<li>Does a restriction affect the running time of the decider for a given input?</li>
+</ul>
+
+<p>
+$\newcommand\Nat{\mathbb{N}}$We can <i>constrain the transition function</i> by <i>distance constraining</i>.
+We assume the existence of a <i>distance function</i> \(d : V \to V \to \Nat\)
+such that \(f\) has to satisfy \(d~x~(f~x) \le k\) where \(k\) is a constant, usually 1.
+The structure \((S,d)\) then becomes a <i>metric space</i>.
+The distance function must satisfy:
+</p>
+\begin{align*}
+d~x~x &= 0
+\\ d~x~y &= d~y~x
+\end{align*}
+
+<p>
+We can <i>constrain the transition function</i> by <i>vertex label constraining</i>.
+Let there be a vertex labeling \(m : V \to \Nat\).
+(We are silently assuming that \(V\) is countable.)
+The labeling \(m\) is surjective but not necessarily injective.
+This labeling divides the graph into maximal subconnected subcomponents?
+The constraints are:
+</p>
+
+<ul class="org-ul">
+<li>Each label is used finitely many times.
+There are only finitely many vertices with the same label.</li>
+<li>The function \(f\) must satisfy \(|m~(f~x) - m~x| \le d\)
+where \(d\) is a finite number, usually 1.</li>
+</ul>
+</div>
+
+<div id="outline-container-orgda98b38" class="outline-3">
+<h3 id="what-class-does-this-constrained-decider-correspond-to"><a id="orgda98b38"></a><span class="section-number-3">13.1</span> What class does this constrained decider correspond to?</h3>
+<div class="outline-text-3" id="text-what-class-does-this-constrained-decider-correspond-to">
+<p>
+We can also <i>constrain the state size</i>.
+</p>
+
+<p>
+We posit the existence of a <i>state size function</i> \(s : A \to \Nat\) where:
+</p>
+
+<ul class="org-ul">
+<li>There are exactly \(2^n\) states of size \(n\).</li>
+<li>If \(s~x \neq s~y\) then \(x \neq y\).</li>
+</ul>
+
+<p>
+\[
+\forall n \in \Nat: |\{ x ~|~ s~x = n\} = 2^n|
+\]
+</p>
+
+<p>
+We then further constrain the transition function \(f\) such that \(|s~(f~x) - s~x| \le 1\).
+</p>
+
+<p>
+We can constrain the transition function \(f\) such that \(s~x - s~(f~x) = -1\).
+</p>
+
+<p>
+An alternative to this is defining fringe functions \(A \to P~A\),
+and work with the generated \((P~A, F)\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga3bd26f" class="outline-3">
+<h3 id="finite"><a id="orga3bd26f"></a><span class="section-number-3">13.2</span> Finite</h3>
+<div class="outline-text-3" id="text-finite">
+<p>
+A decider is <i>finite</i> iff its underlying set is finite.
+</p>
+
+<p>
+If \(S\) is finite then \(S \to S\) is also finite.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org65fce93" class="outline-3">
+<h3 id="relationship-with-predicates"><a id="org65fce93"></a><span class="section-number-3">13.3</span> Relationship with predicates</h3>
+<div class="outline-text-3" id="text-relationship-with-predicates">
+<p>
+The set of all $A$-deciders is isomorphic to the set of all <i>$A$-predicates</i>.
+If \(|A| = n\) then there are \(2^n\) different $A$-predicates (extensionally).
+</p>
+
+<p>
+A <i>total</i> decider has total \(c~f\).
+A <i>partial</i> decider has partial \(c~f\).
+</p>
+
+<p>
+A state \(s\) is <i>eventually terminal</i> iff \(c~f~s\) is defined,
+is <i>eventually rejecting</i> iff \(c~f~s = 0\),
+and is <i>eventually accepting</i> iff \(c~f~s = 1\).
+</p>
+
+<p>
+The <i>generating set</i> \(G\) is the set of all \(x\)
+that is not in the range of \(f\).
+</p>
+\begin{align*}
+G = A - \{ f~x | x \in A \}
+\end{align*}
+
+<p>
+The generating set is the set of <i>initial states</i>.
+</p>
+
+<p>
+A state is <i>initial</i> iff it is in \(G\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc3cd9e0" class="outline-3">
+<h3 id="logic-calculus-decider"><a id="orgc3cd9e0"></a><span class="section-number-3">13.4</span> Logic calculus decider</h3>
+<div class="outline-text-3" id="text-logic-calculus-decider">
+<p>
+Let each vertex represent a logic expression.
+</p>
+
+<p>
+Let an edge from \(x\) to \(y\) mean that there is
+an inference rule that step-reduces the expression \(x\) to \(y\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4a383e7" class="outline-3">
+<h3 id="decider"><a id="org4a383e7"></a><span class="section-number-3">13.5</span> Decider</h3>
+<div class="outline-text-3" id="text-decider">
+</div>
+
+<div id="outline-container-orgf296373" class="outline-4">
+<h4 id="logical-definition"><a id="orgf296373"></a><span class="section-number-4">13.5.1</span> Logical definition</h4>
+<div class="outline-text-4" id="text-logical-definition">
+<p>
+A <i>decider</i> is \((V,E,A)\) with signature \((2,1,1)\).
+A decider is a directed graph with some special vertexes.
+A <i>state</i> is a vertex.
+</p>
+
+<p>
+\(A~x\) is true iff \(x\) is an <i>accepting</i> vertex.
+</p>
+
+<p>
+\(E~x~y\) is true iff \(y\) is a successor of \(x\).
+The relation \(E~x~y\) is true iff there is an edge from \(x\) to \(y\).
+</p>
+
+<p>
+The decider is <i>deterministic</i> iff \(E\) is injective:
+\[
+E~x~y \wedge E~x~z \implies y = z
+\]
+</p>
+
+<p>
+\(E\) is injective iff each vertex has out-degree one or less.
+</p>
+</div>
+
+<ol class="org-ol">
+<li><a id="path-existence-predicate"></a><a id="org286e5eb"></a>Path-existence predicate<br />
+<div class="outline-text-5" id="text-path-existence-predicate">
+<p>
+\(P~x~y\) means there is path from \(x\) to \(y\).
+</p>
+
+\begin{align*}
+E~x~y &\implies P~x~y
+\\ E~x~y \wedge P~y~z &\implies P~x~z
+\\ \alpha~x &= P~x~y \wedge A~y
+\end{align*}
+
+\begin{align*}
+E~x~y &\implies \neg A~x
+\end{align*}
+
+\begin{align*}
+E~x~y &\vdash P~x~y
+\\ E~x~y , P~y~z &\vdash P~x~z
+\\ E~x~y , A~x &\vdash
+\end{align*}
+
+<p>
+Defining the predicate \(T\):
+</p>
+
+<p>
+\(T~x~n\) means there exists a path of length \(n\) from \(x\) to a terminal vertex.
+</p>
+
+\begin{align*}
+A~x &\implies T~x~0
+\\ R~x &\implies T~x~0
+\\ E~x~y \wedge T~y~k &\implies T~x~(1 + k)
+\end{align*}
+</div>
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orgdd97624" class="outline-3">
+<h3 id="descriptivealgorithmic-complexity"><a id="orgdd97624"></a><span class="section-number-3">13.6</span> Descriptive/algorithmic complexity</h3>
+<div class="outline-text-3" id="text-descriptivealgorithmic-complexity">
+<p>
+Suppose that there is a <i>complexity</i> function that maps a predicate to a complexity measure.
+</p>
+
+<p>
+\(c : (A \to \Bool) \to C\).
+</p>
+
+<p>
+Assume that \(c_L~p\) is the length of the shortest $L$-program for the predicate \(p\).
+What does this even mean?
+</p>
+
+<p>
+Can a function be stated as a combination of other functions?
+What combination?
+</p>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/Logic_of_graphs">Logic of graphs</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org81f0983" class="outline-3">
+<h3 id="inefficientizing"><a id="org81f0983"></a><span class="section-number-3">13.7</span> Inefficientizing</h3>
+<div class="outline-text-3" id="text-inefficientizing">
+<p>
+Given an $A$-decider and infinite \(A\),
+we can always construct another $A$-decider
+that computes the same predicate but with more states.
+</p>
+
+<p>
+Given a non-oracle $A$-decider, we can always construct another $A$-decider
+that computes the same predicate but with less states.
+</p>
+</div>
 </div>
 </div>
 
