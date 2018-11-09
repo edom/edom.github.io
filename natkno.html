@@ -56,6 +56,48 @@ MathJax.Hub.Config({
   
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async></script>
   
+    <script>
+        // Help the reader estimate how much time the reading is going to take.
+        // Show word count and reading time estimation in TOC entry.
+        //
+        // TOC = table of contents
+        document.addEventListener("DOMContentLoaded", function () {
+            function count_word (string) {
+                return string.trim().split(/\s+/).length;
+            }
+            function show_quantity (count, singular) {
+                let plural = singular + "s"; // For this script only.
+                return count + " " + ((count == 1) ? singular : plural);
+            }
+            // We violate the HTML specification.
+            // The page may have several elements with the same ID.
+            // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+            // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+            // This only works for Org HTML Export's TOC.
+            let toc_entries = document.querySelectorAll("#table-of-contents a");
+            toc_entries.forEach((toc_entry_a) => {
+                let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+                let h_elem = document.querySelector(href); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+                if (h_elem === null) { // We assume that this is impossible.
+                    console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+                    return;
+                }
+                let section = h_elem.parentNode;
+                let word_count = count_word(section.textContent);
+                // We assume that readers read this many words per minute with 100% comprehension.
+                // This assumption may not hold for dense texts such as philosophy and mathematics.
+                let wpm_assumption = 200;
+                let minute_estimate = Math.ceil(word_count / wpm_assumption);
+                let length_indicator = (function () {
+                    let e = document.createElement("span");
+                    e.className = "toc_entry__length_indicator";
+                    e.textContent = " (" + show_quantity(word_count, "word") + " ~ " + show_quantity(minute_estimate, "minute") + ")";
+                    return e;
+                })();
+                toc_entry_a.parentNode.insertBefore(length_indicator, toc_entry_a.nextSibling);
+            });
+        });
+    </script>
 </head>
 
 
@@ -123,13 +165,13 @@ MathJax.Hub.Config({
 <li><a href="#org0ea862c">3. Let's go back to prehistoric times.</a></li>
 <li><a href="#org38c28c9">4. (This is a big hole of things not yet justified.)</a></li>
 <li><a href="#org8e143f9">5. Modern physics?</a></li>
-<li><a href="#org43a5f10">6. Chemistry</a></li>
+<li><a href="#orged98154">6. Chemistry</a></li>
 <li><a href="#org010aeb4">7. Astronomy</a></li>
 <li><a href="#org96efeb8">8. Quantum Venn diagram paradox</a></li>
 <li><a href="#org9d368f8">9. Biology</a></li>
 <li><a href="#org1cf06b1">10. Physics</a></li>
 <li><a href="#orge4300b4">11. Fixing reification fallacies; we often conflate a representation of a thing and the thing itself.</a></li>
-<li><a href="#org1f27a2d">12. Colors</a></li>
+<li><a href="#org98fcc08">12. Colors</a></li>
 <li><a href="#orgcd8d6c0">13. Probability arises from basic physical laws?</a></li>
 </ul>
 </div>
@@ -141,7 +183,7 @@ MathJax.Hub.Config({
 <li><a href="#orgb9114d2">1. Overview</a>
 <ul>
 <li><a href="#org7fd4fdd">1.1. Target audience:</a></li>
-<li><a href="#org0b16e3a">1.2. What</a></li>
+<li><a href="#org0a69e60">1.2. What</a></li>
 <li><a href="#orgea25cf0">1.3. Brief excursion to philosophy</a></li>
 </ul>
 </li>
@@ -150,8 +192,8 @@ MathJax.Hub.Config({
 <li><a href="#org7733ece">2.1. Obvious things: mass, weight, volume, density</a></li>
 <li><a href="#org3093b80">2.2. Fire, light, and heat</a></li>
 <li><a href="#org6465b6d">2.3. Metal, rock, ore, mineral, mining, smelting</a></li>
-<li><a href="#org150adbe">2.4. Unread</a></li>
-<li><a href="#orged98154">2.5. Chemistry</a></li>
+<li><a href="#org89a3997">2.4. Unread</a></li>
+<li><a href="#org7680816">2.5. Chemistry</a></li>
 <li><a href="#orgf534279">2.6. Chemical element</a></li>
 <li><a href="#org4cc8b89">2.7. Atomic theory</a></li>
 <li><a href="#orgd6845b1">2.8. Electrochemistry</a></li>
@@ -163,7 +205,7 @@ MathJax.Hub.Config({
 <li><a href="#org0af4493">3.1. Falling</a></li>
 <li><a href="#org157b58a">3.2. Electromagnetism</a></li>
 <li><a href="#orgc25bfb2">3.3. Unplaced</a></li>
-<li><a href="#org89a3997">3.4. Unread</a></li>
+<li><a href="#org15708f4">3.4. Unread</a></li>
 <li><a href="#org19076c3">3.5. Chemical analysis / Analytical chemistry: how do we know what something is, what is in it, what it is made of?</a></li>
 <li><a href="#org790703a">3.6. Predicting chemical reactions?</a></li>
 </ul>
@@ -174,10 +216,10 @@ MathJax.Hub.Config({
 <li><a href="#orga1c285b">5.1. General relativity</a></li>
 <li><a href="#org83893d7">5.2. Quantum mechanics</a></li>
 <li><a href="#orgae6aed4">5.3. Why, at STP, is hydrogen gaseous, is lithium solid, and is radon gaseous? Why is there no apparent relationship between the mass of an element and the phase of a homogenous mixture?</a></li>
-<li><a href="#org98fcc08">5.4. Colors</a></li>
+<li><a href="#orgd17c13a">5.4. Colors</a></li>
 </ul>
 </li>
-<li><a href="#org43a5f10">6. Chemistry</a></li>
+<li><a href="#orged98154">6. Chemistry</a></li>
 <li><a href="#org010aeb4">7. Astronomy</a></li>
 <li><a href="#org96efeb8">8. Quantum Venn diagram paradox</a>
 <ul>
@@ -188,11 +230,11 @@ MathJax.Hub.Config({
 <li><a href="#org9d368f8">9. Biology</a></li>
 <li><a href="#org1cf06b1">10. Physics</a></li>
 <li><a href="#orge4300b4">11. Fixing reification fallacies; we often conflate a representation of a thing and the thing itself.</a></li>
-<li><a href="#org1f27a2d">12. Colors</a>
+<li><a href="#org98fcc08">12. Colors</a>
 <ul>
 <li><a href="#org18a180b">12.1. Light travels in straight line. The proof is the shape of shadows.</a></li>
 <li><a href="#org713f6c2">12.2. We don't see the objects themselves. We see only the light arriving at our eyes.</a></li>
-<li><a href="#org0a69e60">12.3. What</a></li>
+<li><a href="#orge560ab8">12.3. What</a></li>
 <li><a href="#org85e2458">12.4. Understanding metamerism is the key to understanding color perception.</a></li>
 <li><a href="#org2af4653">12.5. Newton's prism splits sunlight into spectrum?</a></li>
 <li><a href="#org7d75492">12.6. Good question about the meaning of the wavelength of a photon</a></li>
@@ -209,7 +251,7 @@ MathJax.Hub.Config({
 <li><a href="#orgb9114d2">1. Overview</a>
 <ul>
 <li><a href="#org7fd4fdd">1.1. Target audience:</a></li>
-<li><a href="#org0b16e3a">1.2. What</a></li>
+<li><a href="#org0a69e60">1.2. What</a></li>
 <li><a href="#orgea25cf0">1.3. Brief excursion to philosophy</a>
 <ul>
 <li><a href="#org6191311">1.3.1. Truth is a continuum (not binary true-and-false).</a></li>
@@ -224,8 +266,8 @@ MathJax.Hub.Config({
 <li><a href="#org7733ece">2.1. Obvious things: mass, weight, volume, density</a></li>
 <li><a href="#org3093b80">2.2. Fire, light, and heat</a></li>
 <li><a href="#org6465b6d">2.3. Metal, rock, ore, mineral, mining, smelting</a></li>
-<li><a href="#org150adbe">2.4. Unread</a></li>
-<li><a href="#orged98154">2.5. Chemistry</a></li>
+<li><a href="#org89a3997">2.4. Unread</a></li>
+<li><a href="#org7680816">2.5. Chemistry</a></li>
 <li><a href="#orgf534279">2.6. Chemical element</a></li>
 <li><a href="#org4cc8b89">2.7. Atomic theory</a></li>
 <li><a href="#orgd6845b1">2.8. Electrochemistry</a></li>
@@ -237,7 +279,7 @@ MathJax.Hub.Config({
 <li><a href="#org0af4493">3.1. Falling</a></li>
 <li><a href="#org157b58a">3.2. Electromagnetism</a></li>
 <li><a href="#orgc25bfb2">3.3. Unplaced</a></li>
-<li><a href="#org89a3997">3.4. Unread</a></li>
+<li><a href="#org15708f4">3.4. Unread</a></li>
 <li><a href="#org19076c3">3.5. Chemical analysis / Analytical chemistry: how do we know what something is, what is in it, what it is made of?</a></li>
 <li><a href="#org790703a">3.6. Predicting chemical reactions?</a></li>
 </ul>
@@ -255,10 +297,10 @@ MathJax.Hub.Config({
 </ul>
 </li>
 <li><a href="#orgae6aed4">5.3. Why, at STP, is hydrogen gaseous, is lithium solid, and is radon gaseous? Why is there no apparent relationship between the mass of an element and the phase of a homogenous mixture?</a></li>
-<li><a href="#org98fcc08">5.4. Colors</a></li>
+<li><a href="#orgd17c13a">5.4. Colors</a></li>
 </ul>
 </li>
-<li><a href="#org43a5f10">6. Chemistry</a></li>
+<li><a href="#orged98154">6. Chemistry</a></li>
 <li><a href="#org010aeb4">7. Astronomy</a></li>
 <li><a href="#org96efeb8">8. Quantum Venn diagram paradox</a>
 <ul>
@@ -269,11 +311,11 @@ MathJax.Hub.Config({
 <li><a href="#org9d368f8">9. Biology</a></li>
 <li><a href="#org1cf06b1">10. Physics</a></li>
 <li><a href="#orge4300b4">11. Fixing reification fallacies; we often conflate a representation of a thing and the thing itself.</a></li>
-<li><a href="#org1f27a2d">12. Colors</a>
+<li><a href="#org98fcc08">12. Colors</a>
 <ul>
 <li><a href="#org18a180b">12.1. Light travels in straight line. The proof is the shape of shadows.</a></li>
 <li><a href="#org713f6c2">12.2. We don't see the objects themselves. We see only the light arriving at our eyes.</a></li>
-<li><a href="#org0a69e60">12.3. What</a></li>
+<li><a href="#orge560ab8">12.3. What</a></li>
 <li><a href="#org85e2458">12.4. Understanding metamerism is the key to understanding color perception.</a></li>
 <li><a href="#org2af4653">12.5. Newton's prism splits sunlight into spectrum?</a></li>
 <li><a href="#org7d75492">12.6. Good question about the meaning of the wavelength of a photon</a></li>
@@ -296,8 +338,8 @@ MathJax.Hub.Config({
 </ul>
 </div>
 </div>
-<div id="outline-container-org0b16e3a" class="outline-3">
-<h3 id="org0b16e3a"><span class="section-number-3">1.2</span> What</h3>
+<div id="outline-container-org0a69e60" class="outline-3">
+<h3 id="org0a69e60"><span class="section-number-3">1.2</span> What</h3>
 <div class="outline-text-3" id="text-1-2">
 <ul class="org-ul">
 <li>Natural knowledge is knowledge about nature (reality).</li>
@@ -572,8 +614,8 @@ MathJax.Hub.Config({
 </ul>
 </div>
 </div>
-<div id="outline-container-org150adbe" class="outline-3">
-<h3 id="org150adbe"><span class="section-number-3">2.4</span> Unread</h3>
+<div id="outline-container-org89a3997" class="outline-3">
+<h3 id="org89a3997"><span class="section-number-3">2.4</span> Unread</h3>
 <div class="outline-text-3" id="text-2-4">
 <ul class="org-ul">
 <li><a href="https://www.school-for-champions.com/science/matter_theories.htm">2016, "Theories of matter"</a></li>
@@ -581,8 +623,8 @@ MathJax.Hub.Config({
 </ul>
 </div>
 </div>
-<div id="outline-container-orged98154" class="outline-3">
-<h3 id="orged98154"><span class="section-number-3">2.5</span> Chemistry</h3>
+<div id="outline-container-org7680816" class="outline-3">
+<h3 id="org7680816"><span class="section-number-3">2.5</span> Chemistry</h3>
 <div class="outline-text-3" id="text-2-5">
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/Chemistry#History">WP:Chemistry, history</a></li>
@@ -1202,8 +1244,8 @@ solar analemma = figure eight pattern of the sun on the sky across the year</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org89a3997" class="outline-3">
-<h3 id="org89a3997"><span class="section-number-3">3.4</span> Unread</h3>
+<div id="outline-container-org15708f4" class="outline-3">
+<h3 id="org15708f4"><span class="section-number-3">3.4</span> Unread</h3>
 <div class="outline-text-3" id="text-3-4">
 <ul class="org-ul">
 <li>Ampere's experiments
@@ -1418,8 +1460,8 @@ How do we measure the momentum/energy of an electron?</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org98fcc08" class="outline-3">
-<h3 id="org98fcc08"><span class="section-number-3">5.4</span> Colors</h3>
+<div id="outline-container-orgd17c13a" class="outline-3">
+<h3 id="orgd17c13a"><span class="section-number-3">5.4</span> Colors</h3>
 <div class="outline-text-3" id="text-5-4">
 <ul class="org-ul">
 <li>What is color?
@@ -1444,8 +1486,8 @@ How do we measure the momentum/energy of an electron?</li>
 </div>
 </div>
 </div>
-<div id="outline-container-org43a5f10" class="outline-2">
-<h2 id="org43a5f10"><span class="section-number-2">6</span> Chemistry</h2>
+<div id="outline-container-orged98154" class="outline-2">
+<h2 id="orged98154"><span class="section-number-2">6</span> Chemistry</h2>
 <div class="outline-text-2" id="text-6">
 <ul class="org-ul">
 <li>How do we identify something? How do we know what something is?
@@ -2792,8 +2834,8 @@ What?
 </ul>
 </div>
 </div>
-<div id="outline-container-org1f27a2d" class="outline-2">
-<h2 id="org1f27a2d"><span class="section-number-2">12</span> Colors</h2>
+<div id="outline-container-org98fcc08" class="outline-2">
+<h2 id="org98fcc08"><span class="section-number-2">12</span> Colors</h2>
 <div class="outline-text-2" id="text-12">
 </div>
 <div id="outline-container-org18a180b" class="outline-3">
@@ -2802,8 +2844,8 @@ What?
 <div id="outline-container-org713f6c2" class="outline-3">
 <h3 id="org713f6c2"><span class="section-number-3">12.2</span> We don't see the objects themselves. We see only the light arriving at our eyes.</h3>
 </div>
-<div id="outline-container-org0a69e60" class="outline-3">
-<h3 id="org0a69e60"><span class="section-number-3">12.3</span> What</h3>
+<div id="outline-container-orge560ab8" class="outline-3">
+<h3 id="orge560ab8"><span class="section-number-3">12.3</span> What</h3>
 <div class="outline-text-3" id="text-12-3">
 <p>
 <a href="https://en.wikipedia.org/wiki/Color_of_chemicals">https://en.wikipedia.org/wiki/Color_of_chemicals</a>
