@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+    <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Political goals</title>
+  <title>Politics</title>
   <meta name="description" content="Personal website">
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -14,6 +14,75 @@
   <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
 
   
+
+    <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+    </script>
 
   
   <script>
@@ -31,48 +100,6 @@
   
 
   
-    <script>
-        // Help the reader estimate how much time the reading is going to take.
-        // Show word count and reading time estimation in TOC entry.
-        //
-        // TOC = table of contents
-        document.addEventListener("DOMContentLoaded", function () {
-            function count_word (string) {
-                return string.trim().split(/\s+/).length;
-            }
-            function show_quantity (count, singular) {
-                let plural = singular + "s"; // For this script only.
-                return count + " " + ((count == 1) ? singular : plural);
-            }
-            // We violate the HTML specification.
-            // The page may have several elements with the same ID.
-            // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
-            // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
-            // This only works for Org HTML Export's TOC.
-            let toc_entries = document.querySelectorAll("#table-of-contents a");
-            toc_entries.forEach((toc_entry_a) => {
-                let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
-                let h_elem = document.querySelector(href); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
-                if (h_elem === null) { // We assume that this is impossible.
-                    console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
-                    return;
-                }
-                let section = h_elem.parentNode;
-                let word_count = count_word(section.textContent);
-                // We assume that readers read this many words per minute with 100% comprehension.
-                // This assumption may not hold for dense texts such as philosophy and mathematics.
-                let wpm_assumption = 200;
-                let minute_estimate = Math.ceil(word_count / wpm_assumption);
-                let length_indicator = (function () {
-                    let e = document.createElement("span");
-                    e.className = "toc_entry__length_indicator";
-                    e.textContent = " (" + show_quantity(word_count, "word") + " ~ " + show_quantity(minute_estimate, "minute") + ")";
-                    return e;
-                })();
-                toc_entry_a.parentNode.insertBefore(length_indicator, toc_entry_a.nextSibling);
-            });
-        });
-    </script>
 </head>
 
 
@@ -92,7 +119,7 @@
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Political goals</h1>
+    <h1 class="post-title">Politics</h1>
   </header>
 
   <div class="post-content">
@@ -100,15 +127,356 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgaa10623">1. Goal</a>
+<li><a href="#org7e566e0">1. Introduction</a></li>
+<li><a href="#org4d5a07f">2. Catatan: semua ini baru ide; masih bisa berubah.</a></li>
+<li><a href="#org5c94309">3. Prinsip</a></li>
+<li><a href="#org5925d31">4. Building the ideal society</a></li>
+<li><a href="#org69476e5">5. Hukum</a></li>
+<li><a href="#orgbc1a181">6. Agama</a></li>
+<li><a href="#orgfafa3dd">7. Teknologi</a></li>
+<li><a href="#org356f723">8. Transportasi, lingkungan, pertanahan, tata kota</a></li>
+<li><a href="#org78e9532">9. Politik</a></li>
+<li><a href="#org7f173a3">10. Kesehatan</a></li>
+<li><a href="#orgf052d88">11. Ekonomi</a></li>
+<li><a href="#org56aa92a">12. Survei tanah, konflik agraria, sertifikasi tanah?</a></li>
+<li><a href="#org91b3d82">13. Pendidikan</a></li>
+<li><a href="#org03cc139">14. News?</a></li>
+<li><a href="#orgee4f91e">15. Ethics</a></li>
+<li><a href="#orgabf182d">16. What? Socialism? Communism? Understanding communism before criticizing it?</a></li>
+<li><a href="#org3ba8afd">17. Important and urgent things for most (if not all) countries on Earth to do as soon as possible?</a></li>
+<li><a href="#org660aa6b">18. Golkar (golongan karya, functional group)</a></li>
+<li><a href="#orgddea60e">19. Use nitrogen asphyxiation for capital punishment</a></li>
+<li><a href="#org6702362">20. Blacklisted untrustworthy news sources</a></li>
+<li><a href="#orgc806411">21. <span class="todo TODO">TODO</span> reorganize; from politics.md</a></li>
+<li><a href="#orgd4e65d8">22. <span class="todo TODO">TODO</span> reorganize; from indonesia.md</a></li>
+<li><a href="#org68569a7">23. Kewajiban dan hak warga negara</a></li>
+<li><a href="#org13434e6">24. How do we scale democracy?</a></li>
+<li><a href="#orge6cb6e1">25. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-03&gt; </span></span> It's 2018, but people still believe in flat Earth and trickle-down economics.</a></li>
+<li><a href="#org16341c9">26. Twitter</a></li>
+<li><a href="#orge30467e">27. Mendirikan dan menjalankan perusahaan</a></li>
+<li><a href="#org60f0b1b">28. Political theory/research</a></li>
+<li><a href="#org010a4fc">29. LSEV (low-speed electric vehicle)</a></li>
+<li><a href="#org8c4e015">30. Anggaran Dasar</a></li>
+<li><a href="#org7705412">31. Aturan Tambahan</a></li>
+<li><a href="#orgfc051b3">32. Internet censorship in Indonesia</a></li>
+<li><a href="#org7aae83e">33. Do we need government? Why do we need government?</a></li>
+<li><a href="#orgd82e91d">34. Political system is broken.</a></li>
+<li><a href="#org7903d79">35. Anarchism?</a></li>
+<li><a href="#org2edba3a">36. Meterai</a></li>
+<li><a href="#org6e5eef2">37. Thinking</a></li>
+<li><a href="#org712ab5e">38. Other</a></li>
+<li><a href="#org8178147">39. Privacy</a></li>
+<li><a href="#orgb3bd09c">40. Government/state</a></li>
+<li><a href="#org56b2e06">41. Suspicious things; things to keep track; things to recheck next year</a></li>
+<li><a href="#orgde81234">42. Game-changers?</a></li>
+</ul>
+</div>
+</div>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
 <ul>
-<li><a href="#orgfce2977">1.1. Establish a benevolent dictatorship, embodied in a company embedded in Indonesian law.</a>
+<li><a href="#org7e566e0">1. Introduction</a></li>
+<li><a href="#org4d5a07f">2. Catatan: semua ini baru ide; masih bisa berubah.</a>
 <ul>
-<li><a href="#org656e99b">1.1.1. Principles</a></li>
+<li><a href="#org3a7a551">2.1. Ini apa?</a></li>
+<li><a href="#orge7f7ba5">2.2. Apa masalah terbesar Indonesia? Apa akar masalahnya?</a></li>
+<li><a href="#orge7eb371">2.3. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-26&gt; </span></span> Ganti <i>retributive justice</i> dengan <i>restorative justice</i>.</a></li>
+<li><a href="#org600fc44">2.4. Obtain political power?</a></li>
+<li><a href="#orgeee5ec6">2.5. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-02&gt; </span></span> Ajar cara berpikir di sekolah</a></li>
+<li><a href="#orge1f7795">2.6. Establish low-operational-cost power generation and transportation: solar power plants and sun-powered trucks.</a></li>
+<li><a href="#orge673f64">2.7. Basmi politik identitas; mulai desegregasi; basmi partisanisme; basmi tribal politics</a></li>
+<li><a href="#org3cd0e23">2.8. Sederhanakan hukum</a></li>
+<li><a href="#org6d13e22">2.9. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Tertibkan pelacuran, narkoba, dan judi?</a></li>
+<li><a href="#org52a41f7">2.10. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Perbaiki sistem hukum?</a></li>
+<li><a href="#org6f7d383">2.11. Buat profesi petani jadi menarik secara ekonomi.</a></li>
+<li><a href="#org7de4819">2.12. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Net neutrality, un-ban websites, Reddit, Vimeo, dll.</a></li>
+<li><a href="#orgb63b631">2.13. Close international tax evasion loopholes</a></li>
+</ul>
+</li>
+<li><a href="#org5c94309">3. Prinsip</a>
+<ul>
+<li><a href="#org4686041">3.1. My basic assumptions for legislating</a></li>
+<li><a href="#org381e94f">3.2. Start from the objective reality.</a></li>
+<li><a href="#org17d0f7b">3.3. Work as close as possible to the root cause.</a></li>
+<li><a href="#org8f33305">3.4. Bigger changes should be slower</a></li>
+</ul>
+</li>
+<li><a href="#org5925d31">4. Building the ideal society</a>
+<ul>
+<li><a href="#org7f3c03e">4.1. Maximize individual freedom while minimizing harm to others</a></li>
+<li><a href="#orgc486e96">4.2. Presumption of innocence</a></li>
+</ul>
+</li>
+<li><a href="#org69476e5">5. Hukum</a>
+<ul>
+<li><a href="#hapusnya-hak-atas-tanah">5.1. Hapusnya hak atas tanah?</a></li>
+<li><a href="#masalah-sistem-hukum-dan-kasus-menggantung">5.2. Masalah sistem hukum, dan kasus menggantung</a></li>
+<li><a href="#keluar-masuk-pegawai">5.3. Keluar masuk pegawai</a></li>
+</ul>
+</li>
+<li><a href="#orgbc1a181">6. Agama</a>
+<ul>
+<li><a href="#org2c4c9eb">6.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Akui semua agama, aliran, dan kepercayaan.</a></li>
+<li><a href="#org760287a">6.2. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Alihkan tugas departemen agama (umrah, naik haji dll.) kepada private sector.</a></li>
+<li><a href="#orgd2fa37f">6.3. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Serahkan pendidikan agama sepenuhnya kepada keluarga.</a></li>
+<li><a href="#org7c1aea5">6.4. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Kurangi/tiadakan ekstremisme/radikalisme</a></li>
+<li><a href="#kerusuhan-sara">6.5. Kerusuhan SARA</a></li>
+</ul>
+</li>
+<li><a href="#orgfafa3dd">7. Teknologi</a>
+<ul>
+<li><a href="#org9a52bea">7.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Kuasai infrastruktur Internet</a></li>
+<li><a href="#org5f7800f">7.2. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-21&gt; </span></span> Benahi keculasan Telkomsel dan korporat lainnya</a></li>
+</ul>
+</li>
+<li><a href="#org356f723">8. Transportasi, lingkungan, pertanahan, tata kota</a>
+<ul>
+<li><a href="#orge2f14ac">8.1. Self-driving buses for public transport can drive transport costs down?</a></li>
+<li><a href="#org8e35400">8.2. Solusi kemacetan tol Jakarta?</a></li>
+<li><a href="#orgb3b2bf8">8.3. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-17&gt; </span></span> Gratiskan kendaraan umum bertrayek</a></li>
+<li><a href="#orgc61ab26">8.4. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-22&gt; </span></span> Jakarta is sinking, unless we stop draining the aquifer below it.</a></li>
+<li><a href="#org4909476">8.5. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-21&gt; </span></span> Perbaiki jembatan penyeberangan</a></li>
+<li><a href="#pentingnya-infrastruktur">8.6. Pentingnya infrastruktur</a></li>
+</ul>
+</li>
+<li><a href="#org78e9532">9. Politik</a>
+<ul>
+<li><a href="#orgb800b8c">9.1. Mengapa Indonesia tertinggal?</a></li>
+<li><a href="#orgf978465">9.2. Mudahkan pemilu untuk perantau</a></li>
+<li><a href="#orgf27fd12">9.3. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Evidence-based legislation? data-driven legislation?</a></li>
+<li><a href="#org48f8573">9.4. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Tertibkan kampanye politik</a></li>
+<li><a href="#orgeb9cacc">9.5. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Larang <i>lobbying</i></a></li>
+<li><a href="#org70aae10">9.6. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-17&gt; </span></span> Larang partai membayar anggota; wajibkan anggota membayar partai?</a></li>
+<li><a href="#pesimis-soal-partai-baru">9.7. Pesimis soal partai baru</a></li>
+<li><a href="#ucapan-terima-kasih">9.8. Ucapan terima kasih</a></li>
+<li><a href="#peduli-rakyat-kecil">9.9. Peduli rakyat kecil</a></li>
+<li><a href="#section">9.10. 1998</a></li>
+<li><a href="#pemilihan-presiden-2019">9.11. Pemilihan Presiden 2019</a></li>
+<li><a href="#pendapat-pendapat-yang-edgy-tapi-mungkin-ada-benarnya">9.12. Pendapat-pendapat yang edgy tapi mungkin ada benarnya</a></li>
+<li><a href="#pertanyaan-pertanyaan-yang-belum-terjawab">9.13. Pertanyaan-pertanyaan yang belum terjawab</a></li>
+</ul>
+</li>
+<li><a href="#org7f173a3">10. Kesehatan</a>
+<ul>
+<li><a href="#org807b866">10.1. Permurah kesehatan?</a></li>
+<li><a href="#org5511c55">10.2. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Ban buffets/all-you-can-eat restaurants</a></li>
+<li><a href="#org9e871f7">10.3. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-19&gt; </span></span> Bantu petani tembakau dan buruh tembakau cari pekerjaan lain</a></li>
+<li><a href="#orgb9d6ab2">10.4. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-22&gt; </span></span> Legalkan aborsi</a></li>
+</ul>
+</li>
+<li><a href="#orgf052d88">11. Ekonomi</a>
+<ul>
+<li><a href="#org4f4dd6c">11.1. Prinsip ekonomi</a></li>
+<li><a href="#org6eaa1a3">11.2. Kurangi nilai impor.</a></li>
+<li><a href="#bantuan-langsung-tunai-blt-cash-transfers">11.3. Bantuan langsung tunai (BLT) = cash transfers</a></li>
+</ul>
+</li>
+<li><a href="#org56aa92a">12. Survei tanah, konflik agraria, sertifikasi tanah?</a></li>
+<li><a href="#org91b3d82">13. Pendidikan</a>
+<ul>
+<li><a href="#org7ad667b">13.1. Tingkatkan gaji dan mutu guru?</a></li>
+<li><a href="#orgf87585a">13.2. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-22&gt; </span></span> Perbaiki cara mengajar sejarah</a></li>
+<li><a href="#org43c3b2b">13.3. 100% literacy rate; budayakan membaca dan menulis</a></li>
+<li><a href="#orgf78f6bf">13.4. Bahasa Inggris (dan Mandarin?)</a></li>
+<li><a href="#memberantas-kebodohan">13.5. Memberantas kebodohan</a></li>
+</ul>
+</li>
+<li><a href="#org03cc139">14. News?</a>
+<ul>
+<li><a href="#org5d6acdb">14.1. Such titles</a></li>
+<li><a href="#orgadb606a">14.2. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-05&gt; </span></span> Global information technology hardware supply chain serious security disaster</a></li>
+<li><a href="#orge134fb4">14.3. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-02&gt; </span></span> Beware of China's debt-trap diplomacy?</a></li>
+</ul>
+</li>
+<li><a href="#orgee4f91e">15. Ethics</a>
+<ul>
+<li><a href="#org1f18fed">15.1. Abortion debates are futile communication failures</a></li>
+<li><a href="#org185d9d3">15.2. Moral particularism</a></li>
+<li><a href="#org1e837ee">15.3. Does intention matter?</a></li>
+<li><a href="#orgf651fcd">15.4. Improbability of equality of outcome in doomsday spaceship scenario</a></li>
+<li><a href="#org20a8139">15.5. Leaving Greenpeace</a></li>
+<li><a href="#orgd6e3cfc">15.6. Contextual/circumstantial morality/ethics</a></li>
+<li><a href="#org0eeaedc">15.7. Natural morality? Survival?</a></li>
+<li><a href="#orgd2a274f">15.8. Survivalism moral quandary: two people on a sinking ship, in which only one person can be saved</a></li>
+</ul>
+</li>
+<li><a href="#orgabf182d">16. What? Socialism? Communism? Understanding communism before criticizing it?</a>
+<ul>
+<li><a href="#org455ed8c">16.1. Examples of local communism?</a></li>
+<li><a href="#orga53a284">16.2. Is sharing communism?</a></li>
+</ul>
+</li>
+<li><a href="#org3ba8afd">17. Important and urgent things for most (if not all) countries on Earth to do as soon as possible?</a>
+<ul>
+<li><a href="#fixing-the-political-system">17.1. Fixing the political system</a></li>
+<li><a href="#fixing-the-justice-system">17.2. Fixing the justice system</a></li>
+<li><a href="#should-we-limit-inheritance">17.3. Should we limit inheritance?</a></li>
+<li><a href="#a-government-is-to-maximize-the-well-being-of-its-people">17.4. A government is to maximize the well-being of its people</a></li>
+<li><a href="#ungrouped-content">17.5. Ungrouped content</a></li>
+<li><a href="#deciding-what-governments-should-do">17.6. Deciding what governments should do</a></li>
+<li><a href="#tips-from-our-ancestors">17.7. Tips from our ancestors</a></li>
+<li><a href="#ramble">17.8. Ramble</a></li>
+<li><a href="#the-world-should-have-only-one-country-one-government-one-law.">17.9. The world should have only one country, one government, one law.</a></li>
+</ul>
+</li>
+<li><a href="#org660aa6b">18. Golkar (golongan karya, functional group)</a></li>
+<li><a href="#orgddea60e">19. Use nitrogen asphyxiation for capital punishment</a></li>
+<li><a href="#org6702362">20. Blacklisted untrustworthy news sources</a></li>
+<li><a href="#orgc806411">21. <span class="todo TODO">TODO</span> reorganize; from politics.md</a></li>
+<li><a href="#orgd4e65d8">22. <span class="todo TODO">TODO</span> reorganize; from indonesia.md</a>
+<ul>
+<li><a href="#berinteraksi-dengan-pemerintah">22.1. Berinteraksi dengan pemerintah</a></li>
+<li><a href="#deradikalisasi-seperti-singapura">22.2. Deradikalisasi seperti Singapura</a></li>
+<li><a href="#cara-memilih-anggota-dpr-dan-dpd">22.3. Cara memilih anggota DPR dan DPD</a></li>
+<li><a href="#mencari-partai">22.4. Mencari partai</a></li>
+<li><a href="#komputerisasi-untuk-menidakmungkinkan-korupsi">22.5. Komputerisasi untuk menidakmungkinkan korupsi?</a></li>
+<li><a href="#tumpang-tindih-tugas-bpk-kpk-polisi-bareskrim-tim-tastipikor-dll.">22.6. Tumpang tindih tugas BPK, KPK, polisi, bareskrim, tim tastipikor, dll.?</a></li>
+<li><a href="#hancurnya-negara-ini-adalah-salah-kita-yang-menolak-berpolitik.">22.7. Hancurnya negara ini adalah salah kita yang menolak berpolitik.</a></li>
+<li><a href="#legislatif-lebih-penting-daripada-eksekutif.">22.8. Legislatif lebih penting daripada eksekutif.</a></li>
+<li><a href="#fadli-zon-library">22.9. Fadli Zon Library</a></li>
+<li><a href="#mengatasi-sesat-pikir">22.10. Mengatasi sesat pikir</a></li>
+<li><a href="#narasi-berbeda-antara-eksekutif-dan-legislatif">22.11. Narasi berbeda antara eksekutif dan legislatif</a></li>
+</ul>
+</li>
+<li><a href="#org68569a7">23. Kewajiban dan hak warga negara</a>
+<ul>
+<li><a href="#org40baa04">23.1. BPJS?</a></li>
+<li><a href="#orgbaff4fa">23.2. Pemerintah menyediakan akses ke jurnal berbayar? Di mana? Cara pakainya?</a></li>
+<li><a href="#orgd8178fc">23.3. Jangan abstain dalam pemilu.</a></li>
+<li><a href="#org61e912c">23.4. Bayar pajak</a></li>
+</ul>
+</li>
+<li><a href="#org13434e6">24. How do we scale democracy?</a>
+<ul>
+<li><a href="#org48efa43">24.1. How do we make elections cheap, easy, trustworthy (independently verifiable), and scalable?</a></li>
+</ul>
+</li>
+<li><a href="#orge6cb6e1">25. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-03&gt; </span></span> It's 2018, but people still believe in flat Earth and trickle-down economics.</a></li>
+<li><a href="#org16341c9">26. Twitter</a></li>
+<li><a href="#orge30467e">27. Mendirikan dan menjalankan perusahaan</a>
+<ul>
+<li><a href="#org0976ac9">27.1. Basic definitions</a></li>
+<li><a href="#org2ec2713">27.2. Memahami dasar hukum</a></li>
+<li><a href="#org8a58b3f">27.3. Mendirikan PT</a></li>
+<li><a href="#org37c622b">27.4. Laporan tahunan</a></li>
+<li><a href="#org6d34912">27.5. Perencanaan pajak: bentuk usaha paling efisien pajak?</a></li>
+<li><a href="#orgb09f929">27.6. Tanggung jawab sosial dan lingkungan (TJSL) / corporate social responsibility (CSR)</a></li>
+<li><a href="#org6772aee">27.7. Mempekerjakan orang lain</a></li>
+<li><a href="#orgcf049df">27.8. Memperluas bidang usaha</a></li>
+</ul>
+</li>
+<li><a href="#org60f0b1b">28. Political theory/research</a>
+<ul>
+<li><a href="#orgcde8d5c">28.1. Politics basics: What is the difference between nation, state, country?</a></li>
+<li><a href="#org5689d60">28.2. Why do politicians diverge from their constituents' preferences?</a></li>
+<li><a href="#org6be4acc">28.3. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-02&gt; </span></span> We don't want completely free-and-global trade because we don't want to depend too much to others.</a></li>
+<li><a href="#org16f457b">28.4. Measuring trust between countries</a></li>
+<li><a href="#orgdb707c1">28.5. Cipolla's laws of stupidity</a></li>
+<li><a href="#orgf97130f">28.6. Why are the Norwegians so sensible? Why are their governments so good?</a></li>
+</ul>
+</li>
+<li><a href="#org010a4fc">29. LSEV (low-speed electric vehicle)</a></li>
+<li><a href="#org8c4e015">30. Anggaran Dasar</a>
+<ul>
+<li><a href="#orgf9980d0">30.1. Definisi</a></li>
+<li><a href="#org7c7a79d">30.2. Maksud dan tujuan</a></li>
+<li><a href="#org31f37fe">30.3. Jangka waktu</a></li>
+<li><a href="#orga0b2360">30.4. Modal</a></li>
+</ul>
+</li>
+<li><a href="#org7705412">31. Aturan Tambahan</a>
+<ul>
+<li><a href="#orge5875ca">31.1. Tentang Aturan Tambahan</a></li>
+<li><a href="#org465e724">31.2. Saham</a></li>
+<li><a href="#org3e84b3a">31.3. Direksi</a></li>
+<li><a href="#org0cedeee">31.4. Daftar Hitam</a></li>
+<li><a href="#orgb24f914">31.5. Principles</a></li>
+</ul>
+</li>
+<li><a href="#orgfc051b3">32. Internet censorship in Indonesia</a></li>
+<li><a href="#org7aae83e">33. Do we need government? Why do we need government?</a></li>
+<li><a href="#orgd82e91d">34. Political system is broken.</a>
+<ul>
+<li><a href="#org00a98b9">34.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-02&gt; </span></span> Dalam praktek, BPJS hanya bagus buat PNS, dan shitty buat non-PNS.</a></li>
+<li><a href="#org1d3184a">34.2. How Republicans and Democrats are different, and how they are the same.</a></li>
+<li><a href="#orgcd796f7">34.3. As long as we have political term limits, we will have popular-but-bad programs.</a></li>
+</ul>
+</li>
+<li><a href="#org7903d79">35. Anarchism?</a>
+<ul>
+<li><a href="#orgf8f6e48">35.1. Letter to anarchists: Say "self-governance" instead of "anarchism"; focus on making what you want, not on avoiding what you hate</a></li>
+</ul>
+</li>
+<li><a href="#org2edba3a">36. Meterai</a></li>
+<li><a href="#org6e5eef2">37. Thinking</a>
+<ul>
+<li><a href="#org0d9ce1e">37.1. Weapons enable oppression.</a></li>
+<li><a href="#orgd89ab5a">37.2. NUKEMAP: nuclear explosion damage calculator</a></li>
+<li><a href="#org7aba7cc">37.3. The truth about the truth</a></li>
+<li><a href="#orga07968f">37.4. Donald Trump, firehose of lies, psychology</a></li>
+</ul>
+</li>
+<li><a href="#org712ab5e">38. Other</a>
+<ul>
+<li><a href="#org7c93bab">38.1. Some journalist brutal murder cases</a></li>
+<li><a href="#org554f474">38.2. Witness testimony shouldn't count as <i>sole</i> evidence; there has to be independent corroboration</a></li>
+<li><a href="#org9a3e55f">38.3. Why is Xi Jinping becoming so powerful?</a></li>
+<li><a href="#org73334d9">38.4. Antivaccinism is parental negligence.</a></li>
+<li><a href="#orga7e4f26">38.5. Analogy: Marx were a doctor, capitalism were the disease, Marxism was the cure that was worse than the disease.</a></li>
+<li><a href="#orgfb1a2ff">38.6. Does Wikileaks matter? Who is going to scour all that text for interesting stuffs / incriminating evidence? Most people don't have time to read that.</a></li>
+<li><a href="#org676a080">38.7. You MUST have at least one camera in your car streaming the data to a remote safe location. Cops will trap you.</a></li>
+<li><a href="#orga9370db">38.8. Negara tidak perlu mengatur agama.</a></li>
+<li><a href="#org5b751c3">38.9. Laporan penggunaan pajak oleh negara</a></li>
+<li><a href="#org541c31e">38.10. What is fairness?</a></li>
+<li><a href="#org788a84e">38.11. All fierce debates are language problems</a></li>
+<li><a href="#orgdea5ad5">38.12. This may be biased; speculations about China</a></li>
+<li><a href="#org6d33216">38.13. Why the non-oppressed people must help the oppressed people</a></li>
+<li><a href="#org665e525">38.14. Is the world better without private ownership?</a></li>
+<li><a href="#org35d1635">38.15. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-24&gt; </span></span> Competition is wasteful</a></li>
+<li><a href="#org7cca877">38.16. Class treason? Class traitors?</a></li>
+<li><a href="#orgd71bf61">38.17. Living in a republic</a></li>
+<li><a href="#orgba6a5cd">38.18. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-20&gt; </span></span> Politics</a></li>
+<li><a href="#orgda55ee8">38.19. Indonesia market research: effect of sharia label on buying propensity?</a></li>
+<li><a href="#org09bd779">38.20. Why do some markets such as job markets don't show prices?</a></li>
+<li><a href="#org2324fbf">38.21. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-21&gt; </span></span> Australia fruit sabotage crisis</a></li>
+<li><a href="#orga900357">38.22. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-22&gt; </span></span> Power: control vs identity</a></li>
+</ul>
+</li>
+<li><a href="#org8178147">39. Privacy</a>
+<ul>
+<li><a href="#org706a98b">39.1. Re-identification: Pieces of anonymized information about a subject can be combined to identify the subject.</a></li>
+<li><a href="#orgaafacd9">39.2. Is advertising ethical?</a></li>
+</ul>
+</li>
+<li><a href="#orgb3bd09c">40. Government/state</a>
+<ul>
+<li><a href="#org5f527c9">40.1. Deregulation of USA</a></li>
+<li><a href="#org2eaedb4">40.2. Antonin Scalia: The key to American freedom is the separation of power, not the Bill of Rights.</a></li>
+<li><a href="#org1e89272">40.3. Evolution justifies governments</a></li>
+<li><a href="#it-is-insane-that-every-country-makes-their-own-laws.">40.4. It is insane that every country makes their own laws.</a></li>
+</ul>
+</li>
+<li><a href="#org56b2e06">41. Suspicious things; things to keep track; things to recheck next year</a>
+<ul>
+<li><a href="#org735371f">41.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-04&gt; </span></span> Amazon raises its warehouse worker wage (hourly pay) from about $8 (?) to $15 (minimum wage).</a></li>
+<li><a href="#orgb77c12f">41.2. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-06&gt; </span></span> Swiss banking is no longer secret. Does this reduce international crimes / money laundering?</a></li>
+<li><a href="#org85a37ce">41.3. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-26&gt; </span></span> Why is Nikkei Asian Review sponsoring Mochtar Riady stories?</a></li>
+</ul>
+</li>
+<li><a href="#orgde81234">42. Game-changers?</a>
+<ul>
+<li><a href="#org0045369">42.1. DoNotPay: automate lawyers</a></li>
 </ul>
 </li>
 </ul>
-</li>
+</div>
+</div>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org7e566e0">1. Introduction</a></li>
 <li><a href="#org4d5a07f">2. Catatan: semua ini baru ide; masih bisa berubah.</a>
 <ul>
 <li><a href="#org3a7a551">2.1. Ini apa?</a></li>
@@ -401,7 +769,7 @@
 <li><a href="#org8a58b3f">27.3. Mendirikan PT</a>
 <ul>
 <li><a href="#org0d5c10a">27.3.1. Modal Disetor disetor ke mana?</a></li>
-<li><a href="#org34dd53a">27.3.2. Anggaran Dasar</a></li>
+<li><a href="#orgfcc8115">27.3.2. Anggaran Dasar</a></li>
 <li><a href="#orgdea9f34">27.3.3. Mengangkat Direksi dan Dewan Komisaris</a></li>
 <li><a href="#orga999403">27.3.4. System for operating companies/enterprises: accounting, payroll, legal, tax, reporting, ERP, SCM, recruiting, ATS, etc.</a></li>
 <li><a href="#orgcd8b0d5">27.3.5. Virtual office Jakarta? Barat? Selatan?</a></li>
@@ -444,7 +812,7 @@
 </ul>
 </li>
 <li><a href="#org010a4fc">29. LSEV (low-speed electric vehicle)</a></li>
-<li><a href="#org2d3d149">30. Anggaran Dasar</a>
+<li><a href="#org8c4e015">30. Anggaran Dasar</a>
 <ul>
 <li><a href="#orgf9980d0">30.1. Definisi</a></li>
 <li><a href="#org7c7a79d">30.2. Maksud dan tujuan</a></li>
@@ -458,7 +826,7 @@
 <li><a href="#org465e724">31.2. Saham</a></li>
 <li><a href="#org3e84b3a">31.3. Direksi</a></li>
 <li><a href="#org0cedeee">31.4. Daftar Hitam</a></li>
-<li><a href="#org0fb98e4">31.5. Principles</a></li>
+<li><a href="#orgb24f914">31.5. Principles</a></li>
 </ul>
 </li>
 <li><a href="#orgfc051b3">32. Internet censorship in Indonesia</a></li>
@@ -511,21 +879,101 @@
 </li>
 </ul>
 </li>
+<li><a href="#org712ab5e">38. Other</a>
+<ul>
+<li><a href="#org7c93bab">38.1. Some journalist brutal murder cases</a></li>
+<li><a href="#org554f474">38.2. Witness testimony shouldn't count as <i>sole</i> evidence; there has to be independent corroboration</a></li>
+<li><a href="#org9a3e55f">38.3. Why is Xi Jinping becoming so powerful?</a></li>
+<li><a href="#org73334d9">38.4. Antivaccinism is parental negligence.</a></li>
+<li><a href="#orga7e4f26">38.5. Analogy: Marx were a doctor, capitalism were the disease, Marxism was the cure that was worse than the disease.</a></li>
+<li><a href="#orgfb1a2ff">38.6. Does Wikileaks matter? Who is going to scour all that text for interesting stuffs / incriminating evidence? Most people don't have time to read that.</a></li>
+<li><a href="#org676a080">38.7. You MUST have at least one camera in your car streaming the data to a remote safe location. Cops will trap you.</a></li>
+<li><a href="#orga9370db">38.8. Negara tidak perlu mengatur agama.</a></li>
+<li><a href="#org5b751c3">38.9. Laporan penggunaan pajak oleh negara</a></li>
+<li><a href="#org541c31e">38.10. What is fairness?</a></li>
+<li><a href="#org788a84e">38.11. All fierce debates are language problems</a></li>
+<li><a href="#orgdea5ad5">38.12. This may be biased; speculations about China</a>
+<ul>
+<li><a href="#orga72cf13">38.12.1. Speculations</a></li>
+<li><a href="#orgccf5721">38.12.2. Hopeful</a></li>
+</ul>
+</li>
+<li><a href="#org6d33216">38.13. Why the non-oppressed people must help the oppressed people</a></li>
+<li><a href="#org665e525">38.14. Is the world better without private ownership?</a></li>
+<li><a href="#org35d1635">38.15. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-24&gt; </span></span> Competition is wasteful</a></li>
+<li><a href="#org7cca877">38.16. Class treason? Class traitors?</a></li>
+<li><a href="#orgd71bf61">38.17. Living in a republic</a>
+<ul>
+<li><a href="#orgb8846c5">38.17.1. If you don't vote, you let the worst guy win.</a></li>
+<li><a href="#orga339468">38.17.2. If you vote some people, and they win, then, you are, in some way, responsible for the bad things that they</a></li>
+<li><a href="#orgd3f10ae">38.17.3. If you don't speak, you let the worst guy do anything he wants.</a></li>
+</ul>
+</li>
+<li><a href="#orgba6a5cd">38.18. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-20&gt; </span></span> Politics</a></li>
+<li><a href="#orgda55ee8">38.19. Indonesia market research: effect of sharia label on buying propensity?</a></li>
+<li><a href="#org09bd779">38.20. Why do some markets such as job markets don't show prices?</a>
+<ul>
+<li><a href="#org142b721">38.20.1. Would it be better if they do?</a></li>
+<li><a href="#orgb952409">38.20.2. How much should you be paid?</a></li>
+</ul>
+</li>
+<li><a href="#org2324fbf">38.21. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-21&gt; </span></span> Australia fruit sabotage crisis</a></li>
+<li><a href="#orga900357">38.22. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-22&gt; </span></span> Power: control vs identity</a></li>
+</ul>
+</li>
+<li><a href="#org8178147">39. Privacy</a>
+<ul>
+<li><a href="#org706a98b">39.1. Re-identification: Pieces of anonymized information about a subject can be combined to identify the subject.</a></li>
+<li><a href="#orgaafacd9">39.2. Is advertising ethical?</a></li>
+</ul>
+</li>
+<li><a href="#orgb3bd09c">40. Government/state</a>
+<ul>
+<li><a href="#org5f527c9">40.1. Deregulation of USA</a></li>
+<li><a href="#org2eaedb4">40.2. Antonin Scalia: The key to American freedom is the separation of power, not the Bill of Rights.</a></li>
+<li><a href="#org1e89272">40.3. Evolution justifies governments</a>
+<ul>
+<li><a href="#org9280af5">40.3.1. Government is not to merely maintain public order.</a></li>
+<li><a href="#org8b63cd7">40.3.2. Social apoptosis? Programmed human death?</a></li>
+<li><a href="#org56935b5">40.3.3. Why should our survival be desirable at all?</a></li>
+<li><a href="#org29866da">40.3.4. Human rights are legal fiction.</a></li>
+<li><a href="#justifying-freedom">40.3.5. Justifying freedom</a></li>
+</ul>
+</li>
+<li><a href="#it-is-insane-that-every-country-makes-their-own-laws.">40.4. It is insane that every country makes their own laws.</a></li>
+</ul>
+</li>
+<li><a href="#org56b2e06">41. Suspicious things; things to keep track; things to recheck next year</a>
+<ul>
+<li><a href="#org735371f">41.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-04&gt; </span></span> Amazon raises its warehouse worker wage (hourly pay) from about $8 (?) to $15 (minimum wage).</a>
+<ul>
+<li><a href="#orgf916ea3">41.1.1. Find out 1 years later: Compare the number of blue-collar workers.</a></li>
+</ul>
+</li>
+<li><a href="#orgb77c12f">41.2. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-06&gt; </span></span> Swiss banking is no longer secret. Does this reduce international crimes / money laundering?</a></li>
+<li><a href="#org85a37ce">41.3. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-26&gt; </span></span> Why is Nikkei Asian Review sponsoring Mochtar Riady stories?</a></li>
+</ul>
+</li>
+<li><a href="#orgde81234">42. Game-changers?</a>
+<ul>
+<li><a href="#org0045369">42.1. DoNotPay: automate lawyers</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-orgaa10623" class="outline-2">
-<h2 id="orgaa10623"><span class="section-number-2">1</span> Goal</h2>
+<div id="outline-container-org7e566e0" class="outline-2">
+<h2 id="org7e566e0"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
-</div>
-<div id="outline-container-orgfce2977" class="outline-3">
-<h3 id="orgfce2977"><span class="section-number-3">1.1</span> Establish a benevolent dictatorship, embodied in a company embedded in Indonesian law.</h3>
-<div class="outline-text-3" id="text-1-1">
-</div>
-<div id="outline-container-org656e99b" class="outline-4">
-<h4 id="org656e99b"><span class="section-number-4">1.1.1</span> Principles</h4>
-<div class="outline-text-4" id="text-1-1-1">
+<p>
+Is this just a waste of time?
+Is this going to change anything?
+</p>
+
+<p>
+Goal:
+Establish a benevolent dictatorship with these principles:
+</p>
 <ul class="org-ul">
 <li>Peace of mind.
 <ul class="org-ul">
@@ -534,15 +982,7 @@
 <li>No loans.</li>
 <li>If growth robs you of peace of mind, don't grow.</li>
 </ul></li>
-<li>Be a benevolent dictator.</li>
-<li>Practically 100% ownership.</li>
-<li>Use Indonesian law and economy for faster bootstrapping.
-<ul class="org-ul">
-<li>The company shouldn't violate Indonesian law, obviously.</li>
-</ul></li>
 </ul>
-</div>
-</div>
 </div>
 </div>
 <div id="outline-container-org4d5a07f" class="outline-2">
@@ -4322,8 +4762,8 @@ Saya pun setuju. Perkiraan saya paling juga Mei 2017 udah beres. Ternyata melese
 <div id="outline-container-org0d5c10a" class="outline-4">
 <h4 id="org0d5c10a"><span class="section-number-4">27.3.1</span> Modal Disetor disetor ke mana?</h4>
 </div>
-<div id="outline-container-org34dd53a" class="outline-4">
-<h4 id="org34dd53a"><span class="section-number-4">27.3.2</span> Anggaran Dasar</h4>
+<div id="outline-container-orgfcc8115" class="outline-4">
+<h4 id="orgfcc8115"><span class="section-number-4">27.3.2</span> Anggaran Dasar</h4>
 <div class="outline-text-4" id="text-27-3-2">
 <p>
 Di sini "anggaran" berarti "aturan".
@@ -4630,8 +5070,8 @@ Why do countries fare differently?
 </ul>
 </div>
 </div>
-<div id="outline-container-org2d3d149" class="outline-2">
-<h2 id="org2d3d149"><span class="section-number-2">30</span> Anggaran Dasar</h2>
+<div id="outline-container-org8c4e015" class="outline-2">
+<h2 id="org8c4e015"><span class="section-number-2">30</span> Anggaran Dasar</h2>
 <div class="outline-text-2" id="text-30">
 </div>
 <div id="outline-container-orgf9980d0" class="outline-3">
@@ -4712,8 +5152,8 @@ Perusahaan adalah PT &#x2026; yang beralamat di &#x2026;
 </ol>
 </div>
 </div>
-<div id="outline-container-org0fb98e4" class="outline-3">
-<h3 id="org0fb98e4"><span class="section-number-3">31.5</span> Principles</h3>
+<div id="outline-container-orgb24f914" class="outline-3">
+<h3 id="orgb24f914"><span class="section-number-3">31.5</span> Principles</h3>
 <div class="outline-text-3" id="text-31-5">
 <ol class="org-ol">
 <li>There should be at most one way to do something.</li>
@@ -5071,6 +5511,681 @@ We will ban everyone who points out that we are lying.</li>
 <li>any existential threat; a threat to the existence of all of us</li>
 </ul>
 </div>
+</div>
+</div>
+</div>
+<div id="outline-container-org712ab5e" class="outline-2">
+<h2 id="org712ab5e"><span class="section-number-2">38</span> Other</h2>
+<div class="outline-text-2" id="text-38">
+</div>
+<div id="outline-container-org7c93bab" class="outline-3">
+<h3 id="org7c93bab"><span class="section-number-3">38.1</span> Some journalist brutal murder cases</h3>
+<div class="outline-text-3" id="text-38-1">
+<p>
+Journalists have been brutally murdered in these areas:
+</p>
+<ul class="org-ul">
+<li>Malta: Daphne Caruana Galizia was car-bombed in 2017. <a href="https://en.wikipedia.org/wiki/Daphne_Caruana_Galizia">https://en.wikipedia.org/wiki/Daphne_Caruana_Galizia</a></li>
+<li>Bulgaria: Viktoria Marinova was raped and murdered in 2018.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org554f474" class="outline-3">
+<h3 id="org554f474"><span class="section-number-3">38.2</span> Witness testimony shouldn't count as <i>sole</i> evidence; there has to be independent corroboration</h3>
+<div class="outline-text-3" id="text-38-2">
+<ul class="org-ul">
+<li>How reliable is your memory? | Elizabeth Loftus <a href="https://www.youtube.com/watch?v=PB2OegI6wvI">https://www.youtube.com/watch?v=PB2OegI6wvI</a></li>
+<li>Steve Titus: victim of false memory <a href="https://en.wikipedia.org/wiki/Wrongful_conviction_of_Steve_Titus">https://en.wikipedia.org/wiki/Wrongful_conviction_of_Steve_Titus</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org9a3e55f" class="outline-3">
+<h3 id="org9a3e55f"><span class="section-number-3">38.3</span> Why is Xi Jinping becoming so powerful?</h3>
+<div class="outline-text-3" id="text-38-3">
+<p>
+Some answers/opinions on Reddit:
+</p>
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/China/comments/80fqlr/why_is_xi_jinping_becoming_so_powerful_why_is_the/duvmnlo">https://www.reddit.com/r/China/comments/80fqlr/why_is_xi_jinping_becoming_so_powerful_why_is_the/duvmnlo</a></li>
+<li><a href="https://www.reddit.com/r/China/comments/80fqlr/why_is_xi_jinping_becoming_so_powerful_why_is_the/duvf76g">https://www.reddit.com/r/China/comments/80fqlr/why_is_xi_jinping_becoming_so_powerful_why_is_the/duvf76g</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org73334d9" class="outline-3">
+<h3 id="org73334d9"><span class="section-number-3">38.4</span> Antivaccinism is parental negligence.</h3>
+<div class="outline-text-3" id="text-38-4">
+<p>
+<a href="http://www.thejakartapost.com/news/2018/09/05/rubella-kills-baby-in-jambi-as-vaccination-campaign-meets-resistance.html">http://www.thejakartapost.com/news/2018/09/05/rubella-kills-baby-in-jambi-as-vaccination-campaign-meets-resistance.html</a>
+</p>
+
+<p>
+What is the difference between killing and letting die?
+What is the difference between deliberately killing and deliberately letting die?
+</p>
+</div>
+</div>
+<div id="outline-container-orga7e4f26" class="outline-3">
+<h3 id="orga7e4f26"><span class="section-number-3">38.5</span> Analogy: Marx were a doctor, capitalism were the disease, Marxism was the cure that was worse than the disease.</h3>
+<div class="outline-text-3" id="text-38-5">
+<ul class="org-ul">
+<li>Jordan Peterson Vs Marxist Professor Richard Wolff <a href="https://www.youtube.com/watch?v=HTj17c4N9vI">https://www.youtube.com/watch?v=HTj17c4N9vI</a>
+<ul class="org-ul">
+<li>Marx predicted some bad consequences of capitalism, but the cure he proposed was worse than the disease.</li>
+<li>However, Jordan Peterson says that inequality is not due to capitalism, but because small successes breeds even bigger successes.
+<ul class="org-ul">
+<li>When something good happens to you, it increases the probability that something else good also happens to you.
+<ul class="org-ul">
+<li>That (string of luck) spirals out of control, and we don't know what to do about it.
+<ul class="org-ul">
+<li>Luck begets more luck.
+Success begets more success.
+Money begets more money.
+(If you know what you're doing.)</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgfb1a2ff" class="outline-3">
+<h3 id="orgfb1a2ff"><span class="section-number-3">38.6</span> Does Wikileaks matter? Who is going to scour all that text for interesting stuffs / incriminating evidence? Most people don't have time to read that.</h3>
+</div>
+<div id="outline-container-org676a080" class="outline-3">
+<h3 id="org676a080"><span class="section-number-3">38.7</span> You MUST have at least one camera in your car streaming the data to a remote safe location. Cops will trap you.</h3>
+<div class="outline-text-3" id="text-38-7">
+<ul class="org-ul">
+<li><a href="https://www.youtube.com/watch?v=UpT-SAunuLk">https://www.youtube.com/watch?v=UpT-SAunuLk</a></li>
+<li>Busted! How to Handle the Police Until You Get a Lawyer - by Mary Griego <a href="https://www.youtube.com/watch?v=bmtIizXdh88">https://www.youtube.com/watch?v=bmtIizXdh88</a>
+<ul class="org-ul">
+<li>Ordering vs asking.</li>
+</ul></li>
+<li>We need to make sure that misbehaving cops are punished.</li>
+<li>5 Rules for Recording Police: Steve Silverman of FlexYourRights.org <a href="https://www.youtube.com/watch?v=BHpQtvIxBJ4">https://www.youtube.com/watch?v=BHpQtvIxBJ4</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orga9370db" class="outline-3">
+<h3 id="orga9370db"><span class="section-number-3">38.8</span> Negara tidak perlu mengatur agama.</h3>
+<div class="outline-text-3" id="text-38-8">
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/indonesia/comments/9r72uj/pgi_keberatan_atas_2_pasal_di_ruu_pesantren_dan/">https://www.reddit.com/r/indonesia/comments/9r72uj/pgi_keberatan_atas_2_pasal_di_ruu_pesantren_dan/</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org5b751c3" class="outline-3">
+<h3 id="org5b751c3"><span class="section-number-3">38.9</span> Laporan penggunaan pajak oleh negara</h3>
+<div class="outline-text-3" id="text-38-9">
+<ul class="org-ul">
+<li><a href="https://www.kemenkeu.go.id/alokasipajakmu">https://www.kemenkeu.go.id/alokasipajakmu</a>
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/indonesia/comments/9qkd3m/as_an_early_adult_who_recently_graduated_from/">https://www.reddit.com/r/indonesia/comments/9qkd3m/as_an_early_adult_who_recently_graduated_from/</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org541c31e" class="outline-3">
+<h3 id="org541c31e"><span class="section-number-3">38.10</span> What is fairness?</h3>
+<div class="outline-text-3" id="text-38-10">
+<ul class="org-ul">
+<li>Suppose that we have a running contest, and you beat me.
+How do I know that you beat me <i>fairly</i>?
+<ul class="org-ul">
+<li>Good genetics is an advantage, but is it a fair advantage?</li>
+<li>If we can't control it, can it be unfair?</li>
+<li>Is it fair for children to be born in families with different socioeconomic status?</li>
+<li>If equality of outcome is absurd, then what is fairness?</li>
+<li>Is equality of opportunity fair?
+<ul class="org-ul">
+<li>Opportunity to do what?
+Opportunity to become what?</li>
+<li>Equality of <i>all</i> opportunity?
+<ul class="org-ul">
+<li>Opportunity to be boss/capitalist/rich?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org788a84e" class="outline-3">
+<h3 id="org788a84e"><span class="section-number-3">38.11</span> All fierce debates are language problems</h3>
+<div class="outline-text-3" id="text-38-11">
+<p>
+Communication consists of input, processing, and output.
+</p>
+
+<p>
+In a fierce debate, there is no input; there is only output, and the participants don't even agree about the definitions.
+They don't know what they are talking about.
+</p>
+</div>
+</div>
+<div id="outline-container-orgdea5ad5" class="outline-3">
+<h3 id="orgdea5ad5"><span class="section-number-3">38.12</span> This may be biased; speculations about China</h3>
+<div class="outline-text-3" id="text-38-12">
+</div>
+<div id="outline-container-orga72cf13" class="outline-4">
+<h4 id="orga72cf13"><span class="section-number-4">38.12.1</span> Speculations</h4>
+<div class="outline-text-4" id="text-38-12-1">
+<p>
+These are the possible scenarios:
+</p>
+<ul class="org-ul">
+<li>The oppressed thinks that they are already dead (their lives are worse than death) anyway,
+musters enough strength, revolts, and overthrows the government.
+The non-oppressed (the middle-class) takes collateral damage.</li>
+<li>The government kills off all oppressed people.
+The non-oppressed people lives in their bubble happily ever after.</li>
+<li>The government slowly releases control while trying to save face.</li>
+</ul>
+
+<p>
+Xi Jinping cannot release control in 2018, because if he releases control, his opponents will pounce on him, reveal all his crimes, and tarnish his name.
+Xi Jinping wants to die in good standing, with good reputation; he wants to be remembered as a good person.
+</p>
+
+<p>
+I hope that the next bloodshed gives the Chinese people enough reason to limit government power.
+</p>
+
+<p>
+You can live a good comfortable life in China as long as you blind yourself from the truth.
+</p>
+
+<ul class="org-ul">
+<li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-26&gt; </span></span> <a href="https://www.youtube.com/watch?v=eViswN602_k">Exposing China's Digital Dystopian Dictatorship | Foreign Correspondent</a>
+<ul class="org-ul">
+<li>China's Big Brother system favors obedient middle-class people, and limits journalists, minorities, and dissenters.</li>
+<li>Alibaba helps oppression.
+Alibaba is making AI to help the Chinese government oppress people more efficiently.
+Do they profit from oppression?</li>
+</ul></li>
+</ul>
+
+<p>
+Stalin's inner circle was too afraid to tell him the truth.
+Nobody dared to challenge Stalin.
+Stalin's inner circle told him what he wanted to hear.
+</p>
+
+<p>
+<a href="https://www.quora.com/Is-is-true-that-top-Soviet-officials-lived-in-constant-fear-under-Stalin-Or-is-that-an-exaggeration">https://www.quora.com/Is-is-true-that-top-Soviet-officials-lived-in-constant-fear-under-Stalin-Or-is-that-an-exaggeration</a>
+</p>
+
+<p>
+After Stalin died, there was a great purge.
+</p>
+
+<p>
+You know your country is led by an authoritarian if:
+</p>
+<ul class="org-ul">
+<li>You can't say the truth there.</li>
+<li>There is someone whom people are too afraid to disagree with, even politely.</li>
+</ul>
+
+<p>
+We must respect the truth.
+The truth doesn't care about us.
+People who ignore the truth do so at their own peril.
+Ignoring the truth means ignoring some danger;
+such ignorance reduces the chance of survival.
+</p>
+</div>
+</div>
+<div id="outline-container-orgccf5721" class="outline-4">
+<h4 id="orgccf5721"><span class="section-number-4">38.12.2</span> Hopeful</h4>
+<div class="outline-text-4" id="text-38-12-2">
+<p>
+<a href="https://www.youtube.com/watch?v=8XQ1onjXJK0">Are China and the US doomed to conflict? | Kevin Rudd - YouTube</a>
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org6d33216" class="outline-3">
+<h3 id="org6d33216"><span class="section-number-3">38.13</span> Why the non-oppressed people must help the oppressed people</h3>
+<div class="outline-text-3" id="text-38-13">
+<p>
+Because when the oppressed people revolt, the non-oppressed people will be among the victims.
+</p>
+</div>
+</div>
+<div id="outline-container-org665e525" class="outline-3">
+<h3 id="org665e525"><span class="section-number-3">38.14</span> Is the world better without private ownership?</h3>
+<div class="outline-text-3" id="text-38-14">
+<p>
+Nobody needs to be rich?
+What we really seek is satisfaction.
+We should be happy if others find us useful, if others want us to stay, if others want us to exist.
+</p>
+
+<p>
+If people's basic needs are met, they will still work, but they will only do what they really want to do.
+</p>
+
+<p>
+Personal property is OK.
+Is private non-moving property OK?
+</p>
+
+<p>
+<a href="https://kk.org/thetechnium/better-than-own/">https://kk.org/thetechnium/better-than-own/</a>
+</p>
+
+<p>
+<a href="https://www.quora.com/How-would-a-world-without-money-ownership-and-monetary-value-operate">https://www.quora.com/How-would-a-world-without-money-ownership-and-monetary-value-operate</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org35d1635" class="outline-3">
+<h3 id="org35d1635"><span class="section-number-3">38.15</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-24&gt; </span></span> Competition is wasteful</h3>
+<div class="outline-text-3" id="text-38-15">
+<p>
+Suppose that Company A and Company B both make System S.
+They duplicate each other's efforts.
+Then Company B loses.
+Thus everything B (and all other losers) did is <i>wasted</i>.
+</p>
+
+<ul class="org-ul">
+<li>If a company doesn't have any competitors, it has little incentive to improve.
+(We assume that companies only improve when they are existentially threatened.)</li>
+<li>How do we make sure that something improves even without competition?
+<i>Guilds</i>.
+An organization that <i>intrinsically</i> wants to improve (while still profiting),
+not an organization that intrinsically wants to maximize profit at all costs.</li>
+</ul>
+
+<p>
+<a href="https://academic.oup.com/antitrust/article/1/1/162/274807">Is competition always good? | Journal of Antitrust Enforcement | Oxford Academic</a>
+</p>
+
+<p>
+Duplicated Effort vs. Partnership from Christianity perspective
+<a href="http://www.lausanneworldpulse.com/perspectives-php/1234/01-2010">http://www.lausanneworldpulse.com/perspectives-php/1234/01-2010</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org7cca877" class="outline-3">
+<h3 id="org7cca877"><span class="section-number-3">38.16</span> Class treason? Class traitors?</h3>
+<div class="outline-text-3" id="text-38-16">
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Class_traitor">https://en.wikipedia.org/wiki/Class_traitor</a></li>
+<li>police?</li>
+<li>human resources?</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgd71bf61" class="outline-3">
+<h3 id="orgd71bf61"><span class="section-number-3">38.17</span> Living in a republic</h3>
+<div class="outline-text-3" id="text-38-17">
+</div>
+<div id="outline-container-orgb8846c5" class="outline-4">
+<h4 id="orgb8846c5"><span class="section-number-4">38.17.1</span> If you don't vote, you let the worst guy win.</h4>
+<div class="outline-text-4" id="text-38-17-1">
+<p>
+Your vote prevents greater harm.
+</p>
+</div>
+</div>
+<div id="outline-container-orga339468" class="outline-4">
+<h4 id="orga339468"><span class="section-number-4">38.17.2</span> If you vote some people, and they win, then, you are, in some way, responsible for the bad things that they</h4>
+<div class="outline-text-4" id="text-38-17-2">
+<p>
+George Carlin doesn't vote <a href="https://www.youtube.com/watch?v=xIraCchPDhk">https://www.youtube.com/watch?v=xIraCchPDhk</a>
+</p>
+</div>
+</div>
+<div id="outline-container-orgd3f10ae" class="outline-4">
+<h4 id="orgd3f10ae"><span class="section-number-4">38.17.3</span> If you don't speak, you let the worst guy do anything he wants.</h4>
+<div class="outline-text-4" id="text-38-17-3">
+<p>
+You must state your disagreement.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgba6a5cd" class="outline-3">
+<h3 id="orgba6a5cd"><span class="section-number-3">38.18</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-20&gt; </span></span> Politics</h3>
+<div class="outline-text-3" id="text-38-18">
+<ul class="org-ul">
+<li><a href="https://www.youtube.com/watch?v=xDsg2sLhnIE">Trump Is Making America Great Again. Just Not the Way He Thinks. | NYT - Opinion - YouTube</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgda55ee8" class="outline-3">
+<h3 id="orgda55ee8"><span class="section-number-3">38.19</span> Indonesia market research: effect of sharia label on buying propensity?</h3>
+<div class="outline-text-3" id="text-38-19">
+<p>
+Does slapping a sharia label on a hotel increases its sales?
+</p>
+</div>
+</div>
+<div id="outline-container-org09bd779" class="outline-3">
+<h3 id="org09bd779"><span class="section-number-3">38.20</span> Why do some markets such as job markets don't show prices?</h3>
+<div class="outline-text-3" id="text-38-20">
+<p>
+A supermarket shows its prices prominently.
+</p>
+
+<p>
+Why doesn't a job market show its prices?
+</p>
+
+<p>
+<a href="https://www.flexjobs.com/blog/post/why-isnt-salary-always-listed-on-a-postin/">Why Isn't Salary Always Listed on a Job Posting? - FlexJobs</a>
+</p>
+
+<ul class="org-ul">
+<li>Adam Ruins Everything - Why You Should Tell Coworkers Your Salary <a href="https://www.youtube.com/watch?v=7xH7eGFuSYI">https://www.youtube.com/watch?v=7xH7eGFuSYI</a></li>
+</ul>
+</div>
+<div id="outline-container-org142b721" class="outline-4">
+<h4 id="org142b721"><span class="section-number-4">38.20.1</span> Would it be better if they do?</h4>
+<div class="outline-text-4" id="text-38-20-1">
+<ul class="org-ul">
+<li><a href="https://www.elitedaily.com/money/about-sharing-salaries/1171642">https://www.elitedaily.com/money/about-sharing-salaries/1171642</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgb952409" class="outline-4">
+<h4 id="orgb952409"><span class="section-number-4">38.20.2</span> How much should you be paid?</h4>
+<div class="outline-text-4" id="text-38-20-2">
+<p>
+<a href="https://www.forbes.com/sites/jacquelynsmith/2012/11/27/how-to-figure-out-what-you-really-should-be-paid/#333beba75402">https://www.forbes.com/sites/jacquelynsmith/2012/11/27/how-to-figure-out-what-you-really-should-be-paid/#333beba75402</a>
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org2324fbf" class="outline-3">
+<h3 id="org2324fbf"><span class="section-number-3">38.21</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-21&gt; </span></span> Australia fruit sabotage crisis</h3>
+<div class="outline-text-3" id="text-38-21">
+<ul class="org-ul">
+<li>Is it done by immature kids?</li>
+<li>Is it done by foreign actors (to destabilize Australia, for example)?</li>
+<li>Is there any other explanation?</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orga900357" class="outline-3">
+<h3 id="orga900357"><span class="section-number-3">38.22</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-22&gt; </span></span> Power: control vs identity</h3>
+<div class="outline-text-3" id="text-38-22">
+<p>
+"The traditional view—that power means having <i>control</i> over a group of people—is giving way to a new understanding: that power means having other people <i>identify</i> with you." (<a href="https://insight.kellogg.northwestern.edu/article/four-tips-to-gain-influence-in-your-organization">source</a>)
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8178147" class="outline-2">
+<h2 id="org8178147"><span class="section-number-2">39</span> Privacy</h2>
+<div class="outline-text-2" id="text-39">
+</div>
+<div id="outline-container-org706a98b" class="outline-3">
+<h3 id="org706a98b"><span class="section-number-3">39.1</span> Re-identification: Pieces of anonymized information about a subject can be combined to identify the subject.</h3>
+<div class="outline-text-3" id="text-39-1">
+<p>
+<a href="https://arstechnica.com/tech-policy/2009/09/your-secrets-live-online-in-databases-of-ruin/">“Anonymized” data really isn’t—and here’s why not | Ars Technica</a>
+</p>
+
+<ul class="org-ul">
+<li>Massachusetts Group Insurance Commission</li>
+<li>AOL</li>
+<li>Netflix</li>
+<li>etc.</li>
+</ul>
+
+<p>
+Browser fingerprinting
+</p>
+</div>
+</div>
+<div id="outline-container-orgaafacd9" class="outline-3">
+<h3 id="orgaafacd9"><span class="section-number-3">39.2</span> Is advertising ethical?</h3>
+<div class="outline-text-3" id="text-39-2">
+<ul class="org-ul">
+<li>Happiness = Expectation - Reality.</li>
+<li>Advertising increases expectation.</li>
+<li>Therefore advertising reduces happiness.</li>
+<li>But without advertising, how will people know that you even exist?
+How are you going to have customers at all?</li>
+<li>Advertising should be replaced with information.</li>
+<li><a href="https://twitter.com/oxcsh/status/1055953330328010753">https://twitter.com/oxcsh/status/1055953330328010753</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb3bd09c" class="outline-2">
+<h2 id="orgb3bd09c"><span class="section-number-2">40</span> Government/state</h2>
+<div class="outline-text-2" id="text-40">
+</div>
+<div id="outline-container-org5f527c9" class="outline-3">
+<h3 id="org5f527c9"><span class="section-number-3">40.1</span> Deregulation of USA</h3>
+<div class="outline-text-3" id="text-40-1">
+<ul class="org-ul">
+<li><a href="https://www.youtube.com/watch?v=TuAg-RaZ4Is">Trump Is 'Destroying' Regulations - YouTube</a></li>
+</ul>
+
+<p>
+Trump needs a cooperative Congress in order for him to be able to repeal more laws.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2eaedb4" class="outline-3">
+<h3 id="org2eaedb4"><span class="section-number-3">40.2</span> Antonin Scalia: The key to American freedom is the separation of power, not the Bill of Rights.</h3>
+<div class="outline-text-3" id="text-40-2">
+<p>
+<a href="https://www.youtube.com/watch?v=Ggz_gd--UO0">https://www.youtube.com/watch?v=Ggz_gd--UO0</a>
+</p>
+
+<p>
+The USSR Constitution guarantees more freedom than the USA Constitution, but the USSR failed to prevent the centralization of power.
+</p>
+
+<p>
+Every dictatorship has bill of rights.
+</p>
+
+<p>
+North Korea has elections.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1e89272" class="outline-3">
+<h3 id="org1e89272"><span class="section-number-3">40.3</span> Evolution justifies governments</h3>
+<div class="outline-text-3" id="text-40-3">
+<p>
+Evolution suggests that cooperation improves survival (in the long run, of the species, not of an individual).
+</p>
+
+<p>
+Evolution suggests that morality improves survival.
+</p>
+
+<p>
+Evolution suggests that government improves survival.
+</p>
+
+<p>
+What is the state for?
+Why do we need government?
+To promote the survival of the governed species.
+</p>
+</div>
+
+<div id="outline-container-org9280af5" class="outline-4">
+<h4 id="org9280af5"><span class="section-number-4">40.3.1</span> Government is not to merely maintain public order.</h4>
+<div class="outline-text-4" id="text-40-3-1">
+<p>
+Public order can be undesirable:
+</p>
+
+<ul class="org-ul">
+<li>We don't want a government that oppresses people in order to maintain public order.</li>
+<li>The overthrowing of a tyrant may be a desirable public disorder.</li>
+</ul>
+
+<p>
+To promote survival of the people? As in evolution?
+</p>
+
+<p>
+To better the people?
+To impose the morality of the people?
+A government reflects the morality of its people.
+</p>
+
+<p>
+We must impose our morality on others.
+The law imposes the lawmakers' morality on everyone.
+It is practically impossible to live without imposing your morality on others.
+There is a minimum decency that we expect when we interact with others.
+</p>
+
+<p>
+The enforcement of law is an imposition of the morality of the lawmakers (and therefore of the people who elected the lawmakers).
+</p>
+
+<p>
+<a href="https://www.quora.com/Should-the-law-impose-morality">https://www.quora.com/Should-the-law-impose-morality</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8b63cd7" class="outline-4">
+<h4 id="org8b63cd7"><span class="section-number-4">40.3.2</span> Social apoptosis? Programmed human death?</h4>
+<div class="outline-text-4" id="text-40-3-2">
+<p>
+Some cells must die to better the organism.
+Some people should die to better the society?
+Programmed cell death ~ programmed human death?
+</p>
+
+<p>
+A malfunctioning cell kills itself.
+It would be nice if a malfunctioning human could kill himself?
+</p>
+
+<p>
+A cell infected by a virus kills itself.
+It would be nice if a human infected by ideological virus (mind virus) could kill himself?
+</p>
+
+<p>
+How do we know we're infected?
+</p>
+</div>
+</div>
+
+<div id="outline-container-org56935b5" class="outline-4">
+<h4 id="org56935b5"><span class="section-number-4">40.3.3</span> Why should our survival be desirable at all?</h4>
+</div>
+
+<div id="outline-container-org29866da" class="outline-4">
+<h4 id="org29866da"><span class="section-number-4">40.3.4</span> Human rights are legal fiction.</h4>
+<div class="outline-text-4" id="text-40-3-4">
+<p>
+What is real is tolerance.
+People let other people live.
+If I am still alive, it's because others let me live,
+because others tolerate me,
+not because I have any rights.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgba32b5c" class="outline-4">
+<h4 id="justifying-freedom"><a id="orgba32b5c"></a><span class="section-number-4">40.3.5</span> Justifying freedom</h4>
+<div class="outline-text-4" id="text-justifying-freedom">
+<ul class="org-ul">
+<li>Hypotheses:
+
+<ul class="org-ul">
+<li>People do/produce best (the highest quantity for the lowest price) when they pursue what they want to do/produce.</li>
+<li>People approach their strengths and leave their weaknesses.</li>
+<li>Different people have different goals.</li>
+<li>Higher intrinsic motivation increases willingness to accept lower pay.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7af06fb" class="outline-3">
+<h3 id="it-is-insane-that-every-country-makes-their-own-laws."><a id="org7af06fb"></a><span class="section-number-3">40.4</span> It is insane that every country makes their own laws.</h3>
+<div class="outline-text-3" id="text-it-is-insane-that-every-country-makes-their-own-laws.">
+<p>
+Software engineers share as much as possible to avoid repeating work.
+They use operating systems, libraries.
+</p>
+
+<p>
+Legislators could share more work.
+</p>
+
+<p>
+Most software engineers use the same operating system.
+Every country has its own constitution.
+This is an insane amount of duplication.
+</p>
+
+<p>
+There should be a "software library" for laws.
+Laws should be reusable.
+It should be able to legislate
+"law X of country Y also holds in country Z, provided that every occurrence of X is replaced by Z".
+</p>
+
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Don't_repeat_yourself">WP:Don't repeat yourself</a></li>
+<li><a href="https://en.wikipedia.org/wiki/World_government">WP:World government</a></li>
+<li><a href="https://www.quora.com/There-is-only-one-country-in-the-world-and-there-are-no-borders-no-need-for-passports-People-can-travel-freely-and-there-is-a-similar-legal-and-economic-system-for-everyone-in-the-world-What-do-you-think-of-this-idea">Quora question about world government</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org56b2e06" class="outline-2">
+<h2 id="org56b2e06"><span class="section-number-2">41</span> Suspicious things; things to keep track; things to recheck next year</h2>
+<div class="outline-text-2" id="text-41">
+</div>
+<div id="outline-container-org735371f" class="outline-3">
+<h3 id="org735371f"><span class="section-number-3">41.1</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-04&gt; </span></span> Amazon raises its warehouse worker wage (hourly pay) from about $8 (?) to $15 (minimum wage).</h3>
+<div class="outline-text-3" id="text-41-1">
+<ul class="org-ul">
+<li><a href="https://news.vice.com/en_us/article/yw4n7j/jeff-bezos-just-caved-to-activists-and-bernie-sanders-and-raised-amazons-minimum-wage-to-dollar15">https://news.vice.com/en_us/article/yw4n7j/jeff-bezos-just-caved-to-activists-and-bernie-sanders-and-raised-amazons-minimum-wage-to-dollar15</a></li>
+</ul>
+</div>
+<div id="outline-container-orgf916ea3" class="outline-4">
+<h4 id="orgf916ea3"><span class="section-number-4">41.1.1</span> Find out 1 years later: Compare the number of blue-collar workers.</h4>
+</div>
+</div>
+<div id="outline-container-orgb77c12f" class="outline-3">
+<h3 id="orgb77c12f"><span class="section-number-3">41.2</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-06&gt; </span></span> Swiss banking is no longer secret. Does this reduce international crimes / money laundering?</h3>
+<div class="outline-text-3" id="text-41-2">
+<ul class="org-ul">
+<li>"Era of bank secrecy ends as Swiss start sharing account data"
+<a href="https://www.reuters.com/article/us-swiss-secrecy/era-of-bank-secrecy-ends-as-swiss-start-sharing-account-data-idUSKCN1MF13O">https://www.reuters.com/article/us-swiss-secrecy/era-of-bank-secrecy-ends-as-swiss-start-sharing-account-data-idUSKCN1MF13O</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org85a37ce" class="outline-3">
+<h3 id="org85a37ce"><span class="section-number-3">41.3</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-26&gt; </span></span> Why is Nikkei Asian Review sponsoring Mochtar Riady stories?</h3>
+</div>
+</div>
+<div id="outline-container-orgde81234" class="outline-2">
+<h2 id="orgde81234"><span class="section-number-2">42</span> Game-changers?</h2>
+<div class="outline-text-2" id="text-42">
+</div>
+<div id="outline-container-org0045369" class="outline-3">
+<h3 id="org0045369"><span class="section-number-3">42.1</span> DoNotPay: automate lawyers</h3>
+<div class="outline-text-3" id="text-42-1">
+<ul class="org-ul">
+<li><a href="https://www.youtube.com/watch?v=xbXM-aNRNlY">https://www.youtube.com/watch?v=xbXM-aNRNlY</a></li>
+<li><a href="https://www.donotpay.com/">https://www.donotpay.com/</a></li>
+</ul>
 </div>
 </div>
 </div>

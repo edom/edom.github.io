@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+    <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,6 +14,75 @@
   <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
 
   
+
+    <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+    </script>
 
   
   <script>
@@ -31,48 +100,6 @@
   
 
   
-    <script>
-        // Help the reader estimate how much time the reading is going to take.
-        // Show word count and reading time estimation in TOC entry.
-        //
-        // TOC = table of contents
-        document.addEventListener("DOMContentLoaded", function () {
-            function count_word (string) {
-                return string.trim().split(/\s+/).length;
-            }
-            function show_quantity (count, singular) {
-                let plural = singular + "s"; // For this script only.
-                return count + " " + ((count == 1) ? singular : plural);
-            }
-            // We violate the HTML specification.
-            // The page may have several elements with the same ID.
-            // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
-            // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
-            // This only works for Org HTML Export's TOC.
-            let toc_entries = document.querySelectorAll("#table-of-contents a");
-            toc_entries.forEach((toc_entry_a) => {
-                let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
-                let h_elem = document.querySelector(href); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
-                if (h_elem === null) { // We assume that this is impossible.
-                    console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
-                    return;
-                }
-                let section = h_elem.parentNode;
-                let word_count = count_word(section.textContent);
-                // We assume that readers read this many words per minute with 100% comprehension.
-                // This assumption may not hold for dense texts such as philosophy and mathematics.
-                let wpm_assumption = 200;
-                let minute_estimate = Math.ceil(word_count / wpm_assumption);
-                let length_indicator = (function () {
-                    let e = document.createElement("span");
-                    e.className = "toc_entry__length_indicator";
-                    e.textContent = " (" + show_quantity(word_count, "word") + " ~ " + show_quantity(minute_estimate, "minute") + ")";
-                    return e;
-                })();
-                toc_entry_a.parentNode.insertBefore(length_indicator, toc_entry_a.nextSibling);
-            });
-        });
-    </script>
 </head>
 
 
@@ -100,48 +127,51 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgf8d265b">1. Writing</a></li>
-<li><a href="#orgf8305e6">2. Gender-neutral third-person pronoun</a>
+<li><a href="#org13abaec">1. What?</a></li>
+<li><a href="#org537561b">2. Using languages</a>
 <ul>
-<li><a href="#org53e11b1">2.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Prescription</a></li>
-<li><a href="#org57fe1ff">2.2. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> An old prescription I no longer follow</a></li>
-<li><a href="#orgcebdb9e">2.3. Languages without this problem</a></li>
-<li><a href="#orga047808">2.4. English history?</a></li>
+<li><a href="#org524ebdf">2.1. "The length of a sentence isn’t what makes it hard to understand—it’s how long you have to wait for a phrase to be completed."</a></li>
+<li><a href="#orgf8305e6">2.2. Gender-neutral third-person pronoun</a></li>
 </ul>
 </li>
-<li><a href="#org518f715">3. Writing for screen</a></li>
-<li><a href="#org524ebdf">4. "The length of a sentence isn’t what makes it hard to understand—it’s how long you have to wait for a phrase to be completed."</a></li>
-<li><a href="#org30867eb">5. My opinions about writing</a>
+<li><a href="#org1735f0b">3. Writing for screen or web</a>
 <ul>
-<li><a href="#orga7c36fa">5.1. My old opinions that I no longer believe</a>
+<li><a href="#orgcc88c08">3.1. Writing for screen</a></li>
+<li><a href="#orgb617c7e">3.2. TOC (table of contents), page numbers, word counts, and reading time estimation</a></li>
+<li><a href="#org4de2e01">3.3. I use DejaVu font families for my web books.</a></li>
+<li><a href="#org844f858">3.4. Don't just collect links. Comment them. Opine. Think.</a></li>
+</ul>
+</li>
+<li><a href="#org30867eb">4. My opinions about writing</a>
 <ul>
-<li><a href="#org4bebb34">5.1.1. Paragraphs should be replaced with bulleted lists.</a></li>
+<li><a href="#orga7c36fa">4.1. My old opinions that I no longer believe</a>
+<ul>
+<li><a href="#org4bebb34">4.1.1. Paragraphs should be replaced with bulleted lists.</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org55456ac">6. How to write: recursive-modification structures in writing</a>
+<li><a href="#org55456ac">5. How to write: recursive-modification structures in writing</a>
 <ul>
-<li><a href="#org9b74b40">6.1. The importance of the first sentence of each paragraph</a></li>
-<li><a href="#org48f8c80">6.2. The table of contents must tell the readers how they will benefit by reading the book.</a></li>
-<li><a href="#org2727243">6.3. If there is any conclusion, then it should be the first chapter.</a></li>
-<li><a href="#org1eb4c92">6.4. The abstract explains how the readers will benefit by reading the article.</a></li>
-<li><a href="#org362df54">6.5. Modification hierarchy</a></li>
-<li><a href="#org910601b">6.6. Paragraph structure</a></li>
+<li><a href="#org9b74b40">5.1. The importance of the first sentence of each paragraph</a></li>
+<li><a href="#org48f8c80">5.2. The table of contents must tell the readers how they will benefit by reading the book.</a></li>
+<li><a href="#org2727243">5.3. If there is any conclusion, then it should be the first chapter.</a></li>
+<li><a href="#org1eb4c92">5.4. The abstract explains how the readers will benefit by reading the article.</a></li>
+<li><a href="#org362df54">5.5. Modification hierarchy</a></li>
+<li><a href="#org910601b">5.6. Paragraph structure</a></li>
 </ul>
 </li>
-<li><a href="#orgef066ea">7. Arguing strongly</a>
+<li><a href="#orgef066ea">6. Arguing strongly</a>
 <ul>
-<li><a href="#org20b6c8f">7.1. A strong argument has few objections.</a></li>
-<li><a href="#orgb3665e5">7.2. Refuting a definition</a></li>
+<li><a href="#org20b6c8f">6.1. A strong argument has few objections.</a></li>
+<li><a href="#orgb3665e5">6.2. Refuting a definition</a></li>
 </ul>
 </li>
-<li><a href="#orgb617c7e">8. TOC (table of contents), page numbers, word counts, and reading time estimation</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgf8d265b" class="outline-2">
-<h2 id="orgf8d265b"><span class="section-number-2">1</span> Writing</h2>
+<div id="outline-container-org13abaec" class="outline-2">
+<h2 id="org13abaec"><span class="section-number-2">1</span> What?</h2>
 <div class="outline-text-2" id="text-1">
 <ul class="org-ul">
 <li>Links
@@ -385,22 +415,37 @@ which can sometimes then translate into money through advertising
 </ul>
 </div>
 </div>
-<div id="outline-container-orgf8305e6" class="outline-2">
-<h2 id="orgf8305e6"><span class="section-number-2">2</span> Gender-neutral third-person pronoun</h2>
+<div id="outline-container-org537561b" class="outline-2">
+<h2 id="org537561b"><span class="section-number-2">2</span> Using languages</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-org53e11b1" class="outline-3">
-<h3 id="org53e11b1"><span class="section-number-3">2.1</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Prescription</h3>
+<div id="outline-container-org524ebdf" class="outline-3">
+<h3 id="org524ebdf"><span class="section-number-3">2.1</span> "The length of a sentence isn’t what makes it hard to understand—it’s how long you have to wait for a phrase to be completed."</h3>
 <div class="outline-text-3" id="text-2-1">
+<ul class="org-ul">
+<li>"Why this sentence is hard to understand" <a href="https://www.businessinsider.com/why-this-sentence-is-hard-to-understand-2015-3/">https://www.businessinsider.com/why-this-sentence-is-hard-to-understand-2015-3/</a>
+<ul class="org-ul">
+<li>"The length of a sentence isn’t what makes it hard to understand—it’s how long you have to wait for a phrase to be completed."</li>
+<li>It gives the example sentence: "While Bob ate an apple was in the basket."</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Garden-path_sentence">https://en.wikipedia.org/wiki/Garden-path_sentence</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgf8305e6" class="outline-3">
+<h3 id="orgf8305e6"><span class="section-number-3">2.2</span> Gender-neutral third-person pronoun</h3>
+<div class="outline-text-3" id="text-2-2">
 <p>
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt;</span></span>
+Prescription:
 Pluralize things and use "they".
 This is the least hassle.
 </p>
-</div>
-</div>
-<div id="outline-container-org57fe1ff" class="outline-3">
-<h3 id="org57fe1ff"><span class="section-number-3">2.2</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> An old prescription I no longer follow</h3>
-<div class="outline-text-3" id="text-2-2">
+
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt;</span></span>
+An old prescription I no longer follow:
+</p>
 <ul class="org-ul">
 <li>I use "he" as both male and gender-neutral singular third-person pronoun.</li>
 <li>Ambiguity resolution rules
@@ -408,28 +453,33 @@ This is the least hassle.
 <li>If the context makes sense for both genders, then "he" is gender-neutral.</li>
 </ul></li>
 </ul>
-</div>
-</div>
-<div id="outline-container-orgcebdb9e" class="outline-3">
-<h3 id="orgcebdb9e"><span class="section-number-3">2.3</span> Languages without this problem</h3>
-<div class="outline-text-3" id="text-2-3">
+
 <p>
+Some languages don't have this problem.
 Indonesian has gender-neutral third-person pronoun "dia" and "beliau".
 </p>
-</div>
-</div>
-<div id="outline-container-orga047808" class="outline-3">
-<h3 id="orga047808"><span class="section-number-3">2.4</span> English history?</h3>
-<div class="outline-text-3" id="text-2-4">
+
+<p>
+Why the hell does English care about the gender of the third person?
+We just need one word that means "that person".
+</p>
+
+<p>
+English history?
+</p>
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/Singular_they#Older_usage">WP:Singular they, older usage</a></li>
 </ul>
 </div>
 </div>
 </div>
-<div id="outline-container-org518f715" class="outline-2">
-<h2 id="org518f715"><span class="section-number-2">3</span> Writing for screen</h2>
+<div id="outline-container-org1735f0b" class="outline-2">
+<h2 id="org1735f0b"><span class="section-number-2">3</span> Writing for screen or web</h2>
 <div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgcc88c08" class="outline-3">
+<h3 id="orgcc88c08"><span class="section-number-3">3.1</span> Writing for screen</h3>
+<div class="outline-text-3" id="text-3-1">
 <ul class="org-ul">
 <li>Design your text so that the reader can read it continuously and can resume arbitrarily.
 <ul class="org-ul">
@@ -472,30 +522,77 @@ Occasionally you jump to the table of contents.
 </ul>
 </div>
 </div>
-<div id="outline-container-org524ebdf" class="outline-2">
-<h2 id="org524ebdf"><span class="section-number-2">4</span> "The length of a sentence isn’t what makes it hard to understand—it’s how long you have to wait for a phrase to be completed."</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-orgb617c7e" class="outline-3">
+<h3 id="orgb617c7e"><span class="section-number-3">3.2</span> TOC (table of contents), page numbers, word counts, and reading time estimation</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+I can estimate the time required to read a printed book:
+I look at its TOC and page numbers.
+</p>
+
+<p>
+I can't estimate the time required to read a Web book:
+There are no page numbers.
+</p>
+
+<p>
+To go to a section:
+</p>
 <ul class="org-ul">
-<li>"Why this sentence is hard to understand" <a href="https://www.businessinsider.com/why-this-sentence-is-hard-to-understand-2015-3/">https://www.businessinsider.com/why-this-sentence-is-hard-to-understand-2015-3/</a>
-<ul class="org-ul">
-<li>"The length of a sentence isn’t what makes it hard to understand—it’s how long you have to wait for a phrase to be completed."</li>
-<li>It gives the example sentence: "While Bob ate an apple was in the basket."</li>
-</ul></li>
-<li><a href="https://en.wikipedia.org/wiki/Garden-path_sentence">https://en.wikipedia.org/wiki/Garden-path_sentence</a></li>
+<li>Print readers use a <i>page number</i>.</li>
+<li>Web readers use a <i>link</i>.</li>
 </ul>
+
+<p>
+To estimate how much time is required to read a section:
+</p>
+<ul class="org-ul">
+<li>Print readers use <i>how many pages</i> that section takes.</li>
+<li>Web readers use <i>number of words</i> in that section.</li>
+</ul>
+
+<p>
+Thus, in Web book TOC entries, we should substitute page number with word count.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4de2e01" class="outline-3">
+<h3 id="org4de2e01"><span class="section-number-3">3.3</span> I use DejaVu font families for my web books.</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+I need serif fonts and monospaced fonts that mix.
+</p>
+
+<p>
+The DejaVu families have compatible x-heights.
+</p>
+
+<p>
+Times New Roman, Arial, and Courier New don't mix: They have painfully different x-heights.
+</p>
+
+<p>
+DejaVu families may only be widely available on libre software platforms.
+I don't know the situation on Windows and Mac.
+</p>
+</div>
+</div>
+<div id="outline-container-org844f858" class="outline-3">
+<h3 id="org844f858"><span class="section-number-3">3.4</span> Don't just collect links. Comment them. Opine. Think.</h3>
 </div>
 </div>
 <div id="outline-container-org30867eb" class="outline-2">
-<h2 id="org30867eb"><span class="section-number-2">5</span> My opinions about writing</h2>
-<div class="outline-text-2" id="text-5">
+<h2 id="org30867eb"><span class="section-number-2">4</span> My opinions about writing</h2>
+<div class="outline-text-2" id="text-4">
 </div>
 <div id="outline-container-orga7c36fa" class="outline-3">
-<h3 id="orga7c36fa"><span class="section-number-3">5.1</span> My old opinions that I no longer believe</h3>
-<div class="outline-text-3" id="text-5-1">
+<h3 id="orga7c36fa"><span class="section-number-3">4.1</span> My old opinions that I no longer believe</h3>
+<div class="outline-text-3" id="text-4-1">
 </div>
 <div id="outline-container-org4bebb34" class="outline-4">
-<h4 id="org4bebb34"><span class="section-number-4">5.1.1</span> Paragraphs should be replaced with bulleted lists.</h4>
-<div class="outline-text-4" id="text-5-1-1">
+<h4 id="org4bebb34"><span class="section-number-4">4.1.1</span> Paragraphs should be replaced with bulleted lists.</h4>
+<div class="outline-text-4" id="text-4-1-1">
 <ul class="org-ul">
 <li>One list item may contain more than one sentences.</li>
 <li>People who disagree:
@@ -514,29 +611,29 @@ Paragraphs with first-sentence thesis are more readable.
 </div>
 </div>
 <div id="outline-container-org55456ac" class="outline-2">
-<h2 id="org55456ac"><span class="section-number-2">6</span> How to write: recursive-modification structures in writing</h2>
-<div class="outline-text-2" id="text-6">
+<h2 id="org55456ac"><span class="section-number-2">5</span> How to write: recursive-modification structures in writing</h2>
+<div class="outline-text-2" id="text-5">
 </div>
 <div id="outline-container-org9b74b40" class="outline-3">
-<h3 id="org9b74b40"><span class="section-number-3">6.1</span> The importance of the first sentence of each paragraph</h3>
-<div class="outline-text-3" id="text-6-1">
+<h3 id="org9b74b40"><span class="section-number-3">5.1</span> The importance of the first sentence of each paragraph</h3>
+<div class="outline-text-3" id="text-5-1">
 <p>
 Write such that the reader can summarize your writing just by reading the first sentence of each paragraph.
 </p>
 </div>
 </div>
 <div id="outline-container-org48f8c80" class="outline-3">
-<h3 id="org48f8c80"><span class="section-number-3">6.2</span> The table of contents must tell the readers how they will benefit by reading the book.</h3>
+<h3 id="org48f8c80"><span class="section-number-3">5.2</span> The table of contents must tell the readers how they will benefit by reading the book.</h3>
 </div>
 <div id="outline-container-org2727243" class="outline-3">
-<h3 id="org2727243"><span class="section-number-3">6.3</span> If there is any conclusion, then it should be the first chapter.</h3>
+<h3 id="org2727243"><span class="section-number-3">5.3</span> If there is any conclusion, then it should be the first chapter.</h3>
 </div>
 <div id="outline-container-org1eb4c92" class="outline-3">
-<h3 id="org1eb4c92"><span class="section-number-3">6.4</span> The abstract explains how the readers will benefit by reading the article.</h3>
+<h3 id="org1eb4c92"><span class="section-number-3">5.4</span> The abstract explains how the readers will benefit by reading the article.</h3>
 </div>
 <div id="outline-container-org362df54" class="outline-3">
-<h3 id="org362df54"><span class="section-number-3">6.5</span> Modification hierarchy</h3>
-<div class="outline-text-3" id="text-6-5">
+<h3 id="org362df54"><span class="section-number-3">5.5</span> Modification hierarchy</h3>
+<div class="outline-text-3" id="text-5-5">
 <ul class="org-ul">
 <li>Adjective modifies noun.</li>
 <li>Predicate modifies subject.</li>
@@ -569,8 +666,8 @@ However, he loves his family.</li>
 </div>
 </div>
 <div id="outline-container-org910601b" class="outline-3">
-<h3 id="org910601b"><span class="section-number-3">6.6</span> Paragraph structure</h3>
-<div class="outline-text-3" id="text-6-6">
+<h3 id="org910601b"><span class="section-number-3">5.6</span> Paragraph structure</h3>
+<div class="outline-text-3" id="text-5-6">
 <p>
 Every paragraph should have this form: "Thesis. Modifier 1. Modifier 2. &#x2026; Modifier N."
 </p>
@@ -593,12 +690,12 @@ Good paragraph: thesis sentence at beginning of paragraph.
 </div>
 </div>
 <div id="outline-container-orgef066ea" class="outline-2">
-<h2 id="orgef066ea"><span class="section-number-2">7</span> Arguing strongly</h2>
-<div class="outline-text-2" id="text-7">
+<h2 id="orgef066ea"><span class="section-number-2">6</span> Arguing strongly</h2>
+<div class="outline-text-2" id="text-6">
 </div>
 <div id="outline-container-org20b6c8f" class="outline-3">
-<h3 id="org20b6c8f"><span class="section-number-3">7.1</span> A strong argument has few objections.</h3>
-<div class="outline-text-3" id="text-7-1">
+<h3 id="org20b6c8f"><span class="section-number-3">6.1</span> A strong argument has few objections.</h3>
+<div class="outline-text-3" id="text-6-1">
 <p>
 Consider whether the reader can understand.
 </p>
@@ -635,46 +732,12 @@ An argument is a chain of reasons.
 </div>
 </div>
 <div id="outline-container-orgb3665e5" class="outline-3">
-<h3 id="orgb3665e5"><span class="section-number-3">7.2</span> Refuting a definition</h3>
-<div class="outline-text-3" id="text-7-2">
+<h3 id="orgb3665e5"><span class="section-number-3">6.2</span> Refuting a definition</h3>
+<div class="outline-text-3" id="text-6-2">
 <p>
 We can refute a definition by showing that it leads to undesirable consequences.
 </p>
 </div>
-</div>
-</div>
-<div id="outline-container-orgb617c7e" class="outline-2">
-<h2 id="orgb617c7e"><span class="section-number-2">8</span> TOC (table of contents), page numbers, word counts, and reading time estimation</h2>
-<div class="outline-text-2" id="text-8">
-<p>
-I can estimate the time required to read a printed book:
-I look at its TOC and page numbers.
-</p>
-
-<p>
-I can't estimate the time required to read a Web book:
-There are no page numbers.
-</p>
-
-<p>
-To go to a section:
-</p>
-<ul class="org-ul">
-<li>Print readers use a <i>page number</i>.</li>
-<li>Web readers use a <i>link</i>.</li>
-</ul>
-
-<p>
-To estimate how much time is required to read a section:
-</p>
-<ul class="org-ul">
-<li>Print readers use <i>how many pages</i> that section takes.</li>
-<li>Web readers use <i>number of words</i> in that section.</li>
-</ul>
-
-<p>
-Thus, in Web book TOC entries, we should substitute page number with word count.
-</p>
 </div>
 </div>
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+    <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,6 +14,75 @@
   <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
 
   
+
+    <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+    </script>
 
   
   <script>
@@ -31,48 +100,6 @@
   
 
   
-    <script>
-        // Help the reader estimate how much time the reading is going to take.
-        // Show word count and reading time estimation in TOC entry.
-        //
-        // TOC = table of contents
-        document.addEventListener("DOMContentLoaded", function () {
-            function count_word (string) {
-                return string.trim().split(/\s+/).length;
-            }
-            function show_quantity (count, singular) {
-                let plural = singular + "s"; // For this script only.
-                return count + " " + ((count == 1) ? singular : plural);
-            }
-            // We violate the HTML specification.
-            // The page may have several elements with the same ID.
-            // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
-            // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
-            // This only works for Org HTML Export's TOC.
-            let toc_entries = document.querySelectorAll("#table-of-contents a");
-            toc_entries.forEach((toc_entry_a) => {
-                let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
-                let h_elem = document.querySelector(href); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
-                if (h_elem === null) { // We assume that this is impossible.
-                    console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
-                    return;
-                }
-                let section = h_elem.parentNode;
-                let word_count = count_word(section.textContent);
-                // We assume that readers read this many words per minute with 100% comprehension.
-                // This assumption may not hold for dense texts such as philosophy and mathematics.
-                let wpm_assumption = 200;
-                let minute_estimate = Math.ceil(word_count / wpm_assumption);
-                let length_indicator = (function () {
-                    let e = document.createElement("span");
-                    e.className = "toc_entry__length_indicator";
-                    e.textContent = " (" + show_quantity(word_count, "word") + " ~ " + show_quantity(minute_estimate, "minute") + ")";
-                    return e;
-                })();
-                toc_entry_a.parentNode.insertBefore(length_indicator, toc_entry_a.nextSibling);
-            });
-        });
-    </script>
 </head>
 
 
@@ -118,6 +145,48 @@
 <li><a href="#open-access-journals">3.3. Open access journals</a></li>
 <li><a href="#how-do-we-know-what-others-have-done">3.4. How do we know what others have done?</a></li>
 <li><a href="#others">3.5. Others</a></li>
+</ul>
+</li>
+<li><a href="#orge946d45">4. Drafts</a>
+<ul>
+<li><a href="#org85e0eb5">4.1. Problems</a></li>
+<li><a href="#org54eca1e">4.2. Academics is broken. Science is broken. Research is broken.</a></li>
+<li><a href="#org9037030">4.3. Finding research papers?</a></li>
+<li><a href="#org0c26192">4.4. Mathematical knowledge management?</a></li>
+<li><a href="#orgc428e58">4.5. Academic writing</a></li>
+<li><a href="#org902793d">4.6. Math PhD?</a></li>
+<li><a href="#org3d95071">4.7. Mathematical modeling?</a></li>
+<li><a href="#org09b79d9">4.8. Common company wiki fundamental problem</a></li>
+<li><a href="#orgc295ee4">4.9. Library problems</a></li>
+<li><a href="#org0e275a0">4.10. Applying probability theory and statistics to marketing and pricing</a></li>
+<li><a href="#org32f7273">4.11. Wikipedia alternatives?</a></li>
+<li><a href="#org1eb9873">4.12. AI/ML?</a>
+<ul>
+<li><a href="#org02c6668">4.12.1. Judea Pearl, "book of why", causal inference</a></li>
+</ul>
+</li>
+<li><a href="#org1fb179a">4.13. Programming language research</a>
+<ul>
+<li><a href="#org2e159b8">4.13.1. Self-composable programming?</a></li>
+<li><a href="#orgd419134">4.13.2. Generate REST API from database</a></li>
+</ul>
+</li>
+<li><a href="#org4c1290e">4.14. Philosophy</a>
+<ul>
+<li><a href="#org392b976">4.14.1. First- vs third-person view?</a></li>
+<li><a href="#org2aeafd6">4.14.2. Morality</a></li>
+<li><a href="#org7bf3832">4.14.3. Evolutionary ethics</a></li>
+</ul>
+</li>
+<li><a href="#org5fb0f7a">4.15. Refuting bullshit</a></li>
+<li><a href="#org6deabb1">4.16. Teaching and learning</a></li>
+<li><a href="#org1ed65ba">4.17. Brain? Biology?</a></li>
+<li><a href="#org2c95374">4.18. TED?</a></li>
+<li><a href="#utilitarianism-is-questionable.">4.19. Utilitarianism is questionable.</a></li>
+<li><a href="#org6b8d81c">4.20. psychology? goals? systems?</a></li>
+<li><a href="#orgb98062d">4.21. How to get research grants?</a></li>
+<li><a href="#org810b9f9">4.22. What does an assistant professor do?</a></li>
+<li><a href="#org82c80c8">4.23. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-02&gt; </span></span> Twitter is surprisingly good for computer science research?</a></li>
 </ul>
 </li>
 </ul>
@@ -998,6 +1067,448 @@ Can we crowdsource it?
 <li>What is the difference between conference, congregation, symposium, seminar?
 Why can't we just use the word "meeting" for all of them?</li>
 </ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orge946d45" class="outline-2">
+<h2 id="orge946d45"><span class="section-number-2">4</span> Drafts</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org85e0eb5" class="outline-3">
+<h3 id="org85e0eb5"><span class="section-number-3">4.1</span> Problems</h3>
+<div class="outline-text-3" id="text-4-1">
+<ul class="org-ul">
+<li>2005, article, "Why Most Published Research Findings Are False", John P. A. Ioannidis, <a href="http://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124">html</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org54eca1e" class="outline-3">
+<h3 id="org54eca1e"><span class="section-number-3">4.2</span> Academics is broken. Science is broken. Research is broken.</h3>
+<div class="outline-text-3" id="text-4-2">
+<ul class="org-ul">
+<li><a href="https://www.statnews.com/2018/10/29/alzheimers-research-outsider-bucked-prevailing-theory/">https://www.statnews.com/2018/10/29/alzheimers-research-outsider-bucked-prevailing-theory/</a>
+<ul class="org-ul">
+<li>Alzheimer research went slowly.
+30 years and still no cure.
+Because grants are decided by narrow-minded old high guards.
+Perverse incentives.
+Too narrow.
+Too incremental.
+Too risk averse.
+Too tribal.
+Groupthink.
+Science has become a religious monoculture.
+<ul class="org-ul">
+<li>Science requires diverse thoughts in order to progress.</li>
+</ul></li>
+</ul></li>
+<li>Theoretical physics is also broken.
+It's hard to get a grant if you don't do string theory.
+See Lee Smolin's commentary.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org9037030" class="outline-3">
+<h3 id="org9037030"><span class="section-number-3">4.3</span> Finding research papers?</h3>
+<div class="outline-text-3" id="text-4-3">
+<ul class="org-ul">
+<li><a href="https://www.deutsche-digitale-bibliothek.de/?lang=en">Deutsche Digitale Bibliothek - Kultur und Wissen online</a> (English available)</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0c26192" class="outline-3">
+<h3 id="org0c26192"><span class="section-number-3">4.4</span> Mathematical knowledge management?</h3>
+<div class="outline-text-3" id="text-4-4">
+<ul class="org-ul">
+<li><a href="https://github.com/planetmath">Planetmath</a> is a collection of TeX documents.
+<ul class="org-ul">
+<li>Can it be made into a mathematical knowledge management system?</li>
+</ul></li>
+<li><a href="https://wikieducator.org/Main_Page">https://wikieducator.org/Main_Page</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgc428e58" class="outline-3">
+<h3 id="orgc428e58"><span class="section-number-3">4.5</span> Academic writing</h3>
+<div class="outline-text-3" id="text-4-5">
+<ul class="org-ul">
+<li>"How to write a good CVPR submission", <a href="https://billf.mit.edu/sites/default/files/documents/cvprPapers.pdf">pdf slides</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org902793d" class="outline-3">
+<h3 id="org902793d"><span class="section-number-3">4.6</span> Math PhD?</h3>
+<div class="outline-text-3" id="text-4-6">
+<ul class="org-ul">
+<li>2011, article, "A Very Rough Guide for PhD Students in Mathematics", <a href="http://www.maths.manchester.ac.uk/media/eps/schoolofmathematics/study/guide_2011.pdf">pdf</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org3d95071" class="outline-3">
+<h3 id="org3d95071"><span class="section-number-3">4.7</span> Mathematical modeling?</h3>
+<div class="outline-text-3" id="text-4-7">
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Mathematical_model">WP:Mathematical model</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Many-body_problem">WP:Many-body problem</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Few-body_systems">WP:Few-body systems</a></li>
+<li><a href="https://en.wikipedia.org/wiki/N-body_problem">WP:N-body problem</a></li>
+<li>Articles
+<ul class="org-ul">
+<li><a href="https://aip.scitation.org/doi/10.1063/1.533319">The quantum N-body problem</a></li>
+</ul></li>
+<li>What is the difference between variable and parameter?</li>
+<li>How many parameters do we need to model a system?</li>
+<li>Discrete Newtonian kinematical model
+<ul class="org-ul">
+<li>A <i>system at time \( t \)</i> is a set of particles ( { 1, \ldots, n } ).
+<ul class="org-ul">
+<li>Time is a real number: \( t \in \Real \).</li>
+<li>The number of particle is constant \( n \in \Nat \).</li>
+<li>For each particle \( k \):
+<ul class="org-ul">
+<li>It has <i>position</i> \( x_k \in \Real^3 \).</li>
+<li>Simplifying assumptions
+<ul class="org-ul">
+<li>particle
+<ul class="org-ul">
+<li>It is a point.
+<ul class="org-ul">
+<li>It doesn't occupy any space.</li>
+</ul></li>
+<li>Its mass is not modeled.</li>
+</ul></li>
+<li>Time is global and absolute (the same everywhere).</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Discrete Newtonian dynamical model (N-body problem) extends discrete Newtonian kinematical model.
+<ul class="org-ul">
+<li>A <i>system at time \( t \)</i> is all that above, plus:
+<ul class="org-ul">
+<li>For each particle \( k \):
+<ul class="org-ul">
+<li>It has <i>mass</i> \( m_k \in \Real \).</li>
+<li>It has <i>resultant force</i> \( F_k \) acting on it.</li>
+<li>Simplifying assumptions about the particle
+<ul class="org-ul">
+<li>It is rigid.
+<ul class="org-ul">
+<li>It doesn't deform.</li>
+<li>It doesn't break.</li>
+</ul></li>
+<li>Its mass is constant.</li>
+<li>It don't interact with other particles.
+<ul class="org-ul">
+<li>Particles don't merge or collide.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Continuum_mechanics">WP:Continuum mechanics</a></li>
+<li>Skippable philosophical issues?
+<ul class="org-ul">
+<li>Does "the same particle at different times" make sense?
+<ul class="org-ul">
+<li>What is "same"?</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Heraclitus#Panta_rhei,_%22everything_flows%22">WP:"Panta rhei" ("Everything flows"), Heraclitus</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org09b79d9" class="outline-3">
+<h3 id="org09b79d9"><span class="section-number-3">4.8</span> Common company wiki fundamental problem</h3>
+<div class="outline-text-3" id="text-4-8">
+<ul class="org-ul">
+<li>Employees have no reason to read the wiki.</li>
+<li>It doesn't help them do their jobs.
+<ul class="org-ul">
+<li>Why should they read it then?</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgc295ee4" class="outline-3">
+<h3 id="orgc295ee4"><span class="section-number-3">4.9</span> Library problems</h3>
+<div class="outline-text-3" id="text-4-9">
+<ul class="org-ul">
+<li>In 2018, a lot of human knowledge is still in libraries and not available on the Internet.
+Digital typesetting was invented relatively recently.
+Papers should be scanned and OCR-ed.
+AI can help.</li>
+<li>Why are there different libraries?
+There should be only one library in the world.
+All library should be the same.
+All library should have the same content.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org0e275a0" class="outline-3">
+<h3 id="org0e275a0"><span class="section-number-3">4.10</span> Applying probability theory and statistics to marketing and pricing</h3>
+<div class="outline-text-3" id="text-4-10">
+<ul class="org-ul">
+<li><a href="https://medium.com/airbnb-engineering/learning-market-dynamics-for-optimal-pricing-97cffbcc53e3">https://medium.com/airbnb-engineering/learning-market-dynamics-for-optimal-pricing-97cffbcc53e3</a></li>
+<li><a href="https://overflow.buffer.com/2018/08/13/predicting-churn/">https://overflow.buffer.com/2018/08/13/predicting-churn/</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org32f7273" class="outline-3">
+<h3 id="org32f7273"><span class="section-number-3">4.11</span> Wikipedia alternatives?</h3>
+<div class="outline-text-3" id="text-4-11">
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Wikipedia:Other_projects_similar_to_Wikipedia">https://en.wikipedia.org/wiki/Wikipedia:Other_projects_similar_to_Wikipedia</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Wikipedia:Alternative_outlets">https://en.wikipedia.org/wiki/Wikipedia:Alternative_outlets</a></li>
+<li><a href="https://www.quora.com/What-are-the-best-alternatives-to-Wikipedia">https://www.quora.com/What-are-the-best-alternatives-to-Wikipedia</a></li>
+<li><a href="https://everipedia.org/wiki/InterPlanetary_File_System/">https://everipedia.org/wiki/InterPlanetary_File_System/</a>
+<ul class="org-ul">
+<li>Everipedia and IPFS?</li>
+</ul></li>
+<li><a href="https://oedb.org/ilibrarian/top-7-alternatives-to-wikipedia/">https://oedb.org/ilibrarian/top-7-alternatives-to-wikipedia/</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org1eb9873" class="outline-3">
+<h3 id="org1eb9873"><span class="section-number-3">4.12</span> AI/ML?</h3>
+<div class="outline-text-3" id="text-4-12">
+<ul class="org-ul">
+<li><a href="https://thegradient.pub/nlp-imagenet/">https://thegradient.pub/nlp-imagenet/</a></li>
+<li><a href="https://chrisalbon.com/">https://chrisalbon.com/</a></li>
+<li><a href="https://createmomo.github.io/2017/09/12/CRF_Layer_on_the_Top_of_BiLSTM_1/">https://createmomo.github.io/2017/09/12/CRF_Layer_on_the_Top_of_BiLSTM_1/</a></li>
+</ul>
+</div>
+
+<div id="outline-container-org02c6668" class="outline-4">
+<h4 id="org02c6668"><span class="section-number-4">4.12.1</span> Judea Pearl, "book of why", causal inference</h4>
+<div class="outline-text-4" id="text-4-12-1">
+<ul class="org-ul">
+<li><a href="https://twitter.com/yudapearl/status/1016858846034210816">https://twitter.com/yudapearl/status/1016858846034210816</a>
+<ul class="org-ul">
+<li>2018, "The Seven Tools of Causal Inference with Reflections on Machine Learning", Judea Pearl, <a href="http://ftp.cs.ucla.edu/pub/stat_ser/r481.pdf">pdf</a>
+<ul class="org-ul">
+<li>book, "The book of why [&#x2026;]", Judea Pearl</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1fb179a" class="outline-3">
+<h3 id="org1fb179a"><span class="section-number-3">4.13</span> Programming language research</h3>
+<div class="outline-text-3" id="text-4-13">
+</div>
+<div id="outline-container-org2e159b8" class="outline-4">
+<h4 id="org2e159b8"><span class="section-number-4">4.13.1</span> Self-composable programming?</h4>
+<div class="outline-text-4" id="text-4-13-1">
+<ul class="org-ul">
+<li><a href="https://arxiv.org/abs/1612.02547">1612.02547 - Self-composable Programming</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgd419134" class="outline-4">
+<h4 id="orgd419134"><span class="section-number-4">4.13.2</span> Generate REST API from database</h4>
+<div class="outline-text-4" id="text-4-13-2">
+<ul class="org-ul">
+<li><a href="https://github.com/PostgREST/postgrest">PostgREST/postgrest: REST API for any Postgres database</a>
+<ul class="org-ul">
+<li><a href="https://restifydb.com/">https://restifydb.com/</a></li>
+<li><a href="https://www.progress.com/blogs/restify-databases-expose-your-database-to-rest-web-services">https://www.progress.com/blogs/restify-databases-expose-your-database-to-rest-web-services</a></li>
+<li><a href="http://www.odata.org/getting-started/understand-odata-in-6-steps/">http://www.odata.org/getting-started/understand-odata-in-6-steps/</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4c1290e" class="outline-3">
+<h3 id="org4c1290e"><span class="section-number-3">4.14</span> Philosophy</h3>
+<div class="outline-text-3" id="text-4-14">
+</div>
+<div id="outline-container-org392b976" class="outline-4">
+<h4 id="org392b976"><span class="section-number-4">4.14.1</span> First- vs third-person view?</h4>
+<div class="outline-text-4" id="text-4-14-1">
+<ul class="org-ul">
+<li><a href="http://consc.net/notes/first-third.html">The First-Person and Third-Person Views</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2aeafd6" class="outline-4">
+<h4 id="org2aeafd6"><span class="section-number-4">4.14.2</span> Morality</h4>
+<div class="outline-text-4" id="text-4-14-2">
+<ul class="org-ul">
+<li>Blind pursuit of Equal OUTCOME leads to an "Abomination of Justice" - Jonathan Haidt; <a href="https://www.youtube.com/watch?v=cQNaT52QYYA">video</a></li>
+<li><a href="https://www.youtube.com/watch?v=vs41JrnGaxc">Jonathan Haidt: The moral roots of liberals and conservatives - YouTube</a></li>
+<li><a href="https://www.yourmorals.org/aboutus.php">https://www.yourmorals.org/aboutus.php</a></li>
+<li><a href="https://www.moralfoundations.org/">https://www.moralfoundations.org/</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org7bf3832" class="outline-4">
+<h4 id="org7bf3832"><span class="section-number-4">4.14.3</span> Evolutionary ethics</h4>
+<div class="outline-text-4" id="text-4-14-3">
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Evolution_of_morality">https://en.wikipedia.org/wiki/Evolution_of_morality</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Evolutionary_ethics">https://en.wikipedia.org/wiki/Evolutionary_ethics</a></li>
+<li>Evolutionary ethics
+<ul class="org-ul">
+<li>Morality is shaped by evolution.</li>
+<li>We have difficulties defining what is "good", but there are things that we agree are good.</li>
+<li>Morality is defined by the majority opinion.</li>
+<li>Humans evolved morality because morality promotes survival.
+<ul class="org-ul">
+<li>Nature selects moral behavior. There is evolutionary pressure for moral behavior.
+<ul class="org-ul">
+<li>Sharing foods promotes survival.</li>
+<li>Sharing knowledge promotes survival.</li>
+<li>Cooperation promotes survival.</li>
+<li>Marriage promotes survival?</li>
+<li>Monogamy promotes survival?</li>
+</ul></li>
+</ul></li>
+<li>The morality of a species is whatever evolved behavior that promotes its survival.</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Evolutionary_ethics">https://en.wikipedia.org/wiki/Evolutionary_ethics</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Evolution_of_morality">https://en.wikipedia.org/wiki/Evolution_of_morality</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5fb0f7a" class="outline-3">
+<h3 id="org5fb0f7a"><span class="section-number-3">4.15</span> Refuting bullshit</h3>
+<div class="outline-text-3" id="text-4-15">
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Bullshit#Bullshit_asymmetry_principle">WP:Bullshit asymmetry principle</a>
+<ul class="org-ul">
+<li>"The amount of energy needed to refute bullshit is an order of magnitude bigger than to produce it."</li>
+<li>Does that mean it's easier to fight a bullshit with another bullshit?
+<ul class="org-ul">
+<li>Why don't we fight bullshit with bullshit?</li>
+<li>Why don't we fight false news with false news?</li>
+<li>Why don't we fight hoaxes with hoaxes?</li>
+<li>Why don't we fight propagandas with propagandas?</li>
+<li>If we fight lies with lies, everybody loses?</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org6deabb1" class="outline-3">
+<h3 id="org6deabb1"><span class="section-number-3">4.16</span> Teaching and learning</h3>
+<div class="outline-text-3" id="text-4-16">
+<ul class="org-ul">
+<li>How to teach history (or anything)
+<ul class="org-ul">
+<li>Don't memorize things that you can look up on the Internet.</li>
+<li>Focus on stories, insights, reasons, motivations.</li>
+<li>Empathize with the subjects.
+Why do they go to war?</li>
+</ul></li>
+<li>Learning languages, both human languages and programming languages
+<ul class="org-ul">
+<li>One learns a language by example sentences.
+One learns a programming language by example programs/snippets.
+<ul class="org-ul">
+<li>One does not learn a language by memorizing the syntax.</li>
+<li>One does not learn a language by memorizing the language reference document.</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org1ed65ba" class="outline-3">
+<h3 id="org1ed65ba"><span class="section-number-3">4.17</span> Brain? Biology?</h3>
+<div class="outline-text-3" id="text-4-17">
+<ul class="org-ul">
+<li>Does everyone have a fusiform gyrus? A prefrontal cortex?</li>
+<li><a href="https://www.youtube.com/watch?v=lyu7v7nWzfo">TED: Your brain hallucinates your conscious reality | Anil Seth</a></li>
+<li><a href="https://www.youtube.com/watch?v=SgOTaXhbqPQ">TED: What hallucination reveals about our minds | Oliver Sacks</a></li>
+<li>same video, different narrator
+<ul class="org-ul">
+<li><a href="https://www.youtube.com/watch?v=X_tYrnv_o6A">Veritasium: Your Amazing Molecular Machines</a></li>
+<li><a href="https://www.youtube.com/watch?v=WFCvkkDSfIU">Drew Berry: Animations of unseeable biology</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org2c95374" class="outline-3">
+<h3 id="org2c95374"><span class="section-number-3">4.18</span> TED?</h3>
+<div class="outline-text-3" id="text-4-18">
+<ul class="org-ul">
+<li><a href="https://www.youtube.com/watch?v=fxbCHn6gE3U">The surprising habits of original thinkers | Adam Grant</a></li>
+<li><a href="https://www.youtube.com/watch?v=YM-uykVfq_E">TED-Ed: What is entropy? - Jeff Phillips</a></li>
+<li><a href="https://www.youtube.com/watch?v=PRYmx7Lk9F0">This Quantum 'Sixth Sense' Could Allow Birds to Navigate Earth's Magnetic Field</a></li>
+<li><a href="https://www.youtube.com/watch?v=YnY0J_Z1TF4">The Earth Is Running Out of Sand and It Could Cause a Global Crisis</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org3674b50" class="outline-3">
+<h3 id="utilitarianism-is-questionable."><a id="org3674b50"></a><span class="section-number-3">4.19</span> Utilitarianism is questionable.</h3>
+<div class="outline-text-3" id="text-utilitarianism-is-questionable.">
+<ul class="org-ul">
+<li><a href="https://rationaloptimist.wordpress.com/2014/05/24/utilitarianism-is-killing-one-to-save-five-moral/">https://rationaloptimist.wordpress.com/2014/05/24/utilitarianism-is-killing-one-to-save-five-moral/</a></li>
+<li><a href="http://blog.practicalethics.ox.ac.uk/2014/11/why-i-am-not-a-utilitarian/">http://blog.practicalethics.ox.ac.uk/2014/11/why-i-am-not-a-utilitarian/</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org6b8d81c" class="outline-3">
+<h3 id="org6b8d81c"><span class="section-number-3">4.20</span> psychology? goals? systems?</h3>
+<div class="outline-text-3" id="text-4-20">
+<ul class="org-ul">
+<li><a href="https://jamesclear.com/goals-systems">Forget About Setting Goals. Focus on This Instead.</a>: focus on systems/processes instead of goals.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgb98062d" class="outline-3">
+<h3 id="orgb98062d"><span class="section-number-3">4.21</span> How to get research grants?</h3>
+<div class="outline-text-3" id="text-4-21">
+<ul class="org-ul">
+<li>What are the laws and rules?</li>
+<li>Who makes the decisions?</li>
+<li>How do you improve your chances?</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org810b9f9" class="outline-3">
+<h3 id="org810b9f9"><span class="section-number-3">4.22</span> What does an assistant professor do?</h3>
+<div class="outline-text-3" id="text-4-22">
+<p>
+According to <a href="https://recruit.ucsc.edu/apply/JPF00651">https://recruit.ucsc.edu/apply/JPF00651</a>:
+</p>
+<ul class="org-ul">
+<li>develop a research program</li>
+<li>advise graduate students in their research area</li>
+<li>obtain external funding</li>
+<li>develop and teach courses within the undergraduate and graduate curriculum</li>
+<li>perform university, public, and professional service</li>
+</ul>
+
+<p>
+That's a lot for one person to do.
+</p>
+</div>
+</div>
+<div id="outline-container-org82c80c8" class="outline-3">
+<h3 id="org82c80c8"><span class="section-number-3">4.23</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-02&gt; </span></span> Twitter is surprisingly good for computer science research?</h3>
+<div class="outline-text-3" id="text-4-23">
+<p>
+Example:
+</p>
+<ul class="org-ul">
+<li><a href="https://twitter.com/search?q=programming%20language%20research&amp;src=typd">https://twitter.com/search?q=programming language research&amp;src=typd</a></li>
 </ul>
 </div>
 </div>
