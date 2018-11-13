@@ -122,7 +122,13 @@ MathJax.Hub.Config({
     }
 });
   </script>
-  
+<style>
+/*
+PreviewHTML produces small Times New Roman text.
+PreviewHTML scale doesn't work.
+*/
+.MathJax_PHTML { font-size: 125%; }
+</style>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
   
 </head>
@@ -190,12 +196,13 @@ MathJax.Hub.Config({
 <li><a href="#org0f15940">1. Introduction</a></li>
 <li><a href="#org5e21590">2. Logic, language, ontology, and science</a></li>
 <li><a href="#orgeb4ddb0">3. Cause, causality, implication, and probability</a></li>
-<li><a href="#orgfdf8b7c">4. Modeling, with emphasis on computer science</a></li>
-<li><a href="#orgdefffcc">5. Computer science</a></li>
-<li><a href="#org086be6a">6. Knowledge, consciousness</a></li>
-<li><a href="#orgeee7242">7. Self, mind, brain, and volition</a></li>
-<li><a href="#orga9a65d3">8. What?</a></li>
-<li><a href="#orgfcb66f9">9. Implication (do not read; conversion errors)</a></li>
+<li><a href="#org77df826">4. Model and simplification</a></li>
+<li><a href="#orga393804">5. Formal logic</a></li>
+<li><a href="#orgdefffcc">6. Computer science</a></li>
+<li><a href="#org086be6a">7. Knowledge, consciousness</a></li>
+<li><a href="#orgeee7242">8. Self, mind, brain, and volition</a></li>
+<li><a href="#org5e141e5">9. What?</a></li>
+<li><a href="#orgfcb66f9">10. Implication (do not read; conversion errors)</a></li>
 </ul>
 </div>
 </div>
@@ -227,78 +234,87 @@ MathJax.Hub.Config({
 <li><a href="#org31191e7">3.5. Causation is not transitive.</a></li>
 <li><a href="#org10509e1">3.6. Causation increases conditional probability</a></li>
 <li><a href="#orga58337b">3.7. Suspecting causation from correlation of things that happen almost together</a></li>
-<li><a href="#org0870ddc">3.8. Counterfactual reasoning</a></li>
+<li><a href="#org50a3813">3.8. Counterfactual reasoning</a></li>
 <li><a href="#org68ece4c">3.9. Causal inference and causal modeling</a></li>
 <li><a href="#org9d6391a">3.10. Cause, luck, and randomness</a></li>
 </ul>
 </li>
-<li><a href="#orgfdf8b7c">4. Modeling, with emphasis on computer science</a>
+<li><a href="#org77df826">4. Model and simplification</a>
 <ul>
-<li><a href="#org4e5d92f">4.1. Theory, model, simplifying assumption; some examples</a></li>
-<li><a href="#org9e2b5c7">4.2. A model is &#x2026;</a></li>
-<li><a href="#org0bfda2d">4.3. Example of modeling</a></li>
-<li><a href="#org86b039a">4.4. Model and reality</a></li>
-<li><a href="#org130b9b2">4.5. Example of modeling; example of violating the simplifying assumptions</a></li>
-<li><a href="#orgb49dc73">4.6. Modeling: How does X model Y?</a></li>
-<li><a href="#orgef7b5ac">4.7. What is a "model" in English?</a></li>
-<li><a href="#orgedce5e8">4.8. Our "model" vs metamathematics model theory "model"</a></li>
-<li><a href="#orga5ef0b0">4.9. <span class="todo TODO">TODO</span> Questions we want to answer</a></li>
-<li><a href="#org32f1349">4.10. Measuring model quality: How well does X model Y?</a></li>
-<li><a href="#org53d8199">4.11. Model of model: multiple-level machine model</a></li>
+<li><a href="#org3be85de">4.1. Summary</a></li>
+<li><a href="#orgc183f86">4.2. The meaning of "model"</a></li>
+<li><a href="#org3c7ea63">4.3. Modeling is simplification.</a></li>
+<li><a href="#org235773a">4.4. Modeling by ignoring irrelevant information</a></li>
+<li><a href="#orga40e30a">4.5. How we model things</a></li>
+<li><a href="#org3ae38f1">4.6. Fundamental learning by falsifying simplifying assumptions</a></li>
+<li><a href="#org7fcea31">4.7. Generalizing the "model" in model theory?</a></li>
+<li><a href="#org82a0c2e">4.8. We model things because our thought is limited</a></li>
+<li><a href="#org9e2b5c7">4.9. A model is &#x2026;</a></li>
+<li><a href="#org86b039a">4.10. Model and reality</a></li>
+<li><a href="#orgb49dc73">4.11. Modeling: How does X model Y?</a></li>
+<li><a href="#org1e6e9c0">4.12. "Model theory" should be named "structure theory" instead</a></li>
+<li><a href="#orgedce5e8">4.13. Our "model" vs metamathematics model theory "model"</a></li>
+<li><a href="#orga5ef0b0">4.14. <span class="todo TODO">TODO</span> Questions we want to answer</a></li>
+<li><a href="#org32f1349">4.15. Measuring model quality: How well does X model Y?</a></li>
+<li><a href="#org53d8199">4.16. Model of model: multiple-level machine model</a></li>
+<li><a href="#org393130e">4.17. Complexity</a></li>
 </ul>
 </li>
-<li><a href="#orgdefffcc">5. Computer science</a>
+<li><a href="#orga393804">5. Formal logic</a></li>
+<li><a href="#orgdefffcc">6. Computer science</a>
 <ul>
-<li><a href="#orgfb5f15d">5.1. What does it mean for a machine to compute a real number?</a></li>
-<li><a href="#orgae25a91">5.2. Algorithm, machine, describability, computability</a></li>
-<li><a href="#org343e709">5.3. What it means for an algorithm to compute a function</a></li>
-<li><a href="#org6795741">5.4. Machine, algorithm, embodiment, computation</a></li>
-<li><a href="#org488ecec">5.5. What is software?</a></li>
-<li><a href="#orgd2e8e61">5.6. The dualistic nature of machines; the machine-program dualism; the hardware-software dualism</a></li>
-<li><a href="#org02c5d02">5.7. <span class="todo TODO">TODO</span> Move this somewhere else: Hierarchy of machines</a></li>
+<li><a href="#orgd22acf3">6.1. Tools, usage, and machine</a></li>
+<li><a href="#org4dd9d3e">6.2. Tools and machines</a></li>
+<li><a href="#orgfb5f15d">6.3. What does it mean for a machine to compute a real number?</a></li>
+<li><a href="#orgae25a91">6.4. Algorithm, machine, describability, computability</a></li>
+<li><a href="#org343e709">6.5. What it means for an algorithm to compute a function</a></li>
+<li><a href="#org6795741">6.6. Machine, algorithm, embodiment, computation</a></li>
+<li><a href="#org488ecec">6.7. What is software?</a></li>
+<li><a href="#orgd2e8e61">6.8. The dualistic nature of machines; the machine-program dualism; the hardware-software dualism</a></li>
+<li><a href="#org02c5d02">6.9. <span class="todo TODO">TODO</span> Move this somewhere else: Hierarchy of machines</a></li>
 </ul>
 </li>
-<li><a href="#org086be6a">6. Knowledge, consciousness</a>
+<li><a href="#org086be6a">7. Knowledge, consciousness</a>
 <ul>
-<li><a href="#org5286c98">6.1. We think we can share or transfer some knowledge.</a></li>
-<li><a href="#org6bb407f">6.2. Knowledge, software, copy, and move</a></li>
-<li><a href="#org70124b0">6.3. Old English, ken, wit, and knowledge</a></li>
-<li><a href="#orgd94b782">6.4. Consciousness is the ability to know.</a></li>
-<li><a href="#org4351f8f">6.5. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> Attention is the direction of consciousness?</a></li>
-<li><a href="#org5b26ca3">6.6. <span class="todo TODO">TODO</span> What is knowledge?</a></li>
+<li><a href="#org5286c98">7.1. We think we can share or transfer some knowledge.</a></li>
+<li><a href="#org6bb407f">7.2. Knowledge, software, copy, and move</a></li>
+<li><a href="#org70124b0">7.3. Old English, ken, wit, and knowledge</a></li>
+<li><a href="#orgd94b782">7.4. Consciousness is the ability to know.</a></li>
+<li><a href="#org4351f8f">7.5. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> Attention is the direction of consciousness?</a></li>
+<li><a href="#org5b26ca3">7.6. <span class="todo TODO">TODO</span> What is knowledge?</a></li>
 </ul>
 </li>
-<li><a href="#orgeee7242">7. Self, mind, brain, and volition</a>
+<li><a href="#orgeee7242">8. Self, mind, brain, and volition</a>
 <ul>
-<li><a href="#orgb399982">7.1. Conclusions</a></li>
-<li><a href="#orgc13c91c">7.2. Mind is what thinks thoughts.</a></li>
-<li><a href="#org16d07c3">7.3. Self is the extent of control.</a></li>
-<li><a href="#orge917e36">7.4. Volition, imagination, hallucination, illusion, delusion, and intrusive thoughts</a></li>
-<li><a href="#orgc578ab9">7.5. Self, mind, brain, volition</a></li>
+<li><a href="#orgb399982">8.1. Conclusions</a></li>
+<li><a href="#orgc13c91c">8.2. Mind is what thinks thoughts.</a></li>
+<li><a href="#org16d07c3">8.3. Self is the extent of control.</a></li>
+<li><a href="#orge917e36">8.4. Volition, imagination, hallucination, illusion, delusion, and intrusive thoughts</a></li>
+<li><a href="#orgc578ab9">8.5. Self, mind, brain, volition</a></li>
 </ul>
 </li>
-<li><a href="#orga9a65d3">8. What?</a>
+<li><a href="#org5e141e5">9. What?</a>
 <ul>
-<li><a href="#org8c03557">8.1. Objective reality</a></li>
-<li><a href="#orgd8aa84b">8.2. Solipsism unnecessarily assumes that one person's point of view is special.</a></li>
-<li><a href="#org23a2fbd">8.3. <span class="todo TODO">TODO</span> Delete this section? Maybe we don't have to define these terms.</a></li>
-<li><a href="#org013dca9">8.4. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-04&gt; </span></span> Summarize current research</a></li>
-<li><a href="#org81021d3">8.5. <span class="todo TODO">TODO</span> Tidy up these ramblings</a></li>
-<li><a href="#org3e1736f">8.6. <span class="todo TODO">TODO</span> What is the relationship between first-person view, consciousness, imagination, and reality?</a></li>
-<li><a href="#org04dccb5">8.7. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> If I can imagine something, does it exist?</a></li>
-<li><a href="#org61f0c53">8.8. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Imagination is not real, because saying otherwise bends words too much.</a></li>
-<li><a href="#org968f65c">8.9. Fact, judgment, and seeing things as is</a></li>
-<li><a href="#orgf3f8e51">8.10. List of unsolved problems in philosophy</a></li>
+<li><a href="#org8c03557">9.1. Objective reality</a></li>
+<li><a href="#orgd8aa84b">9.2. Solipsism unnecessarily assumes that one person's point of view is special.</a></li>
+<li><a href="#org23a2fbd">9.3. <span class="todo TODO">TODO</span> Delete this section? Maybe we don't have to define these terms.</a></li>
+<li><a href="#org013dca9">9.4. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-04&gt; </span></span> Summarize current research</a></li>
+<li><a href="#org81021d3">9.5. <span class="todo TODO">TODO</span> Tidy up these ramblings</a></li>
+<li><a href="#org3e1736f">9.6. <span class="todo TODO">TODO</span> What is the relationship between first-person view, consciousness, imagination, and reality?</a></li>
+<li><a href="#org04dccb5">9.7. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> If I can imagine something, does it exist?</a></li>
+<li><a href="#org61f0c53">9.8. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Imagination is not real, because saying otherwise bends words too much.</a></li>
+<li><a href="#org968f65c">9.9. Fact, judgment, and seeing things as is</a></li>
+<li><a href="#orgf3f8e51">9.10. List of unsolved problems in philosophy</a></li>
 </ul>
 </li>
-<li><a href="#orgfcb66f9">9. Implication (do not read; conversion errors)</a>
+<li><a href="#orgfcb66f9">10. Implication (do not read; conversion errors)</a>
 <ul>
-<li><a href="#org772628f">9.1. Abstract</a></li>
-<li><a href="#orgd1537c7">9.2. What does implication mean?</a></li>
-<li><a href="#org9835bf1">9.3. Implication system</a></li>
-<li><a href="#org6f17c3c">9.4. Induction</a></li>
-<li><a href="#orgd5e438d">9.5. Conditionals</a></li>
-<li><a href="#org2b71dba">9.6. The axioms</a></li>
+<li><a href="#org772628f">10.1. Abstract</a></li>
+<li><a href="#orgd1537c7">10.2. What does implication mean?</a></li>
+<li><a href="#org9835bf1">10.3. Implication system</a></li>
+<li><a href="#org6f17c3c">10.4. Induction</a></li>
+<li><a href="#orgd5e438d">10.5. Conditionals</a></li>
+<li><a href="#org2b71dba">10.6. The axioms</a></li>
 </ul>
 </li>
 </ul>
@@ -356,181 +372,196 @@ MathJax.Hub.Config({
 <li><a href="#org31191e7">3.5. Causation is not transitive.</a></li>
 <li><a href="#org10509e1">3.6. Causation increases conditional probability</a></li>
 <li><a href="#orga58337b">3.7. Suspecting causation from correlation of things that happen almost together</a></li>
-<li><a href="#org0870ddc">3.8. Counterfactual reasoning</a></li>
+<li><a href="#org50a3813">3.8. Counterfactual reasoning</a></li>
 <li><a href="#org68ece4c">3.9. Causal inference and causal modeling</a>
 <ul>
-<li><a href="#orgf7c03c1">3.9.1. Unread</a></li>
+<li><a href="#orgb8b66d2">3.9.1. Unread</a></li>
 </ul>
 </li>
 <li><a href="#org9d6391a">3.10. Cause, luck, and randomness</a></li>
 </ul>
 </li>
-<li><a href="#orgfdf8b7c">4. Modeling, with emphasis on computer science</a>
+<li><a href="#org77df826">4. Model and simplification</a>
 <ul>
-<li><a href="#org4e5d92f">4.1. Theory, model, simplifying assumption; some examples</a></li>
-<li><a href="#org9e2b5c7">4.2. A model is &#x2026;</a></li>
-<li><a href="#org0bfda2d">4.3. Example of modeling</a></li>
-<li><a href="#org86b039a">4.4. Model and reality</a></li>
-<li><a href="#org130b9b2">4.5. Example of modeling; example of violating the simplifying assumptions</a></li>
-<li><a href="#orgb49dc73">4.6. Modeling: How does X model Y?</a></li>
-<li><a href="#orgef7b5ac">4.7. What is a "model" in English?</a>
+<li><a href="#org3be85de">4.1. Summary</a></li>
+<li><a href="#orgc183f86">4.2. The meaning of "model"</a>
 <ul>
-<li><a href="#orgb872dae">4.7.1. Defining "model" generally</a></li>
+<li><a href="#org5abb6b8">4.2.1. History of the English word "model"</a></li>
+<li><a href="#orgf60cc08">4.2.2. The meanings of "model" in 2018</a></li>
 </ul>
 </li>
-<li><a href="#orgedce5e8">4.8. Our "model" vs metamathematics model theory "model"</a></li>
-<li><a href="#orga5ef0b0">4.9. <span class="todo TODO">TODO</span> Questions we want to answer</a></li>
-<li><a href="#org32f1349">4.10. Measuring model quality: How well does X model Y?</a></li>
-<li><a href="#org53d8199">4.11. Model of model: multiple-level machine model</a></li>
+<li><a href="#org3c7ea63">4.3. Modeling is simplification.</a></li>
+<li><a href="#org235773a">4.4. Modeling by ignoring irrelevant information</a></li>
+<li><a href="#orga40e30a">4.5. How we model things</a>
+<ul>
+<li><a href="#org9c0e470">4.5.1. Modeling by partial evaluation (grounding of variables)</a></li>
+<li><a href="#org4a63318">4.5.2. <span class="todo TODO">TODO</span> Capturing function?</a></li>
 </ul>
 </li>
-<li><a href="#orgdefffcc">5. Computer science</a>
-<ul>
-<li><a href="#orgfb5f15d">5.1. What does it mean for a machine to compute a real number?</a></li>
-<li><a href="#orgae25a91">5.2. Algorithm, machine, describability, computability</a></li>
-<li><a href="#org343e709">5.3. What it means for an algorithm to compute a function</a></li>
-<li><a href="#org6795741">5.4. Machine, algorithm, embodiment, computation</a></li>
-<li><a href="#org488ecec">5.5. What is software?</a></li>
-<li><a href="#orgd2e8e61">5.6. The dualistic nature of machines; the machine-program dualism; the hardware-software dualism</a></li>
-<li><a href="#org02c5d02">5.7. <span class="todo TODO">TODO</span> Move this somewhere else: Hierarchy of machines</a></li>
+<li><a href="#org3ae38f1">4.6. Fundamental learning by falsifying simplifying assumptions</a></li>
+<li><a href="#org7fcea31">4.7. Generalizing the "model" in model theory?</a></li>
+<li><a href="#org82a0c2e">4.8. We model things because our thought is limited</a></li>
+<li><a href="#org9e2b5c7">4.9. A model is &#x2026;</a></li>
+<li><a href="#org86b039a">4.10. Model and reality</a></li>
+<li><a href="#orgb49dc73">4.11. Modeling: How does X model Y?</a></li>
+<li><a href="#org1e6e9c0">4.12. "Model theory" should be named "structure theory" instead</a></li>
+<li><a href="#orgedce5e8">4.13. Our "model" vs metamathematics model theory "model"</a></li>
+<li><a href="#orga5ef0b0">4.14. <span class="todo TODO">TODO</span> Questions we want to answer</a></li>
+<li><a href="#org32f1349">4.15. Measuring model quality: How well does X model Y?</a></li>
+<li><a href="#org53d8199">4.16. Model of model: multiple-level machine model</a></li>
+<li><a href="#org393130e">4.17. Complexity</a></li>
 </ul>
 </li>
-<li><a href="#org086be6a">6. Knowledge, consciousness</a>
+<li><a href="#orga393804">5. Formal logic</a></li>
+<li><a href="#orgdefffcc">6. Computer science</a>
 <ul>
-<li><a href="#org5286c98">6.1. We think we can share or transfer some knowledge.</a></li>
-<li><a href="#org6bb407f">6.2. Knowledge, software, copy, and move</a></li>
-<li><a href="#org70124b0">6.3. Old English, ken, wit, and knowledge</a></li>
-<li><a href="#orgd94b782">6.4. Consciousness is the ability to know.</a>
-<ul>
-<li><a href="#orgd3a99f3">6.4.1. Defining consciousness requires epistemology.</a></li>
-<li><a href="#org7b0038d">6.4.2. How do we measure consciousness (ability to know)?</a></li>
-<li><a href="#org6575670">6.4.3. Hypothesis: Consciousness requires sense, memory, and feedback.</a></li>
+<li><a href="#orgd22acf3">6.1. Tools, usage, and machine</a></li>
+<li><a href="#org4dd9d3e">6.2. Tools and machines</a></li>
+<li><a href="#orgfb5f15d">6.3. What does it mean for a machine to compute a real number?</a></li>
+<li><a href="#orgae25a91">6.4. Algorithm, machine, describability, computability</a></li>
+<li><a href="#org343e709">6.5. What it means for an algorithm to compute a function</a></li>
+<li><a href="#org6795741">6.6. Machine, algorithm, embodiment, computation</a></li>
+<li><a href="#org488ecec">6.7. What is software?</a></li>
+<li><a href="#orgd2e8e61">6.8. The dualistic nature of machines; the machine-program dualism; the hardware-software dualism</a></li>
+<li><a href="#org02c5d02">6.9. <span class="todo TODO">TODO</span> Move this somewhere else: Hierarchy of machines</a></li>
 </ul>
 </li>
-<li><a href="#org4351f8f">6.5. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> Attention is the direction of consciousness?</a></li>
-<li><a href="#org5b26ca3">6.6. <span class="todo TODO">TODO</span> What is knowledge?</a>
+<li><a href="#org086be6a">7. Knowledge, consciousness</a>
 <ul>
-<li><a href="#org3e64d13">6.6.1. Plato JTB theory: Knowledge is Justified True Belief.</a></li>
-<li><a href="#org5dae8b0">6.6.2. How do we know? Ways of obtaining and justifying knowledge</a></li>
-<li><a href="#orgcc05263">6.6.3. <span class="todo TODO">TODO</span> What does it mean to know something?</a></li>
-<li><a href="#orgaed5c00">6.6.4. <span class="todo TODO">TODO</span> Knowledge justification dilemma</a></li>
-<li><a href="#org46cf753">6.6.5. <span class="todo TODO">TODO</span> What is the difference between knowledge and belief?</a></li>
-<li><a href="#org1109e9f">6.6.6. <span class="todo TODO">TODO</span> We can imagine some things we have never experienced.</a></li>
-<li><a href="#org2569f7f">6.6.7. <span class="todo TODO">TODO</span> Can we imagine a color we have never seen?</a></li>
-<li><a href="#orgb5ddf2a">6.6.8. <span class="todo TODO">TODO</span> What do we <i>believe</i> about our <i>imagination</i>?</a></li>
-<li><a href="#org51a6809">6.6.9. Knowledge argument, Mary's room: Argument against physicalism</a></li>
+<li><a href="#org5286c98">7.1. We think we can share or transfer some knowledge.</a></li>
+<li><a href="#org6bb407f">7.2. Knowledge, software, copy, and move</a></li>
+<li><a href="#org70124b0">7.3. Old English, ken, wit, and knowledge</a></li>
+<li><a href="#orgd94b782">7.4. Consciousness is the ability to know.</a>
+<ul>
+<li><a href="#orgd3a99f3">7.4.1. Defining consciousness requires epistemology.</a></li>
+<li><a href="#org7b0038d">7.4.2. How do we measure consciousness (ability to know)?</a></li>
+<li><a href="#org6575670">7.4.3. Hypothesis: Consciousness requires sense, memory, and feedback.</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a href="#orgeee7242">7. Self, mind, brain, and volition</a>
+<li><a href="#org4351f8f">7.5. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> Attention is the direction of consciousness?</a></li>
+<li><a href="#org5b26ca3">7.6. <span class="todo TODO">TODO</span> What is knowledge?</a>
 <ul>
-<li><a href="#orgb399982">7.1. Conclusions</a></li>
-<li><a href="#orgc13c91c">7.2. Mind is what thinks thoughts.</a></li>
-<li><a href="#org16d07c3">7.3. Self is the extent of control.</a>
-<ul>
-<li><a href="#orgc0c79f5">7.3.1. Supports</a></li>
-<li><a href="#org1f04fc2">7.3.2. Possibly objectionable consequences</a></li>
-<li><a href="#org2359624">7.3.3. Self-control?</a></li>
-<li><a href="#org862f584">7.3.4. Further questions</a></li>
-<li><a href="#org707b96a">7.3.5. Set-theoretic definition of self</a></li>
-<li><a href="#org939e989">7.3.6. <span class="todo TODO">TODO</span> What is the relationship between control, causality, agency, subject, and subjective experience?</a></li>
-<li><a href="#org9f5cf5c">7.3.7. <span class="todo TODO">TODO</span> For us to determine the size of the self of a system, some its output must <i>feed back</i> into some of its input, so that we can distinguish what it can control and what it can't.</a></li>
-<li><a href="#orgfe70b34">7.3.8. <span class="todo TODO">TODO</span> Our definition of "self" generalizes its dictionary meaning.</a></li>
-</ul>
-</li>
-<li><a href="#orge917e36">7.4. Volition, imagination, hallucination, illusion, delusion, and intrusive thoughts</a>
-<ul>
-<li><a href="#orgf40bd85">7.4.1. <span class="todo TODO">TODO</span> Is intrusive thoughts voluntary?</a></li>
-</ul>
-</li>
-<li><a href="#orgc578ab9">7.5. Self, mind, brain, volition</a>
-<ul>
-<li><a href="#org31fa17e">7.5.1. Autonomous nervous system is not part of mind</a></li>
-<li><a href="#org54f8d96">7.5.2. <span class="todo TODO">TODO</span> Drafts</a></li>
+<li><a href="#org3e64d13">7.6.1. Plato JTB theory: Knowledge is Justified True Belief.</a></li>
+<li><a href="#org5dae8b0">7.6.2. How do we know? Ways of obtaining and justifying knowledge</a></li>
+<li><a href="#orgcc05263">7.6.3. <span class="todo TODO">TODO</span> What does it mean to know something?</a></li>
+<li><a href="#orgaed5c00">7.6.4. <span class="todo TODO">TODO</span> Knowledge justification dilemma</a></li>
+<li><a href="#org46cf753">7.6.5. <span class="todo TODO">TODO</span> What is the difference between knowledge and belief?</a></li>
+<li><a href="#org1109e9f">7.6.6. <span class="todo TODO">TODO</span> We can imagine some things we have never experienced.</a></li>
+<li><a href="#org2569f7f">7.6.7. <span class="todo TODO">TODO</span> Can we imagine a color we have never seen?</a></li>
+<li><a href="#orgb5ddf2a">7.6.8. <span class="todo TODO">TODO</span> What do we <i>believe</i> about our <i>imagination</i>?</a></li>
+<li><a href="#org51a6809">7.6.9. Knowledge argument, Mary's room: Argument against physicalism</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orga9a65d3">8. What?</a>
+<li><a href="#orgeee7242">8. Self, mind, brain, and volition</a>
 <ul>
-<li><a href="#org8c03557">8.1. Objective reality</a>
+<li><a href="#orgb399982">8.1. Conclusions</a></li>
+<li><a href="#orgc13c91c">8.2. Mind is what thinks thoughts.</a></li>
+<li><a href="#org16d07c3">8.3. Self is the extent of control.</a>
 <ul>
-<li><a href="#org8d990e3">8.1.1. My inability to manipulate everything implies the existence of reality outside my mind</a></li>
-<li><a href="#org108d036">8.1.2. Is "objective reality" redundant? How does "objective reality" differ from "reality"?</a></li>
-<li><a href="#org3f30b38">8.1.3. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Example difference between statements about objective reality and statements of subjective reality</a></li>
-<li><a href="#org377416e">8.1.4. <span class="todo TODO">TODO</span> A thing is <b>real</b> iff &#x2026;</a></li>
-<li><a href="#org7a610f1">8.1.5. <span class="todo TODO">TODO</span> We can know <i>some</i> of objective reality.</a></li>
+<li><a href="#orgc0c79f5">8.3.1. Supports</a></li>
+<li><a href="#org1f04fc2">8.3.2. Possibly objectionable consequences</a></li>
+<li><a href="#org2359624">8.3.3. Self-control?</a></li>
+<li><a href="#org862f584">8.3.4. Further questions</a></li>
+<li><a href="#org707b96a">8.3.5. Set-theoretic definition of self</a></li>
+<li><a href="#org939e989">8.3.6. <span class="todo TODO">TODO</span> What is the relationship between control, causality, agency, subject, and subjective experience?</a></li>
+<li><a href="#org9f5cf5c">8.3.7. <span class="todo TODO">TODO</span> For us to determine the size of the self of a system, some its output must <i>feed back</i> into some of its input, so that we can distinguish what it can control and what it can't.</a></li>
+<li><a href="#orgfe70b34">8.3.8. <span class="todo TODO">TODO</span> Our definition of "self" generalizes its dictionary meaning.</a></li>
 </ul>
 </li>
-<li><a href="#orgd8aa84b">8.2. Solipsism unnecessarily assumes that one person's point of view is special.</a></li>
-<li><a href="#org23a2fbd">8.3. <span class="todo TODO">TODO</span> Delete this section? Maybe we don't have to define these terms.</a>
+<li><a href="#orge917e36">8.4. Volition, imagination, hallucination, illusion, delusion, and intrusive thoughts</a>
 <ul>
-<li><a href="#orgb6c5ec2">8.3.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> A system is a <i>reflex</i> system iff it is <i>memoryless</i>.</a></li>
+<li><a href="#orgf40bd85">8.4.1. <span class="todo TODO">TODO</span> Is intrusive thoughts voluntary?</a></li>
 </ul>
 </li>
-<li><a href="#org013dca9">8.4. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-04&gt; </span></span> Summarize current research</a>
+<li><a href="#orgc578ab9">8.5. Self, mind, brain, volition</a>
 <ul>
-<li><a href="#org9f2fb28">8.4.1. Neuropsychology</a></li>
-<li><a href="#org72c09da">8.4.2. Popular science</a></li>
-<li><a href="#org6bade35">8.4.3. Nonlocality</a></li>
-<li><a href="#org44a77ba">8.4.4. Experiments that support physicalism/materialism/reductionism/monism: reconstructing brain input from brain activity</a></li>
-<li><a href="#org94c81bc">8.4.5. <span class="todo TODO">TODO</span> Summarize Wikipedia</a></li>
+<li><a href="#org31fa17e">8.5.1. Autonomous nervous system is not part of mind</a></li>
+<li><a href="#org54f8d96">8.5.2. <span class="todo TODO">TODO</span> Drafts</a></li>
 </ul>
 </li>
-<li><a href="#org81021d3">8.5. <span class="todo TODO">TODO</span> Tidy up these ramblings</a>
-<ul>
-<li><a href="#org4feb130">8.5.1. <span class="todo TODO">TODO</span> Intension (actual) vs extension (apparent)? What are we trying to say?</a></li>
-<li><a href="#orgaf1baf5">8.5.2. <span class="todo TODO">TODO</span> Problem with idealism? If reality is an illusion, why is it consistent?</a></li>
-<li><a href="#org35933c9">8.5.3. <span class="todo TODO">TODO</span> What is the relationship between my old self and my present self?</a></li>
-<li><a href="#org0a4123d">8.5.4. <span class="todo TODO">TODO</span> Are there scientific experiments? Search "consciousness experiments" on the Internet</a></li>
-<li><a href="#org98b0133">8.5.5. <span class="todo TODO">TODO</span> Blind protocol?</a></li>
-<li><a href="#org5795eb7">8.5.6. <span class="todo TODO">TODO</span> Materialism is false? What are these trying to say?</a></li>
-<li><a href="#orge0a91a2">8.5.7. Things I'm no longer interested in</a></li>
-<li><a href="#org234578c">8.5.8. <span class="todo TODO">TODO</span> Ruminations about control</a></li>
 </ul>
 </li>
-<li><a href="#org3e1736f">8.6. <span class="todo TODO">TODO</span> What is the relationship between first-person view, consciousness, imagination, and reality?</a></li>
-<li><a href="#org04dccb5">8.7. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> If I can imagine something, does it exist?</a></li>
-<li><a href="#org61f0c53">8.8. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Imagination is not real, because saying otherwise bends words too much.</a></li>
-<li><a href="#org968f65c">8.9. Fact, judgment, and seeing things as is</a></li>
-<li><a href="#orgf3f8e51">8.10. List of unsolved problems in philosophy</a></li>
+<li><a href="#org5e141e5">9. What?</a>
+<ul>
+<li><a href="#org8c03557">9.1. Objective reality</a>
+<ul>
+<li><a href="#org8d990e3">9.1.1. My inability to manipulate everything implies the existence of reality outside my mind</a></li>
+<li><a href="#org108d036">9.1.2. Is "objective reality" redundant? How does "objective reality" differ from "reality"?</a></li>
+<li><a href="#org3f30b38">9.1.3. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Example difference between statements about objective reality and statements of subjective reality</a></li>
+<li><a href="#org377416e">9.1.4. <span class="todo TODO">TODO</span> A thing is <b>real</b> iff &#x2026;</a></li>
+<li><a href="#org7a610f1">9.1.5. <span class="todo TODO">TODO</span> We can know <i>some</i> of objective reality.</a></li>
 </ul>
 </li>
-<li><a href="#orgfcb66f9">9. Implication (do not read; conversion errors)</a>
+<li><a href="#orgd8aa84b">9.2. Solipsism unnecessarily assumes that one person's point of view is special.</a></li>
+<li><a href="#org23a2fbd">9.3. <span class="todo TODO">TODO</span> Delete this section? Maybe we don't have to define these terms.</a>
 <ul>
-<li><a href="#org772628f">9.1. Abstract</a></li>
-<li><a href="#orgd1537c7">9.2. What does implication mean?</a>
-<ul>
-<li><a href="#org1db5142">9.2.1. Deriving the constraint</a></li>
-<li><a href="#org7769710">9.2.2. Algebra of metrics</a></li>
-<li><a href="#orge58d124">9.2.3. Consequent freedom functions</a></li>
-<li><a href="#org2cd4599">9.2.4. Principle of non-contradiction</a></li>
+<li><a href="#orgb6c5ec2">9.3.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> A system is a <i>reflex</i> system iff it is <i>memoryless</i>.</a></li>
 </ul>
 </li>
-<li><a href="#org9835bf1">9.3. Implication system</a>
+<li><a href="#org013dca9">9.4. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-04&gt; </span></span> Summarize current research</a>
 <ul>
-<li><a href="#org9ce2639">9.3.1. Definition of implication system</a></li>
-<li><a href="#org6607bb4">9.3.2. Known instances</a></li>
-<li><a href="#orgf7b44dd">9.3.3. Probability theory</a></li>
+<li><a href="#org9f2fb28">9.4.1. Neuropsychology</a></li>
+<li><a href="#org72c09da">9.4.2. Popular science</a></li>
+<li><a href="#org6bade35">9.4.3. Nonlocality</a></li>
+<li><a href="#org44a77ba">9.4.4. Experiments that support physicalism/materialism/reductionism/monism: reconstructing brain input from brain activity</a></li>
+<li><a href="#org94c81bc">9.4.5. <span class="todo TODO">TODO</span> Summarize Wikipedia</a></li>
 </ul>
 </li>
-<li><a href="#org6f17c3c">9.4. Induction</a>
+<li><a href="#org81021d3">9.5. <span class="todo TODO">TODO</span> Tidy up these ramblings</a>
 <ul>
-<li><a href="#org5e50fb2">9.4.1. Justifying induction with probability theory</a></li>
+<li><a href="#org4feb130">9.5.1. <span class="todo TODO">TODO</span> Intension (actual) vs extension (apparent)? What are we trying to say?</a></li>
+<li><a href="#orgaf1baf5">9.5.2. <span class="todo TODO">TODO</span> Problem with idealism? If reality is an illusion, why is it consistent?</a></li>
+<li><a href="#org35933c9">9.5.3. <span class="todo TODO">TODO</span> What is the relationship between my old self and my present self?</a></li>
+<li><a href="#org0a4123d">9.5.4. <span class="todo TODO">TODO</span> Are there scientific experiments? Search "consciousness experiments" on the Internet</a></li>
+<li><a href="#org98b0133">9.5.5. <span class="todo TODO">TODO</span> Blind protocol?</a></li>
+<li><a href="#org5795eb7">9.5.6. <span class="todo TODO">TODO</span> Materialism is false? What are these trying to say?</a></li>
+<li><a href="#orge0a91a2">9.5.7. Things I'm no longer interested in</a></li>
+<li><a href="#org234578c">9.5.8. <span class="todo TODO">TODO</span> Ruminations about control</a></li>
 </ul>
 </li>
-<li><a href="#orgd5e438d">9.5. Conditionals</a>
-<ul>
-<li><a href="#orgb881e4c">9.5.1. Types of conditionals according to logic, philosophy, and linguistics</a></li>
-<li><a href="#orgb09aa66">9.5.2. Eight types of conditionals by the truth values of the parts</a></li>
+<li><a href="#org3e1736f">9.6. <span class="todo TODO">TODO</span> What is the relationship between first-person view, consciousness, imagination, and reality?</a></li>
+<li><a href="#org04dccb5">9.7. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> If I can imagine something, does it exist?</a></li>
+<li><a href="#org61f0c53">9.8. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Imagination is not real, because saying otherwise bends words too much.</a></li>
+<li><a href="#org968f65c">9.9. Fact, judgment, and seeing things as is</a></li>
+<li><a href="#orgf3f8e51">9.10. List of unsolved problems in philosophy</a></li>
 </ul>
 </li>
-<li><a href="#org2b71dba">9.6. The axioms</a>
+<li><a href="#orgfcb66f9">10. Implication (do not read; conversion errors)</a>
 <ul>
-<li><a href="#orgdf3e777">9.6.1. Equations</a></li>
-<li><a href="#org4edb9dd">9.6.2. Tautologies</a></li>
-<li><a href="#org4426911">9.6.3. Inequalities</a></li>
+<li><a href="#org772628f">10.1. Abstract</a></li>
+<li><a href="#orgd1537c7">10.2. What does implication mean?</a>
+<ul>
+<li><a href="#org1db5142">10.2.1. Deriving the constraint</a></li>
+<li><a href="#org7769710">10.2.2. Algebra of metrics</a></li>
+<li><a href="#orge58d124">10.2.3. Consequent freedom functions</a></li>
+<li><a href="#org2cd4599">10.2.4. Principle of non-contradiction</a></li>
+</ul>
+</li>
+<li><a href="#org9835bf1">10.3. Implication system</a>
+<ul>
+<li><a href="#org9ce2639">10.3.1. Definition of implication system</a></li>
+<li><a href="#org6607bb4">10.3.2. Known instances</a></li>
+<li><a href="#orgf7b44dd">10.3.3. Probability theory</a></li>
+</ul>
+</li>
+<li><a href="#org6f17c3c">10.4. Induction</a>
+<ul>
+<li><a href="#org5e50fb2">10.4.1. Justifying induction with probability theory</a></li>
+</ul>
+</li>
+<li><a href="#orgd5e438d">10.5. Conditionals</a>
+<ul>
+<li><a href="#orgb881e4c">10.5.1. Types of conditionals according to logic, philosophy, and linguistics</a></li>
+<li><a href="#orgb09aa66">10.5.2. Eight types of conditionals by the truth values of the parts</a></li>
+</ul>
+</li>
+<li><a href="#org2b71dba">10.6. The axioms</a>
+<ul>
+<li><a href="#orgdf3e777">10.6.1. Equations</a></li>
+<li><a href="#org4edb9dd">10.6.2. Tautologies</a></li>
+<li><a href="#org4426911">10.6.3. Inequalities</a></li>
 </ul>
 </li>
 </ul>
@@ -665,7 +696,7 @@ But <i>can</i> doesn't mean <i>should</i>.
 People sometimes say "can't" when they mean they don't know how.
 Example:
 "I can't start the car."
-Of course he <i>can</i>; there is a satisfying action: Fix the car, turn the key, and so on.
+Of course he <i>can</i>; there is a satisfying action: Repair the car, turn the key, and so on.
 But he doesn't <i>know</i> how.
 He should say "I don't know how I can start the car" or "The car isn't starting."
 That satisfying action <i>exists</i> regardless of whether he knows it.
@@ -1339,8 +1370,8 @@ Can a Hebbian learner learn causality?
 </p>
 </div>
 </div>
-<div id="outline-container-org0870ddc" class="outline-3">
-<h3 id="org0870ddc"><span class="section-number-3">3.8</span> Counterfactual reasoning</h3>
+<div id="outline-container-org50a3813" class="outline-3">
+<h3 id="org50a3813"><span class="section-number-3">3.8</span> Counterfactual reasoning</h3>
 <div class="outline-text-3" id="text-3-8">
 <p>
 <i>We justify some counterfactuals by frequentist probability.</i>
@@ -1412,12 +1443,12 @@ Other resources:
 <li>Causal modeling philosophy paper aggregator <a href="https://philpapers.org/browse/causal-modeling">https://philpapers.org/browse/causal-modeling</a></li>
 </ul>
 </div>
-<div id="outline-container-orgf7c03c1" class="outline-4">
-<h4 id="orgf7c03c1"><span class="section-number-4">3.9.1</span> Unread</h4>
+<div id="outline-container-orgb8b66d2" class="outline-4">
+<h4 id="orgb8b66d2"><span class="section-number-4">3.9.1</span> Unread</h4>
 <div class="outline-text-4" id="text-3-9-1">
 </div>
 <ol class="org-ol">
-<li><a id="org29f1000"></a>Counterfactual reasoning<br />
+<li><a id="org265bea7"></a>Counterfactual reasoning<br />
 <div class="outline-text-5" id="text-3-9-1-1">
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/Counterfactual_conditional">WP:Counterfactual conditional</a></li>
@@ -1444,65 +1475,261 @@ Other resources:
 </div>
 </div>
 </div>
-<div id="outline-container-orgfdf8b7c" class="outline-2">
-<h2 id="orgfdf8b7c"><span class="section-number-2">4</span> Modeling, with emphasis on computer science</h2>
+<div id="outline-container-org77df826" class="outline-2">
+<h2 id="org77df826"><span class="section-number-2">4</span> Model and simplification</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-org4e5d92f" class="outline-3">
-<h3 id="org4e5d92f"><span class="section-number-3">4.1</span> Theory, model, simplifying assumption; some examples</h3>
+<div id="outline-container-org3be85de" class="outline-3">
+<h3 id="org3be85de"><span class="section-number-3">4.1</span> Summary</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
-Examples:
-</p>
-<ul class="org-ul">
-<li>The theory \(q \to r\) <i>models</i> the theory \((p\wedge q) \to r\) with the <i>simplifying assumption</i> that \(p\) is true.</li>
-<li>The theory \(e^x \approx 1 + x + x^2/2\) <i>models</i> the theory \(e^x = \sum_{k=0}^\infty x^k/k!\) with the <i>simplifying assumption</i> that \(x\) is near zero.</li>
-<li>The theory "if I strike the match then it will burn" is a causal <i>model</i> of how striking matches work in reality,
-with the <i>simplifying assumptions</i> that all matches are dry (and many other implicit simplifying assumptions we take for granted).</li>
-</ul>
-
-<p>
-We model a thing by making simplifying assumptions on that thing.
-We choose which aspects to care about.
-We ignore all other aspects.
-Thus a model of something is a <i>simplification</i> of that thing.
+A <i>model</i> of a thing is a <i>simplification</i> of that thing.
 </p>
 
 <p>
-An example of how to model is partial evaluation (fixing of variables).
-In this case, the model X is obtained from the modeled Y by partially evaluating Y, that is, by assuming the constancy of some variables in Y.
+A model always comes with <i>simplifying assumptions</i>.
 </p>
 
 <p>
-We judge models by their usefulness, not by their correctness.
+Violating the simplifying assumptions leads to nonsense.
 </p>
 
 <p>
-Questions:
+Related concepts: simplification, ignoration, truncation, approximation.
 </p>
-<ul class="org-ul">
-<li>If our perception models reality, then what are the simplifying assumptions?</li>
-</ul>
 </div>
 </div>
-<div id="outline-container-org9e2b5c7" class="outline-3">
-<h3 id="org9e2b5c7"><span class="section-number-3">4.2</span> A model is &#x2026;</h3>
+<div id="outline-container-orgc183f86" class="outline-3">
+<h3 id="orgc183f86"><span class="section-number-3">4.2</span> The meaning of "model"</h3>
 <div class="outline-text-3" id="text-4-2">
+</div>
+<div id="outline-container-org5abb6b8" class="outline-4">
+<h4 id="org5abb6b8"><span class="section-number-4">4.2.1</span> History of the English word "model"</h4>
+<div class="outline-text-4" id="text-4-2-1">
 <p>
-A model is &#x2026; resemblance, replica, downscaling, simplification?
-We say "X models Y" iff X resembles Y, iff X behaves like Y, iff X is a simplification of Y, iff X and Y have something in common but X is simpler than Y?
-A model of X is a simplified representation of X.
-A model is a simplified description of reality?
-A description of reality is not reality.
-If reality and theory disagree, then reality wins and theory must change.
+In the 15th century, a model is a small woodwork crafted with the same proportions of a building that is going to be built.
+Thus a model has the same shape of the building but is much smaller.
+For example, if the building has a stone wall, then the model has a wooden card.
+</p>
+
+<p>
+The English word "model" comes from Latin "modellus" that is diminutive of "modulus" that is diminutive of "modus".
+The Latin "modus" means "measure", and "modulus" is small "modus", and "modellus" is small "modulus";
+thus "modellus" should mean "a small small measure".
+</p>
+
+<p>
+Sources:
+</p>
+<ul class="org-ul">
+<li>Dictionaries and thesauruses
+<ul class="org-ul">
+<li>Oxford English Dictionary: "model" comes from "Late 16th century (denoting a set of plans of a building) [&#x2026;]".
+<a href="https://en.oxforddictionaries.com/definition/model">https://en.oxforddictionaries.com/definition/model</a></li>
+<li>Historical Thesaurus of English (ht.ac.uk):
+The noun "model" was used in 1575 to mean "plans of construction".
+and the verb "model" was used in 1604 to mean "represent".
+<a href="https://ht.ac.uk/category-selection/?word=model&amp;page=1&amp;categoryMinis=on&amp;categorySort=tier">https://ht.ac.uk/category-selection/?word=model&amp;page=1&amp;categoryMinis=on&amp;categorySort=tier</a></li>
+<li>The Online Etymology Dictionary traces the noun "model" back to the 1570s "likeness made to scale; architect's set of designs".
+It traces the verb "model" back to a word in 1660s meaning "fashion in clay or wax".
+<a href="https://www.etymonline.com/word/model">https://www.etymonline.com/word/model</a></li>
+<li>Princeton WordNet 3.1
+<a href="http://wordnetweb.princeton.edu/perl/webwn?s=model&amp;sub=Search+WordNet&amp;o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;h=">http://wordnetweb.princeton.edu/perl/webwn?s=model&amp;sub=Search+WordNet&amp;o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;h=</a></li>
+<li>The Free Dictionary <a href="https://www.thefreedictionary.com/model">https://www.thefreedictionary.com/model</a></li>
+<li>Wiktionary <a href="https://en.wiktionary.org/wiki/model">https://en.wiktionary.org/wiki/model</a></li>
+<li>Also, the definition of "model oneself after" in Merriam-Webster dictionary
+<a href="https://www.merriam-webster.com/dictionary/model%20oneself%20after">https://www.merriam-webster.com/dictionary/model oneself after</a></li>
+</ul></li>
+<li>Images
+<ul class="org-ul">
+<li>15th century wooden architectural model of Florence Cathedral Dome by Filippo Brunelleschi
+<a href="https://www.architectural-review.com/essays/architects-do-it-with-models-the-history-of-architecture-in-16-models/8658964.article">https://www.architectural-review.com/essays/architects-do-it-with-models-the-history-of-architecture-in-16-models/8658964.article</a></li>
+</ul></li>
+<li>Essays
+<ul class="org-ul">
+<li>Wilfrid Hodges's history of the word "model" in "model theory", in the Stanford Encyclopedia of Philosophy
+<a href="https://plato.stanford.edu/entries/model-theory/#Modelling">https://plato.stanford.edu/entries/model-theory/#Modelling</a></li>
+<li>Gene Bellinger's definition: "a simplification of reality intended to promote understanding"
+<a href="http://www.systems-thinking.org/simulation/model.htm">http://www.systems-thinking.org/simulation/model.htm</a></li>
+<li>2009 Emily Griffiths article "What is a model?"
+<ul class="org-ul">
+<li>various types of models: conceptual models, in vivo (in life) models, in vitro (in glass) models, in silico (in silicon, that is, computer) models</li>
+<li>"Certainly all models are simplifications"</li>
+<li>"[models] bear some likeness to the real world and are constructed to reflect certain parts that are essential for the job in hand"</li>
+<li><a href="https://sites.google.com/a/ncsu.edu/emily-griffiths/publications/general-articles">https://sites.google.com/a/ncsu.edu/emily-griffiths/publications/general-articles</a></li>
+<li><a href="https://sites.google.com/a/ncsu.edu/emily-griffiths/whatisamodel.pdf?attredirects=0">https://sites.google.com/a/ncsu.edu/emily-griffiths/whatisamodel.pdf?attredirects=0</a></li>
+<li><a href="https://web.archive.org/web/20120312220527/http://www.emily-griffiths.postgrad.shef.ac.uk/models.pdf">https://web.archive.org/web/20120312220527/http://www.emily-griffiths.postgrad.shef.ac.uk/models.pdf</a></li>
+</ul></li>
+</ul></li>
+<li>Forums
+<ul class="org-ul">
+<li>I asked this on History of Science and Mathematics StackOverflow.
+<a href="https://hsm.stackexchange.com/questions/7948/what-motivated-the-choice-of-the-word-model-in-model-theory/7953#7953">https://hsm.stackexchange.com/questions/7948/what-motivated-the-choice-of-the-word-model-in-model-theory/7953#7953</a></li>
+</ul></li>
+<li>Automated question-answering systems
+<ul class="org-ul">
+<li><a href="https://books.google.com/talktobooks/query?q=What%20is%20a%20model?">What is a model? - Google Talk to Books</a></li>
+</ul></li>
+<li>Encyclopedias
+<ul class="org-ul">
+<li>Wikipedia article <a href="https://en.wikipedia.org/wiki/Model">Model</a>, and pages linked from there, such as
+<a href="https://en.wikipedia.org/wiki/Architectural_model">Architectural model</a>,
+<a href="https://en.wikipedia.org/wiki/Physical_model">Physical model</a>,
+Also, by text search: <a href="https://en.wikipedia.org/wiki/Role_model">Role model</a>.</li>
+<li><a href="https://www.britannica.com/search?query=model">Encyclopaedia Britannica search result for "model"</a></li>
+<li><a href="https://www.encyclopedia.com/search?keys=model">encyclopedia.com search result for "model"</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgf60cc08" class="outline-4">
+<h4 id="orgf60cc08"><span class="section-number-4">4.2.2</span> The meanings of "model" in 2018</h4>
+<div class="outline-text-4" id="text-4-2-2">
+<p>
+How do we show that all these senses of "model" are essentially simplifications?
 </p>
 </div>
+<ol class="org-ol">
+<li><a id="org4dda623"></a>Concretization for transfer learning<br />
+<div class="outline-text-5" id="text-4-2-2-1">
+<p>
+For example, we study a <i>model organism</i> to understand other organisms.
+This suggests that a model is about <i>transfer learning</i>:
+knowledge about the model maps to knowledge about the modeled,
+as long as the knowledge is about aspects captured by the model.
+See also the <a href="https://en.wikipedia.org/wiki/Model_organism">Wikipedia article about model organism</a>.
+</p>
 </div>
-<div id="outline-container-org0bfda2d" class="outline-3">
-<h3 id="org0bfda2d"><span class="section-number-3">4.3</span> Example of modeling</h3>
+</li>
+<li><a id="orgd2efe60"></a>Abstraction, picking aspects, ignoring irrelevant details<br />
+<div class="outline-text-5" id="text-4-2-2-2">
+<ul class="org-ul">
+<li>A Newton equation system <i>models</i> a real physical system.</li>
+<li>A Newton equation system <i>is a model of</i> a real physical system.</li>
+<li>Quadratic equations <i>model</i> parabolic motions.</li>
+<li>The Lotka-Volterra equations can <i>model</i> the populations of lions and deers in a savanna.</li>
+</ul>
+
+<p>
+It is confusing that "model" can mean both concretion and abstraction, which are opposites.
+</p>
+</div>
+</li>
+<li><a id="orge3e2fba"></a>A resemblance that takes less effort to make than the real thing does<br />
+<div class="outline-text-5" id="text-4-2-2-3">
+<ul class="org-ul">
+<li>This <i>model</i> railroad is mostly made of plastic.</li>
+<li>This miniature <i>models</i> the 20-story building.</li>
+<li>This miniature <i>is a model of</i> the 20-story building.</li>
+<li>A stick figure is a <i>model</i> of a person/animal/being.</li>
+</ul>
+</div>
+</li>
+<li><a id="orgdf8c4cf"></a>Intentional resemblance<br />
+<div class="outline-text-5" id="text-4-2-2-4">
+<ul class="org-ul">
+<li>Some cartoon characters <i>are modeled after</i> real people.</li>
+<li>The Abraham Lincoln statue <i>was modeled after</i> Abraham Lincoln.
+(It means that the statue was intended to look like him.)</li>
+</ul>
+</div>
+</li>
+<li><a id="orgcc653fc"></a>Fashion model, photo model, actor<br />
+<div class="outline-text-5" id="text-4-2-2-5">
+<ul class="org-ul">
+<li>The <i>model</i> sits on the chair so that the painters can begin painting.</li>
+<li>The <i>model</i> wearing a fancy dress walks on the catwalk.</li>
+<li>The <i>model</i> is posing for the camera.</li>
+<li>His dog is <i>modeling</i> for a dog food advertisement.</li>
+</ul>
+</div>
+</li>
+<li><a id="org6b4c497"></a>What one strives to imitate<br />
+<div class="outline-text-5" id="text-4-2-2-6">
+<ul class="org-ul">
+<li>He is a <i>role model</i>.</li>
+<li>He is a <i>model</i> husband. He and his wife are much happier after their marriage.</li>
+</ul>
+</div>
+</li>
+<li><a id="orgdc87b8c"></a>Type, class, kind, variant, product line<br />
+<div class="outline-text-5" id="text-4-2-2-7">
+<ul class="org-ul">
+<li>Ford <i>Model</i> T and Tesla <i>Model</i> S are cars.</li>
+<li>This Honda car comes in two <i>models</i>: an automatic transmission <i>model</i> and a manual transmission <i>model</i>.</li>
+<li>Which <i>model</i> of this Toyota car do you want to buy: the gasoline engine <i>model</i> or the diesel engine <i>model</i>?</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org3c7ea63" class="outline-3">
+<h3 id="org3c7ea63"><span class="section-number-3">4.3</span> Modeling is simplification.</h3>
 <div class="outline-text-3" id="text-4-3">
 <p>
-"To model X" is to deliberately lose irrelevant information about X.
+Here we think of some examples where X is a model of Y.
+We discuss about (1) how X simplifies Y (the "manner of simplification"), (2) what the simplifying assumptions are,
+and (3) what nonsense happens when the assumptions are violated.
+</p>
+
+<p>
+The following paragraphs follow this pattern: "X models Y, by <i>(manner of simplification)</i>, assuming <i>(simplifying assumptions)</i>".
+</p>
+
+<p>
+The formula \(q \to r\) models the formula \((p\wedge q) \to r\), by grounding some variables, assuming that \(p\) is true.
+</p>
+
+<p>
+The formula \(e^x \approx 1 + x + x^2/2\) models the formula \(e^x = \sum_{k=0}^\infty x^k/k!\), by truncating the series, assuming that \(x\) is near zero.
+</p>
+
+<p>
+The statement "if I strike the match then it will burn" is a causal <i>model</i> of how striking matches work in reality, by picking a small part of the modeled,
+assuming that all matches are dry (and many other implicit simplifying assumptions we take for granted).
+</p>
+
+<p>
+A fashion model models the average person, by hasty generalization, assuming that the average person has similar body measurements.
+(Fallacies such as hasty generalization can be useful. Indeed a model is something <i>wrong but useful</i>.)
+Violating this assumption makes the clothes misfit.
+</p>
+
+<p>
+The tuple (john, 30 years old) models the tuple (john, 30 years old, black hair, brown eyes),
+by projection (as in the geometric projection of a solid to its shadow),
+assuming that the discarded aspects are irrelevant.
+Modeling is dimension reduction.
+Modeling is projection.
+</p>
+
+<p>
+If we violate a simplifying assumption, the model breaks down and gives nonsensical results.
+The name-age tuple (john, 10000 years old) models something nonexistent.
+We can insert such nonsensical data into the database, but what does such nonsensical data mean?
+We can substitute the mass variables in Newton's gravity equation with negative quantities, but what does it mean?
+</p>
+
+<p>
+Our perception models reality, assuming that we stay in the environment that evolution and natural selection led us to.
+We violate this assumption when we fly an aircraft.
+This violation may kill us.
+</p>
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Sensory_illusions_in_aviation">https://en.wikipedia.org/wiki/Sensory_illusions_in_aviation</a></li>
+<li><a href="https://www.scientificamerican.com/article/did-humans-evolve-to-see-things-as-they-really-are/">https://www.scientificamerican.com/article/did-humans-evolve-to-see-things-as-they-really-are/</a>
+<ul class="org-ul">
+<li>"Mimicry works only if there is an objective reality to mimic."</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org235773a" class="outline-3">
+<h3 id="org235773a"><span class="section-number-3">4.4</span> Modeling by ignoring irrelevant information</h3>
+<div class="outline-text-3" id="text-4-4">
+<p>
+"To model X" is to ignore the irrelevant aspects of X.
 </p>
 
 <p>
@@ -1514,7 +1741,7 @@ If reality and theory disagree, then reality wins and theory must change.
 </p>
 
 <p>
-Example of how model deliberately loses information.
+Example of how model ignores irrelevant aspects.
 Statics.
 Real physical systems in rest.
 Pick a coordinate system.
@@ -1522,171 +1749,36 @@ Center of mass of car.
 Change car color.
 The model is the same.
 The reality is different.
+The model ignores the irrelevant aspect that is the car's color.
 </p>
 </div>
 </div>
-<div id="outline-container-org86b039a" class="outline-3">
-<h3 id="org86b039a"><span class="section-number-3">4.4</span> Model and reality</h3>
-<div class="outline-text-3" id="text-4-4">
-<ul class="org-ul">
-<li>Some models model reality well.</li>
-<li>Some reality is modeled well.</li>
-<li>Some models are unrealistic.</li>
-<li>Some reality are unmodelable.</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org130b9b2" class="outline-3">
-<h3 id="org130b9b2"><span class="section-number-3">4.5</span> Example of modeling; example of violating the simplifying assumptions</h3>
+<div id="outline-container-orga40e30a" class="outline-3">
+<h3 id="orga40e30a"><span class="section-number-3">4.5</span> How we model things</h3>
 <div class="outline-text-3" id="text-4-5">
 <p>
-The tuple (john, 30 years old) models the tuple (john, 30 years old, black hair, brown eyes).
-The capturing function (the modeling schema) is \((a,b,c,d) \mapsto (a,b)\).
-Modeling is dimension reduction.
-Modeling is projection.
+We model a thing by making simplifying assumptions on that thing.
+We choose which aspects to care about.
+We ignore all other aspects.
+Thus a model of something is a <i>simplification</i> of that thing.
 </p>
 
 <p>
-If we violate a simplifying assumption, the model breaks down and gives nonsensical funny results.
-The name-age tuple (john, 10000 years old) models something nonexistent.
-We can insert such nonsensical data into the database, but what does such nonsensical data mean?
-We can substitute the mass variables in Newton's gravity equation with negative quantities, but what does it mean?
+We judge models by their usefulness, not by their correctness.
+</p>
+</div>
+<div id="outline-container-org9c0e470" class="outline-4">
+<h4 id="org9c0e470"><span class="section-number-4">4.5.1</span> Modeling by partial evaluation (grounding of variables)</h4>
+<div class="outline-text-4" id="text-4-5-1">
+<p>
+An example of how to model is partial evaluation (grounding of variables).
+In this case, the model X is obtained from the modeled Y by partially evaluating Y, that is, by assuming the constancy of some variables in Y.
 </p>
 </div>
 </div>
-<div id="outline-container-orgb49dc73" class="outline-3">
-<h3 id="orgb49dc73"><span class="section-number-3">4.6</span> Modeling: How does X model Y?</h3>
-<div class="outline-text-3" id="text-4-6">
-<p>
-Consider several ways we can model a person:
-</p>
-
-<ul class="org-ul">
-<li>as a stick figure</li>
-<li>as a photograph</li>
-<li>as a police sketch</li>
-<li>as a tuple (row in a relational database)</li>
-<li>as a "chemical" that may react with another person ("chemical")</li>
-</ul>
-
-<p>
-Reading list:
-</p>
-
-<ul class="org-ul">
-<li>1980 Hilary Putnam article "Models and Reality" <a href="https://www.jstor.org/stable/2273415?seq=1#page_scan_tab_contents">paywall</a></li>
-<li>2004 Ronald N. Giere article "How Models Are Used to Represent Reality" <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.433.860&amp;rep=rep1&amp;type=pdf">pdf</a></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-orgef7b5ac" class="outline-3">
-<h3 id="orgef7b5ac"><span class="section-number-3">4.7</span> What is a "model" in English?</h3>
-<div class="outline-text-3" id="text-4-7">
-<p>
-Etymology: "model" comes from Latin "modellus" that is diminutive of "modulus" that is diminutive of "modus" that means "measure", according to <a href="https://en.wiktionary.org/wiki/model">Wiktionary</a>.
-Thus "modellus" should mean "a small small measure".
-</p>
-
-<p>
-What is the history of the word "model"?
-How did people use it in the past?
-Use <a href="https://books.google.com/ngrams">Google Ngram</a> to find how words were used in the past, as far back as the 18th century.
-</p>
-
-<p>
-Here we try to infer the meanings of "model" from these sources:
-</p>
-
-<ul class="org-ul">
-<li>The definitions of "model" in these dictionaries:
-<a href="http://wordnetweb.princeton.edu/perl/webwn?s=model&amp;sub=Search+WordNet&amp;o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;h=">Princeton WordNet 3.1</a>,
-<a href="https://en.oxforddictionaries.com/definition/model">English Oxford Dictionaries</a>,
-<a href="https://www.thefreedictionary.com/model">The Free Dictionary</a>,
-<a href="https://en.wiktionary.org/wiki/model#Etymology">Wiktionary</a>.
-Also, the definition of "model oneself after" in <a href="https://www.merriam-webster.com/dictionary/model%20oneself%20after">Merriam-Webster</a>.</li>
-<li>Other people's opinions:
-<ul class="org-ul">
-<li><a href="http://www.systems-thinking.org/simulation/model.htm">systems-thinking.org</a>: A model is a simplification of reality.</li>
-<li>2010 Emily Griffiths article "What is a model?" <a href="https://web.archive.org/web/20120312220527/http://www.emily-griffiths.postgrad.shef.ac.uk/models.pdf">archived pdf</a></li>
-<li><a href="https://books.google.com/talktobooks/query?q=What%20is%20a%20model?">What is a model? - Talk to Books</a></li>
-</ul></li>
-<li>Encyclopedia articles
-<ul class="org-ul">
-<li>Wikipedia article <a href="https://en.wikipedia.org/wiki/Model">Model</a>, and all pages linked from there, such as
-<a href="https://en.wikipedia.org/wiki/Architectural_model">Architectural model</a>,
-<a href="https://en.wikipedia.org/wiki/Physical_model">Physical model</a>,
-Also, by text search: <a href="https://en.wikipedia.org/wiki/Role_model">Role model</a>.</li>
-<li><a href="https://www.britannica.com/search?query=model">Encyclopaedia Britannica search result for "model"</a></li>
-<li><a href="https://www.encyclopedia.com/search?keys=model">encyclopedia.com search result for "model"</a></li>
-</ul></li>
-</ul>
-
-<p>
-The word "model" have many meanings.
-Here are some example sentences.
-We are only interested in Sense 1.
-But can we show that the other senses are just special cases of Sense 1?
-</p>
-<ul class="org-ul">
-<li>Sense 1: concept
-<ul class="org-ul">
-<li>Sense 1a: concretion for transfer learning
-<ul class="org-ul">
-<li>"A <i>model organism</i> is [&#x2026;] extensively studied [&#x2026;]
-with the expectation that discoveries made in the model organism will provide insight into [&#x2026;] other organisms."
-(<a href="https://en.wikipedia.org/wiki/Model_organism">WP:Model organism</a>)
-This suggests that a model is about <i>transfer learning</i>:
-a knowledge about the model maps to a knowledge about the modeled,
-if the model captures the required aspects.</li>
-</ul></li>
-<li>Sense 1b: abstraction, picking aspects, ignoring irrelevant details
-<ul class="org-ul">
-<li>A Newton equation system <i>models</i> a real physical system.</li>
-<li>A Newton equation system <i>is a model of</i> a real physical system.</li>
-<li>Quadratic equations <i>model</i> parabolic motions.</li>
-<li>The Lotka-Volterra equations can <i>model</i> the populations of lions and deers in a savanna.</li>
-</ul></li>
-<li>Note: It is confusing that "model" can mean both concretion and abstraction, which are opposites.</li>
-<li>Sense 1c: a resemblance that takes less effort to make than the real thing does
-<ul class="org-ul">
-<li>This <i>model</i> railroad is mostly made of plastic.</li>
-<li>This miniature <i>models</i> the 20-story building.</li>
-<li>This miniature <i>is a model of</i> the 20-story building.</li>
-<li>A stick figure is a <i>model</i> of a person/animal/being.</li>
-</ul></li>
-<li>Sense 1c: intended resemblance
-<ul class="org-ul">
-<li>Some cartoon characters <i>are modeled after</i> real people.</li>
-<li>The Abraham Lincoln statue <i>was modeled after</i> Abraham Lincoln.
-(It means that the statue was intended to look like him.)</li>
-</ul></li>
-</ul></li>
-<li>Sense 2: person, animal, being
-<ul class="org-ul">
-<li>Sense 2a: fashion model, photo model, actor
-<ul class="org-ul">
-<li>The <i>model</i> sits on the chair so that the painters can begin painting.</li>
-<li>The <i>model</i> wearing a fancy dress walks on the catwalk.</li>
-<li>The <i>model</i> is posing for the camera.</li>
-<li>His dog is <i>modeling</i> for a dog food advertisement.</li>
-</ul></li>
-<li>Sense 2b: what one strives to imitate
-<ul class="org-ul">
-<li>He is a <i>role model</i>.</li>
-<li>He is a <i>model</i> husband. He and his wife are much happier after their marriage.</li>
-</ul></li>
-</ul></li>
-<li>Sense 3: type, class, kind, variant, product line
-<ul class="org-ul">
-<li>Ford <i>Model</i> T and Tesla <i>Model</i> S are cars.</li>
-<li>This Honda car comes in two <i>models</i>: an automatic transmission <i>model</i> and a manual transmission <i>model</i>.</li>
-<li>Which <i>model</i> of this Toyota car do you want to buy: the gasoline engine <i>model</i> or the diesel engine <i>model</i>?</li>
-</ul></li>
-</ul>
-</div>
-<div id="outline-container-orgb872dae" class="outline-4">
-<h4 id="orgb872dae"><span class="section-number-4">4.7.1</span> Defining "model" generally</h4>
-<div class="outline-text-4" id="text-4-7-1">
+<div id="outline-container-org4a63318" class="outline-4">
+<h4 id="org4a63318"><span class="section-number-4">4.5.2</span> <span class="todo TODO">TODO</span> Capturing function?</h4>
+<div class="outline-text-4" id="text-4-5-2">
 <p>
 We say any of these to mean the same thing:
 </p>
@@ -1752,9 +1844,142 @@ X models Y.
 </div>
 </div>
 </div>
-<div id="outline-container-orgedce5e8" class="outline-3">
-<h3 id="orgedce5e8"><span class="section-number-3">4.8</span> Our "model" vs metamathematics model theory "model"</h3>
+<div id="outline-container-org3ae38f1" class="outline-3">
+<h3 id="org3ae38f1"><span class="section-number-3">4.6</span> Fundamental learning by falsifying simplifying assumptions</h3>
+<div class="outline-text-3" id="text-4-6">
+<p>
+We learn something fundamental by testing ("torturing") our models at their limits to break them.
+We can find out a model's simplifying assumptions by pushing it to failure.
+Fundamental learning happens at the boundary of a simplifying assumption,
+that is, a situation where a simplifying assumption changes from true to false.
+This is what experimental physicists do.
+</p>
+
+<p>
+We learn about people when we anger them.
+Other people's anger signals us that at least one of our simplifying assumptions about them doesn't hold.
+</p>
+
+<p>
+An aircraft crash signals that a simplifying assumption, of someone, somewhere, is wrong.
+</p>
+</div>
+</div>
+<div id="outline-container-org7fcea31" class="outline-3">
+<h3 id="org7fcea31"><span class="section-number-3">4.7</span> Generalizing the "model" in model theory?</h3>
+<div class="outline-text-3" id="text-4-7">
+<p>
+Sentence S models sentence T iff S can be derived from T by grounding some variables.
+The simplifying assumption is that assignment of variables to ground terms.
+The simplifying assumption is an interpretation.
+</p>
+
+<p>
+Examples.
+"John ate a hamburger" is a model of "X ate Y".
+"John ate a hamburger" is a model of "Someone ate something".
+</p>
+
+<p>
+To <i>interpret</i> a sentence is to <i>ground</i> all its variables (to substitute all its variables with <i>ground terms</i>).
+</p>
+
+<p>
+This generalizes model theory?
+</p>
+</div>
+</div>
+<div id="outline-container-org82a0c2e" class="outline-3">
+<h3 id="org82a0c2e"><span class="section-number-3">4.8</span> We model things because our thought is limited</h3>
 <div class="outline-text-3" id="text-4-8">
+<p>
+We <i>model</i> a machine in order to <i>understand</i> what it does:
+to <i>interpret</i> what it does, to give <i>meaning</i> to what it does.
+Of course what we <i>think</i> it does is not what it <i>actually</i> does.
+We think the machine is adding two numbers.
+What the machine actually does is shuffling electrons around in a way that we interpret as adding two numbers.
+We model something so that we can reason about it.
+We can only think about very few things at once.
+</p>
+
+<p>
+We ignore hardware problems, such as unreliable power supplies, cosmic rays flipping bits,
+cats pissing on the machine, fires burning down the building,
+and other infinitely many hardware problems we conveniently ignore.
+The simplifying assumption is that the hardware works in the environment it's designed for.
+As long as our simplifying assumptions hold, our model is valid.
+</p>
+
+<p>
+We need that model.
+Without model, irrelevant details would preclude us from understanding anything.
+</p>
+</div>
+</div>
+<div id="outline-container-org9e2b5c7" class="outline-3">
+<h3 id="org9e2b5c7"><span class="section-number-3">4.9</span> A model is &#x2026;</h3>
+<div class="outline-text-3" id="text-4-9">
+<p>
+A model is &#x2026; resemblance, replica, downscaling, simplification?
+We say "X models Y" iff X resembles Y, iff X behaves like Y, iff X is a simplification of Y, iff X and Y have something in common but X is simpler than Y?
+A model of X is a simplified representation of X.
+A model is a simplified description of reality?
+A description of reality is not reality.
+If reality and theory disagree, then reality wins and theory must change.
+</p>
+</div>
+</div>
+<div id="outline-container-org86b039a" class="outline-3">
+<h3 id="org86b039a"><span class="section-number-3">4.10</span> Model and reality</h3>
+<div class="outline-text-3" id="text-4-10">
+<ul class="org-ul">
+<li>Some models model reality well.</li>
+<li>Some reality is modeled well.</li>
+<li>Some models are unrealistic.</li>
+<li>Some reality are unmodelable.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgb49dc73" class="outline-3">
+<h3 id="orgb49dc73"><span class="section-number-3">4.11</span> Modeling: How does X model Y?</h3>
+<div class="outline-text-3" id="text-4-11">
+<p>
+Consider several ways we can model a person:
+</p>
+
+<ul class="org-ul">
+<li>as a stick figure</li>
+<li>as a photograph</li>
+<li>as a police sketch</li>
+<li>as a tuple (row in a relational database)</li>
+<li>as a "chemical" that may react with another person ("chemical")</li>
+</ul>
+
+<p>
+Reading list:
+</p>
+
+<ul class="org-ul">
+<li>1980 Hilary Putnam article "Models and Reality" <a href="https://www.jstor.org/stable/2273415?seq=1#page_scan_tab_contents">paywall</a></li>
+<li>2004 Ronald N. Giere article "How Models Are Used to Represent Reality" <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.433.860&amp;rep=rep1&amp;type=pdf">pdf</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org1e6e9c0" class="outline-3">
+<h3 id="org1e6e9c0"><span class="section-number-3">4.12</span> "Model theory" should be named "structure theory" instead</h3>
+<div class="outline-text-3" id="text-4-12">
+<p>
+"Model theory" should be called "structure theory" instead.
+Group theory studies groups.
+Number theory studies numbers.
+Model theory studies structures!
+What a surprise!
+</p>
+</div>
+</div>
+<div id="outline-container-orgedce5e8" class="outline-3">
+<h3 id="orgedce5e8"><span class="section-number-3">4.13</span> Our "model" vs metamathematics model theory "model"</h3>
+<div class="outline-text-3" id="text-4-13">
 <p>
 SEP's "Basic notions of model theory" is surprisingly readable. <a href="https://plato.stanford.edu/archives/fall2018/entries/model-theory/">https://plato.stanford.edu/archives/fall2018/entries/model-theory/</a>
 </p>
@@ -1820,8 +2045,8 @@ The structure \(S = (A,I)\) maps the language \(L\) to \(J(A)\).
 </div>
 </div>
 <div id="outline-container-orga5ef0b0" class="outline-3">
-<h3 id="orga5ef0b0"><span class="section-number-3">4.9</span> <span class="todo TODO">TODO</span> Questions we want to answer</h3>
-<div class="outline-text-3" id="text-4-9">
+<h3 id="orga5ef0b0"><span class="section-number-3">4.14</span> <span class="todo TODO">TODO</span> Questions we want to answer</h3>
+<div class="outline-text-3" id="text-4-14">
 <ul class="org-ul">
 <li>How does X model Y?</li>
 <li>How do we measure how good a model is?</li>
@@ -1831,8 +2056,8 @@ The structure \(S = (A,I)\) maps the language \(L\) to \(J(A)\).
 </div>
 </div>
 <div id="outline-container-org32f1349" class="outline-3">
-<h3 id="org32f1349"><span class="section-number-3">4.10</span> Measuring model quality: How well does X model Y?</h3>
-<div class="outline-text-3" id="text-4-10">
+<h3 id="org32f1349"><span class="section-number-3">4.15</span> Measuring model quality: How well does X model Y?</h3>
+<div class="outline-text-3" id="text-4-15">
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/All_models_are_wrong">"All models are wrong, but some are useful."</a>, George Edward Pelham Box (1919&#x2013;2013)</li>
 <li>In <a href="http://chem.tufts.edu/answersinscience/relativityofwrong.htm">The Relativity of Wrong</a>, Isaac Asimov writes
@@ -1854,8 +2079,8 @@ The structure \(S = (A,I)\) maps the language \(L\) to \(J(A)\).
 </div>
 </div>
 <div id="outline-container-org53d8199" class="outline-3">
-<h3 id="org53d8199"><span class="section-number-3">4.11</span> Model of model: multiple-level machine model</h3>
-<div class="outline-text-3" id="text-4-11">
+<h3 id="org53d8199"><span class="section-number-3">4.16</span> Model of model: multiple-level machine model</h3>
+<div class="outline-text-3" id="text-4-16">
 <p>
 A model can model another model.
 We can stack simplifying assumptions on top of other simplifying assumptions.
@@ -1924,14 +2149,199 @@ Who retyped this neat version?
 </ul>
 </div>
 </div>
+<div id="outline-container-org393130e" class="outline-3">
+<h3 id="org393130e"><span class="section-number-3">4.17</span> Complexity</h3>
+<div class="outline-text-3" id="text-4-17">
+<p>
+Here we try to understand complexity from its etymology.
+The following etymology is according to the Wiktionary entries on <a href="https://en.wiktionary.org/wiki/simple#Etymology">simple</a>, <a href="https://en.wiktionary.org/wiki/complex#Etymology">complex</a>, <a href="https://en.wiktionary.org/wiki/plico#Etymology_2">plico</a>, <a href="https://en.wiktionary.org/wiki/plecto#Etymology_1">plecto</a>, <a href="https://en.wiktionary.org/wiki/complicate#Etymology">complicate</a>, <a href="https://en.wiktionary.org/wiki/complect#Etymology">complect</a>.
+</p>
+
+<p>
+"Simple" comes from Latin "simplex" (one-fold), from "sim-" (same) and "plicare" (to fold, to bend),
+comparable with "uniplex" (one-fold), "duplex" (two-fold), "triplex" (three-fold), "quadruplex" (four-fold), and so on.
+"Complex" comes from Latin "com-" (together) and "plectere" (to weave, to braid, to twist), comparable with "complect", "complicate".
+"Plicare" and "plectere" both come from a Proto-Indo-European word meaning "to fold, to weave".
+(I omit this PIE word because I don't know how to type it in XeLaTeX; copying doesn't work.)
+</p>
+
+<p>
+Thus "simple" means "one-fold" and "complex" means "woven together".
+</p>
+
+<p>
+Here we try to understand complexity by an example of paper folding.
+</p>
+
+<p>
+Imagine a sheet of paper.
+Fold it several times.
+</p>
+
+<p>
+The <i>complexity</i> of the resulting shape is the number of folds, that is how many times the original sheet is folded.
+The shape with zero complexity is the original sheet of paper before any folding.
+</p>
+
+<p>
+A shape's complexity is unique and irreducible.
+There is always an \(n\)-fold shape that can't be made by folding less than \(n\) times.
+</p>
+
+<p>
+A fold affects all folds after it.
+The folding order matters.
+The folds usually don't commute.
+</p>
+
+<p>
+A fold always adds complexity.
+There is no way to unfold a folded paper by folding it.
+A combination of folds will never be equal to an unfold.
+</p>
+
+<p>
+See also the <a href="https://en.wikipedia.org/wiki/Origami">Wikipedia entry on origami</a> (paper folding).
+</p>
+
+<p>
+Folding <i>complicates</i> the shape.
+Unfolding <i>simplifies</i> the shape.
+</p>
+
+<p>
+We can <i>simplify</i> a shape by removing its last folds.
+Suppose that a shape is a folding sequence (a sequence of folds).
+Then shape X is a <i>simplification</i> of shape Y iff the folding sequence X begins (is a prefix of) the folding sequence Y.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orga393804" class="outline-2">
+<h2 id="orga393804"><span class="section-number-2">5</span> Formal logic</h2>
+<div class="outline-text-2" id="text-5">
+\begin{align*}
+\text{formal language} &= \text{alphabet} + \text{grammar}
+\\
+\text{formal system} &= \text{formal language} + \text{axioms} + \text{inference rules}
+\\
+\text{logical system} &= \text{formal system} + \text{semantics}
+\end{align*}
+
+<p>
+"A theory consists of an axiomatic system and all its derived theorems."
+<a href="https://en.wikipedia.org/wiki/Axiomatic_system">https://en.wikipedia.org/wiki/Axiomatic_system</a>
+</p>
+
+<p>
+An interpretation models a sentence [Hodges SEP archive fall 2018 "Model theory"].
+</p>
+
+<p>
+Sources:
+</p>
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Formal_system">https://en.wikipedia.org/wiki/Formal_system</a></li>
+</ul>
+</div>
 </div>
 <div id="outline-container-orgdefffcc" class="outline-2">
-<h2 id="orgdefffcc"><span class="section-number-2">5</span> Computer science</h2>
-<div class="outline-text-2" id="text-5">
+<h2 id="orgdefffcc"><span class="section-number-2">6</span> Computer science</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-orgd22acf3" class="outline-3">
+<h3 id="orgd22acf3"><span class="section-number-3">6.1</span> Tools, usage, and machine</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+Remember that we defined <i>self</i> as everything that we control.
+</p>
+
+<p>
+The essence of tools is the extension of self (the boundary of control).
+</p>
+
+<p>
+A <i>tool</i> is a thing that extends our <i>self</i> (our boundary of control).
+A tool is a thing that enables us to control more things than we would without that tool.
+</p>
+
+<p>
+"Tool" is a relative concept, like "weed", "good", "bad".
+Whether something is a tool depends on what use we imagine of it.
+We can think of a rock as a useless heavy space-occupying thing.
+We can think of a rock as a tool for crushing things.
+To 20th century people, a computer is a mind extension tool.
+To a villager in the Stone Age, a computer might be a heavy weight that can be thrown to kill animals.
+</p>
+
+<p>
+<i>Usage is goal-directed control</i>.
+To use something is to control it for a goal/purpose/intention.
+"To use X for Y" is to control X in order to achieve Y (to make Y true).
+</p>
+
+<p>
+A tool is something we use.
+</p>
+
+<p>
+A tool may be animate.
+</p>
+
+<p>
+People are tools.
+Everyone uses everyone else.
+We use each other.
+A worker is a capitalist's tool; a capitalist is also a worker's tool.
+An employee is his employer's tool; an employer is also his employee's tool.
+Surely employers avoid hiring useless employees, and employees avoid hiring useless employers.
+A useless employee doesn't work; a useless employer doesn't pay.
+</p>
+
+<p>
+How <i>do</i> we use this person?
+How <i>can</i> we use this person?
+What <i>does</i> this person help us do?
+What <i>can</i> this person help us do?
+</p>
+
+<p>
+Using other people is not inherently bad.
+One can use his tools with care, whether animate and inanimate.
+But this idea may discomfort non-philosophers.
+</p>
+
+<p>
+It is only a matter of time before a tool-using animal realizes that it can use other animals as tools.
+</p>
+
+<p>
+Are we using others, or are we being used by others?
+</p>
+</div>
+</div>
+<div id="outline-container-org4dd9d3e" class="outline-3">
+<h3 id="org4dd9d3e"><span class="section-number-3">6.2</span> Tools and machines</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+(I need to find the words to say this, and rewrite this more clearly.)
+</p>
+
+<p>
+A <i>machine</i> is an <i>automatic tool</i>:
+it is a tool that runs by itself; it has its own behavior.
+</p>
+
+<p>
+A hammer doesn't have its own behaviors.
+A car has its own behaviors.
+A computer has its own behaviors.
+</p>
+</div>
 </div>
 <div id="outline-container-orgfb5f15d" class="outline-3">
-<h3 id="orgfb5f15d"><span class="section-number-3">5.1</span> What does it mean for a machine to compute a real number?</h3>
-<div class="outline-text-3" id="text-5-1">
+<h3 id="orgfb5f15d"><span class="section-number-3">6.3</span> What does it mean for a machine to compute a real number?</h3>
+<div class="outline-text-3" id="text-6-3">
 <p>
 Computation is approximate expression normalization.
 To <i>compute</i> a real number is to calculate some of its digits.
@@ -1993,8 +2403,8 @@ Addition also has a geometric meaning: it is the set of points on the plane \(\{
 </div>
 </div>
 <div id="outline-container-orgae25a91" class="outline-3">
-<h3 id="orgae25a91"><span class="section-number-3">5.2</span> Algorithm, machine, describability, computability</h3>
-<div class="outline-text-3" id="text-5-2">
+<h3 id="orgae25a91"><span class="section-number-3">6.4</span> Algorithm, machine, describability, computability</h3>
+<div class="outline-text-3" id="text-6-4">
 <p>
 We assume that these are primitive concepts: algorithm, machine.
 By "machine", we mean a computing machine.
@@ -2073,16 +2483,16 @@ See also:
 </div>
 </div>
 <div id="outline-container-org343e709" class="outline-3">
-<h3 id="org343e709"><span class="section-number-3">5.3</span> What it means for an algorithm to compute a function</h3>
-<div class="outline-text-3" id="text-5-3">
+<h3 id="org343e709"><span class="section-number-3">6.5</span> What it means for an algorithm to compute a function</h3>
+<div class="outline-text-3" id="text-6-5">
 <p>
 The algorithm \(A\) <i>computes</i> the function \(f : A \to B\) iff for every input \(x \in A\), the algorithm outputs \(f(x)\).
 </p>
 </div>
 </div>
 <div id="outline-container-org6795741" class="outline-3">
-<h3 id="org6795741"><span class="section-number-3">5.4</span> Machine, algorithm, embodiment, computation</h3>
-<div class="outline-text-3" id="text-5-4">
+<h3 id="org6795741"><span class="section-number-3">6.6</span> Machine, algorithm, embodiment, computation</h3>
+<div class="outline-text-3" id="text-6-6">
 <p>
 A machine <i>embodies</i> an algorithm.
 A machine <i>computes</i> what the algorithm computes.
@@ -2095,8 +2505,8 @@ for example: rewire the machine, load another set of punch cards, write a progra
 </div>
 </div>
 <div id="outline-container-org488ecec" class="outline-3">
-<h3 id="org488ecec"><span class="section-number-3">5.5</span> What is software?</h3>
-<div class="outline-text-3" id="text-5-5">
+<h3 id="org488ecec"><span class="section-number-3">6.7</span> What is software?</h3>
+<div class="outline-text-3" id="text-6-7">
 <ul class="org-ul">
 <li>Which ICSE paper said this?
 <ul class="org-ul">
@@ -2114,8 +2524,8 @@ Don't commit reification fallacy.
 </div>
 </div>
 <div id="outline-container-orgd2e8e61" class="outline-3">
-<h3 id="orgd2e8e61"><span class="section-number-3">5.6</span> The dualistic nature of machines; the machine-program dualism; the hardware-software dualism</h3>
-<div class="outline-text-3" id="text-5-6">
+<h3 id="orgd2e8e61"><span class="section-number-3">6.8</span> The dualistic nature of machines; the machine-program dualism; the hardware-software dualism</h3>
+<div class="outline-text-3" id="text-6-8">
 <p>
 The hardware is the body.
 The software is the mind.
@@ -2131,8 +2541,8 @@ A running machine embodies the software it is running?
 </div>
 </div>
 <div id="outline-container-org02c5d02" class="outline-3">
-<h3 id="org02c5d02"><span class="section-number-3">5.7</span> <span class="todo TODO">TODO</span> Move this somewhere else: Hierarchy of machines</h3>
-<div class="outline-text-3" id="text-5-7">
+<h3 id="org02c5d02"><span class="section-number-3">6.9</span> <span class="todo TODO">TODO</span> Move this somewhere else: Hierarchy of machines</h3>
+<div class="outline-text-3" id="text-6-9">
 <ul class="org-ul">
 <li>An FA (<i>finite automaton</i>) is &#x2026;</li>
 <li>An FSM (<i>finite-state machine</i>) is &#x2026;</li>
@@ -2166,16 +2576,16 @@ A running machine embodies the software it is running?
 </div>
 </div>
 <div id="outline-container-org086be6a" class="outline-2">
-<h2 id="org086be6a"><span class="section-number-2">6</span> Knowledge, consciousness</h2>
-<div class="outline-text-2" id="text-6">
+<h2 id="org086be6a"><span class="section-number-2">7</span> Knowledge, consciousness</h2>
+<div class="outline-text-2" id="text-7">
 <p>
 We don't know what "knowledge" is.
 But, for this section, assume that we know.
 </p>
 </div>
 <div id="outline-container-org5286c98" class="outline-3">
-<h3 id="org5286c98"><span class="section-number-3">6.1</span> We think we can share or transfer some knowledge.</h3>
-<div class="outline-text-3" id="text-6-1">
+<h3 id="org5286c98"><span class="section-number-3">7.1</span> We think we can share or transfer some knowledge.</h3>
+<div class="outline-text-3" id="text-7-1">
 <p>
 We can <i>transfer</i> some knowledge by <i>simulation</i>.
 Simulator-trained pilots <i>know</i> how to fly planes:
@@ -2203,8 +2613,8 @@ Perhaps someday technology will enable transferring all knowledge.
 </div>
 </div>
 <div id="outline-container-org6bb407f" class="outline-3">
-<h3 id="org6bb407f"><span class="section-number-3">6.2</span> Knowledge, software, copy, and move</h3>
-<div class="outline-text-3" id="text-6-2">
+<h3 id="org6bb407f"><span class="section-number-3">7.2</span> Knowledge, software, copy, and move</h3>
+<div class="outline-text-3" id="text-7-2">
 <p>
 We can <i>copy</i> knowledge, but not <i>move</i> knowledge.
 This is similar to software: it can be copied but not moved.
@@ -2224,8 +2634,8 @@ Destroying a book is like destroying a computer disk that contains a program.
 </div>
 </div>
 <div id="outline-container-org70124b0" class="outline-3">
-<h3 id="org70124b0"><span class="section-number-3">6.3</span> Old English, ken, wit, and knowledge</h3>
-<div class="outline-text-3" id="text-6-3">
+<h3 id="org70124b0"><span class="section-number-3">7.3</span> Old English, ken, wit, and knowledge</h3>
+<div class="outline-text-3" id="text-7-3">
 <p>
 German has "kennen" and "wissen".
 English has "ken" and "wit".
@@ -2278,8 +2688,8 @@ In all cases, knowledge implies <i>memory</i>.
 </div>
 </div>
 <div id="outline-container-orgd94b782" class="outline-3">
-<h3 id="orgd94b782"><span class="section-number-3">6.4</span> Consciousness is the ability to know.</h3>
-<div class="outline-text-3" id="text-6-4">
+<h3 id="orgd94b782"><span class="section-number-3">7.4</span> Consciousness is the ability to know.</h3>
+<div class="outline-text-3" id="text-7-4">
 <p>
 <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-04&gt;</span></span>
 </p>
@@ -2312,8 +2722,8 @@ says that it comes from Latin "con-" (together) and "scire" (to know).
 </p>
 </div>
 <div id="outline-container-orgd3a99f3" class="outline-4">
-<h4 id="orgd3a99f3"><span class="section-number-4">6.4.1</span> Defining consciousness requires epistemology.</h4>
-<div class="outline-text-4" id="text-6-4-1">
+<h4 id="orgd3a99f3"><span class="section-number-4">7.4.1</span> Defining consciousness requires epistemology.</h4>
+<div class="outline-text-4" id="text-7-4-1">
 <p>
 Defining consciousness as "the ability to know" raises two questions:
 What does it mean to <i>know</i> something?
@@ -2330,16 +2740,16 @@ Thus defining consciousness requires epistemology.
 </div>
 </div>
 <div id="outline-container-org7b0038d" class="outline-4">
-<h4 id="org7b0038d"><span class="section-number-4">6.4.2</span> How do we measure consciousness (ability to know)?</h4>
-<div class="outline-text-4" id="text-6-4-2">
+<h4 id="org7b0038d"><span class="section-number-4">7.4.2</span> How do we measure consciousness (ability to know)?</h4>
+<div class="outline-text-4" id="text-7-4-2">
 <p>
 How do we measure whether X has more consciousness than Y?
 </p>
 </div>
 </div>
 <div id="outline-container-org6575670" class="outline-4">
-<h4 id="org6575670"><span class="section-number-4">6.4.3</span> Hypothesis: Consciousness requires sense, memory, and feedback.</h4>
-<div class="outline-text-4" id="text-6-4-3">
+<h4 id="org6575670"><span class="section-number-4">7.4.3</span> Hypothesis: Consciousness requires sense, memory, and feedback.</h4>
+<div class="outline-text-4" id="text-7-4-3">
 <ul class="org-ul">
 <li>Imagine something.</li>
 <li>Imagine that you are imagining something.</li>
@@ -2371,14 +2781,14 @@ the feedback of information from the immediate past.</li>
 </div>
 <ol class="org-ol">
 <li><a id="orgf5b55c5"></a>Memory is necessary but not sufficient for consciousness.<br />
-<div class="outline-text-5" id="text-6-4-3-1">
+<div class="outline-text-5" id="text-7-4-3-1">
 <ul class="org-ul">
 <li>If I don't have memory, I can't bunch my past self and my present self into the same identity.</li>
 </ul>
 </div>
 </li>
 <li><a id="org2140788"></a>Identity?<br />
-<div class="outline-text-5" id="text-6-4-3-2">
+<div class="outline-text-5" id="text-7-4-3-2">
 <ul class="org-ul">
 <li>Cutting off the legs of a person does not change the identity of that person.
 All of his memories are intact.
@@ -2388,7 +2798,7 @@ Veterans who lost their legs in war retains their pre-war memories.</li>
 </div>
 </li>
 <li><a id="orgd7cff3e"></a>Prerequisites of consciousness?<br />
-<div class="outline-text-5" id="text-6-4-3-3">
+<div class="outline-text-5" id="text-7-4-3-3">
 <ul class="org-ul">
 <li>What is <i>necessary</i> for consciousness?
 <ul class="org-ul">
@@ -2428,7 +2838,7 @@ the absence of consciousness, and the absence of efferent nerves?</li>
 </div>
 </li>
 <li><a id="orga5e82a1"></a>How does consciousness arise? How are these different things of the same person related? Which requires which?<br />
-<div class="outline-text-5" id="text-6-4-3-4">
+<div class="outline-text-5" id="text-7-4-3-4">
 <ul class="org-ul">
 <li>His brain.</li>
 <li>His mind / thought / soul / spirit.</li>
@@ -2466,14 +2876,14 @@ Which is sufficient for which?</li>
 </div>
 <ol class="org-ol">
 <li><a id="org00d8891"></a>What we know: Altering the brain alters the behavior of the body that contains the brain.<br />
-<div class="outline-text-6" id="text-6-4-3-4-1">
+<div class="outline-text-6" id="text-7-4-3-4-1">
 <ul class="org-ul">
 <li>Machine analog: Physically altering the machine without altering the software alters the output of the machine. Example: Firing electrons at a transistor.</li>
 </ul>
 </div>
 </li>
 <li><a id="orgc784bf9"></a>Why do we experience life from first-person view?<br />
-<div class="outline-text-6" id="text-6-4-3-4-2">
+<div class="outline-text-6" id="text-7-4-3-4-2">
 <p>
 Why am I I?
 Why are you you?
@@ -2488,7 +2898,7 @@ If I cut off my legs, am I I?
 </div>
 </li>
 <li><a id="org9ac0141"></a>Why is consciousness trapped in a body?<br />
-<div class="outline-text-6" id="text-6-4-3-4-3">
+<div class="outline-text-6" id="text-7-4-3-4-3">
 <p>
 Why can't we swap the consciousness of two people?
 </p>
@@ -2664,15 +3074,15 @@ Why do I see things from my point of view?
 </div>
 </div>
 <div id="outline-container-org4351f8f" class="outline-3">
-<h3 id="org4351f8f"><span class="section-number-3">6.5</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> Attention is the direction of consciousness?</h3>
+<h3 id="org4351f8f"><span class="section-number-3">7.5</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> Attention is the direction of consciousness?</h3>
 </div>
 <div id="outline-container-org5b26ca3" class="outline-3">
-<h3 id="org5b26ca3"><span class="section-number-3">6.6</span> <span class="todo TODO">TODO</span> What is knowledge?</h3>
-<div class="outline-text-3" id="text-6-6">
+<h3 id="org5b26ca3"><span class="section-number-3">7.6</span> <span class="todo TODO">TODO</span> What is knowledge?</h3>
+<div class="outline-text-3" id="text-7-6">
 </div>
 <div id="outline-container-org3e64d13" class="outline-4">
-<h4 id="org3e64d13"><span class="section-number-4">6.6.1</span> Plato JTB theory: Knowledge is Justified True Belief.</h4>
-<div class="outline-text-4" id="text-6-6-1">
+<h4 id="org3e64d13"><span class="section-number-4">7.6.1</span> Plato JTB theory: Knowledge is Justified True Belief.</h4>
+<div class="outline-text-4" id="text-7-6-1">
 <p>
 Gettier problem / epistemic luck?
 Can we believe something right for the wrong reason?
@@ -2684,8 +3094,8 @@ Justifying justifications?
 </div>
 </div>
 <div id="outline-container-org5dae8b0" class="outline-4">
-<h4 id="org5dae8b0"><span class="section-number-4">6.6.2</span> How do we know? Ways of obtaining and justifying knowledge</h4>
-<div class="outline-text-4" id="text-6-6-2">
+<h4 id="org5dae8b0"><span class="section-number-4">7.6.2</span> How do we know? Ways of obtaining and justifying knowledge</h4>
+<div class="outline-text-4" id="text-7-6-2">
 <ul class="org-ul">
 <li>Through our senses.</li>
 <li>By logic?</li>
@@ -2697,8 +3107,8 @@ Justifying justifications?
 </div>
 
 <div id="outline-container-orgcc05263" class="outline-4">
-<h4 id="orgcc05263"><span class="section-number-4">6.6.3</span> <span class="todo TODO">TODO</span> What does it mean to know something?</h4>
-<div class="outline-text-4" id="text-6-6-3">
+<h4 id="orgcc05263"><span class="section-number-4">7.6.3</span> <span class="todo TODO">TODO</span> What does it mean to know something?</h4>
+<div class="outline-text-4" id="text-7-6-3">
 <p>
 Example sentences:
 </p>
@@ -2739,8 +3149,8 @@ Reading queue:
 </ol>
 </div>
 <div id="outline-container-orgaed5c00" class="outline-4">
-<h4 id="orgaed5c00"><span class="section-number-4">6.6.4</span> <span class="todo TODO">TODO</span> Knowledge justification dilemma</h4>
-<div class="outline-text-4" id="text-6-6-4">
+<h4 id="orgaed5c00"><span class="section-number-4">7.6.4</span> <span class="todo TODO">TODO</span> Knowledge justification dilemma</h4>
+<div class="outline-text-4" id="text-7-6-4">
 <p>
 Knowledge without justification is "dumb luck": <a href="https://english.stackexchange.com/questions/384314/is-there-a-word-for-an-unjustified-true-belief">https://english.stackexchange.com/questions/384314/is-there-a-word-for-an-unjustified-true-belief</a>
 </p>
@@ -2760,12 +3170,12 @@ Knowledge with justification suffers the Gettier problem.
 </div>
 </div>
 <div id="outline-container-org46cf753" class="outline-4">
-<h4 id="org46cf753"><span class="section-number-4">6.6.5</span> <span class="todo TODO">TODO</span> What is the difference between knowledge and belief?</h4>
-<div class="outline-text-4" id="text-6-6-5">
+<h4 id="org46cf753"><span class="section-number-4">7.6.5</span> <span class="todo TODO">TODO</span> What is the difference between knowledge and belief?</h4>
+<div class="outline-text-4" id="text-7-6-5">
 </div>
 <ol class="org-ol">
 <li><a id="org9352009"></a>Knowledge is a <i>subset</i> of belief?<br />
-<div class="outline-text-5" id="text-6-6-5-1">
+<div class="outline-text-5" id="text-7-6-5-1">
 <p>
 Every knowledge is a belief.
 There are beliefs that are not knowledge.
@@ -2782,7 +3192,7 @@ For example, I can falsely believe that I have a shirt with this color that I ca
 </div>
 </li>
 <li><a id="org783dbec"></a>Wrong: <i>Knowledge</i> is <i>belief</i> that agrees with <i>reality</i>.<br />
-<div class="outline-text-5" id="text-6-6-5-2">
+<div class="outline-text-5" id="text-7-6-5-2">
 <p>
 "We know S" means "we believe S, and S is true".
 </p>
@@ -2793,7 +3203,7 @@ When we say "S is true", we mean that S is true in objective reality.
 </div>
 </li>
 <li><a id="org7c57ba7"></a>Belief is not binary<br />
-<div class="outline-text-5" id="text-6-6-5-3">
+<div class="outline-text-5" id="text-7-6-5-3">
 <p>
 "If an acquaintance suddenly contacts you after a long time of silence, he is trying to sell you insurance."
 </p>
@@ -2804,14 +3214,14 @@ When we say "S is true", we mean that S is true in objective reality.
 </div>
 </li>
 <li><a id="orgd185c88"></a>Distinguishing the absence of belief and the belief of absence<br />
-<div class="outline-text-5" id="text-6-6-5-4">
+<div class="outline-text-5" id="text-7-6-5-4">
 <p>
 There is a difference between "S does not believe P" and "S believes that P is false".
 </p>
 </div>
 </li>
 <li><a id="orga69efea"></a>Beliefs that go against reality<br />
-<div class="outline-text-5" id="text-6-6-5-5">
+<div class="outline-text-5" id="text-7-6-5-5">
 <p>
 False negative: S is true but I believe that S is false.
 </p>
@@ -2821,8 +3231,8 @@ False positive: S is false but I believe that S is true.
 </p>
 </div>
 </li>
-<li><a id="orgb0b06ed"></a>Unread<br />
-<div class="outline-text-5" id="text-6-6-5-6">
+<li><a id="org5027390"></a>Unread<br />
+<div class="outline-text-5" id="text-7-6-5-6">
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/Doxastic_logic">https://en.wikipedia.org/wiki/Doxastic_logic</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Modal_logic#Doxastic_logic">https://en.wikipedia.org/wiki/Modal_logic#Doxastic_logic</a></li>
@@ -2830,7 +3240,7 @@ False positive: S is false but I believe that S is true.
 </div>
 </li>
 <li><a id="org9079d9f"></a>Beliefs about conditionals and probabilities<br />
-<div class="outline-text-5" id="text-6-6-5-7">
+<div class="outline-text-5" id="text-7-6-5-7">
 <p>
 Example belief: Car crashes kill drivers.
 </p>
@@ -2839,17 +3249,17 @@ Example belief: Car crashes kill drivers.
 </ol>
 </div>
 <div id="outline-container-org1109e9f" class="outline-4">
-<h4 id="org1109e9f"><span class="section-number-4">6.6.6</span> <span class="todo TODO">TODO</span> We can imagine some things we have never experienced.</h4>
+<h4 id="org1109e9f"><span class="section-number-4">7.6.6</span> <span class="todo TODO">TODO</span> We can imagine some things we have never experienced.</h4>
 </div>
 <div id="outline-container-org2569f7f" class="outline-4">
-<h4 id="org2569f7f"><span class="section-number-4">6.6.7</span> <span class="todo TODO">TODO</span> Can we imagine a color we have never seen?</h4>
+<h4 id="org2569f7f"><span class="section-number-4">7.6.7</span> <span class="todo TODO">TODO</span> Can we imagine a color we have never seen?</h4>
 </div>
 <div id="outline-container-orgb5ddf2a" class="outline-4">
-<h4 id="orgb5ddf2a"><span class="section-number-4">6.6.8</span> <span class="todo TODO">TODO</span> What do we <i>believe</i> about our <i>imagination</i>?</h4>
+<h4 id="orgb5ddf2a"><span class="section-number-4">7.6.8</span> <span class="todo TODO">TODO</span> What do we <i>believe</i> about our <i>imagination</i>?</h4>
 </div>
 <div id="outline-container-org51a6809" class="outline-4">
-<h4 id="org51a6809"><span class="section-number-4">6.6.9</span> Knowledge argument, Mary's room: Argument against physicalism</h4>
-<div class="outline-text-4" id="text-6-6-9">
+<h4 id="org51a6809"><span class="section-number-4">7.6.9</span> Knowledge argument, Mary's room: Argument against physicalism</h4>
+<div class="outline-text-4" id="text-7-6-9">
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/Knowledge_argument">https://en.wikipedia.org/wiki/Knowledge_argument</a></li>
 <li><a href="https://plato.stanford.edu/entries/qualia-knowledge/#3.1">https://plato.stanford.edu/entries/qualia-knowledge/#3.1</a></li>
@@ -2859,12 +3269,12 @@ Example belief: Car crashes kill drivers.
 </div>
 </div>
 <div id="outline-container-orgeee7242" class="outline-2">
-<h2 id="orgeee7242"><span class="section-number-2">7</span> Self, mind, brain, and volition</h2>
-<div class="outline-text-2" id="text-7">
+<h2 id="orgeee7242"><span class="section-number-2">8</span> Self, mind, brain, and volition</h2>
+<div class="outline-text-2" id="text-8">
 </div>
 <div id="outline-container-orgb399982" class="outline-3">
-<h3 id="orgb399982"><span class="section-number-3">7.1</span> Conclusions</h3>
-<div class="outline-text-3" id="text-7-1">
+<h3 id="orgb399982"><span class="section-number-3">8.1</span> Conclusions</h3>
+<div class="outline-text-3" id="text-8-1">
 <p>
 The <i>self</i> of X is everything that X <i>controls</i>.
 </p>
@@ -2883,8 +3293,8 @@ It is the <i>mind</i> that <i>thinks</i>, not the <i>brain</i>.
 </div>
 </div>
 <div id="outline-container-orgc13c91c" class="outline-3">
-<h3 id="orgc13c91c"><span class="section-number-3">7.2</span> Mind is what thinks thoughts.</h3>
-<div class="outline-text-3" id="text-7-2">
+<h3 id="orgc13c91c"><span class="section-number-3">8.2</span> Mind is what thinks thoughts.</h3>
+<div class="outline-text-3" id="text-8-2">
 <p>
 <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-04&gt;</span></span>
 English suggests that <i>the mind is what thinks thoughts</i>:
@@ -2904,8 +3314,8 @@ Mind contains thoughts.
 </div>
 
 <div id="outline-container-org16d07c3" class="outline-3">
-<h3 id="org16d07c3"><span class="section-number-3">7.3</span> Self is the extent of control.</h3>
-<div class="outline-text-3" id="text-7-3">
+<h3 id="org16d07c3"><span class="section-number-3">8.3</span> Self is the extent of control.</h3>
+<div class="outline-text-3" id="text-8-3">
 <p>
 <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-03&gt;</span></span>
 </p>
@@ -2947,8 +3357,8 @@ Don't conflate "itself" and "its self".
 </p>
 </div>
 <div id="outline-container-orgc0c79f5" class="outline-4">
-<h4 id="orgc0c79f5"><span class="section-number-4">7.3.1</span> Supports</h4>
-<div class="outline-text-4" id="text-7-3-1">
+<h4 id="orgc0c79f5"><span class="section-number-4">8.3.1</span> Supports</h4>
+<div class="outline-text-4" id="text-8-3-1">
 <ul class="org-ul">
 <li>The definition is <i>not anthropocentric</i>.
 It does not assume that a self belongs to a human.</li>
@@ -2957,8 +3367,8 @@ It does not assume that a self belongs to a human.</li>
 </div>
 </div>
 <div id="outline-container-org1f04fc2" class="outline-4">
-<h4 id="org1f04fc2"><span class="section-number-4">7.3.2</span> Possibly objectionable consequences</h4>
-<div class="outline-text-4" id="text-7-3-2">
+<h4 id="org1f04fc2"><span class="section-number-4">8.3.2</span> Possibly objectionable consequences</h4>
+<div class="outline-text-4" id="text-8-3-2">
 <ul class="org-ul">
 <li>A rich person has <i>more self</i> than a poor person because the rich person <i>controls more</i> things than the poor person.</li>
 <li>If another person B absolutely obeys all my orders, then B is a part of my self.</li>
@@ -2967,8 +3377,8 @@ It does not assume that a self belongs to a human.</li>
 </div>
 </div>
 <div id="outline-container-org2359624" class="outline-4">
-<h4 id="org2359624"><span class="section-number-4">7.3.3</span> Self-control?</h4>
-<div class="outline-text-4" id="text-7-3-3">
+<h4 id="org2359624"><span class="section-number-4">8.3.3</span> Self-control?</h4>
+<div class="outline-text-4" id="text-8-3-3">
 <p>
 The self-control of X is X's control of X?
 </p>
@@ -2988,16 +3398,16 @@ according to <a href="https://en.wikipedia.org/wiki/Self-control">Wikipedia</a>.
 </div>
 </div>
 <div id="outline-container-org862f584" class="outline-4">
-<h4 id="org862f584"><span class="section-number-4">7.3.4</span> Further questions</h4>
-<div class="outline-text-4" id="text-7-3-4">
+<h4 id="org862f584"><span class="section-number-4">8.3.4</span> Further questions</h4>
+<div class="outline-text-4" id="text-8-3-4">
 <ul class="org-ul">
 <li>What is the relationship between control, intention, and causality?</li>
 </ul>
 </div>
 </div>
 <div id="outline-container-org707b96a" class="outline-4">
-<h4 id="org707b96a"><span class="section-number-4">7.3.5</span> Set-theoretic definition of self</h4>
-<div class="outline-text-4" id="text-7-3-5">
+<h4 id="org707b96a"><span class="section-number-4">8.3.5</span> Set-theoretic definition of self</h4>
+<div class="outline-text-4" id="text-8-3-5">
 <p>
 The self of X is the <i>set</i> of everything that X controls.
 Therefore, because selves are sets, they can intersect and join.
@@ -3028,18 +3438,18 @@ If I reattach it, it becomes a part of my self again, although I may not control
 </div>
 </div>
 <div id="outline-container-org939e989" class="outline-4">
-<h4 id="org939e989"><span class="section-number-4">7.3.6</span> <span class="todo TODO">TODO</span> What is the relationship between control, causality, agency, subject, and subjective experience?</h4>
+<h4 id="org939e989"><span class="section-number-4">8.3.6</span> <span class="todo TODO">TODO</span> What is the relationship between control, causality, agency, subject, and subjective experience?</h4>
 </div>
 <div id="outline-container-org9f5cf5c" class="outline-4">
-<h4 id="org9f5cf5c"><span class="section-number-4">7.3.7</span> <span class="todo TODO">TODO</span> For us to determine the size of the self of a system, some its output must <i>feed back</i> into some of its input, so that we can distinguish what it can control and what it can't.</h4>
+<h4 id="org9f5cf5c"><span class="section-number-4">8.3.7</span> <span class="todo TODO">TODO</span> For us to determine the size of the self of a system, some its output must <i>feed back</i> into some of its input, so that we can distinguish what it can control and what it can't.</h4>
 </div>
 <div id="outline-container-orgfe70b34" class="outline-4">
-<h4 id="orgfe70b34"><span class="section-number-4">7.3.8</span> <span class="todo TODO">TODO</span> Our definition of "self" generalizes its dictionary meaning.</h4>
-<div class="outline-text-4" id="text-7-3-8">
+<h4 id="orgfe70b34"><span class="section-number-4">8.3.8</span> <span class="todo TODO">TODO</span> Our definition of "self" generalizes its dictionary meaning.</h4>
+<div class="outline-text-4" id="text-8-3-8">
 </div>
 <ol class="org-ol">
 <li><a id="org779e605"></a><a href="https://en.wikipedia.org/wiki/Self">https://en.wikipedia.org/wiki/Self</a><br />
-<div class="outline-text-5" id="text-7-3-8-1">
+<div class="outline-text-5" id="text-8-3-8-1">
 <ul class="org-ul">
 <li>"The self is an individual person as the object of his or her own reflective consciousness.
 This reference is necessarily subjective, thus self is a reference by a subject to the same subject.
@@ -3050,7 +3460,7 @@ Whereas "identity" is sameness, self-hood implies a first-person perspective."</
 </div>
 </li>
 <li><a id="orga832e6c"></a>Dictionary definitions of "self" assume too much.<br />
-<div class="outline-text-5" id="text-7-3-8-2">
+<div class="outline-text-5" id="text-8-3-8-2">
 <ul class="org-ul">
 <li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> <a href="https://en.wiktionary.org/wiki/self#Noun">https://en.wiktionary.org/wiki/self#Noun</a>
 <ul class="org-ul">
@@ -3068,8 +3478,8 @@ Whereas "identity" is sameness, self-hood implies a first-person perspective."</
 </div>
 </div>
 <div id="outline-container-orge917e36" class="outline-3">
-<h3 id="orge917e36"><span class="section-number-3">7.4</span> Volition, imagination, hallucination, illusion, delusion, and intrusive thoughts</h3>
-<div class="outline-text-3" id="text-7-4">
+<h3 id="orge917e36"><span class="section-number-3">8.4</span> Volition, imagination, hallucination, illusion, delusion, and intrusive thoughts</h3>
+<div class="outline-text-3" id="text-8-4">
 <p>
 <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-07&gt;</span></span>
 The difference between imagination and hallucination is <i>voluntary of existence</i>.
@@ -3173,22 +3583,22 @@ There is an idea "Your brain hallucinates your conscious reality" (your brain ha
 </p>
 </div>
 <div id="outline-container-orgf40bd85" class="outline-4">
-<h4 id="orgf40bd85"><span class="section-number-4">7.4.1</span> <span class="todo TODO">TODO</span> Is intrusive thoughts voluntary?</h4>
+<h4 id="orgf40bd85"><span class="section-number-4">8.4.1</span> <span class="todo TODO">TODO</span> Is intrusive thoughts voluntary?</h4>
 </div>
 </div>
 <div id="outline-container-orgc578ab9" class="outline-3">
-<h3 id="orgc578ab9"><span class="section-number-3">7.5</span> Self, mind, brain, volition</h3>
-<div class="outline-text-3" id="text-7-5">
+<h3 id="orgc578ab9"><span class="section-number-3">8.5</span> Self, mind, brain, volition</h3>
+<div class="outline-text-3" id="text-8-5">
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org31fa17e">7.5.1. Autonomous nervous system is not part of mind</a></li>
-<li><a href="#org54f8d96">7.5.2. <span class="todo TODO">TODO</span> Drafts</a></li>
+<li><a href="#org31fa17e">8.5.1. Autonomous nervous system is not part of mind</a></li>
+<li><a href="#org54f8d96">8.5.2. <span class="todo TODO">TODO</span> Drafts</a></li>
 </ul>
 </div>
 </div>
 <div id="outline-container-org31fa17e" class="outline-4">
-<h4 id="org31fa17e"><span class="section-number-4">7.5.1</span> Autonomous nervous system is not part of mind</h4>
-<div class="outline-text-4" id="text-7-5-1">
+<h4 id="org31fa17e"><span class="section-number-4">8.5.1</span> Autonomous nervous system is not part of mind</h4>
+<div class="outline-text-4" id="text-8-5-1">
 <p>
 Consider my ANS (autonomic nervous system).
 </p>
@@ -3213,7 +3623,7 @@ The involuntary processes are much bigger than the voluntary processes.
 </div>
 <ol class="org-ol">
 <li><a id="org48b83ab"></a><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> We usually conflate <i>someone</i> and <i>someone's mind</i>.<br />
-<div class="outline-text-5" id="text-7-5-1-1">
+<div class="outline-text-5" id="text-8-5-1-1">
 <p>
 These questions usually mean the same thing:
 </p>
@@ -3234,26 +3644,26 @@ However, when we insult, we say "Use your brain!", not "Use your mind!"
 </ol>
 </div>
 <div id="outline-container-org54f8d96" class="outline-4">
-<h4 id="org54f8d96"><span class="section-number-4">7.5.2</span> <span class="todo TODO">TODO</span> Drafts</h4>
-<div class="outline-text-4" id="text-7-5-2">
+<h4 id="org54f8d96"><span class="section-number-4">8.5.2</span> <span class="todo TODO">TODO</span> Drafts</h4>
+<div class="outline-text-4" id="text-8-5-2">
 </div>
 <ol class="org-ol">
 <li><a id="orgb90dae9"></a>What does it mean to have the same thought?<br />
-<div class="outline-text-5" id="text-7-5-2-1">
+<div class="outline-text-5" id="text-8-5-2-1">
 <p>
 "Are you thinking what I'm thinking?"
 </p>
 </div>
 </li>
 <li><a id="org8d9e0c7"></a>Casual English usage<br />
-<div class="outline-text-5" id="text-7-5-2-2">
+<div class="outline-text-5" id="text-8-5-2-2">
 <ul class="org-ul">
 <li>"It has a mind of its own" means it has its own wants.</li>
 </ul>
 </div>
 <ol class="org-ol">
 <li><a id="orga0df7a1"></a>Expressing objections<br />
-<div class="outline-text-6" id="text-7-5-2-2-1">
+<div class="outline-text-6" id="text-8-5-2-2-1">
 <ul class="org-ul">
 <li>"Mind the gap."</li>
 <li>"Mind the language."</li>
@@ -3265,7 +3675,7 @@ However, when we insult, we say "Use your brain!", not "Use your mind!"
 </ol>
 </li>
 <li><a id="org18c1d77"></a>Dictionary definitions of "mind"<br />
-<div class="outline-text-5" id="text-7-5-2-3">
+<div class="outline-text-5" id="text-8-5-2-3">
 <ul class="org-ul">
 <li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> <a href="https://en.oxforddictionaries.com/definition/mind">https://en.oxforddictionaries.com/definition/mind</a>
 <ul class="org-ul">
@@ -3297,7 +3707,7 @@ However, when we insult, we say "Use your brain!", not "Use your mind!"
 </div>
 </li>
 <li><a id="org13ec11a"></a><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Is the mind a <i>sense</i>?<br />
-<div class="outline-text-5" id="text-7-5-2-4">
+<div class="outline-text-5" id="text-8-5-2-4">
 <ul class="org-ul">
 <li>A sense connects mind and reality?</li>
 <li>The eye senses light.</li>
@@ -3308,7 +3718,7 @@ However, when we insult, we say "Use your brain!", not "Use your mind!"
 </div>
 </li>
 <li><a id="org50a510a"></a><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-04&gt; </span></span> A mind is an <i>organ</i> that thinks?<br />
-<div class="outline-text-5" id="text-7-5-2-5">
+<div class="outline-text-5" id="text-8-5-2-5">
 <ul class="org-ul">
 <li>What is an organ?</li>
 <li><i>Where</i> is the mind?
@@ -3317,7 +3727,7 @@ Does it exist in space?</li>
 </div>
 </li>
 <li><a id="orgfdda720"></a><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-04&gt; </span></span> A brain <i>houses</i> a mind?<br />
-<div class="outline-text-5" id="text-7-5-2-6">
+<div class="outline-text-5" id="text-8-5-2-6">
 <ul class="org-ul">
 <li>Hippocrates?
 Brain is seat of mind?</li>
@@ -3325,7 +3735,7 @@ Brain is seat of mind?</li>
 </div>
 </li>
 <li><a id="orgf4b3250"></a>What is the relationship between mind, sleep, and consciousness?<br />
-<div class="outline-text-5" id="text-7-5-2-7">
+<div class="outline-text-5" id="text-8-5-2-7">
 <p>
 Does my mind exist while I'm sleeping?
 </p>
@@ -3345,7 +3755,7 @@ Which one sleeps: my mind, my brain, or me?
 </li>
 <li><a id="orgbe33558"></a>First-person view? Subjective experience? Qualia?<br /></li>
 <li><a id="orge0dcac1"></a>Why does subjective experience exist?<br />
-<div class="outline-text-5" id="text-7-5-2-9">
+<div class="outline-text-5" id="text-8-5-2-9">
 <p>
 We are made of the same kinds of atoms.
 Why do our consciousness differ?
@@ -3424,7 +3834,7 @@ But there are stories of some people who can corroborate their past lives?
 <li><a id="org0a13099"></a><span class="todo TODO">TODO</span> Fucking around with language: intending to intend, wanting to want, willing to will<br />
 <ol class="org-ol">
 <li><a id="orgeaa4dd3"></a><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> Volition is involuntary.<br />
-<div class="outline-text-6" id="text-7-5-2-10-1">
+<div class="outline-text-6" id="text-8-5-2-10-1">
 <ul class="org-ul">
 <li>Life is involuntary.
 We have life without wanting it.</li>
@@ -3435,7 +3845,7 @@ We have volition without wanting it.</li>
 </div>
 </li>
 <li><a id="org02062f0"></a>All these articles are behind fucking paywalls. Who the hell pays $40 to read philosophers fuck around with language?<br />
-<div class="outline-text-6" id="text-7-5-2-10-2">
+<div class="outline-text-6" id="text-8-5-2-10-2">
 <ul class="org-ul">
 <li>1987 article "Are Intentions Self-Referential?" <a href="https://www.jstor.org/stable/4319923?seq=1">https://www.jstor.org/stable/4319923?seq=1</a></li>
 <li>2000 article "The Self-referentiality of Intentions" <a href="https://link.springer.com/article/10.1023/A:1018336525240">https://link.springer.com/article/10.1023/A:1018336525240</a></li>
@@ -3448,17 +3858,17 @@ We have volition without wanting it.</li>
 </div>
 </div>
 </div>
-<div id="outline-container-orga9a65d3" class="outline-2">
-<h2 id="orga9a65d3"><span class="section-number-2">8</span> What?</h2>
-<div class="outline-text-2" id="text-8">
+<div id="outline-container-org5e141e5" class="outline-2">
+<h2 id="org5e141e5"><span class="section-number-2">9</span> What?</h2>
+<div class="outline-text-2" id="text-9">
 </div>
 <div id="outline-container-org8c03557" class="outline-3">
-<h3 id="org8c03557"><span class="section-number-3">8.1</span> Objective reality</h3>
-<div class="outline-text-3" id="text-8-1">
+<h3 id="org8c03557"><span class="section-number-3">9.1</span> Objective reality</h3>
+<div class="outline-text-3" id="text-9-1">
 </div>
 <div id="outline-container-org8d990e3" class="outline-4">
-<h4 id="org8d990e3"><span class="section-number-4">8.1.1</span> My inability to manipulate everything implies the existence of reality outside my mind</h4>
-<div class="outline-text-4" id="text-8-1-1">
+<h4 id="org8d990e3"><span class="section-number-4">9.1.1</span> My inability to manipulate everything implies the existence of reality outside my mind</h4>
+<div class="outline-text-4" id="text-9-1-1">
 <p>
 What is wrong with this argument?
 </p>
@@ -3474,11 +3884,11 @@ A green elephant does not appear even though I will it to appear.
 </div>
 </div>
 <div id="outline-container-org108d036" class="outline-4">
-<h4 id="org108d036"><span class="section-number-4">8.1.2</span> Is "objective reality" redundant? How does "objective reality" differ from "reality"?</h4>
+<h4 id="org108d036"><span class="section-number-4">9.1.2</span> Is "objective reality" redundant? How does "objective reality" differ from "reality"?</h4>
 </div>
 <div id="outline-container-org3f30b38" class="outline-4">
-<h4 id="org3f30b38"><span class="section-number-4">8.1.3</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Example difference between statements about objective reality and statements of subjective reality</h4>
-<div class="outline-text-4" id="text-8-1-3">
+<h4 id="org3f30b38"><span class="section-number-4">9.1.3</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Example difference between statements about objective reality and statements of subjective reality</h4>
+<div class="outline-text-4" id="text-9-1-3">
 <p>
 There is this difference:
 </p>
@@ -3489,8 +3899,8 @@ There is this difference:
 </div>
 </div>
 <div id="outline-container-org377416e" class="outline-4">
-<h4 id="org377416e"><span class="section-number-4">8.1.4</span> <span class="todo TODO">TODO</span> A thing is <b>real</b> iff &#x2026;</h4>
-<div class="outline-text-4" id="text-8-1-4">
+<h4 id="org377416e"><span class="section-number-4">9.1.4</span> <span class="todo TODO">TODO</span> A thing is <b>real</b> iff &#x2026;</h4>
+<div class="outline-text-4" id="text-9-1-4">
 <ul class="org-ul">
 <li>&#x2026; it has material existence?</li>
 <li>&#x2026; it interacts with our senses?</li>
@@ -3500,8 +3910,8 @@ There is this difference:
 </div>
 </div>
 <div id="outline-container-org7a610f1" class="outline-4">
-<h4 id="org7a610f1"><span class="section-number-4">8.1.5</span> <span class="todo TODO">TODO</span> We can know <i>some</i> of objective reality.</h4>
-<div class="outline-text-4" id="text-8-1-5">
+<h4 id="org7a610f1"><span class="section-number-4">9.1.5</span> <span class="todo TODO">TODO</span> We can know <i>some</i> of objective reality.</h4>
+<div class="outline-text-4" id="text-9-1-5">
 <p>
 <a href="https://medium.com/the-polymath-project/so-you-think-humans-cant-know-objective-reality-e609346c2682">https://medium.com/the-polymath-project/so-you-think-humans-cant-know-objective-reality-e609346c2682</a>
 </p>
@@ -3509,8 +3919,8 @@ There is this difference:
 </div>
 </div>
 <div id="outline-container-orgd8aa84b" class="outline-3">
-<h3 id="orgd8aa84b"><span class="section-number-3">8.2</span> Solipsism unnecessarily assumes that one person's point of view is special.</h3>
-<div class="outline-text-3" id="text-8-2">
+<h3 id="orgd8aa84b"><span class="section-number-3">9.2</span> Solipsism unnecessarily assumes that one person's point of view is special.</h3>
+<div class="outline-text-3" id="text-9-2">
 <p>
 Let there be three people P, Q, and R.
 </p>
@@ -3528,8 +3938,8 @@ Let there be three people P, Q, and R.
 </div>
 </div>
 <div id="outline-container-org23a2fbd" class="outline-3">
-<h3 id="org23a2fbd"><span class="section-number-3">8.3</span> <span class="todo TODO">TODO</span> Delete this section? Maybe we don't have to define these terms.</h3>
-<div class="outline-text-3" id="text-8-3">
+<h3 id="org23a2fbd"><span class="section-number-3">9.3</span> <span class="todo TODO">TODO</span> Delete this section? Maybe we don't have to define these terms.</h3>
+<div class="outline-text-3" id="text-9-3">
 <ul class="org-ul">
 <li>Define: A <i>model</i> is a representation or approximation.</li>
 <li>Define: The <i>self-model</i> of X is X's model of X.</li>
@@ -3547,8 +3957,8 @@ Let there be three people P, Q, and R.
 </ul>
 </div>
 <div id="outline-container-orgb6c5ec2" class="outline-4">
-<h4 id="orgb6c5ec2"><span class="section-number-4">8.3.1</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> A system is a <i>reflex</i> system iff it is <i>memoryless</i>.</h4>
-<div class="outline-text-4" id="text-8-3-1">
+<h4 id="orgb6c5ec2"><span class="section-number-4">9.3.1</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-05&gt; </span></span> A system is a <i>reflex</i> system iff it is <i>memoryless</i>.</h4>
+<div class="outline-text-4" id="text-9-3-1">
 <ul class="org-ul">
 <li>Intension: A system is a <i>reflex</i> system iff it is memoryless.</li>
 <li>Extension: A system is a <i>reflex</i> system iff its reaction is always the same.</li>
@@ -3562,16 +3972,16 @@ Let there be three people P, Q, and R.
 </div>
 </div>
 <div id="outline-container-org013dca9" class="outline-3">
-<h3 id="org013dca9"><span class="section-number-3">8.4</span> <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-04&gt; </span></span> Summarize current research</h3>
-<div class="outline-text-3" id="text-8-4">
+<h3 id="org013dca9"><span class="section-number-3">9.4</span> <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-04&gt; </span></span> Summarize current research</h3>
+<div class="outline-text-3" id="text-9-4">
 </div>
 <div id="outline-container-org9f2fb28" class="outline-4">
-<h4 id="org9f2fb28"><span class="section-number-4">8.4.1</span> Neuropsychology</h4>
-<div class="outline-text-4" id="text-8-4-1">
+<h4 id="org9f2fb28"><span class="section-number-4">9.4.1</span> Neuropsychology</h4>
+<div class="outline-text-4" id="text-9-4-1">
 </div>
 <ol class="org-ol">
 <li><a id="org076afe7"></a>2017 article "The Status and Future of Consciousness Research" <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5641373/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5641373/</a><br />
-<div class="outline-text-5" id="text-8-4-1-1">
+<div class="outline-text-5" id="text-9-4-1-1">
 <ul class="org-ul">
 <li>This article makes me sure that
 I'm not interested in how to measure consciousness,
@@ -3601,7 +4011,7 @@ Scientists across disciplines generally agree that consciousness is subjective, 
 </div>
 </li>
 <li><a id="org655811c"></a>2011 article "Understanding Brain, Mind and Soul: Contributions from Neurology and Neurosurgery" <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3115284/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3115284/</a><br />
-<div class="outline-text-5" id="text-8-4-1-2">
+<div class="outline-text-5" id="text-9-4-1-2">
 <ul class="org-ul">
 <li>The section "The Mind" correlates brain damage and behavior change.</li>
 <li>The section "Where is the Mind Located?" says "The brain is the organ of the mind just as the lungs are the organs for respiration."</li>
@@ -3641,12 +4051,12 @@ near-death experience research suggests that the mind can function without brain
 </ol>
 </div>
 <div id="outline-container-org72c09da" class="outline-4">
-<h4 id="org72c09da"><span class="section-number-4">8.4.2</span> Popular science</h4>
-<div class="outline-text-4" id="text-8-4-2">
+<h4 id="org72c09da"><span class="section-number-4">9.4.2</span> Popular science</h4>
+<div class="outline-text-4" id="text-9-4-2">
 </div>
 <ol class="org-ol">
 <li><a id="org448bdfc"></a>2013 article "Distinguishing Brain From Mind" <a href="https://www.theatlantic.com/health/archive/2013/05/distinguishing-brain-from-mind/276380/">https://www.theatlantic.com/health/archive/2013/05/distinguishing-brain-from-mind/276380/</a><br />
-<div class="outline-text-5" id="text-8-4-2-1">
+<div class="outline-text-5" id="text-9-4-2-1">
 <ul class="org-ul">
 <li>"In coming years, neuroscience will answer questions we don't even yet know to ask.
 Sometimes, though, focus on the brain is misleading."</li>
@@ -3655,7 +4065,7 @@ Sometimes, though, focus on the brain is misleading."</li>
 </div>
 </li>
 <li><a id="orgcc072c9"></a>2013 article "Why are top scientists [&#x2026;] interested in researching human consciousness?" <a href="https://www.mindscience.org/index.php/research/the-scientific-study-of-consciousness.html">https://www.mindscience.org/index.php/research/the-scientific-study-of-consciousness.html</a><br />
-<div class="outline-text-5" id="text-8-4-2-2">
+<div class="outline-text-5" id="text-9-4-2-2">
 <ul class="org-ul">
 <li>"modern brain imaging seems to indicate that it is Spinoza's concept of an integrated mind-body that is closer to reality."</li>
 <li>"psychologist William James' great work on consciousness in the late 1800s is slowly regaining the pivotal position it deserves in understanding and interpreting human behavior."</li>
@@ -3666,12 +4076,12 @@ Sometimes, though, focus on the brain is misleading."</li>
 </ol>
 </div>
 <div id="outline-container-org6bade35" class="outline-4">
-<h4 id="org6bade35"><span class="section-number-4">8.4.3</span> Nonlocality</h4>
-<div class="outline-text-4" id="text-8-4-3">
+<h4 id="org6bade35"><span class="section-number-4">9.4.3</span> Nonlocality</h4>
+<div class="outline-text-4" id="text-9-4-3">
 </div>
 <ol class="org-ol">
 <li><a id="org5f5039e"></a>2016 Pim van Lommel interview "Continuity of non-local consciousness" <a href="https://www.landelijkexpertisecentrumsterven.nl/inspiratie/continuity-of-non-local-consciousness/">https://www.landelijkexpertisecentrumsterven.nl/inspiratie/continuity-of-non-local-consciousness/</a><br />
-<div class="outline-text-5" id="text-8-4-3-1">
+<div class="outline-text-5" id="text-9-4-3-1">
 <ul class="org-ul">
 <li>Which experiment of continuity of nonlocal consciousness convinces you the most?
 <ul class="org-ul">
@@ -3695,7 +4105,7 @@ Sometimes, though, focus on the brain is misleading."</li>
 </div>
 </li>
 <li><a id="org882fd03"></a>2016 article <a href="https://explore.scimednet.org/index.php/all-physics-is-nonlocal/">https://explore.scimednet.org/index.php/all-physics-is-nonlocal/</a><br />
-<div class="outline-text-5" id="text-8-4-3-2">
+<div class="outline-text-5" id="text-9-4-3-2">
 <ul class="org-ul">
 <li>"there is no agreement among physicists on what nonlocality means"</li>
 <li>"Bohmian mechanics is different from traditional quantum mechanics, in that particles follow definite trajectories, and possess both a definite position and momentum.
@@ -3706,7 +4116,7 @@ What Bohm said is that a quantum particle has a real as opposed to statistical e
 </div>
 </li>
 <li><a id="orgb9df17a"></a>2017 article <a href="https://bigthink.com/robby-berman/is-consciousness-in-the-physical-world-we-may-be-about-to-find-out">https://bigthink.com/robby-berman/is-consciousness-in-the-physical-world-we-may-be-about-to-find-out</a><br />
-<div class="outline-text-5" id="text-8-4-3-3">
+<div class="outline-text-5" id="text-9-4-3-3">
 <ul class="org-ul">
 <li>Lucien Hardy "has an experiment to see if the mind operates on a quantum level."</li>
 <li>"I am currently working with the group of Jian-Wei Pan to realize this experiment using their satellite source that can distribute entanglement over 1200km."
@@ -3723,7 +4133,7 @@ and whose settings are controlled by EEG signals from headsets on 100 human volu
 </div>
 </li>
 <li><a id="org1ba845c"></a>2015 article "Does consciousness go beyond the brain?" <a href="https://noetic.org/blog/arnaud-delorme/does-consciousness-go-beyond">https://noetic.org/blog/arnaud-delorme/does-consciousness-go-beyond</a><br />
-<div class="outline-text-5" id="text-8-4-3-4">
+<div class="outline-text-5" id="text-9-4-3-4">
 <ul class="org-ul">
 <li>"What is the evidence so far?"</li>
 <li>"Currently consciousness is considered by mainstream science as an epiphenomenon often with no causal consequence that emerges from this structure in a sort of magical way.
@@ -3737,8 +4147,8 @@ The prevailing view is that consciousness an illusion created by the brain."</li
 </ol>
 </div>
 <div id="outline-container-org44a77ba" class="outline-4">
-<h4 id="org44a77ba"><span class="section-number-4">8.4.4</span> Experiments that support physicalism/materialism/reductionism/monism: reconstructing brain input from brain activity</h4>
-<div class="outline-text-4" id="text-8-4-4">
+<h4 id="org44a77ba"><span class="section-number-4">9.4.4</span> Experiments that support physicalism/materialism/reductionism/monism: reconstructing brain input from brain activity</h4>
+<div class="outline-text-4" id="text-9-4-4">
 <ul class="org-ul">
 <li>1999, Scientists reconstruct picture from cat brain activity
 <ul class="org-ul">
@@ -3754,8 +4164,8 @@ The prevailing view is that consciousness an illusion created by the brain."</li
 </div>
 </div>
 <div id="outline-container-org94c81bc" class="outline-4">
-<h4 id="org94c81bc"><span class="section-number-4">8.4.5</span> <span class="todo TODO">TODO</span> Summarize Wikipedia</h4>
-<div class="outline-text-4" id="text-8-4-5">
+<h4 id="org94c81bc"><span class="section-number-4">9.4.5</span> <span class="todo TODO">TODO</span> Summarize Wikipedia</h4>
+<div class="outline-text-4" id="text-9-4-5">
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/Mind">https://en.wikipedia.org/wiki/Mind</a>
 <ul class="org-ul">
@@ -3874,12 +4284,12 @@ It is distinct from the question of how mind and body function chemically and ph
 </div>
 </div>
 <div id="outline-container-org81021d3" class="outline-3">
-<h3 id="org81021d3"><span class="section-number-3">8.5</span> <span class="todo TODO">TODO</span> Tidy up these ramblings</h3>
-<div class="outline-text-3" id="text-8-5">
+<h3 id="org81021d3"><span class="section-number-3">9.5</span> <span class="todo TODO">TODO</span> Tidy up these ramblings</h3>
+<div class="outline-text-3" id="text-9-5">
 </div>
 <div id="outline-container-org4feb130" class="outline-4">
-<h4 id="org4feb130"><span class="section-number-4">8.5.1</span> <span class="todo TODO">TODO</span> Intension (actual) vs extension (apparent)? What are we trying to say?</h4>
-<div class="outline-text-4" id="text-8-5-1">
+<h4 id="org4feb130"><span class="section-number-4">9.5.1</span> <span class="todo TODO">TODO</span> Intension (actual) vs extension (apparent)? What are we trying to say?</h4>
+<div class="outline-text-4" id="text-9-5-1">
 <ul class="org-ul">
 <li>Intension: actually having a mind</li>
 <li>Extension: apparently having a mind (behaving like something having a mind)</li>
@@ -3894,7 +4304,7 @@ It is distinct from the question of how mind and body function chemically and ph
 </div>
 <ol class="org-ol">
 <li><a id="org902e861"></a>Examples of intensional consciousness vs extensional consciousness?<br />
-<div class="outline-text-5" id="text-8-5-1-1">
+<div class="outline-text-5" id="text-9-5-1-1">
 <ul class="org-ul">
 <li>Intensional but not extensional: a person playing dead.</li>
 <li>Extensional but not intensionally: a rule-based system with very many rules
@@ -3910,7 +4320,7 @@ but never changes (doesn't have memory, doesn't learn).
 </div>
 <ol class="org-ol">
 <li><a id="orgf00a90a"></a>Locked-in syndrome: The sensors work but the actuators don't work.<br />
-<div class="outline-text-6" id="text-8-5-1-1-1">
+<div class="outline-text-6" id="text-9-5-1-1-1">
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/Locked-in_syndrome">https://en.wikipedia.org/wiki/Locked-in_syndrome</a></li>
 </ul>
@@ -3921,11 +4331,11 @@ but never changes (doesn't have memory, doesn't learn).
 </ol>
 </div>
 <div id="outline-container-orgaf1baf5" class="outline-4">
-<h4 id="orgaf1baf5"><span class="section-number-4">8.5.2</span> <span class="todo TODO">TODO</span> Problem with idealism? If reality is an illusion, why is it consistent?</h4>
+<h4 id="orgaf1baf5"><span class="section-number-4">9.5.2</span> <span class="todo TODO">TODO</span> Problem with idealism? If reality is an illusion, why is it consistent?</h4>
 </div>
 <div id="outline-container-org35933c9" class="outline-4">
-<h4 id="org35933c9"><span class="section-number-4">8.5.3</span> <span class="todo TODO">TODO</span> What is the relationship between my old self and my present self?</h4>
-<div class="outline-text-4" id="text-8-5-3">
+<h4 id="org35933c9"><span class="section-number-4">9.5.3</span> <span class="todo TODO">TODO</span> What is the relationship between my old self and my present self?</h4>
+<div class="outline-text-4" id="text-9-5-3">
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/Identity_(philosophy)">WP:Identity</a></li>
 <li>What does "same" mean?</li>
@@ -3933,19 +4343,19 @@ but never changes (doesn't have memory, doesn't learn).
 </div>
 </div>
 <div id="outline-container-org0a4123d" class="outline-4">
-<h4 id="org0a4123d"><span class="section-number-4">8.5.4</span> <span class="todo TODO">TODO</span> Are there scientific experiments? Search "consciousness experiments" on the Internet</h4>
+<h4 id="org0a4123d"><span class="section-number-4">9.5.4</span> <span class="todo TODO">TODO</span> Are there scientific experiments? Search "consciousness experiments" on the Internet</h4>
 </div>
 <div id="outline-container-org98b0133" class="outline-4">
-<h4 id="org98b0133"><span class="section-number-4">8.5.5</span> <span class="todo TODO">TODO</span> Blind protocol?</h4>
-<div class="outline-text-4" id="text-8-5-5">
+<h4 id="org98b0133"><span class="section-number-4">9.5.5</span> <span class="todo TODO">TODO</span> Blind protocol?</h4>
+<div class="outline-text-4" id="text-9-5-5">
 <p>
 <a href="http://www.ncbi.nlm.nih.gov/pubmed/16781550">The blind protocol and its place in consciousness research</a>
 </p>
 </div>
 </div>
 <div id="outline-container-org5795eb7" class="outline-4">
-<h4 id="org5795eb7"><span class="section-number-4">8.5.6</span> <span class="todo TODO">TODO</span> Materialism is false? What are these trying to say?</h4>
-<div class="outline-text-4" id="text-8-5-6">
+<h4 id="org5795eb7"><span class="section-number-4">9.5.6</span> <span class="todo TODO">TODO</span> Materialism is false? What are these trying to say?</h4>
+<div class="outline-text-4" id="text-9-5-6">
 <ul class="org-ul">
 <li>2016 article "Why Materialism Is False, and Why It Has Nothing To Do with the Mind"
 <a href="https://www.cambridge.org/core/journals/philosophy/article/why-materialism-is-false-and-why-it-has-nothing-to-do-with-the-mind/5DC675B901E2F68E82643B88EE468EAE">https://www.cambridge.org/core/journals/philosophy/article/why-materialism-is-false-and-why-it-has-nothing-to-do-with-the-mind/5DC675B901E2F68E82643B88EE468EAE</a></li>
@@ -3953,7 +4363,7 @@ but never changes (doesn't have memory, doesn't learn).
 </div>
 <ol class="org-ol">
 <li><a id="org81f36dc"></a>Are materialism and subjective experience compatible?<br />
-<div class="outline-text-5" id="text-8-5-6-1">
+<div class="outline-text-5" id="text-9-5-6-1">
 <ul class="org-ul">
 <li>Problem of other minds.</li>
 </ul>
@@ -3962,7 +4372,7 @@ but never changes (doesn't have memory, doesn't learn).
 <li><a id="orge81538e"></a>What is non-local consciousness? Are these legit or kook?<br />
 <ol class="org-ol">
 <li><a id="org9e5252b"></a>Pim van Lommel, cardiologist, consciousness after clinical death<br />
-<div class="outline-text-6" id="text-8-5-6-2-1">
+<div class="outline-text-6" id="text-9-5-6-2-1">
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/Pim_van_Lommel">WP:Pim van Lommel</a>
 <ul class="org-ul">
@@ -3972,14 +4382,14 @@ but never changes (doesn't have memory, doesn't learn).
 </div>
 </li>
 <li><a id="org0196d9a"></a>Sam Parnia's AWARE study<br />
-<div class="outline-text-6" id="text-8-5-6-2-2">
+<div class="outline-text-6" id="text-9-5-6-2-2">
 <ul class="org-ul">
 <li><a href="https://en.wikipedia.org/wiki/Sam_Parnia">https://en.wikipedia.org/wiki/Sam_Parnia</a></li>
 </ul>
 </div>
 </li>
 <li><a id="orgc1e1a57"></a>Dying, near-death experiences, thanatology<br />
-<div class="outline-text-6" id="text-8-5-6-2-3">
+<div class="outline-text-6" id="text-9-5-6-2-3">
 <ul class="org-ul">
 <li><a href="http://www.nderf.org/">http://www.nderf.org/</a></li>
 <li><a href="https://iands.org/news/news/front-page-news/1060-aware-study-initial-results-are-published.html">AWARE study initial results are published!</a></li>
@@ -3989,7 +4399,7 @@ but never changes (doesn't have memory, doesn't learn).
 </div>
 </li>
 <li><a id="org1059b56"></a>Central premonitions registry<br />
-<div class="outline-text-6" id="text-8-5-6-2-4">
+<div class="outline-text-6" id="text-9-5-6-2-4">
 <ul class="org-ul">
 <li>1968, <a href="http://www.weirduniverse.net/blog/comments/central_premonitions_registry">http://www.weirduniverse.net/blog/comments/central_premonitions_registry</a></li>
 <li>2017, <a href="https://scry.cloud/">https://scry.cloud/</a></li>
@@ -3997,7 +4407,7 @@ but never changes (doesn't have memory, doesn't learn).
 </div>
 </li>
 <li><a id="orgcb607b7"></a>Astral travel, remote viewing, out-of-body experience?<br />
-<div class="outline-text-6" id="text-8-5-6-2-5">
+<div class="outline-text-6" id="text-9-5-6-2-5">
 <ul class="org-ul">
 <li><a href="https://allaboutheaven.org/observations/1122/127/swann-ingo-out-of-body-to-mercury-003207">https://allaboutheaven.org/observations/1122/127/swann-ingo-out-of-body-to-mercury-003207</a></li>
 <li><a href="https://www.quora.com/Is-astral-projection-true-If-so-has-anyone-done-it-Is-there-a-standard-procedure">https://www.quora.com/Is-astral-projection-true-If-so-has-anyone-done-it-Is-there-a-standard-procedure</a></li>
@@ -4010,12 +4420,12 @@ but never changes (doesn't have memory, doesn't learn).
 </ol>
 </div>
 <div id="outline-container-orge0a91a2" class="outline-4">
-<h4 id="orge0a91a2"><span class="section-number-4">8.5.7</span> Things I'm no longer interested in</h4>
-<div class="outline-text-4" id="text-8-5-7">
+<h4 id="orge0a91a2"><span class="section-number-4">9.5.7</span> Things I'm no longer interested in</h4>
+<div class="outline-text-4" id="text-9-5-7">
 </div>
 <ol class="org-ol">
 <li><a id="org78879c2"></a>How do we measure consciousness?<br />
-<div class="outline-text-5" id="text-8-5-7-1">
+<div class="outline-text-5" id="text-9-5-7-1">
 <ul class="org-ul">
 <li>Infer: Degree of consciousness is a continuum.
 <ul class="org-ul">
@@ -4054,14 +4464,14 @@ detect consciousness by anomaly in the output of a hardware random number genera
 <li><a id="org170804f"></a>Memory is unreliable.<br />
 <ol class="org-ol">
 <li><a id="org055536e"></a>Observe: There exists things I experienced but don't remember.<br />
-<div class="outline-text-6" id="text-8-5-7-2-1">
+<div class="outline-text-6" id="text-9-5-7-2-1">
 <ul class="org-ul">
 <li>Example: What I ate some long time ago.</li>
 </ul>
 </div>
 </li>
 <li><a id="org9251691"></a>How far back does our memory extend?<br />
-<div class="outline-text-6" id="text-8-5-7-2-2">
+<div class="outline-text-6" id="text-9-5-7-2-2">
 <ul class="org-ul">
 <li>Human memory is unreliable.</li>
 <li>I don't remember being a fetus in the womb.</li>
@@ -4076,14 +4486,14 @@ I don't remember anything that happened before I was 3 years old.</li>
 </div>
 </li>
 <li><a id="org14aed14"></a>What does it mean to remember?<br />
-<div class="outline-text-6" id="text-8-5-7-2-3">
+<div class="outline-text-6" id="text-9-5-7-2-3">
 <ul class="org-ul">
 <li>If one does not remember a thing, it does not mean that he does not have any memory about that thing.</li>
 </ul>
 </div>
 </li>
 <li><a id="orgb0b3fff"></a>How do we remember things?<br />
-<div class="outline-text-6" id="text-8-5-7-2-4">
+<div class="outline-text-6" id="text-9-5-7-2-4">
 <ul class="org-ul">
 <li>Hebbian learning? Long-term potentiation?
 <ul class="org-ul">
@@ -4099,16 +4509,16 @@ I don't remember anything that happened before I was 3 years old.</li>
 </li>
 </ol>
 </li>
-<li><a id="org7abaac5"></a>What?<br />
-<div class="outline-text-5" id="text-8-5-7-3">
+<li><a id="orge525263"></a>What?<br />
+<div class="outline-text-5" id="text-9-5-7-3">
 <ul class="org-ul">
 <li>Thought is the brain's perception of itself.
 Does consciousness arise in a body, or attach to a body?</li>
 </ul>
 </div>
 </li>
-<li><a id="org3496d7c"></a>What?<br />
-<div class="outline-text-5" id="text-8-5-7-4">
+<li><a id="org15542f7"></a>What?<br />
+<div class="outline-text-5" id="text-9-5-7-4">
 <ul class="org-ul">
 <li>Sentence S is true.</li>
 <li>Proof P proves sentence S in formal system F.</li>
@@ -4119,8 +4529,8 @@ Does consciousness arise in a body, or attach to a body?</li>
 </ol>
 </div>
 <div id="outline-container-org234578c" class="outline-4">
-<h4 id="org234578c"><span class="section-number-4">8.5.8</span> <span class="todo TODO">TODO</span> Ruminations about control</h4>
-<div class="outline-text-4" id="text-8-5-8">
+<h4 id="org234578c"><span class="section-number-4">9.5.8</span> <span class="todo TODO">TODO</span> Ruminations about control</h4>
+<div class="outline-text-4" id="text-9-5-8">
 <p>
 Example.
 A feedback system <i>controls</i> its output?
@@ -4172,7 +4582,7 @@ What is "influence"?
 <li><a id="org12fb72e"></a>Failed ruminations<br />
 <ol class="org-ol">
 <li><a id="org8660388"></a>X <i>controls</i> Y iff X does what Y <i>wants</i> X to do.<br />
-<div class="outline-text-6" id="text-8-5-8-1-1">
+<div class="outline-text-6" id="text-9-5-8-1-1">
 <p>
 I control something iff it does what I want.
 </p>
@@ -4190,17 +4600,17 @@ Example: If I want you to do what you do, the definition says I control you.
 </div>
 </div>
 <div id="outline-container-org3e1736f" class="outline-3">
-<h3 id="org3e1736f"><span class="section-number-3">8.6</span> <span class="todo TODO">TODO</span> What is the relationship between first-person view, consciousness, imagination, and reality?</h3>
+<h3 id="org3e1736f"><span class="section-number-3">9.6</span> <span class="todo TODO">TODO</span> What is the relationship between first-person view, consciousness, imagination, and reality?</h3>
 </div>
 <div id="outline-container-org04dccb5" class="outline-3">
-<h3 id="org04dccb5"><span class="section-number-3">8.7</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> If I can imagine something, does it exist?</h3>
+<h3 id="org04dccb5"><span class="section-number-3">9.7</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> If I can imagine something, does it exist?</h3>
 </div>
 <div id="outline-container-org61f0c53" class="outline-3">
-<h3 id="org61f0c53"><span class="section-number-3">8.8</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Imagination is not real, because saying otherwise bends words too much.</h3>
+<h3 id="org61f0c53"><span class="section-number-3">9.8</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-06&gt; </span></span> Imagination is not real, because saying otherwise bends words too much.</h3>
 </div>
 <div id="outline-container-org968f65c" class="outline-3">
-<h3 id="org968f65c"><span class="section-number-3">8.9</span> Fact, judgment, and seeing things as is</h3>
-<div class="outline-text-3" id="text-8-9">
+<h3 id="org968f65c"><span class="section-number-3">9.9</span> Fact, judgment, and seeing things as is</h3>
+<div class="outline-text-3" id="text-9-9">
 <p>
 People often conflate <i>fact</i> and <i>judgment</i>.
 Example:
@@ -4212,8 +4622,8 @@ Example:
 </div>
 </div>
 <div id="outline-container-orgf3f8e51" class="outline-3">
-<h3 id="orgf3f8e51"><span class="section-number-3">8.10</span> List of unsolved problems in philosophy</h3>
-<div class="outline-text-3" id="text-8-10">
+<h3 id="orgf3f8e51"><span class="section-number-3">9.10</span> List of unsolved problems in philosophy</h3>
+<div class="outline-text-3" id="text-9-10">
 <p>
 <a href="https://en.wikipedia.org/wiki/List_of_unsolved_problems_in_philosophy">https://en.wikipedia.org/wiki/List_of_unsolved_problems_in_philosophy</a>
 </p>
@@ -4221,8 +4631,8 @@ Example:
 </div>
 </div>
 <div id="outline-container-orgfcb66f9" class="outline-2">
-<h2 id="orgfcb66f9"><span class="section-number-2">9</span> Implication (do not read; conversion errors)</h2>
-<div class="outline-text-2" id="text-9">
+<h2 id="orgfcb66f9"><span class="section-number-2">10</span> Implication (do not read; conversion errors)</h2>
+<div class="outline-text-2" id="text-10">
 <p>
 <span class="timestamp-wrapper"><span class="timestamp">&lt;2017-10-21&gt;</span></span>
 </p>
@@ -4236,8 +4646,8 @@ Plan: Salvage the parts of this section into the parent document.
 </p>
 </div>
 <div id="outline-container-org772628f" class="outline-3">
-<h3 id="org772628f"><span class="section-number-3">9.1</span> Abstract</h3>
-<div class="outline-text-3" id="text-9-1">
+<h3 id="org772628f"><span class="section-number-3">10.1</span> Abstract</h3>
+<div class="outline-text-3" id="text-10-1">
 <p>
 The <i>implication</i> \(A \to B\) means that \(A\) <i>restricts</i> \(B\).
 </p>
@@ -4255,8 +4665,8 @@ and conditional probability in probability theory.
 </div>
 </div>
 <div id="outline-container-orgd1537c7" class="outline-3">
-<h3 id="orgd1537c7"><span class="section-number-3">9.2</span> What does implication mean?</h3>
-<div class="outline-text-3" id="text-9-2">
+<h3 id="orgd1537c7"><span class="section-number-3">10.2</span> What does implication mean?</h3>
+<div class="outline-text-3" id="text-10-2">
 <p>
 (This section needs rereading and rewriting.)
 </p>
@@ -4299,8 +4709,8 @@ The right-hand side of the inequality says that the maximum distance depends onl
 </p>
 </div>
 <div id="outline-container-org1db5142" class="outline-4">
-<h4 id="org1db5142"><span class="section-number-4">9.2.1</span> Deriving the constraint</h4>
-<div class="outline-text-4" id="text-9-2-1">
+<h4 id="org1db5142"><span class="section-number-4">10.2.1</span> Deriving the constraint</h4>
+<div class="outline-text-4" id="text-10-2-1">
 <p>
 If both \(\tau(p)\) and \(\tau(p \to q)\) are high, then the constraint is quite strict, and \(\tau(q)\) should be near \(\tau(p)\).
 </p>
@@ -4330,8 +4740,8 @@ The corner cases are:
 </div>
 </div>
 <div id="outline-container-org7769710" class="outline-4">
-<h4 id="org7769710"><span class="section-number-4">9.2.2</span> Algebra of metrics</h4>
-<div class="outline-text-4" id="text-9-2-2">
+<h4 id="org7769710"><span class="section-number-4">10.2.2</span> Algebra of metrics</h4>
+<div class="outline-text-4" id="text-10-2-2">
 <p>
 If \(d\) is a metric and \(k\) is a constant, then \(d' = (x,y) \to k \cdot d(x,y)\) is also a metric?
 </p>
@@ -4350,8 +4760,8 @@ A linear combination of metrics is a metric.
 </div>
 </div>
 <div id="outline-container-orge58d124" class="outline-4">
-<h4 id="orge58d124"><span class="section-number-4">9.2.3</span> Consequent freedom functions</h4>
-<div class="outline-text-4" id="text-9-2-3">
+<h4 id="orge58d124"><span class="section-number-4">10.2.3</span> Consequent freedom functions</h4>
+<div class="outline-text-4" id="text-10-2-3">
 <p>
 If \(u\) is a consequent freedom function, then so is \(u' = (x,y) \to [u(x,y)]^k\) for all real \(k > 0\).
 </p>
@@ -4433,8 +4843,8 @@ and \(\tau(p) = 1\) means that \(p\) is true.
 </div>
 </div>
 <div id="outline-container-org2cd4599" class="outline-4">
-<h4 id="org2cd4599"><span class="section-number-4">9.2.4</span> Principle of non-contradiction</h4>
-<div class="outline-text-4" id="text-9-2-4">
+<h4 id="org2cd4599"><span class="section-number-4">10.2.4</span> Principle of non-contradiction</h4>
+<div class="outline-text-4" id="text-10-2-4">
 <p>
 Principle of non-contradiction:
 \(\tau(p) = -1\) if we know that \(p\) is false.
@@ -4455,12 +4865,12 @@ Does paraconsistent logic make sense?
 </div>
 </div>
 <div id="outline-container-org9835bf1" class="outline-3">
-<h3 id="org9835bf1"><span class="section-number-3">9.3</span> Implication system</h3>
-<div class="outline-text-3" id="text-9-3">
+<h3 id="org9835bf1"><span class="section-number-3">10.3</span> Implication system</h3>
+<div class="outline-text-3" id="text-10-3">
 </div>
 <div id="outline-container-org9ce2639" class="outline-4">
-<h4 id="org9ce2639"><span class="section-number-4">9.3.1</span> Definition of implication system</h4>
-<div class="outline-text-4" id="text-9-3-1">
+<h4 id="org9ce2639"><span class="section-number-4">10.3.1</span> Definition of implication system</h4>
+<div class="outline-text-4" id="text-10-3-1">
 <p>
 A <i>unit metric</i> is a metric whose inputs and output are in the unit real line \([0,1]\).
 More specifically, a <i>unit metric</i> is a function \(d : [0,1]^2 \to [0,1]\) satisfying the following <i>metric axioms</i> for all \(x,y,z \in [0,1]\):
@@ -4527,8 +4937,8 @@ We call \eqref{imp-constr} the <i>meaningful implication constraint</i>.
 </div>
 </div>
 <div id="outline-container-org6607bb4" class="outline-4">
-<h4 id="org6607bb4"><span class="section-number-4">9.3.2</span> Known instances</h4>
-<div class="outline-text-4" id="text-9-3-2">
+<h4 id="org6607bb4"><span class="section-number-4">10.3.2</span> Known instances</h4>
+<div class="outline-text-4" id="text-10-3-2">
 <p>
 These systems are implication systems: - classical logic - probability theory
 </p>
@@ -4598,8 +5008,8 @@ If \(A \subseteq B\), then \(P(B|A) = 1\).
 </div>
 </div>
 <div id="outline-container-orgf7b44dd" class="outline-4">
-<h4 id="orgf7b44dd"><span class="section-number-4">9.3.3</span> Probability theory</h4>
-<div class="outline-text-4" id="text-9-3-3">
+<h4 id="orgf7b44dd"><span class="section-number-4">10.3.3</span> Probability theory</h4>
+<div class="outline-text-4" id="text-10-3-3">
 <p>
 Probability theory also allows us to compute \(\tau(p \to q)\) by conditional probabilities \(\tau(p) \cdot \tau(p \to q) = \tau(p \wedge q)\).
 </p>
@@ -4607,12 +5017,12 @@ Probability theory also allows us to compute \(\tau(p \to q)\) by conditional pr
 </div>
 </div>
 <div id="outline-container-org6f17c3c" class="outline-3">
-<h3 id="org6f17c3c"><span class="section-number-3">9.4</span> Induction</h3>
-<div class="outline-text-3" id="text-9-4">
+<h3 id="org6f17c3c"><span class="section-number-3">10.4</span> Induction</h3>
+<div class="outline-text-3" id="text-10-4">
 </div>
 <div id="outline-container-org5e50fb2" class="outline-4">
-<h4 id="org5e50fb2"><span class="section-number-4">9.4.1</span> Justifying induction with probability theory</h4>
-<div class="outline-text-4" id="text-9-4-1">
+<h4 id="org5e50fb2"><span class="section-number-4">10.4.1</span> Justifying induction with probability theory</h4>
+<div class="outline-text-4" id="text-10-4-1">
 <p>
 Let \(X \subseteq \Omega\) be a set of some samples.
 For every \(x \in X\), we can observe \(x\) and compute \(\tau(x)\).
@@ -4638,12 +5048,12 @@ E \subseteq E' \to \tau(P(E) \to P(\Omega)) \le \tau(P(E') \to P(\Omega)) \label
 </div>
 </div>
 <div id="outline-container-orgd5e438d" class="outline-3">
-<h3 id="orgd5e438d"><span class="section-number-3">9.5</span> Conditionals</h3>
-<div class="outline-text-3" id="text-9-5">
+<h3 id="orgd5e438d"><span class="section-number-3">10.5</span> Conditionals</h3>
+<div class="outline-text-3" id="text-10-5">
 </div>
 <div id="outline-container-orgb881e4c" class="outline-4">
-<h4 id="orgb881e4c"><span class="section-number-4">9.5.1</span> Types of conditionals according to logic, philosophy, and linguistics</h4>
-<div class="outline-text-4" id="text-9-5-1">
+<h4 id="orgb881e4c"><span class="section-number-4">10.5.1</span> Types of conditionals according to logic, philosophy, and linguistics</h4>
+<div class="outline-text-4" id="text-10-5-1">
 <p>
 There are several types of conditionals:
 causal, strict, indicative, counterfactual, strict, material, formal.
@@ -4651,8 +5061,8 @@ causal, strict, indicative, counterfactual, strict, material, formal.
 </div>
 </div>
 <div id="outline-container-orgb09aa66" class="outline-4">
-<h4 id="orgb09aa66"><span class="section-number-4">9.5.2</span> Eight types of conditionals by the truth values of the parts</h4>
-<div class="outline-text-4" id="text-9-5-2">
+<h4 id="orgb09aa66"><span class="section-number-4">10.5.2</span> Eight types of conditionals by the truth values of the parts</h4>
+<div class="outline-text-4" id="text-10-5-2">
 <p>
 If \(\tau(p) = 1\) means that all swans are white,
 then \(\tau(p) = 0.99\) should mean that almost all swans are white,
@@ -4749,15 +5159,15 @@ depends on the distribution?
 </div>
 </div>
 <div id="outline-container-org2b71dba" class="outline-3">
-<h3 id="org2b71dba"><span class="section-number-3">9.6</span> The axioms</h3>
-<div class="outline-text-3" id="text-9-6">
+<h3 id="org2b71dba"><span class="section-number-3">10.6</span> The axioms</h3>
+<div class="outline-text-3" id="text-10-6">
 <p>
 In this section, we list the axioms that \(\tau\) has to satisfy.
 </p>
 </div>
 <div id="outline-container-orgdf3e777" class="outline-4">
-<h4 id="orgdf3e777"><span class="section-number-4">9.6.1</span> Equations</h4>
-<div class="outline-text-4" id="text-9-6-1">
+<h4 id="orgdf3e777"><span class="section-number-4">10.6.1</span> Equations</h4>
+<div class="outline-text-4" id="text-10-6-1">
 <p>
 The equations allow us to rewrite sentences without changing their reasonability.
 </p>
@@ -4802,8 +5212,8 @@ The following axioms are less obvious.
 </div>
 </div>
 <div id="outline-container-org4edb9dd" class="outline-4">
-<h4 id="org4edb9dd"><span class="section-number-4">9.6.2</span> Tautologies</h4>
-<div class="outline-text-4" id="text-9-6-2">
+<h4 id="org4edb9dd"><span class="section-number-4">10.6.2</span> Tautologies</h4>
+<div class="outline-text-4" id="text-10-6-2">
 <p>
 \eqref{nowhere} is self-inference.
 \eqref{and_elim} is conjunction elimination.
@@ -4831,8 +5241,8 @@ which is obtained by replacing \(q = \bot\) in \eqref{and_elim}.
 </div>
 </div>
 <div id="outline-container-org4426911" class="outline-4">
-<h4 id="org4426911"><span class="section-number-4">9.6.3</span> Inequalities</h4>
-<div class="outline-text-4" id="text-9-6-3">
+<h4 id="org4426911"><span class="section-number-4">10.6.3</span> Inequalities</h4>
+<div class="outline-text-4" id="text-10-6-3">
 <p>
 \eqref{and_dom} and \eqref{or_dom} describe <i>dominance</i>:
 satisfying two sentences are harder than satisfying either of them.
