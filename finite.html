@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Finitism</title>
+  <meta name="description" content="Personal website">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/finite.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
+
+  
+
+    <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+    </script>
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","input/MathML","input/AsciiMath",
+
+    "output/CommonHTML"
+
+    ],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        , equationNumbers: {
+            autoNumber: "AMS"
+        }
+    },
+    "CommonHTML": {
+        scale: 100
+    },
+    "fast-preview": {
+        disabled: true,
+    }
+});
+  </script>
+<style>
+/*
+PreviewHTML produces small Times New Roman text.
+PreviewHTML scale doesn't work.
+*/
+.MathJax_PHTML { font-size: 125%; }
+</style>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
+  </div>
+</header>
+
+
+    
+  <div style="display:none;">\(
+\renewcommand\emptyset{\varnothing}
+\newcommand\abs[1]{\left|#1\right|}
+\newcommand\dom{\textrm{dom}}
+\newcommand\cod{\textrm{cod}}
+\newcommand\Bernoulli{\textrm{Bernoulli}}
+\newcommand\Binomial{\textrm{Binomial}}
+\newcommand\Expect[1]{\mathbb{E}[#1]}
+\newcommand\Nat{\mathbb{N}}
+\newcommand\Integers{\mathbb{Z}}
+\newcommand\Real{\mathbb{R}}
+\newcommand\Rational{\mathbb{Q}}
+\newcommand\Complex{\mathbb{C}}
+\newcommand\Pr{\mathrm{P}}
+\newcommand\Time{\text{Time}}
+\newcommand\DTime{\text{DTime}}
+\newcommand\NTime{\text{NTime}}
+\newcommand\TimeP{\text{P}}
+\newcommand\TimeNP{\text{NP}}
+\newcommand\TimeExp{\text{ExpTime}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\bbA{\mathbb{A}}
+\newcommand\bbC{\mathbb{C}}
+\newcommand\bbD{\mathbb{D}}
+\newcommand\bbE{\mathbb{E}}
+\newcommand\bbN{\mathbb{N}}
+\newcommand\frakI{\mathfrak{I}}
+% deprecated; use TimeExp
+\newcommand\ExpTime{\text{ExpTime}}
+\newcommand\Compute{\text{Compute}}
+\newcommand\Search{\text{Search}}
+% model theory structure
+\newcommand\struc[1]{\mathcal{#1}}
+  \)</div>
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Finitism</h1>
+  </header>
+
+  <div class="post-content">
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org4519f22">1. Introduction</a></li>
+<li><a href="#org975a9c1">2. Set theory</a></li>
+<li><a href="#org1637245">3. Geometry</a></li>
+<li><a href="#orgff880ea">4. Real analysis</a></li>
+<li><a href="#org0fb70ec">5. Probability theory</a></li>
+</ul>
+</div>
+</div>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org4519f22">1. Introduction</a></li>
+<li><a href="#org975a9c1">2. Set theory</a>
+<ul>
+<li><a href="#org9b0fc9e">2.1. The set of all natural numbers is not finite (does not exist, if we reject the axiom of infinity).</a></li>
+</ul>
+</li>
+<li><a href="#org1637245">3. Geometry</a>
+<ul>
+<li><a href="#orgd2aeebe">3.1. Other people's ideas</a></li>
+<li><a href="#orge3101c8">3.2. What is fundamental in geometry?</a></li>
+<li><a href="#org704545c">3.3. Synthetic finite geometry via discrete topology and graph theory</a></li>
+<li><a href="#orgd5483cd">3.4. What if volumes/lines, not points, were fundamental?</a></li>
+<li><a href="#org321227b">3.5. Lattice geometry?</a></li>
+<li><a href="#org620fb31">3.6. Bresenham's line algorithm, contiguousness, neighbors, and distance</a></li>
+</ul>
+</li>
+<li><a href="#orgff880ea">4. Real analysis</a>
+<ul>
+<li><a href="#org200e459">4.1. Solving a differential equation by detouring to its analogous difference equation</a></li>
+</ul>
+</li>
+<li><a href="#org0fb70ec">5. Probability theory</a>
+<ul>
+<li><a href="#org82f5b36">5.1. Some definitions</a></li>
+<li><a href="#orgedac572">5.2. Random variable probability notation</a></li>
+<li><a href="#org75fee84">5.3. Expected value</a></li>
+<li><a href="#org2ca2cbf">5.4. Random walk</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org4519f22">1. Introduction</a></li>
+<li><a href="#org975a9c1">2. Set theory</a>
+<ul>
+<li><a href="#org9b0fc9e">2.1. The set of all natural numbers is not finite (does not exist, if we reject the axiom of infinity).</a></li>
+</ul>
+</li>
+<li><a href="#org1637245">3. Geometry</a>
+<ul>
+<li><a href="#orgd2aeebe">3.1. Other people's ideas</a></li>
+<li><a href="#orge3101c8">3.2. What is fundamental in geometry?</a></li>
+<li><a href="#org704545c">3.3. Synthetic finite geometry via discrete topology and graph theory</a></li>
+<li><a href="#orgd5483cd">3.4. What if volumes/lines, not points, were fundamental?</a></li>
+<li><a href="#org321227b">3.5. Lattice geometry?</a></li>
+<li><a href="#org620fb31">3.6. Bresenham's line algorithm, contiguousness, neighbors, and distance</a>
+<ul>
+<li><a href="#org2197ee1">3.6.1. Finitism and Newtonian mechanics collisions?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgff880ea">4. Real analysis</a>
+<ul>
+<li><a href="#org200e459">4.1. Solving a differential equation by detouring to its analogous difference equation</a>
+<ul>
+<li><a href="#org4e5ec34">4.1.1. Bias toward the positive side?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org0fb70ec">5. Probability theory</a>
+<ul>
+<li><a href="#org82f5b36">5.1. Some definitions</a></li>
+<li><a href="#orgedac572">5.2. Random variable probability notation</a></li>
+<li><a href="#org75fee84">5.3. Expected value</a></li>
+<li><a href="#org2ca2cbf">5.4. Random walk</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org4519f22" class="outline-2">
+<h2 id="org4519f22"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Computer science can give back to philosophy of mathematics, because computers are inherently finite.
+</p>
+
+<p>
+The words "finitistic" and "finitistically" are unpleasant to write and read.
+</p>
+
+<p>
+The word "finitely" is already taken to mean something else.
+</p>
+
+<p>
+The phrase "according to finitism" is somewhat long.
+</p>
+</div>
+</div>
+<div id="outline-container-org975a9c1" class="outline-2">
+<h2 id="org975a9c1"><span class="section-number-2">2</span> Set theory</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org9b0fc9e" class="outline-3">
+<h3 id="org9b0fc9e"><span class="section-number-3">2.1</span> The set of all natural numbers is not finite (does not exist, if we reject the axiom of infinity).</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Here I argue that fixed-point theory suggests that \(\Nat\) should not exist.
+</p>
+
+<p>
+Let \(f\) be a function.
+</p>
+
+<p>
+A <i>fixed point</i> of \(f\) is an \(x\) such that \(x=f(x)\).
+</p>
+
+<p>
+It is tautological that if \(x \neq f(x)\) for all applicable \(x\),
+then \(f\) has no fixed points, that is, there is no \(x\) such that \(x=f(x)\).
+We readily agree with that if \(x\) is a natural number, and it shouldn't be any different if \(x\) is a set.
+</p>
+
+<p>
+Suppose we encode natural numbers as <a href="https://en.wikipedia.org/wiki/Natural_number#Von_Neumann_ordinals">von Neumann ordinals</a> (VNOs).
+Let \(S\) be the <i>VNO successor function</i> where \(S(X) = \{X\} \cup X\).
+The idea of the successor of \(X\) is to enlarge \(X\) with something that is surely not already in \(X\).
+(Can we be sure that \(X \not\in X\)? What does this have to do with <a href="https://en.wikipedia.org/wiki/Russell's_paradox">Russell's paradox</a>?)
+Let 0 be represented by \(\emptyset\).
+Thus 1 is represented by \(S(\emptyset) = \{\emptyset\}\), 2 is represented by \(\{\{\emptyset\}, \emptyset\}\), and so on.
+</p>
+
+<p>
+The set \(\Nat\) would have to satisfy the equation \(\Nat = S(\Nat)\).
+</p>
+
+<p>
+My argument ends here.
+</p>
+
+<p>
+If we embraced infinitism, we could declare that \(\Nat\) is the least fixed point of \(S\).
+</p>
+
+<p>
+Now that the set \(\Nat\) doesn't exist, what do we mean by the notation \(n \in \Nat\)?
+We don't want to invent a new notation, so we invent a new reading:
+the phrase \( n \in \Nat \) is to be read as "\(n\) is a natural number", not "\(n\) is an element of the set of natural numbers".
+The meaning of the phrase \(n \in \Nat\) is inductively defined by the base case \(0 \in \Nat\) and inductive case \(n \in \Nat \rightarrow (n+1) \in \Nat\).
+</p>
+
+<p>
+We don't need the axiom of infinity if we use predicates directly and don't use sets at all.
+We can read \(\in\) as a binary predicate, and define \(x \in S\) to read "an \(x\) that satisfies the predicate \(S\) (that is, an \(x\) such that \(S(x)\) is true)".
+We can define these satisfiers using induction (inductive data types in functional programming).
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org1637245" class="outline-2">
+<h2 id="org1637245"><span class="section-number-2">3</span> Geometry</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgd2aeebe" class="outline-3">
+<h3 id="orgd2aeebe"><span class="section-number-3">3.1</span> Other people's ideas</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+This is a summary of <a href="https://plato.stanford.edu/entries/geometry-finitism/">https://plato.stanford.edu/entries/geometry-finitism/</a>.
+</p>
+
+<p>
+A finitist geometry must overcome several problems:
+Weyl's distance function problem, the isotropy problem, Fritz no-go theorem, the identity problem, and what else?
+</p>
+
+<p>
+Peter Forrest (1995) formulated a family of discrete spaces \(E_{n,m}\) where \(n\) is dimension and \(m\) is adjacency criterion.
+A two-dimensional point is modeled by a pair of integers \((i,j)\).
+Two points \((i,j)\) and \((i',j')\) are adjacent iff \(0 < (i'-i)^2 + (j'-j)^2 \le m\).
+"Once adjacency has been stipulated, a distance function can be easily derived".
+As \(m\) grows, the distance function approaches Euclidean distance.
+</p>
+
+<p>
+If geometry is discrete, then shouldn't spacetime be anisotropic?
+How do we test spacetime anisotropy?
+</p>
+<ul class="org-ul">
+<li>2011 "Testing for Anisotropy of Space via an Extension of Special Relativity" <a href="https://arxiv.org/abs/1111.4423">https://arxiv.org/abs/1111.4423</a></li>
+</ul>
+
+<p>
+Hodons.
+</p>
+</div>
+</div>
+<div id="outline-container-orge3101c8" class="outline-3">
+<h3 id="orge3101c8"><span class="section-number-3">3.2</span> What is fundamental in geometry?</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Point? Line? Adjacency? Distance?
+</p>
+
+<p>
+For every point P, there are \(n\) points \(Q_1,\ldots,Q_n\) such that \(d(P,Q_k) = 1\).
+</p>
+</div>
+</div>
+<div id="outline-container-org704545c" class="outline-3">
+<h3 id="org704545c"><span class="section-number-3">3.3</span> Synthetic finite geometry via discrete topology and graph theory</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+We assume a global parameter \(n\) (neighborhood granularity).
+</p>
+
+<p>
+A <i>point</i> has \(n\) neighbors.
+A two-dimensional point is like the surface of a floor tile, but it doesn't have to have four sides;
+the geometry's number of dimensions doesn't have to be related with \(n\).
+Because there are finite directions, angles are quantized.
+</p>
+
+<p>
+Don't imagine tiles.
+Imagine a graph.
+</p>
+
+<p>
+There are \(n\) possible <i>directions</i> (<i>unit vectors</i>) from a point to one of its neighbors.
+For example, we can quantize two-dimensional Euclidean geometry with 100 unit vectors (akin to dividing a circle into 100 sectors).
+</p>
+
+<p>
+Every direction has a <i>reverse</i>.
+Thus \(n\) is even.
+</p>
+
+<p>
+The vector from point A to point B is the sum of vectors in the shortest path from A to B.
+</p>
+
+<p>
+If \( X + \vec{v} = Y \) then \( X = Y + (-\vec{v}) \).
+If \(Y\) is the \(\vec{v}\)-ward neighbor of \(X\), then \(X\) is the reverse-\(\vec{v}\)-ward neighbor of \(Y\).
+</p>
+
+<p>
+A <i>line</i> is a path in the graph.
+</p>
+
+<p>
+A <i>straight line</i> is the shortest path between two points.
+</p>
+
+<p>
+We want triangle inequality: \(d(A,B) + d(B,C) \ge d(A,C)\).
+</p>
+
+<p>
+Euclidean geometry is limit of space-filling curve?
+<a href="https://en.wikipedia.org/wiki/Space-filling_curve">https://en.wikipedia.org/wiki/Space-filling_curve</a>
+</p>
+</div>
+</div>
+<div id="outline-container-orgd5483cd" class="outline-3">
+<h3 id="orgd5483cd"><span class="section-number-3">3.4</span> What if volumes/lines, not points, were fundamental?</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+A point is line that is shortened until it can't go any shorter.
+</p>
+
+<p>
+What is a line?
+What happens if we zoom very close to a line?
+</p>
+</div>
+</div>
+<div id="outline-container-org321227b" class="outline-3">
+<h3 id="org321227b"><span class="section-number-3">3.5</span> Lattice geometry?</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+Two-dimensional geometry.
+</p>
+
+<p>
+Pick one point \(O\) (origin) and two vectors \(\vec{e}_1\) and \(\vec{e}_2\) (unit axis vectors).
+Assume that those vectors are perpendicular (orthogonal) to each other.
+</p>
+
+<p>
+A <i>vector</i> \(\vec{v}\) is \(v_1 \vec{e}_1 + v_2 \vec{e}_2\) where \(v_1\) is an <i>integer</i> and \(v_2\) is an <i>integer</i>.
+</p>
+
+<p>
+Too formal?
+2009, "Strict Finitism and the Logic of Mathematical Applications"
+<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.603.1574&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.603.1574&amp;rep=rep1&amp;type=pdf</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org620fb31" class="outline-3">
+<h3 id="org620fb31"><span class="section-number-3">3.6</span> Bresenham's line algorithm, contiguousness, neighbors, and distance</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+Idea: Define the distance between two points as the number of points filled by Bresenham's line algorithm.
+</p>
+
+<p>
+This is an exciting way for computer graphics to give back to the philosophy of mathematics!
+Idea: Finitist geometry is computer graphics with the assumption that the computer can get as big and powerful as we want.
+</p>
+
+<p>
+What is "distance" in two-dimensional finitist geometry?
+</p>
+
+<p>
+Let \( h = h_x h_y \) be a unit area.
+</p>
+
+<p>
+The area of line is \( n h_x h_y \) where \(n\) is the number of pixels in that line.
+</p>
+
+<p>
+The finitist Pythagorean theorem:
+</p>
+
+<p>
+\( (n_x h_x)^2 + (n_y h_y)^2 = n^2 \cdot (h_x^2 + h_y^2) + ??? \)
+</p>
+
+<p>
+A discrete line that "best approximates" the ideal Platonic-infinitist's line?
+</p>
+
+<p>
+Bresenham's line algorithm?
+</p>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/Bresenham's_line_algorithm">https://en.wikipedia.org/wiki/Bresenham's_line_algorithm</a>
+</p>
+
+<p>
+A line is a "contiguous" set of points.
+</p>
+
+<p>
+Two points are "contiguous" iff they are each other's "neighbors".
+</p>
+
+<p>
+4-neighbor rule or 8-neighbor rule?
+</p>
+
+<p>
+The distance between point A and point B is the square root of the number of pixels in the line from A to B?
+</p>
+
+<p>
+How do we measure the units of the Universe?
+Rounding errors?
+Quantization artifacts, like JPEG artifacts?
+</p>
+
+<p>
+What can finitism say about general relativity and quantum mechanics?
+</p>
+</div>
+<div id="outline-container-org2197ee1" class="outline-4">
+<h4 id="org2197ee1"><span class="section-number-4">3.6.1</span> Finitism and Newtonian mechanics collisions?</h4>
+<div class="outline-text-4" id="text-3-6-1">
+<p>
+How does calculus finitization affect Newtonian physics?
+</p>
+
+<p>
+What does a vector become?
+</p>
+
+<ul class="org-ul">
+<li><a href="http://thep.housing.rug.nl/sites/default/files/users/user12/174_How_Some_Infinities_Cause_Problems_in_Classical_Physical_Theories.pdf">http://thep.housing.rug.nl/sites/default/files/users/user12/174_How_Some_Infinities_Cause_Problems_in_Classical_Physical_Theories.pdf</a>
+<ul class="org-ul">
+<li>"Pérez Laraudogoitia’s infinitistic model of colliding balls"</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgff880ea" class="outline-2">
+<h2 id="orgff880ea"><span class="section-number-2">4</span> Real analysis</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Every definition here assumes that the <i>unit</i>.
+It is a global parameter.
+It is usually written \(h\).
+</p>
+
+<p>
+Assuming unit \(h\), we define the "derivative of \(f : \Real \to \Real\) at \(x\)", written \( (Df)(x) \), as \( [f(x+h)-f(x)]/h \).
+</p>
+
+<p>
+Higher-order derivatives are a straightforward matter of substitution:
+</p>
+\begin{align*}
+D^2f = D(Df) &= D\left(x \mapsto \frac{f(x+h)-f(x)}{h}\right)
+\\
+&= \frac{\frac{f(x+h+h)-f(x+h)}{h} - \frac{f(x+h)-f(x)}{h}}{h}
+\\
+&= \frac{f(x+2h) - 2 \cdot f(x+h) + f(x)}{h^2}
+\end{align*}
+
+<p>
+Pascal's triangle with alternating signs.
+Similar to polynomial coefficients of \((a-b)^n\).
+</p>
+</div>
+<div id="outline-container-org200e459" class="outline-3">
+<h3 id="org200e459"><span class="section-number-3">4.1</span> Solving a differential equation by detouring to its analogous difference equation</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+Here we use finitism, and arrive at a result consistent with infinitism!
+This is only a motivating example.
+This does <i>not</i> prove that finitism subsumes infinitism.
+</p>
+
+<p>
+We consider the equation \( y = Dy \).
+</p>
+
+<p>
+We expand the equation according to finitism:
+</p>
+\begin{align*}
+y(x) &= (Dy)(x)
+\\ y(x) &= \frac{y(x+h)-y(x)}{h}
+\\ h \cdot y(x) &= y(x+h) - y(x)
+\\ (1 + h) \cdot y(x) &= y(x+h)
+\\ 1 + h &= \frac{y(x+h)}{y(x)}
+\end{align*}
+
+<p>
+Now we're going to do some trick with these substitutions:
+substitute \(x\) with \(hu\), and substitute \(z(u) = y(hu)\).
+</p>
+
+<p>
+We transform the above into a <i>recurrence relation</i>:
+</p>
+\begin{align*}
+(1 + h) \cdot y(x) &= y(x+h)
+\\ (1 + h) \cdot y(hu) &= y(hu+h)
+\\ (1 + h) \cdot y(hu) &= y(h\cdot(u+1))
+\\ (1 + h) \cdot z(u) &= z(u+1)
+\\ 0 &= z(u + 1) - (1 + h) \cdot z(u)
+\end{align*}
+
+<p>
+A possible solution is \( z(u) = (1+h)^u \).
+</p>
+
+<p>
+Now the second part of the trick:
+do the same substitutions:
+substitute back \( x = hu \) and \( z(u) = y(hu) \).
+</p>
+
+<p>
+We get:
+</p>
+\begin{align*}
+z(u) &= (1+h)^u
+\\ y(hu) &= (1+h)^u
+\\ y(x) &= (1+h)^{x/h}
+\end{align*}
+
+<p>
+Now this is where finitism and infinitism "coincide":
+\[
+\lim_{h \to 0} (1+h)^{x/h} = e^x
+\]
+</p>
+
+<p>
+This seems promising!
+</p>
+
+<p>
+What does the Taylor series become?
+</p>
+
+<p>
+What is the relationship between finitism and non-standard analysis?
+</p>
+</div>
+<div id="outline-container-org4e5ec34" class="outline-4">
+<h4 id="org4e5ec34"><span class="section-number-4">4.1.1</span> Bias toward the positive side?</h4>
+<div class="outline-text-4" id="text-4-1-1">
+<p>
+A problem is that \( Df \) is biased toward the positive side.
+We could try a symmetric definition such as \( (Df)(x) = [f(x+h)-f(x-h)]/(2h) \), but this doesn't use \(f(x)\), but why is this a problem?
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org0fb70ec" class="outline-2">
+<h2 id="org0fb70ec"><span class="section-number-2">5</span> Probability theory</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org82f5b36" class="outline-3">
+<h3 id="org82f5b36"><span class="section-number-3">5.1</span> Some definitions</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+A <i>sample space</i> is a set.
+</p>
+
+<p>
+An <i>event</i> is a subset of a sample space.
+</p>
+
+<p>
+A <i>probability mass function</i> \( p : \Omega \to \Real \) maps each sample to a probability
+such that the probabilities add up to one: \( \sum_{x \in \Omega} p(x) = 1 \).
+</p>
+
+<p>
+The <i>probability function</i> \(P : 2^\Omega \to \Real \) satisfies
+</p>
+
+<p>
+\( P(E) = \sum_{e \in E} p(e) \)
+</p>
+
+<p>
+\( P(\Omega) = 1 \)
+</p>
+
+<p>
+\( P(\emptyset) = 0 \)
+</p>
+
+<p>
+Conditional probability:
+we define the notation \( P(A|B) := P(A \cap B) / P(B) \).
+</p>
+
+<p>
+A <i>random variable</i> is a function whose domain is the sample space.
+An \(R\)-valued random variable is a function \(\Omega \to R\).
+The codomain depends on your modeling.
+</p>
+
+<p>
+A random variable can model a player's <i>profit</i> of an outcome of a gambling round.
+Example: a game of fair coin toss:
+\( \Omega = \{ L, W \} \) where \( \{L\} \) represents "lose" and \( \{W\} \) represents "win".
+\( p(L) = p(R) = 1/2 \).
+\( X(L) = -1, X(W) = 1 \).
+</p>
+</div>
+</div>
+<div id="outline-container-orgedac572" class="outline-3">
+<h3 id="orgedac572"><span class="section-number-3">5.2</span> Random variable probability notation</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+This is widely used but is rarely explained.
+</p>
+
+<p>
+Remember that a <i>random variable</i> is a <i>function</i>, not a variable.
+</p>
+
+<p>
+Suppose that we are discussing about some random variables.
+</p>
+
+<p>
+Let \(\phi\) be a logic formula containing logic variables with the same "name" as some random variables in the context of our discussion.
+Some example formulas are \(X = 0\) and \(2 X < 5\).
+These logic variables have the same name as our random variables, but these logic variables look like algebraic variables.
+</p>
+
+<p>
+Let \(\phi'(s)\) be \(\phi\) but with <i>every</i> occurrence of <i>every logical variable</i> \(X\) replaced with \(X(s)\) (the application of <i>random variable</i> \(X\) to sample \(s\)).
+If the letter \(s\) is already used in \(\phi\), use another unused letter.
+</p>
+
+<p>
+We define this notation:
+</p>
+\begin{align*}
+P(\phi) := P(\{ s ~|~ s \in \Omega, ~ \phi'(s) \})
+\end{align*}
+
+<p>
+Here are some examples of that notation in action:
+</p>
+\begin{align*}
+P(X \in S) &:= P(\{ s ~|~ s \in \Omega, ~ X(s) \in S \})
+\\ P(X = s) &:= P(\{ s ~|~ s \in \Omega, ~ X(s) = s \})
+\\ P(X < s) &:= P(\{ s ~|~ s \in \Omega, ~ X(s) < s \})
+\\ P(X^2 + X + 1 = 0) &:= P(\{ s ~|~ s \in \Omega, ~ [X(s)]^2 + X(s) + 1 = 0 \})
+\\ P(f(X) = 0) &:= P(\{ s ~|~ s \in \Omega, ~ f(X(s)) = 0 \})
+\\ P(e^X = 1) &:= P(\{ s ~|~ s \in \Omega, ~ e^{X(s)} = 1 \})
+\end{align*}
+
+<p>
+The notation also works with many random variables at once:
+</p>
+\begin{align*}
+P(X < Y) &:= P(\{ s ~|~ s \in \Omega, ~ X(s) < Y(s) \})
+\\ P(X + Y + Z = 0) &:= P(\{ s ~|~ s \in \Omega, ~ X(s) + Y(s) + Z(s) = 0 \})
+\end{align*}
+
+<p>
+Note how the notation makes a random variable look like an algebraic variable;
+remember that a random variable is a function, not a variable.
+</p>
+</div>
+</div>
+<div id="outline-container-org75fee84" class="outline-3">
+<h3 id="org75fee84"><span class="section-number-3">5.3</span> Expected value</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+Expected value of real-valued random variable:
+\( E(X) = \sum_{s \in \Omega} p(s) \cdot X(s) \).
+</p>
+</div>
+</div>
+<div id="outline-container-org2ca2cbf" class="outline-3">
+<h3 id="org2ca2cbf"><span class="section-number-3">5.4</span> Random walk</h3>
+<div class="outline-text-3" id="text-5-4">
+<p>
+A <i>random process</i> (a <i>stochastic process</i>) is a sequence of random variables.
+\( Y : \Nat \to (\Omega \to R) \).
+</p>
+
+<p>
+A <i>martingale</i> is a random process [&#x2026;]
+</p>
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Martingale_(probability_theory)">https://en.wikipedia.org/wiki/Martingale_(probability_theory)</a></li>
+</ul>
+
+<p>
+A <i>random walk</i> [&#x2026;]
+</p>
+
+<p>
+Understanding one-dimensional Brownian motion?
+</p>
+
+<p>
+"In 1906 Smoluchowski published a one-dimensional model to describe a particle undergoing Brownian motion."
+<a href="https://en.wikipedia.org/wiki/Brownian_motion">https://en.wikipedia.org/wiki/Brownian_motion</a>
+</p>
+
+<p>
+Example: one-dimensional Brownian motion:
+we assume that at every time step, the particle of interest is hit by another particle:
+sample space \( \Omega = \{ L, R \} \),
+where \(\{L\}\) represents the event that the particle of interest is hit from the left,
+probability mass function \( p(L) = p(R) = 1/2 \),
+which means that a hit from the left and a hit from the right are equally likely;
+random variable \( X : \Omega \to \{ -1,+1 \} \) where \( X(L) = -1, X(R) = +1 \).
+</p>
+
+<p>
+A <i>Wiener process</i> [&#x2026;]
+</p>
+
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Wiener_process#Wiener_process_as_a_limit_of_random_walk">https://en.wikipedia.org/wiki/Wiener_process#Wiener_process_as_a_limit_of_random_walk</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Random_walk#Relation_to_Wiener_process">https://en.wikipedia.org/wiki/Random_walk#Relation_to_Wiener_process</a>
+<ul class="org-ul">
+<li>"if you take a random walk with very small steps, you get an approximation to a Wiener process"</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Scaling_limit">https://en.wikipedia.org/wiki/Scaling_limit</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Brownian_motion">https://en.wikipedia.org/wiki/Brownian_motion</a></li>
+</ul>
+
+<p>
+What does stochastic calculus become?
+</p>
+</div>
+</div>
+</div>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/finite.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/finite.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-11-17 22:00 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>
