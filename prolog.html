@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Relational-bidirectional-logic programming in Prolog</title>
+  <title>Relational-multidirectional-logic programming in production in SWI-Prolog</title>
   <meta name="description" content="Personal website">
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Relational-bidirectional-logic programming in Prolog</h1>
+    <h1 class="post-title">Relational-multidirectional-logic programming in production in SWI-Prolog</h1>
   </header>
 
   <div class="post-content">
@@ -128,9 +128,14 @@ document.addEventListener("DOMContentLoaded", function () {
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#orgecb35de">1. Before you go full Prolog</a></li>
-<li><a href="#orgc26ad3e">2. <span class="todo TODO">TODO</span> Writing elegant Prolog knowledge bases</a></li>
-<li><a href="#orgcf45bfd">3. Using SWI-Prolog</a></li>
-<li><a href="#org1338566">4. <span class="todo TODO">TODO</span> Half-baked things to shuffle around</a></li>
+<li><a href="#orge8eb55e">2. Using the interactive prompt</a></li>
+<li><a href="#orga4013bb">3. Handling errors</a></li>
+<li><a href="#orgc26ad3e">4. Writing elegant Prolog knowledge bases</a></li>
+<li><a href="#orgf2d156d">5. Speeding things up</a></li>
+<li><a href="#org2537bad">6. Where things get ugly</a></li>
+<li><a href="#orgdb8d5a8">7. Writing enterprise web applications?</a></li>
+<li><a href="#org9448c8f">8. Theories</a></li>
+<li><a href="#org1338566">9. <span class="todo TODO">TODO</span> Half-baked things to shuffle around</a></li>
 </ul>
 </div>
 </div>
@@ -242,33 +247,6 @@ Things that I haven't found in Prolog:
 the speed of C,
 the toolchain of Go.
 </p>
-
-<p>
-There are two camps in programming:
-the bottom-up camp and the top-down camp.
-</p>
-
-<p>
-The bottom-up camp starts from machines and goes up toward mathematics.
-This camp produces Assembly, Fortran, Cobol, Pascal, C, C++, Go.
-This camp produced fast but ugly implementations.
-Haphazard incremental improvements.
-</p>
-
-<p>
-The top-down camp starts from mathematics and goes down toward machines.
-This camp produces Lisp, Scheme, Prolog, ML, Ocaml, Haskell, Coq, Idris, Agda, Lean.
-This camp produced elegant but slow implementations.
-Big design up front.
-</p>
-
-<p>
-They seem to be converging to a middle ground: ugly and slow.
-</p>
-
-<p>
-Why can't we get fast and elegant?
-</p>
 </div>
 </div>
 <div id="outline-container-org3b2124a" class="outline-3">
@@ -301,313 +279,30 @@ Some companies have their own Prolog implementations.
 <p>
 I use SWI-Prolog because it's what I use in university, and because of this <a href="http://www.swi-prolog.org/features.html">SWI-Prolog sales pitch</a>.
 </p>
+
+<p>
+This book assumes that the reader uses SWI-Prolog 7.6.4.
+</p>
 </div>
 </div>
 </div>
-<div id="outline-container-orgc26ad3e" class="outline-2">
-<h2 id="orgc26ad3e"><span class="section-number-2">2</span> <span class="todo TODO">TODO</span> Writing elegant Prolog knowledge bases</h2>
+<div id="outline-container-orge8eb55e" class="outline-2">
+<h2 id="orge8eb55e"><span class="section-number-2">2</span> Using the interactive prompt</h2>
 <div class="outline-text-2" id="text-2">
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orga74a36a">2.1. Prolog predicate parameter ordering convention: Order the parameters from the most likely to be bound</a></li>
-<li><a href="#org1658c83">2.2. Prolog throw vs fail</a></li>
-<li><a href="#orgcd563af">2.3. Zero-arity compound term</a></li>
-<li><a href="#org5a9568b">2.4. Naming the parts of a list: head, tail, and butt</a></li>
-<li><a href="#orgfa3bcf2">2.5. Total relational programming? Relational programs that can be proven to terminate?</a></li>
-<li><a href="#org09b6661">2.6. Prolog procedural semantics</a>
-<ul>
-<li><a href="#org7f63ae4">2.6.1. Swapped phrases</a></li>
-<li><a href="#org9f5c130">2.6.2. Understanding depth-first search, backtracking, choice points, performance, and cuts</a></li>
-<li><a href="#org57e49f0">2.6.3. Prolog is a depth-first brute-forcer</a></li>
-</ul>
-</li>
-<li><a href="#org330b62f">2.7. <span class="todo TODO">TODO</span> Error handling</a></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-orga74a36a" class="outline-3">
-<h3 id="orga74a36a"><span class="section-number-3">2.1</span> Prolog predicate parameter ordering convention: Order the parameters from the most likely to be bound</h3>
-<div class="outline-text-3" id="text-2-1">
-<p>
-If parameter A is more likely to be more bound than parameter B, then A should come before B.
-Example: Write list_length/2 instead of length_list/2.
-</p>
-
-<p>
-Not everyone follows this convention.
-</p>
-</div>
-</div>
-
-<div id="outline-container-org1658c83" class="outline-3">
-<h3 id="org1658c83"><span class="section-number-3">2.2</span> Prolog throw vs fail</h3>
-<div class="outline-text-3" id="text-2-2">
-<p>
-If backtracking doesn't make sense, then throw, don't fail
-Fail means try the next alternative
-</p>
-</div>
-</div>
-
-<div id="outline-container-orgcd563af" class="outline-3">
-<h3 id="orgcd563af"><span class="section-number-3">2.3</span> Zero-arity compound term</h3>
-<div class="outline-text-3" id="text-2-3">
-<p>
-Use compound_name_arity/3 instead of functor/3, but this seems to be an SWI-Prolog extension.
-</p>
-
-<p>
-<a href="http://www.swi-prolog.org/pldoc/man?section=ext-compound-zero">http://www.swi-prolog.org/pldoc/man?section=ext-compound-zero</a>
-</p>
-</div>
-</div>
-<div id="outline-container-org5a9568b" class="outline-3">
-<h3 id="org5a9568b"><span class="section-number-3">2.4</span> Naming the parts of a list: head, tail, and butt</h3>
-<div class="outline-text-3" id="text-2-4">
-<ul class="org-ul">
-<li>"head" is the first element</li>
-<li>"tail" is everything but the head</li>
-<li>"butt" is the last element</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-orgfa3bcf2" class="outline-3">
-<h3 id="orgfa3bcf2"><span class="section-number-3">2.5</span> Total relational programming? Relational programs that can be proven to terminate?</h3>
-<div class="outline-text-3" id="text-2-5">
-<p>
-A total relation is a relation that is defined for every element in its domain.
-</p>
-
-<p>
-If there is total functional programming, then there should be total relational programming.
-</p>
-
-<p>
-It is too easy to write a Prolog program that doesn't terminate.
-</p>
-</div>
-</div>
-<div id="outline-container-org09b6661" class="outline-3">
-<h3 id="org09b6661"><span class="section-number-3">2.6</span> Prolog procedural semantics</h3>
-<div class="outline-text-3" id="text-2-6">
-</div>
-<div id="outline-container-org7f63ae4" class="outline-4">
-<h4 id="org7f63ae4"><span class="section-number-4">2.6.1</span> Swapped phrases</h4>
-<div class="outline-text-4" id="text-2-6-1">
-<p>
-There is only a small syntactic difference between <code>dfs</code> and <code>bfs</code> (it's just flipped order).
-</p>
-
-<p>
-Which one exploits tail call optimization (last call optimization)?
-</p>
-<div class="org-src-container">
-<pre class="src src-prolog"><span style="color: #0000ff;">bit</span>(0).
-<span style="color: #0000ff;">bit</span>(1).
-
-<span style="color: #0000ff;">dfs</span>(<span style="color: #a020f0;">[]</span>).
-<span style="color: #0000ff;">dfs</span>(<span style="color: #a020f0;">[</span><span style="color: #a0522d;">H</span><span style="color: #a020f0;">|</span><span style="color: #a0522d;">T</span><span style="color: #a020f0;">]</span>) :- bit(<span style="color: #a0522d;">H</span>), dfs(<span style="color: #a0522d;">T</span>).
-
-<span style="color: #0000ff;">bfs</span>(<span style="color: #a020f0;">[]</span>).
-<span style="color: #0000ff;">bfs</span>(<span style="color: #a020f0;">[</span><span style="color: #a0522d;">H</span><span style="color: #a020f0;">|</span><span style="color: #a0522d;">T</span><span style="color: #a020f0;">]</span>) :- bfs(<span style="color: #a0522d;">T</span>), bit(<span style="color: #a0522d;">H</span>).
-</pre>
-</div>
-</div>
-</div>
-<div id="outline-container-org9f5c130" class="outline-4">
-<h4 id="org9f5c130"><span class="section-number-4">2.6.2</span> Understanding depth-first search, backtracking, choice points, performance, and cuts</h4>
-<div class="outline-text-4" id="text-2-6-2">
-<p>
-Save this knowledge base into a file, and load it into Prolog.
-</p>
-<div class="org-src-container">
-<pre class="src src-prolog"><span style="color: #0000ff;">a</span>(0).
-<span style="color: #0000ff;">a</span>(1).
-
-<span style="color: #0000ff;">b</span>(0).
-<span style="color: #0000ff;">b</span>(1).
-</pre>
-</div>
-
-<p>
-Run the query <code>a(A), b(B).</code> and press <code>;</code> until Prolog fails.
-</p>
-
-<p>
-This is what Prolog finds (we remove the newlines to make it more readable):
-</p>
-<pre class="example">
-A = B, B = 0 ;
-A = 0, B = 1 ;
-A = 1, B = 0 ;
-A = B, B = 1.
-</pre>
-
-<p>
-This is the search space (search tree) of that query.
-</p>
-<pre class="example">
-       ?- a(A), b(B).
-      /              \
-    A = 0           A = 1
-   /     \         /     \
-B = 0   B = 1   B = 0   B = 1
-</pre>
-
-<p>
-Prolog traverses that tree in depth-first order as follows:
-</p>
-<pre class="example">
-- ?- a(A), b(B).
-  - A = 0
-    - B = 0
-    - B = 1
-  - A = 1
-    - B = 0
-    - B = 1
-</pre>
-
-<p>
-The important things to infer from this experiment are:
-</p>
-<ul class="org-ul">
-<li>Prolog repeats the work on <code>b</code> as many times as the number of ways of satisfying <code>a</code>.
-If <code>a</code> can be satisfied in N ways, and satisfying <code>b</code> is a lot of work,
-then Prolog may do that work N times,
-although the work produces the same result.</li>
-<li>Everything to the right of an infinite branch will never be visited.</li>
-</ul>
-
-<p>
-What is a choice point?
-</p>
-
-<p>
-A cut makes <code>a(A), b(B)</code> and <code>b(B), a(A)</code> return different results.
-</p>
-
-<p>
-How far does a cut cut?
-</p>
-
-<p>
-"The craft of Prolog" defines three kinds of cuts: red, green, and blue.
-</p>
-<ul class="org-ul">
-<li>A red cut destroys the logical meaning of a program.
-Green and blue cuts don't.</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org57e49f0" class="outline-4">
-<h4 id="org57e49f0"><span class="section-number-4">2.6.3</span> Prolog is a depth-first brute-forcer</h4>
-<div class="outline-text-4" id="text-2-6-3">
-<p>
-But you can emulate other search algorithms too.
-</p>
-</div>
-<ol class="org-ol">
-<li><a id="org7aa584c"></a>Non-termination pitfalls, and how to generate terms correctly<br />
-<div class="outline-text-5" id="text-2-6-3-1">
-<p>
-Sometimes we forget that Prolog, on failure, backtracks (retries), not stops.
-</p>
-
-<p>
-Sometimes we focus too much on the logical reading and neglect the procedural reading.
-</p>
-
-<p>
-For example, suppose that you want to generate all lists whose length doesn't exceed 2.
-</p>
-
-<p>
-The following is a mathematically correct statement about that fact,
-but it doesn't work in Prolog.
-It has correct logical reading, but incorrect procedural reading.
-If you keep pressing <code>;</code>, this will fail to terminate.
-</p>
-<div class="org-src-container">
-<pre class="src src-prolog">?- length(<span style="color: #a0522d;">A</span>, <span style="color: #a0522d;">LA</span>), <span style="color: #a0522d;">LA</span> =&lt; 2.
-</pre>
-</div>
-
-<p>
-The correct way to do that is to use <code>between/3</code> (inclusive):
-</p>
-<div class="org-src-container">
-<pre class="src src-prolog">?- between(0, 2, <span style="color: #a0522d;">LA</span>), length(<span style="color: #a0522d;">A</span>, <span style="color: #a0522d;">LA</span>).
-</pre>
-</div>
-
-<p>
-We can also use the <code>clpfd</code> library:
-</p>
-<div class="org-src-container">
-<pre class="src src-prolog">:- use_module(library(clpfd)).
-
-?- <span style="color: #a0522d;">LA</span> in 0..2, indomain(<span style="color: #a0522d;">LA</span>), length(<span style="color: #a0522d;">A</span>, <span style="color: #a0522d;">LA</span>).
-</pre>
-</div>
-
-<p>
-We shouldn't have to resort to cuts:
-</p>
-<div class="org-src-container">
-<pre class="src src-prolog"><span style="color: #b22222;">% </span><span style="color: #b22222;">Don't do this.</span>
-?- length(<span style="color: #a0522d;">A</span>, <span style="color: #a0522d;">LA</span>), (<span style="color: #a0522d;">LA</span> =&lt; 2 <span style="color: #a020f0;">-&gt;</span> true<span style="color: #a020f0;">;</span> <span style="color: #a020f0;">!</span>, fail).
-</pre>
-</div>
-
-<p>
-See also:
-</p>
-<ul class="org-ul">
-<li><a href="https://www.metalevel.at/prolog/nontermination">https://www.metalevel.at/prolog/nontermination</a>
-<ul class="org-ul">
-<li>"[Non-termination is] common among beginners, and often lead them to perceive Prolog as 'slow', when in fact their program does not terminate <i>at all</i>."</li>
-</ul></li>
-</ul>
-</div>
-</li>
-</ol>
-</div>
-</div>
-<div id="outline-container-org330b62f" class="outline-3">
-<h3 id="org330b62f"><span class="section-number-3">2.7</span> <span class="todo TODO">TODO</span> Error handling</h3>
-<div class="outline-text-3" id="text-2-7">
-<ul class="org-ul">
-<li><a href="http://www.pathwayslms.com/swipltuts/message/index.html">http://www.pathwayslms.com/swipltuts/message/index.html</a></li>
-</ul>
-</div>
-</div>
-</div>
-<div id="outline-container-orgcf45bfd" class="outline-2">
-<h2 id="orgcf45bfd"><span class="section-number-2">3</span> Using SWI-Prolog</h2>
-<div class="outline-text-2" id="text-3">
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#org52e23ad">3.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-20&gt; </span></span> Installing SWI-Prolog 7.6.4 on Ubuntu 14.04</a></li>
-<li><a href="#org886945a">3.2. Loading files</a></li>
-<li><a href="#org1124d06">3.3. Interacting with SWI-Prolog</a></li>
-<li><a href="#org42e02a7">3.4. Warnings are errors!</a></li>
-<li><a href="#orgf1e542b">3.5. <span class="todo TODO">TODO</span> debugging: spy/1, tspy/1, trace/0, gtrace/0, notrace/0, debug/0, nodebug/0; stepping: creep, skip, and leap</a></li>
-<li><a href="#org8991268">3.6. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-30&gt; </span></span> Prolog needs static checking like Erlang Dialyzer.</a></li>
-<li><a href="#org8a2d1ea">3.7. How do I use SWI-Prolog?</a></li>
-<li><a href="#orgeed882e">3.8. Which string representation should I use?</a>
-<ul>
-<li><a href="#orgefd1380">3.8.1. The answer: Dedicated double-quoted string type (SWI-Prolog 7)</a></li>
-<li><a href="#org3fca09d">3.8.2. Non-answers</a></li>
-</ul>
-</li>
-<li><a href="#orgb5a4dc9">3.9. Profiling in SWI-Prolog; find where your program spends time; find where it is slow; diagnose slowness</a></li>
-<li><a href="#org07fd13b">3.10. SWI-Prolog, PostgreSQL, and ODBC</a></li>
+<li><a href="#org52e23ad">2.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-20&gt; </span></span> Installing SWI-Prolog 7.6.4 on Ubuntu 14.04</a></li>
+<li><a href="#org8579315">2.2. Establishing workflow</a></li>
+<li><a href="#org1124d06">2.3. Interacting with SWI-Prolog</a></li>
+<li><a href="#org8991268">2.4. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-30&gt; </span></span> Prolog needs static checking like Erlang Dialyzer.</a></li>
+<li><a href="#org8a2d1ea">2.5. How do I use SWI-Prolog?</a></li>
+<li><a href="#org07fd13b">2.6. SWI-Prolog, PostgreSQL, and ODBC</a></li>
 </ul>
 </div>
 </div>
 <div id="outline-container-org52e23ad" class="outline-3">
-<h3 id="org52e23ad"><span class="section-number-3">3.1</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-20&gt; </span></span> Installing SWI-Prolog 7.6.4 on Ubuntu 14.04</h3>
-<div class="outline-text-3" id="text-3-1">
+<h3 id="org52e23ad"><span class="section-number-3">2.1</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-20&gt; </span></span> Installing SWI-Prolog 7.6.4 on Ubuntu 14.04</h3>
+<div class="outline-text-3" id="text-2-1">
 <p>
 If you are using Ubuntu 14.04, follow my instructions below.
 </p>
@@ -727,52 +422,37 @@ Related GitHub issue <a href="https://github.com/SWI-Prolog/issues/issues/72">ht
 </p>
 </div>
 </div>
-<div id="outline-container-org886945a" class="outline-3">
-<h3 id="org886945a"><span class="section-number-3">3.2</span> Loading files</h3>
-<div class="outline-text-3" id="text-3-2">
-<ul class="org-ul">
-<li><code>:- [foo].</code> is shorthand for <code>:- consult(foo).</code>.
-<ul class="org-ul">
-<li><a href="http://www.swi-prolog.org/pldoc/man?predicate=consult/1">http://www.swi-prolog.org/pldoc/man?predicate=consult/1</a></li>
-</ul></li>
-</ul>
+<div id="outline-container-org8579315" class="outline-3">
+<h3 id="org8579315"><span class="section-number-3">2.2</span> Establishing workflow</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+<code>swipl -l FILE</code>
+</p>
+
+<p>
+<code>:- [foo].</code> is shorthand for <code>:- consult(foo).</code>.
+<a href="http://www.swi-prolog.org/pldoc/man?predicate=consult/1">http://www.swi-prolog.org/pldoc/man?predicate=consult/1</a>
+</p>
+
+<p>
+We can enter temporary definitions from the prompt: <code>?- [user].</code>
+Enter definitions.
+End with a new line and Control+D.
+</p>
 </div>
 </div>
 <div id="outline-container-org1124d06" class="outline-3">
-<h3 id="org1124d06"><span class="section-number-3">3.3</span> Interacting with SWI-Prolog</h3>
-<div class="outline-text-3" id="text-3-3">
+<h3 id="org1124d06"><span class="section-number-3">2.3</span> Interacting with SWI-Prolog</h3>
+<div class="outline-text-3" id="text-2-3">
 <ul class="org-ul">
 <li>To show the canonical representation of a term, query <code>write_canonical(Term)</code>.</li>
 <li>To show the source of a predicate, query <code>listing(Module:Name)</code> or <code>listing(Name)</code>.</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org42e02a7" class="outline-3">
-<h3 id="org42e02a7"><span class="section-number-3">3.4</span> Warnings are errors!</h3>
-<div class="outline-text-3" id="text-3-4">
-<p>
-Singleton variables most likely mean there's a typo.
-</p>
-</div>
-</div>
-<div id="outline-container-orgf1e542b" class="outline-3">
-<h3 id="orgf1e542b"><span class="section-number-3">3.5</span> <span class="todo TODO">TODO</span> debugging: spy/1, tspy/1, trace/0, gtrace/0, notrace/0, debug/0, nodebug/0; stepping: creep, skip, and leap</h3>
-<div class="outline-text-3" id="text-3-5">
-<p>
-Fixing programming errors:
-</p>
-<ul class="org-ul">
-<li><a href="https://www.cs.ucsb.edu/~kyledewey/cs162w15/debugging_prolog.html">https://www.cs.ucsb.edu/~kyledewey/cs162w15/debugging_prolog.html</a></li>
-<li><a href="http://www.swi-prolog.org/pldoc/man?section=debugoverview">http://www.swi-prolog.org/pldoc/man?section=debugoverview</a>
-<ul class="org-ul">
-<li>Type <code>/f</code> in the tracer prompt to run to the next failure.</li>
-</ul></li>
-</ul>
-</div>
-</div>
 <div id="outline-container-org8991268" class="outline-3">
-<h3 id="org8991268"><span class="section-number-3">3.6</span> <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-30&gt; </span></span> Prolog needs static checking like Erlang Dialyzer.</h3>
-<div class="outline-text-3" id="text-3-6">
+<h3 id="org8991268"><span class="section-number-3">2.4</span> <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-30&gt; </span></span> Prolog needs static checking like Erlang Dialyzer.</h3>
+<div class="outline-text-3" id="text-2-4">
 <p>
 SWI-Prolog has check library?
 </p>
@@ -792,11 +472,9 @@ Prolog typechecking is vital to prevent stupid mistakes in a large knowledge bas
 </div>
 </div>
 <div id="outline-container-org8a2d1ea" class="outline-3">
-<h3 id="org8a2d1ea"><span class="section-number-3">3.7</span> How do I use SWI-Prolog?</h3>
-<div class="outline-text-3" id="text-3-7">
+<h3 id="org8a2d1ea"><span class="section-number-3">2.5</span> How do I use SWI-Prolog?</h3>
+<div class="outline-text-3" id="text-2-5">
 <ul class="org-ul">
-<li>Write a <code>load.pro</code> script that loads your files.</li>
-<li>To start a query interpreter, <code>swipl -l load.pro</code>.</li>
 <li>You write <i>rules</i> in files.
 You write <i>queries</i> in the query interpreter.
 <ul class="org-ul">
@@ -808,76 +486,9 @@ You write <i>queries</i> in the query interpreter.
 </ul>
 </div>
 </div>
-
-<div id="outline-container-orgeed882e" class="outline-3">
-<h3 id="orgeed882e"><span class="section-number-3">3.8</span> Which string representation should I use?</h3>
-<div class="outline-text-3" id="text-3-8">
-</div>
-<div id="outline-container-orgefd1380" class="outline-4">
-<h4 id="orgefd1380"><span class="section-number-4">3.8.1</span> The answer: Dedicated double-quoted string type (SWI-Prolog 7)</h4>
-<div class="outline-text-4" id="text-3-8-1">
-<ul class="org-ul">
-<li>"Strings are distinct from lists" <a href="http://www.swi-prolog.org/pldoc/man?section=strings">http://www.swi-prolog.org/pldoc/man?section=strings</a></li>
-<li>"Why has the representation of double quoted text changed?" <a href="http://www.swi-prolog.org/pldoc/man?section=ext-dquotes-motivation">http://www.swi-prolog.org/pldoc/man?section=ext-dquotes-motivation</a></li>
-<li>2013 article "Strings in ECLiPSe 6.2, SWI-7 and YAP" <a href="http://eclipseclp.org/wiki/Prolog/Strings">http://eclipseclp.org/wiki/Prolog/Strings</a>
-<ul class="org-ul">
-<li>"With SWI-7 and ECLiPSe 6.2 string support has been harmonized, and YAP is expected to agree as well."</li>
-<li>"Agreed Common Functionality"</li>
-<li>"Situation before December 2013"</li>
-</ul></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org3fca09d" class="outline-4">
-<h4 id="org3fca09d"><span class="section-number-4">3.8.2</span> Non-answers</h4>
-<div class="outline-text-4" id="text-3-8-2">
-</div>
-<ol class="org-ol">
-<li><a id="orgc93a5c0"></a>Edinburgh style: Double-quoted string as list of integer codes (default mode of SWI-Prolog 6.6.4 on Ubuntu 14.04)<br />
-<div class="outline-text-5" id="text-3-8-2-1">
-<ul class="org-ul">
-<li>A Unicode character is represented as an integer that is the code of that character.</li>
-<li>A string is represented as a list of codes.
-Example: <code>"aaa" = [97,97,97]</code>.</li>
-<li>Inconvenient to debug.</li>
-<li>This behavior changes in SWI-Prolog 7.</li>
-<li>This was in 1993 ISO standard draft. <a href="http://fsl.cs.illinois.edu/images/9/9c/PrologStandard.pdf">http://fsl.cs.illinois.edu/images/9/9c/PrologStandard.pdf</a>
-<ul class="org-ul">
-<li>This wasn't in the final version?</li>
-</ul></li>
-</ul>
-</div>
-</li>
-<li><a id="org2c1de1d"></a>Double-quoted string as list of one-character atoms<br />
-<div class="outline-text-5" id="text-3-8-2-2">
-<ul class="org-ul">
-<li>A Unicode character is represented as a one-character atom.</li>
-<li>A string is represented as a list of one-character atoms.
-Example: <code>"aaa" = [a,a,a]</code>.</li>
-<li>This assumes that the Prolog implementation garbage-collects atoms.</li>
-<li>More convenient to debug.</li>
-</ul>
-</div>
-</li>
-</ol>
-</div>
-</div>
-
-<div id="outline-container-orgb5a4dc9" class="outline-3">
-<h3 id="orgb5a4dc9"><span class="section-number-3">3.9</span> Profiling in SWI-Prolog; find where your program spends time; find where it is slow; diagnose slowness</h3>
-<div class="outline-text-3" id="text-3-9">
-<p>
-To run your <code>Goal</code> with profiling, simply query <code>profile(Goal)</code>.
-</p>
-
-<p>
-Profiling couldn't be any simpler than this!
-</p>
-</div>
-</div>
 <div id="outline-container-org07fd13b" class="outline-3">
-<h3 id="org07fd13b"><span class="section-number-3">3.10</span> SWI-Prolog, PostgreSQL, and ODBC</h3>
-<div class="outline-text-3" id="text-3-10">
+<h3 id="org07fd13b"><span class="section-number-3">2.6</span> SWI-Prolog, PostgreSQL, and ODBC</h3>
+<div class="outline-text-3" id="text-2-6">
 <p>
 Install the Ubuntu 14.04 package <code>odbc-postgresql</code>.
 </p>
@@ -901,79 +512,491 @@ The file <code>/etc/odbcinst.ini</code> contains a list of driver names.
 </div>
 </div>
 </div>
-<div id="outline-container-org1338566" class="outline-2">
-<h2 id="org1338566"><span class="section-number-2">4</span> <span class="todo TODO">TODO</span> Half-baked things to shuffle around</h2>
+<div id="outline-container-orga4013bb" class="outline-2">
+<h2 id="orga4013bb"><span class="section-number-2">3</span> Handling errors</h2>
+<div class="outline-text-2" id="text-3">
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org046abbc">3.1. Fail, throw, stack traces</a></li>
+<li><a href="#org5033478">3.2. Structured logging</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org046abbc" class="outline-3">
+<h3 id="org046abbc"><span class="section-number-3">3.1</span> Fail, throw, stack traces</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Two options: throw or fail.
+</p>
+
+<p>
+If backtracking doesn't make sense, then throw, don't fail.
+</p>
+
+<pre class="example">
+person(joe).
+pair_first_second(pair(A,_), A, B).
+</pre>
+
+<p>
+Should <code>person(1)</code> fail or throw?
+Should <code>pair_first_second(foo)</code> fail or throw?
+</p>
+
+<p>
+Fail means try the next alternative.
+</p>
+
+<p>
+If you want throw/1 with stack trace,
+you must write it like <code>throw(error(Something, _))</code>.
+</p>
+
+<p>
+A <i>function</i> should always throw and not fail, when an argument has a wrong type.
+</p>
+
+<pre class="example">
+negate(A,B) :- integer(A), !, B is -A.
+negate(A,B) :- integer(B), !, A is -B.
+negate(A,B) :- throw(error(negate(A,B),_)).
+</pre>
+</div>
+</div>
+<div id="outline-container-org5033478" class="outline-3">
+<h3 id="org5033478"><span class="section-number-3">3.2</span> Structured logging</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+This is how we log messages in Prolog:
+</p>
+<ul class="org-ul">
+<li>Design a term that represents the <i>meaning</i> of the message.</li>
+<li>Call <code>print_message(Kind,Message)</code> where Message is that term.</li>
+<li>Extend <code>prolog:message//1</code> to translate that term to string.</li>
+</ul>
+
+<pre class="example">
+% Syntax:
+prolog:message(Term) --&gt; Lines.
+
+% Example:
+prolog:message(Term) --&gt;
+    [ 'The term is ~q.'-[Term] ],
+    [ 'This is the second line in the message.' ].
+</pre>
+
+<p>
+Syntax description:
+</p>
+<ul class="org-ul">
+<li>'Lines' is a list of 'Line's.
+<ul class="org-ul">
+<li>A 'Line' has this shape:
+<ul class="org-ul">
+<li>Format-Args: 'Format' and 'Args' are the same arguments accepted by format/2.</li>
+<li>Terms of other shapes are converted to string.</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>
+The printed message is the concatenation of all 'Line's.
+</p>
+
+<p>
+TODO:
+</p>
+<ul class="org-ul">
+<li>How do we log to file?</li>
+<li>How do we rotate log files?</li>
+</ul>
+
+<p>
+References:
+</p>
+<ul class="org-ul">
+<li><a href="http://www.pathwayslms.com/swipltuts/message/index.html">Anne Ogborn's "Printing Messages in SWI-Prolog"</a></li>
+<li><a href="http://www.swi-prolog.org/pldoc/man?section=printmsg">http://www.swi-prolog.org/pldoc/man?section=printmsg</a></li>
+<li><a href="http://www.swi-prolog.org/pldoc/man?section=debug">http://www.swi-prolog.org/pldoc/man?section=debug</a></li>
+</ul>
+
+<p>
+Usability issues:
+</p>
+<ul class="org-ul">
+<li>Where is <code>prolog:message//1</code> documented?
+I found that by trial-and-error.</li>
+<li>Why do we require people to understand DCG rules before they can use the messaging system?</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc26ad3e" class="outline-2">
+<h2 id="orgc26ad3e"><span class="section-number-2">4</span> Writing elegant Prolog knowledge bases</h2>
 <div class="outline-text-2" id="text-4">
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orga2b3e1b">4.1. Functional/expression style sometimes beats relational/unification style</a></li>
-<li><a href="#org6260cbe">4.2. Embedding Prolog/Haskell in Haskell/Prolog</a>
+<li><a href="#orga74a36a">4.1. Prolog predicate parameter ordering convention: Order the parameters from the most likely to be bound</a></li>
+<li><a href="#orgeb49e89">4.2. Don't multifile if clause order matters.</a></li>
+<li><a href="#org5a9568b">4.3. Naming the parts of a list: head, tail, and butt</a></li>
+<li><a href="#orgfa3bcf2">4.4. Total relational programming? Relational programs that can be proven to terminate?</a></li>
+<li><a href="#org09b6661">4.5. Prolog procedural semantics</a>
 <ul>
-<li><a href="#org96eedd4">4.2.1. Embedding Prolog in Haskell</a></li>
-<li><a href="#org4a0c336">4.2.2. Embedding Haskell in Prolog: Nobody is talking about this.</a></li>
+<li><a href="#org7f63ae4">4.5.1. Swapped phrases</a></li>
+<li><a href="#org9f5c130">4.5.2. Understanding depth-first search, backtracking, choice points, performance, and cuts</a></li>
+<li><a href="#org57e49f0">4.5.3. Prolog is a depth-first brute-forcer</a></li>
 </ul>
 </li>
-<li><a href="#orgff76257">4.3. Directives like <code>:- op</code> complicate parsing a Prolog source code.</a></li>
-<li><a href="#org931ca1c">4.4. Defining your own operators</a></li>
-<li><a href="#orgda69842">4.5. Meta-programming</a></li>
-<li><a href="#org8eef091">4.6. Use clpfd #=/2 instead of is/2?</a></li>
-<li><a href="#org853cdaa">4.7. Comparison between what is difficult in various programming languages</a></li>
-<li><a href="#orgaba238f">4.8. Difference lists</a></li>
-<li><a href="#orgd6b7309">4.9. What? 99 Prolog problems?</a></li>
-<li><a href="#org4b775c7">4.10. Iterative deepening search with length/1</a></li>
-<li><a href="#org71915a3">4.11. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-20&gt; </span></span> How do we make sense of this counterintuitive module syntax?</a></li>
-<li><a href="#orga52d884">4.12. Comparison between ontology, relational programming, and database programming</a>
+<li><a href="#orgeed882e">4.6. Which string representation should I use?</a>
 <ul>
-<li><a href="#org1c7aa9c">4.12.1. Open World Assumption vs Closed World Assumption</a></li>
+<li><a href="#orgefd1380">4.6.1. The answer: Dedicated double-quoted string type (SWI-Prolog 7)</a></li>
+<li><a href="#org3fca09d">4.6.2. Non-answers</a></li>
 </ul>
 </li>
-<li><a href="#org1701963">4.13. Discover the wonderful world of Prolog / logic programming / relational programming</a>
-<ul>
-<li><a href="#org9ba8c58">4.13.1. Symbolic AI is the easiest AI approach.</a></li>
-<li><a href="#orge2c5e32">4.13.2. Dreams</a></li>
-</ul>
-</li>
-<li><a href="#orgf71d684">4.14. Comparison with other relational programming languages</a></li>
-<li><a href="#org56b9135">4.15. Reminder for those who already know</a></li>
-<li><a href="#org08ac6ad">4.16. "Universal-transpiler": Similar to what we want</a></li>
-<li><a href="#orga93cc9a">4.17. Logic programming vs theorem proving</a></li>
-<li><a href="#orgbbbadf1">4.18. Knowledge representation and software specification</a>
-<ul>
-<li><a href="#orgf5826c1">4.18.1. Their relationships</a></li>
-<li><a href="#org772a721">4.18.2. Executable specification?</a></li>
-</ul>
-</li>
-<li><a href="#org946e3fa">4.19. Combine closed-world assumption (logic programming / relational database) and open-world assumption (web ontology)</a></li>
-<li><a href="#orge4f7af2">4.20. Making compilers</a></li>
-<li><a href="#org6fe9637">4.21. Declarative programming languages</a></li>
-<li><a href="#org1289834">4.22. How are Prolog and Lisp similar?</a></li>
-<li><a href="#org3c37b19">4.23. Speculative</a>
-<ul>
-<li><a href="#org9f4de94">4.23.1. Fast logic programming?</a></li>
-<li><a href="#orgedb661a">4.23.2. Lambda-prolog?</a></li>
-</ul>
-</li>
-<li><a href="#org8864f0c">4.24. Resources</a>
-<ul>
-<li><a href="#org3358571">4.24.1. For beginners</a></li>
-<li><a href="#orge83f5ba">4.24.2. Not for beginners</a></li>
-</ul>
-</li>
-<li><a href="#org574abf4">4.25. What?</a>
-<ul>
-<li><a href="#orge795ae4">4.25.1. P# translates Prolog to C#.</a></li>
-<li><a href="#org52d5d28">4.25.2. "Real World Programming in SWI-Prolog"</a></li>
-<li><a href="#org1975287">4.25.3. "Frequently Asked Questions for ##Prolog"</a></li>
-</ul>
-</li>
-<li><a href="#org3a7676e">4.26. What are these trying to say?</a></li>
-<li><a href="#org4a50502">4.27. Books?</a></li>
+<li><a href="#org42e02a7">4.7. Warnings are errors!</a></li>
+<li><a href="#orgf1e542b">4.8. <span class="todo TODO">TODO</span> debugging: spy/1, tspy/1, trace/0, gtrace/0, notrace/0, debug/0, nodebug/0; stepping: creep, skip, and leap</a></li>
 </ul>
 </div>
+</div>
+<div id="outline-container-orga74a36a" class="outline-3">
+<h3 id="orga74a36a"><span class="section-number-3">4.1</span> Prolog predicate parameter ordering convention: Order the parameters from the most likely to be bound</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+If parameter A is more likely to be more bound than parameter B, then A should come before B.
+Example: Write list_length/2 instead of length_list/2.
+</p>
+
+<p>
+Not everyone follows this convention.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgeb49e89" class="outline-3">
+<h3 id="orgeb49e89"><span class="section-number-3">4.2</span> Don't multifile if clause order matters.</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+Reloading changes clause order.
+<a href="http://www.swi-prolog.org/FAQ/Multifile.html">http://www.swi-prolog.org/FAQ/Multifile.html</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org5a9568b" class="outline-3">
+<h3 id="org5a9568b"><span class="section-number-3">4.3</span> Naming the parts of a list: head, tail, and butt</h3>
+<div class="outline-text-3" id="text-4-3">
+<ul class="org-ul">
+<li>"head" is the first element</li>
+<li>"tail" is everything but the head</li>
+<li>"butt" is the last element</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgfa3bcf2" class="outline-3">
+<h3 id="orgfa3bcf2"><span class="section-number-3">4.4</span> Total relational programming? Relational programs that can be proven to terminate?</h3>
+<div class="outline-text-3" id="text-4-4">
+<p>
+A total relation is a relation that is defined for every element in its domain.
+</p>
+
+<p>
+If there is total functional programming, then there should be total relational programming.
+</p>
+
+<p>
+It is too easy to write a Prolog program that doesn't terminate.
+</p>
+</div>
+</div>
+<div id="outline-container-org09b6661" class="outline-3">
+<h3 id="org09b6661"><span class="section-number-3">4.5</span> Prolog procedural semantics</h3>
+<div class="outline-text-3" id="text-4-5">
+</div>
+<div id="outline-container-org7f63ae4" class="outline-4">
+<h4 id="org7f63ae4"><span class="section-number-4">4.5.1</span> Swapped phrases</h4>
+<div class="outline-text-4" id="text-4-5-1">
+<p>
+There is only a small syntactic difference between <code>dfs</code> and <code>bfs</code> (it's just flipped order).
+</p>
+
+<p>
+Which one exploits tail call optimization (last call optimization)?
+</p>
+<div class="org-src-container">
+<pre class="src src-prolog"><span style="color: #0000ff;">bit</span>(0).
+<span style="color: #0000ff;">bit</span>(1).
+
+<span style="color: #0000ff;">dfs</span>(<span style="color: #a020f0;">[]</span>).
+<span style="color: #0000ff;">dfs</span>(<span style="color: #a020f0;">[</span><span style="color: #a0522d;">H</span><span style="color: #a020f0;">|</span><span style="color: #a0522d;">T</span><span style="color: #a020f0;">]</span>) :- bit(<span style="color: #a0522d;">H</span>), dfs(<span style="color: #a0522d;">T</span>).
+
+<span style="color: #0000ff;">bfs</span>(<span style="color: #a020f0;">[]</span>).
+<span style="color: #0000ff;">bfs</span>(<span style="color: #a020f0;">[</span><span style="color: #a0522d;">H</span><span style="color: #a020f0;">|</span><span style="color: #a0522d;">T</span><span style="color: #a020f0;">]</span>) :- bfs(<span style="color: #a0522d;">T</span>), bit(<span style="color: #a0522d;">H</span>).
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9f5c130" class="outline-4">
+<h4 id="org9f5c130"><span class="section-number-4">4.5.2</span> Understanding depth-first search, backtracking, choice points, performance, and cuts</h4>
+<div class="outline-text-4" id="text-4-5-2">
+<p>
+Save this knowledge base into a file, and load it into Prolog.
+</p>
+<div class="org-src-container">
+<pre class="src src-prolog"><span style="color: #0000ff;">a</span>(0).
+<span style="color: #0000ff;">a</span>(1).
+
+<span style="color: #0000ff;">b</span>(0).
+<span style="color: #0000ff;">b</span>(1).
+</pre>
+</div>
+
+<p>
+Run the query <code>a(A), b(B).</code> and press <code>;</code> until Prolog fails.
+</p>
+
+<p>
+This is what Prolog finds (we remove the newlines to make it more readable):
+</p>
+<pre class="example">
+A = B, B = 0 ;
+A = 0, B = 1 ;
+A = 1, B = 0 ;
+A = B, B = 1.
+</pre>
+
+<p>
+This is the search space (search tree) of that query.
+</p>
+<pre class="example">
+       ?- a(A), b(B).
+      /              \
+    A = 0           A = 1
+   /     \         /     \
+B = 0   B = 1   B = 0   B = 1
+</pre>
+
+<p>
+Prolog traverses that tree in depth-first order as follows:
+</p>
+<pre class="example">
+- ?- a(A), b(B).
+  - A = 0
+    - B = 0
+    - B = 1
+  - A = 1
+    - B = 0
+    - B = 1
+</pre>
+
+<p>
+The important things to infer from this experiment are:
+</p>
+<ul class="org-ul">
+<li>Prolog repeats the work on <code>b</code> as many times as the number of ways of satisfying <code>a</code>.
+If <code>a</code> can be satisfied in N ways, and satisfying <code>b</code> is a lot of work,
+then Prolog may do that work N times,
+although the work produces the same result.</li>
+<li>Everything to the right of an infinite branch will never be visited.</li>
+</ul>
+
+<p>
+What is a choice point?
+</p>
+
+<p>
+A cut makes <code>a(A), b(B)</code> and <code>b(B), a(A)</code> return different results.
+</p>
+
+<p>
+How far does a cut cut?
+</p>
+
+<p>
+"The craft of Prolog" defines three kinds of cuts: red, green, and blue.
+</p>
+<ul class="org-ul">
+<li>A red cut destroys the logical meaning of a program.
+Green and blue cuts don't.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org57e49f0" class="outline-4">
+<h4 id="org57e49f0"><span class="section-number-4">4.5.3</span> Prolog is a depth-first brute-forcer</h4>
+<div class="outline-text-4" id="text-4-5-3">
+<p>
+But you can emulate other search algorithms too.
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="org7aa584c"></a>Non-termination pitfalls, and how to generate terms correctly<br />
+<div class="outline-text-5" id="text-4-5-3-1">
+<p>
+Sometimes we forget that Prolog, on failure, backtracks (retries), not stops.
+</p>
+
+<p>
+Sometimes we focus too much on the logical reading and neglect the procedural reading.
+</p>
+
+<p>
+For example, suppose that you want to generate all lists whose length doesn't exceed 2.
+</p>
+
+<p>
+The following is a mathematically correct statement about that fact,
+but it doesn't work in Prolog.
+It has correct logical reading, but incorrect procedural reading.
+If you keep pressing <code>;</code>, this will fail to terminate.
+</p>
+<div class="org-src-container">
+<pre class="src src-prolog">?- length(<span style="color: #a0522d;">A</span>, <span style="color: #a0522d;">LA</span>), <span style="color: #a0522d;">LA</span> =&lt; 2.
+</pre>
+</div>
+
+<p>
+The correct way to do that is to use <code>between/3</code> (inclusive):
+</p>
+<div class="org-src-container">
+<pre class="src src-prolog">?- between(0, 2, <span style="color: #a0522d;">LA</span>), length(<span style="color: #a0522d;">A</span>, <span style="color: #a0522d;">LA</span>).
+</pre>
+</div>
+
+<p>
+We can also use the <code>clpfd</code> library:
+</p>
+<div class="org-src-container">
+<pre class="src src-prolog">:- use_module(library(clpfd)).
+
+?- <span style="color: #a0522d;">LA</span> in 0..2, indomain(<span style="color: #a0522d;">LA</span>), length(<span style="color: #a0522d;">A</span>, <span style="color: #a0522d;">LA</span>).
+</pre>
+</div>
+
+<p>
+We shouldn't have to resort to cuts:
+</p>
+<div class="org-src-container">
+<pre class="src src-prolog"><span style="color: #b22222;">% </span><span style="color: #b22222;">Don't do this.</span>
+?- length(<span style="color: #a0522d;">A</span>, <span style="color: #a0522d;">LA</span>), (<span style="color: #a0522d;">LA</span> =&lt; 2 <span style="color: #a020f0;">-&gt;</span> true<span style="color: #a020f0;">;</span> <span style="color: #a020f0;">!</span>, fail).
+</pre>
+</div>
+
+<p>
+See also:
+</p>
+<ul class="org-ul">
+<li><a href="https://www.metalevel.at/prolog/nontermination">https://www.metalevel.at/prolog/nontermination</a>
+<ul class="org-ul">
+<li>"[Non-termination is] common among beginners, and often lead them to perceive Prolog as 'slow', when in fact their program does not terminate <i>at all</i>."</li>
+</ul></li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgeed882e" class="outline-3">
+<h3 id="orgeed882e"><span class="section-number-3">4.6</span> Which string representation should I use?</h3>
+<div class="outline-text-3" id="text-4-6">
+</div>
+<div id="outline-container-orgefd1380" class="outline-4">
+<h4 id="orgefd1380"><span class="section-number-4">4.6.1</span> The answer: Dedicated double-quoted string type (SWI-Prolog 7)</h4>
+<div class="outline-text-4" id="text-4-6-1">
+<ul class="org-ul">
+<li>"Strings are distinct from lists" <a href="http://www.swi-prolog.org/pldoc/man?section=strings">http://www.swi-prolog.org/pldoc/man?section=strings</a></li>
+<li>"Why has the representation of double quoted text changed?" <a href="http://www.swi-prolog.org/pldoc/man?section=ext-dquotes-motivation">http://www.swi-prolog.org/pldoc/man?section=ext-dquotes-motivation</a></li>
+<li>2013 article "Strings in ECLiPSe 6.2, SWI-7 and YAP" <a href="http://eclipseclp.org/wiki/Prolog/Strings">http://eclipseclp.org/wiki/Prolog/Strings</a>
+<ul class="org-ul">
+<li>"With SWI-7 and ECLiPSe 6.2 string support has been harmonized, and YAP is expected to agree as well."</li>
+<li>"Agreed Common Functionality"</li>
+<li>"Situation before December 2013"</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org3fca09d" class="outline-4">
+<h4 id="org3fca09d"><span class="section-number-4">4.6.2</span> Non-answers</h4>
+<div class="outline-text-4" id="text-4-6-2">
+</div>
+<ol class="org-ol">
+<li><a id="orgc93a5c0"></a>Edinburgh style: Double-quoted string as list of integer codes (default mode of SWI-Prolog 6.6.4 on Ubuntu 14.04)<br />
+<div class="outline-text-5" id="text-4-6-2-1">
+<ul class="org-ul">
+<li>A Unicode character is represented as an integer that is the code of that character.</li>
+<li>A string is represented as a list of codes.
+Example: <code>"aaa" = [97,97,97]</code>.</li>
+<li>Inconvenient to debug.</li>
+<li>This behavior changes in SWI-Prolog 7.</li>
+<li>This was in 1993 ISO standard draft. <a href="http://fsl.cs.illinois.edu/images/9/9c/PrologStandard.pdf">http://fsl.cs.illinois.edu/images/9/9c/PrologStandard.pdf</a>
+<ul class="org-ul">
+<li>This wasn't in the final version?</li>
+</ul></li>
+</ul>
+</div>
+</li>
+<li><a id="org2c1de1d"></a>Double-quoted string as list of one-character atoms<br />
+<div class="outline-text-5" id="text-4-6-2-2">
+<ul class="org-ul">
+<li>A Unicode character is represented as a one-character atom.</li>
+<li>A string is represented as a list of one-character atoms.
+Example: <code>"aaa" = [a,a,a]</code>.</li>
+<li>This assumes that the Prolog implementation garbage-collects atoms.</li>
+<li>More convenient to debug.</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org42e02a7" class="outline-3">
+<h3 id="org42e02a7"><span class="section-number-3">4.7</span> Warnings are errors!</h3>
+</div>
+<div id="outline-container-orgf1e542b" class="outline-3">
+<h3 id="orgf1e542b"><span class="section-number-3">4.8</span> <span class="todo TODO">TODO</span> debugging: spy/1, tspy/1, trace/0, gtrace/0, notrace/0, debug/0, nodebug/0; stepping: creep, skip, and leap</h3>
+<div class="outline-text-3" id="text-4-8">
+<p>
+debug/0 disables optimizations.
+</p>
+
+<p>
+Fixing programming errors:
+</p>
+<ul class="org-ul">
+<li><a href="https://www.cs.ucsb.edu/~kyledewey/cs162w15/debugging_prolog.html">https://www.cs.ucsb.edu/~kyledewey/cs162w15/debugging_prolog.html</a></li>
+<li><a href="http://www.swi-prolog.org/pldoc/man?section=debugoverview">http://www.swi-prolog.org/pldoc/man?section=debugoverview</a>
+<ul class="org-ul">
+<li>Type <code>/f</code> in the tracer prompt to run to the next failure.</li>
+</ul></li>
+</ul>
+
+<p>
+Singleton variables most likely mean there's a typo.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf2d156d" class="outline-2">
+<h2 id="orgf2d156d"><span class="section-number-2">5</span> Speeding things up</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-orgc57b0f5" class="outline-3">
+<h3 id="orgc57b0f5"><span class="section-number-3">5.1</span> Profiling: finding where your program spends time; finding where it is slow; diagnosing slowness</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+To run your <code>Goal</code> with profiling, simply query <code>profile(Goal)</code>.
+</p>
+
+<p>
+Profiling couldn't be any simpler than this!
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org2537bad" class="outline-2">
+<h2 id="org2537bad"><span class="section-number-2">6</span> Where things get ugly</h2>
+<div class="outline-text-2" id="text-6">
 </div>
 <div id="outline-container-orga2b3e1b" class="outline-3">
-<h3 id="orga2b3e1b"><span class="section-number-3">4.1</span> Functional/expression style sometimes beats relational/unification style</h3>
-<div class="outline-text-3" id="text-4-1">
+<h3 id="orga2b3e1b"><span class="section-number-3">6.1</span> Functional/expression style sometimes beats relational/unification style</h3>
+<div class="outline-text-3" id="text-6-1">
 <pre class="example">
 -- Functional/expression style
 g (f0 x0) (f1 x1) (f2 x2)
@@ -1023,13 +1046,92 @@ Should we move from Prolog to Scheme/miniKanren or Mercury?
 </p>
 </div>
 </div>
+<div id="outline-container-orgff76257" class="outline-3">
+<h3 id="orgff76257"><span class="section-number-3">6.2</span> Directives like <code>:- op</code> complicate parsing a Prolog source code.</h3>
+</div>
+<div id="outline-container-orgcd563af" class="outline-3">
+<h3 id="orgcd563af"><span class="section-number-3">6.3</span> Zero-arity compound term</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+Use compound_name_arity/3 instead of functor/3, but this seems to be an SWI-Prolog extension.
+</p>
+
+<p>
+<a href="http://www.swi-prolog.org/pldoc/man?section=ext-compound-zero">http://www.swi-prolog.org/pldoc/man?section=ext-compound-zero</a>
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdb8d5a8" class="outline-2">
+<h2 id="orgdb8d5a8"><span class="section-number-2">7</span> Writing enterprise web applications?</h2>
+<div class="outline-text-2" id="text-7">
+</div>
+<div id="outline-container-orga52d884" class="outline-3">
+<h3 id="orga52d884"><span class="section-number-3">7.1</span> Comparison between ontology, relational programming, and database programming</h3>
+<div class="outline-text-3" id="text-7-1">
+<p>
+Open World Assumption vs Closed World Assumption <a href="http://www.mkbergman.com/852/the-open-world-assumption-elephant-in-the-room/">http://www.mkbergman.com/852/the-open-world-assumption-elephant-in-the-room/</a>
+</p>
+
+<p>
+How do we combine closed-world assumption (logic programming / relational database) and open-world assumption (web ontology)?
+</p>
+</div>
+</div>
+<div id="outline-container-orgbbbadf1" class="outline-3">
+<h3 id="orgbbbadf1"><span class="section-number-3">7.2</span> Knowledge representation and software specification</h3>
+<div class="outline-text-3" id="text-7-2">
+</div>
+<div id="outline-container-orgf5826c1" class="outline-4">
+<h4 id="orgf5826c1"><span class="section-number-4">7.2.1</span> Their relationships</h4>
+<div class="outline-text-4" id="text-7-2-1">
+<ul class="org-ul">
+<li>2010, "Functional-Logic Programming Lecture Notes", Harold Boley, slides, <a href="http://www.cs.unb.ca/~boley/FLP/cs6905FLP.pdf">pdf</a>
+<ul class="org-ul">
+<li>Knowledge representation in AI roughly corresponds to software specification in software engineering.</li>
+<li>Declarative programs can be thought as executable specifications.</li>
+<li>Invertibility principle (slide 36)</li>
+<li>Nesting/conjunction principle (slide 46)</li>
+<li>Unification principle (slide 50)</li>
+<li>Amalgamation/integration principle (slide 55)</li>
+<li>That's a long deck: 270 slides.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org772a721" class="outline-4">
+<h4 id="org772a721"><span class="section-number-4">7.2.2</span> Executable specification?</h4>
+<div class="outline-text-4" id="text-7-2-2">
+<ul class="org-ul">
+<li>lightweight executable mathematics <a href="https://www.cl.cam.ac.uk/~pes20/lem/">https://www.cl.cam.ac.uk/~pes20/lem/</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga93cc9a" class="outline-3">
+<h3 id="orga93cc9a"><span class="section-number-3">7.3</span> Logic programming vs theorem proving</h3>
+<div class="outline-text-3" id="text-7-3">
+<ul class="org-ul">
+<li><a href="https://stackoverflow.com/questions/36335633/difference-between-logic-programming-and-automated-theorem-proving">https://stackoverflow.com/questions/36335633/difference-between-logic-programming-and-automated-theorem-proving</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Automated_theorem_proving">https://en.wikipedia.org/wiki/Automated_theorem_proving</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9448c8f" class="outline-2">
+<h2 id="org9448c8f"><span class="section-number-2">8</span> Theories</h2>
+<div class="outline-text-2" id="text-8">
+</div>
 <div id="outline-container-org6260cbe" class="outline-3">
-<h3 id="org6260cbe"><span class="section-number-3">4.2</span> Embedding Prolog/Haskell in Haskell/Prolog</h3>
-<div class="outline-text-3" id="text-4-2">
+<h3 id="org6260cbe"><span class="section-number-3">8.1</span> Embedding Prolog/Haskell in Haskell/Prolog</h3>
+<div class="outline-text-3" id="text-8-1">
 </div>
 <div id="outline-container-org96eedd4" class="outline-4">
-<h4 id="org96eedd4"><span class="section-number-4">4.2.1</span> Embedding Prolog in Haskell</h4>
-<div class="outline-text-4" id="text-4-2-1">
+<h4 id="org96eedd4"><span class="section-number-4">8.1.1</span> Embedding Prolog in Haskell</h4>
+<div class="outline-text-4" id="text-8-1-1">
 <ul class="org-ul">
 <li>1999 article "Embedding Prolog in Haskell" <a href="https://pdfs.semanticscholar.org/7c46/5d25205830735d0a034532746b7243221eca.pdf">https://pdfs.semanticscholar.org/7c46/5d25205830735d0a034532746b7243221eca.pdf</a>
 <ul class="org-ul">
@@ -1042,39 +1144,35 @@ in such a way that both the declarative and the procedural reading of the Prolog
 </div>
 </div>
 <div id="outline-container-org4a0c336" class="outline-4">
-<h4 id="org4a0c336"><span class="section-number-4">4.2.2</span> Embedding Haskell in Prolog: Nobody is talking about this.</h4>
+<h4 id="org4a0c336"><span class="section-number-4">8.1.2</span> Embedding Haskell in Prolog: Nobody is talking about this.</h4>
 </div>
 </div>
-<div id="outline-container-orgff76257" class="outline-3">
-<h3 id="orgff76257"><span class="section-number-3">4.3</span> Directives like <code>:- op</code> complicate parsing a Prolog source code.</h3>
-</div>
-<div id="outline-container-org931ca1c" class="outline-3">
-<h3 id="org931ca1c"><span class="section-number-3">4.4</span> Defining your own operators</h3>
-<div class="outline-text-3" id="text-4-4">
+
+<div id="outline-container-org1289834" class="outline-3">
+<h3 id="org1289834"><span class="section-number-3">8.2</span> How are Prolog and Lisp similar?</h3>
+<div class="outline-text-3" id="text-8-2">
 <ul class="org-ul">
-<li><code>:- op(Precedence, Type, Name)</code></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-orgda69842" class="outline-3">
-<h3 id="orgda69842"><span class="section-number-3">4.5</span> Meta-programming</h3>
-<div class="outline-text-3" id="text-4-5">
+<li>Both Prolog and Lisp have symbols and cons cells.
 <ul class="org-ul">
-<li>To define 'macros', use <code>term_expansion</code> or <code>goal_expansion</code>.</li>
+<li>This is a Lisp cons cell: <code>(cons 'a 'b)</code> or <code>'(a . b)</code>.</li>
+<li>This is the corresponding SWI-Prolog cons cell: <code>[a|b]</code> (the canonical form is <code>'[|]'(a,b)</code>).</li>
+</ul></li>
+<li>Both have macros.
+<ul class="org-ul">
+<li>Lisp has defmacro.</li>
+<li>Prolog has term_expansion/2 and goal_expansion/2.</li>
+</ul></li>
 </ul>
-</div>
-</div>
-<div id="outline-container-org8eef091" class="outline-3">
-<h3 id="org8eef091"><span class="section-number-3">4.6</span> Use clpfd #=/2 instead of is/2?</h3>
-<div class="outline-text-3" id="text-4-6">
+
 <p>
-But it's good to have minimal dependencies.
+I'd say Prolog = Lisp + unification + backtracking - lambda.
 </p>
 </div>
 </div>
+
 <div id="outline-container-org853cdaa" class="outline-3">
-<h3 id="org853cdaa"><span class="section-number-3">4.7</span> Comparison between what is difficult in various programming languages</h3>
-<div class="outline-text-3" id="text-4-7">
+<h3 id="org853cdaa"><span class="section-number-3">8.3</span> Comparison between what is difficult in various programming languages</h3>
+<div class="outline-text-3" id="text-8-3">
 <ul class="org-ul">
 <li>2014 presentation "That scripting language called Prolog" <a href="https://www.slideshare.net/SergeiWinitzki/prolog-talk">https://www.slideshare.net/SergeiWinitzki/prolog-talk</a>
 <ul class="org-ul">
@@ -1088,9 +1186,146 @@ But it's good to have minimal dependencies.
 </ul>
 </div>
 </div>
+
+<div id="outline-container-orgf71d684" class="outline-3">
+<h3 id="orgf71d684"><span class="section-number-3">8.4</span> Comparison with other relational programming languages</h3>
+<div class="outline-text-3" id="text-8-4">
+<p>
+Comparison with miniKanren:
+</p>
+<ul class="org-ul">
+<li><a href="https://stackoverflow.com/questions/28467011/what-are-the-main-technical-differences-between-prolog-and-minikanren-with-resp">https://stackoverflow.com/questions/28467011/what-are-the-main-technical-differences-between-prolog-and-minikanren-with-resp</a>
+<ul class="org-ul">
+<li>William E. Byrd's answer:
+<ul class="org-ul">
+<li>Prolog is practical; miniKanren is pure.</li>
+<li>Prolog unification doesn't use occurs check; miniKanren unification uses occurs check.</li>
+<li>Prolog uses depth-first search; miniKanren uses complete interleaving search.</li>
+<li>'[&#x2026;] miniKanren is being used for research in "relational" programming.'</li>
+<li>"Over time miniKanren has added more symbolic constraints, really becoming a symbolically-oriented Constraint Logic Programming language."</li>
+<li>"There are other very interesting logic programming languages as well, such as Mercury, Curry, and Gödel, each of which has its own take on logic programming."</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>
+Mercury vs Prolog
+</p>
+<ul class="org-ul">
+<li><a href="http://lambda-the-ultimate.org/node/890">http://lambda-the-ultimate.org/node/890</a></li>
+<li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-21&gt; </span></span> "The Prolog to Mercury transition guide" <a href="https://www.mercurylang.org/information/doc-latest/transition_guide.pdf">https://www.mercurylang.org/information/doc-latest/transition_guide.pdf</a></li>
+</ul>
+
+<p>
+SQL? Datalog?
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc9578c0" class="outline-3">
+<h3 id="orgc9578c0"><span class="section-number-3">8.5</span> Two camps in programming</h3>
+<div class="outline-text-3" id="text-8-5">
+<p>
+There are two camps in programming:
+the bottom-up camp and the top-down camp.
+</p>
+
+<p>
+The bottom-up camp starts from machines and goes up toward mathematics.
+This camp produces Assembly, Fortran, Cobol, Pascal, C, C++, Go.
+This camp produced fast but ugly implementations.
+Haphazard incremental improvements.
+</p>
+
+<p>
+The top-down camp starts from mathematics and goes down toward machines.
+This camp produces Lisp, Scheme, Prolog, ML, Ocaml, Haskell, Coq, Idris, Agda, Lean.
+This camp produced elegant but slow implementations.
+Big design up front.
+</p>
+
+<p>
+They seem to be converging to a middle ground: ugly and slow.
+</p>
+
+<p>
+Why can't we get fast and elegant?
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org1338566" class="outline-2">
+<h2 id="org1338566"><span class="section-number-2">9</span> <span class="todo TODO">TODO</span> Half-baked things to shuffle around</h2>
+<div class="outline-text-2" id="text-9">
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org931ca1c">9.1. Defining your own operators</a></li>
+<li><a href="#orgda69842">9.2. Meta-programming</a></li>
+<li><a href="#org8eef091">9.3. Use clpfd #=/2 instead of is/2?</a></li>
+<li><a href="#orgaba238f">9.4. Difference lists</a></li>
+<li><a href="#orgd6b7309">9.5. What? 99 Prolog problems?</a></li>
+<li><a href="#org4b775c7">9.6. Iterative deepening search with length/1</a></li>
+<li><a href="#org71915a3">9.7. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-20&gt; </span></span> How do we make sense of this counterintuitive module syntax?</a></li>
+<li><a href="#org1701963">9.8. Discover the wonderful world of Prolog / logic programming / relational programming</a>
+<ul>
+<li><a href="#org9ba8c58">9.8.1. Symbolic AI is the easiest AI approach.</a></li>
+<li><a href="#orge2c5e32">9.8.2. Dreams</a></li>
+</ul>
+</li>
+<li><a href="#org56b9135">9.9. Reminder for those who already know</a></li>
+<li><a href="#orge4f7af2">9.10. Making compilers</a></li>
+<li><a href="#org6fe9637">9.11. Declarative programming languages</a></li>
+<li><a href="#org3c37b19">9.12. Speculative</a>
+<ul>
+<li><a href="#org9f4de94">9.12.1. Fast logic programming?</a></li>
+<li><a href="#orgedb661a">9.12.2. Lambda-prolog?</a></li>
+</ul>
+</li>
+<li><a href="#org8864f0c">9.13. Resources</a>
+<ul>
+<li><a href="#org3358571">9.13.1. For beginners</a></li>
+<li><a href="#orge83f5ba">9.13.2. Not for beginners</a></li>
+</ul>
+</li>
+<li><a href="#org574abf4">9.14. What?</a>
+<ul>
+<li><a href="#orge795ae4">9.14.1. P# translates Prolog to C#.</a></li>
+<li><a href="#org52d5d28">9.14.2. "Real World Programming in SWI-Prolog"</a></li>
+<li><a href="#org1975287">9.14.3. "Frequently Asked Questions for ##Prolog"</a></li>
+<li><a href="#org3a7676e">9.14.4. What are these trying to say?</a></li>
+<li><a href="#org4a50502">9.14.5. Books?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org931ca1c" class="outline-3">
+<h3 id="org931ca1c"><span class="section-number-3">9.1</span> Defining your own operators</h3>
+<div class="outline-text-3" id="text-9-1">
+<ul class="org-ul">
+<li><code>:- op(Precedence, Type, Name)</code></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgda69842" class="outline-3">
+<h3 id="orgda69842"><span class="section-number-3">9.2</span> Meta-programming</h3>
+<div class="outline-text-3" id="text-9-2">
+<ul class="org-ul">
+<li>To define 'macros', use <code>term_expansion</code> or <code>goal_expansion</code>.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org8eef091" class="outline-3">
+<h3 id="org8eef091"><span class="section-number-3">9.3</span> Use clpfd #=/2 instead of is/2?</h3>
+<div class="outline-text-3" id="text-9-3">
+<p>
+But it's good to have minimal dependencies.
+</p>
+</div>
+</div>
 <div id="outline-container-orgaba238f" class="outline-3">
-<h3 id="orgaba238f"><span class="section-number-3">4.8</span> Difference lists</h3>
-<div class="outline-text-3" id="text-4-8">
+<h3 id="orgaba238f"><span class="section-number-3">9.4</span> Difference lists</h3>
+<div class="outline-text-3" id="text-9-4">
 <ul class="org-ul">
 <li>Who invented difference lists when?</li>
 </ul>
@@ -1123,16 +1358,16 @@ Ordinary list has linear-time append.</li>
 </div>
 </div>
 <div id="outline-container-orgd6b7309" class="outline-3">
-<h3 id="orgd6b7309"><span class="section-number-3">4.9</span> What? 99 Prolog problems?</h3>
-<div class="outline-text-3" id="text-4-9">
+<h3 id="orgd6b7309"><span class="section-number-3">9.5</span> What? 99 Prolog problems?</h3>
+<div class="outline-text-3" id="text-9-5">
 <ul class="org-ul">
 <li>99 Prolog problems <a href="http://www.ic.unicamp.br/~meidanis/courses/problemas-prolog/">http://www.ic.unicamp.br/~meidanis/courses/problemas-prolog/</a></li>
 </ul>
 </div>
 </div>
 <div id="outline-container-org4b775c7" class="outline-3">
-<h3 id="org4b775c7"><span class="section-number-3">4.10</span> Iterative deepening search with length/1</h3>
-<div class="outline-text-3" id="text-4-10">
+<h3 id="org4b775c7"><span class="section-number-3">9.6</span> Iterative deepening search with length/1</h3>
+<div class="outline-text-3" id="text-9-6">
 <p>
 Prolog uses depth-first search.
 It isn't complete.
@@ -1150,33 +1385,20 @@ then you can query <code>length(List, _), goal(List)</code> to make the search c
 </div>
 </div>
 <div id="outline-container-org71915a3" class="outline-3">
-<h3 id="org71915a3"><span class="section-number-3">4.11</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-20&gt; </span></span> How do we make sense of this counterintuitive module syntax?</h3>
-<div class="outline-text-3" id="text-4-11">
+<h3 id="org71915a3"><span class="section-number-3">9.7</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-20&gt; </span></span> How do we make sense of this counterintuitive module syntax?</h3>
+<div class="outline-text-3" id="text-9-7">
 <ul class="org-ul">
 <li><a href="https://stackoverflow.com/questions/42399020/how-to-get-a-listing-of-a-specific-knowledge-base">https://stackoverflow.com/questions/42399020/how-to-get-a-listing-of-a-specific-knowledge-base</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orga52d884" class="outline-3">
-<h3 id="orga52d884"><span class="section-number-3">4.12</span> Comparison between ontology, relational programming, and database programming</h3>
-<div class="outline-text-3" id="text-4-12">
-</div>
-<div id="outline-container-org1c7aa9c" class="outline-4">
-<h4 id="org1c7aa9c"><span class="section-number-4">4.12.1</span> Open World Assumption vs Closed World Assumption</h4>
-<div class="outline-text-4" id="text-4-12-1">
-<ul class="org-ul">
-<li><a href="http://www.mkbergman.com/852/the-open-world-assumption-elephant-in-the-room/">http://www.mkbergman.com/852/the-open-world-assumption-elephant-in-the-room/</a></li>
-</ul>
-</div>
-</div>
-</div>
 <div id="outline-container-org1701963" class="outline-3">
-<h3 id="org1701963"><span class="section-number-3">4.13</span> Discover the wonderful world of Prolog / logic programming / relational programming</h3>
-<div class="outline-text-3" id="text-4-13">
+<h3 id="org1701963"><span class="section-number-3">9.8</span> Discover the wonderful world of Prolog / logic programming / relational programming</h3>
+<div class="outline-text-3" id="text-9-8">
 </div>
 <div id="outline-container-org9ba8c58" class="outline-4">
-<h4 id="org9ba8c58"><span class="section-number-4">4.13.1</span> Symbolic AI is the easiest AI approach.</h4>
-<div class="outline-text-4" id="text-4-13-1">
+<h4 id="org9ba8c58"><span class="section-number-4">9.8.1</span> Symbolic AI is the easiest AI approach.</h4>
+<div class="outline-text-4" id="text-9-8-1">
 <ul class="org-ul">
 <li>Connectionist AI (neural networks) excels at tasks that are difficult to describe in formal logic.</li>
 <li>Symbolic AI (Prolog) is much more understandable and predictable than connectionist AI.
@@ -1189,8 +1411,8 @@ then you can query <code>length(List, _), goal(List)</code> to make the search c
 </div>
 </div>
 <div id="outline-container-orge2c5e32" class="outline-4">
-<h4 id="orge2c5e32"><span class="section-number-4">4.13.2</span> Dreams</h4>
-<div class="outline-text-4" id="text-4-13-2">
+<h4 id="orge2c5e32"><span class="section-number-4">9.8.2</span> Dreams</h4>
+<div class="outline-text-4" id="text-9-8-2">
 <ul class="org-ul">
 <li>offload/scale/formalize thinking/cognition</li>
 <li>transform reasoning into data entry</li>
@@ -1206,52 +1428,29 @@ then you can query <code>length(List, _), goal(List)</code> to make the search c
 </div>
 </div>
 </div>
-<div id="outline-container-orgf71d684" class="outline-3">
-<h3 id="orgf71d684"><span class="section-number-3">4.14</span> Comparison with other relational programming languages</h3>
-<div class="outline-text-3" id="text-4-14">
-<p>
-Comparison with miniKanren:
-</p>
-<ul class="org-ul">
-<li><a href="https://stackoverflow.com/questions/28467011/what-are-the-main-technical-differences-between-prolog-and-minikanren-with-resp">https://stackoverflow.com/questions/28467011/what-are-the-main-technical-differences-between-prolog-and-minikanren-with-resp</a>
-<ul class="org-ul">
-<li>William E. Byrd's answer:
-<ul class="org-ul">
-<li>Prolog is practical; miniKanren is pure.</li>
-<li>Prolog unification doesn't use occurs check; miniKanren unification uses occurs check.</li>
-<li>Prolog uses depth-first search; miniKanren uses complete interleaving search.</li>
-<li>'[&#x2026;] miniKanren is being used for research in "relational" programming.'</li>
-<li>"Over time miniKanren has added more symbolic constraints, really becoming a symbolically-oriented Constraint Logic Programming language."</li>
-<li>"There are other very interesting logic programming languages as well, such as Mercury, Curry, and Gödel, each of which has its own take on logic programming."</li>
-</ul></li>
-</ul></li>
-</ul>
-
-<p>
-Mercury vs Prolog
-</p>
-<ul class="org-ul">
-<li><a href="http://lambda-the-ultimate.org/node/890">http://lambda-the-ultimate.org/node/890</a></li>
-<li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-21&gt; </span></span> "The Prolog to Mercury transition guide" <a href="https://www.mercurylang.org/information/doc-latest/transition_guide.pdf">https://www.mercurylang.org/information/doc-latest/transition_guide.pdf</a></li>
-</ul>
-
-<p>
-SQL? Datalog?
-</p>
-</div>
-</div>
 <div id="outline-container-org56b9135" class="outline-3">
-<h3 id="org56b9135"><span class="section-number-3">4.15</span> Reminder for those who already know</h3>
-<div class="outline-text-3" id="text-4-15">
+<h3 id="org56b9135"><span class="section-number-3">9.9</span> Reminder for those who already know</h3>
+<div class="outline-text-3" id="text-9-9">
 <p>
 Elucidating
 <a href="https://en.wikipedia.org/wiki/Prolog_syntax_and_semantics">https://en.wikipedia.org/wiki/Prolog_syntax_and_semantics</a>
 </p>
 </div>
 </div>
-<div id="outline-container-org08ac6ad" class="outline-3">
-<h3 id="org08ac6ad"><span class="section-number-3">4.16</span> "Universal-transpiler": Similar to what we want</h3>
-<div class="outline-text-3" id="text-4-16">
+<div id="outline-container-orge4f7af2" class="outline-3">
+<h3 id="orge4f7af2"><span class="section-number-3">9.10</span> Making compilers</h3>
+<div class="outline-text-3" id="text-9-10">
+<ul class="org-ul">
+<li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/9em9jf/future_directions_for_optimizing_compilers/">https://www.reddit.com/r/ProgrammingLanguages/comments/9em9jf/future_directions_for_optimizing_compilers/</a>
+<ul class="org-ul">
+<li>"Future Directions for Optimizing Compilers" <a href="https://arxiv.org/abs/1809.02161">https://arxiv.org/abs/1809.02161</a></li>
+</ul></li>
+</ul>
+
+<p>
+"Universal-transpiler" may be similar to what we want.
+</p>
+
 <ul class="org-ul">
 <li>"Universal-transpiler"
 <ul class="org-ul">
@@ -1264,62 +1463,9 @@ Elucidating
 </ul>
 </div>
 </div>
-<div id="outline-container-orga93cc9a" class="outline-3">
-<h3 id="orga93cc9a"><span class="section-number-3">4.17</span> Logic programming vs theorem proving</h3>
-<div class="outline-text-3" id="text-4-17">
-<ul class="org-ul">
-<li><a href="https://stackoverflow.com/questions/36335633/difference-between-logic-programming-and-automated-theorem-proving">https://stackoverflow.com/questions/36335633/difference-between-logic-programming-and-automated-theorem-proving</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Automated_theorem_proving">https://en.wikipedia.org/wiki/Automated_theorem_proving</a></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-orgbbbadf1" class="outline-3">
-<h3 id="orgbbbadf1"><span class="section-number-3">4.18</span> Knowledge representation and software specification</h3>
-<div class="outline-text-3" id="text-4-18">
-</div>
-<div id="outline-container-orgf5826c1" class="outline-4">
-<h4 id="orgf5826c1"><span class="section-number-4">4.18.1</span> Their relationships</h4>
-<div class="outline-text-4" id="text-4-18-1">
-<ul class="org-ul">
-<li>2010, "Functional-Logic Programming Lecture Notes", Harold Boley, slides, <a href="http://www.cs.unb.ca/~boley/FLP/cs6905FLP.pdf">pdf</a>
-<ul class="org-ul">
-<li>Knowledge representation in AI roughly corresponds to software specification in software engineering.</li>
-<li>Declarative programs can be thought as executable specifications.</li>
-<li>Invertibility principle (slide 36)</li>
-<li>Nesting/conjunction principle (slide 46)</li>
-<li>Unification principle (slide 50)</li>
-<li>Amalgamation/integration principle (slide 55)</li>
-<li>That's a long deck: 270 slides.</li>
-</ul></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org772a721" class="outline-4">
-<h4 id="org772a721"><span class="section-number-4">4.18.2</span> Executable specification?</h4>
-<div class="outline-text-4" id="text-4-18-2">
-<ul class="org-ul">
-<li>lightweight executable mathematics <a href="https://www.cl.cam.ac.uk/~pes20/lem/">https://www.cl.cam.ac.uk/~pes20/lem/</a></li>
-</ul>
-</div>
-</div>
-</div>
-<div id="outline-container-org946e3fa" class="outline-3">
-<h3 id="org946e3fa"><span class="section-number-3">4.19</span> Combine closed-world assumption (logic programming / relational database) and open-world assumption (web ontology)</h3>
-</div>
-<div id="outline-container-orge4f7af2" class="outline-3">
-<h3 id="orge4f7af2"><span class="section-number-3">4.20</span> Making compilers</h3>
-<div class="outline-text-3" id="text-4-20">
-<ul class="org-ul">
-<li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/9em9jf/future_directions_for_optimizing_compilers/">https://www.reddit.com/r/ProgrammingLanguages/comments/9em9jf/future_directions_for_optimizing_compilers/</a>
-<ul class="org-ul">
-<li>"Future Directions for Optimizing Compilers" <a href="https://arxiv.org/abs/1809.02161">https://arxiv.org/abs/1809.02161</a></li>
-</ul></li>
-</ul>
-</div>
-</div>
 <div id="outline-container-org6fe9637" class="outline-3">
-<h3 id="org6fe9637"><span class="section-number-3">4.21</span> Declarative programming languages</h3>
-<div class="outline-text-3" id="text-4-21">
+<h3 id="org6fe9637"><span class="section-number-3">9.11</span> Declarative programming languages</h3>
+<div class="outline-text-3" id="text-9-11">
 <p>
 <a href="http://www.cse.chalmers.se/~oloft/Papers/wm96/node2.html">Declarative Programming Languages</a>, functional logic programming, two ways it is done (narrowing and residuation);
 definitional programming, GCLA language (separate definition and control)
@@ -1330,34 +1476,13 @@ definitional programming, GCLA language (separate definition and control)
 </ul>
 </div>
 </div>
-<div id="outline-container-org1289834" class="outline-3">
-<h3 id="org1289834"><span class="section-number-3">4.22</span> How are Prolog and Lisp similar?</h3>
-<div class="outline-text-3" id="text-4-22">
-<ul class="org-ul">
-<li>Both Prolog and Lisp have symbols and cons cells.
-<ul class="org-ul">
-<li>This is a Lisp cons cell: <code>(cons 'a 'b)</code> or <code>'(a . b)</code>.</li>
-<li>This is the corresponding SWI-Prolog cons cell: <code>[a|b]</code> (the canonical form is <code>'[|]'(a,b)</code>).</li>
-</ul></li>
-<li>Both have macros.
-<ul class="org-ul">
-<li>Lisp has defmacro.</li>
-<li>Prolog has term_expansion/2 and goal_expansion/2.</li>
-</ul></li>
-</ul>
-
-<p>
-I'd say Prolog = Lisp + unification + backtracking - lambda.
-</p>
-</div>
-</div>
 <div id="outline-container-org3c37b19" class="outline-3">
-<h3 id="org3c37b19"><span class="section-number-3">4.23</span> Speculative</h3>
-<div class="outline-text-3" id="text-4-23">
+<h3 id="org3c37b19"><span class="section-number-3">9.12</span> Speculative</h3>
+<div class="outline-text-3" id="text-9-12">
 </div>
 <div id="outline-container-org9f4de94" class="outline-4">
-<h4 id="org9f4de94"><span class="section-number-4">4.23.1</span> Fast logic programming?</h4>
-<div class="outline-text-4" id="text-4-23-1">
+<h4 id="org9f4de94"><span class="section-number-4">9.12.1</span> Fast logic programming?</h4>
+<div class="outline-text-4" id="text-9-12-1">
 <ul class="org-ul">
 <li><a href="https://www.reddit.com/r/ProgrammingLanguages/comments/9fgv3v/can_logic_programming_execute_as_fast_as/">https://www.reddit.com/r/ProgrammingLanguages/comments/9fgv3v/can_logic_programming_execute_as_fast_as/</a>
 <ul class="org-ul">
@@ -1368,8 +1493,8 @@ I'd say Prolog = Lisp + unification + backtracking - lambda.
 </div>
 </div>
 <div id="outline-container-orgedb661a" class="outline-4">
-<h4 id="orgedb661a"><span class="section-number-4">4.23.2</span> Lambda-prolog?</h4>
-<div class="outline-text-4" id="text-4-23-2">
+<h4 id="orgedb661a"><span class="section-number-4">9.12.2</span> Lambda-prolog?</h4>
+<div class="outline-text-4" id="text-9-12-2">
 <ul class="org-ul">
 <li>lambda-prolog <a href="http://www.lix.polytechnique.fr/~dale/lProlog/">http://www.lix.polytechnique.fr/~dale/lProlog/</a></li>
 </ul>
@@ -1377,15 +1502,15 @@ I'd say Prolog = Lisp + unification + backtracking - lambda.
 </div>
 </div>
 <div id="outline-container-org8864f0c" class="outline-3">
-<h3 id="org8864f0c"><span class="section-number-3">4.24</span> Resources</h3>
-<div class="outline-text-3" id="text-4-24">
+<h3 id="org8864f0c"><span class="section-number-3">9.13</span> Resources</h3>
+<div class="outline-text-3" id="text-9-13">
 </div>
 <div id="outline-container-org3358571" class="outline-4">
-<h4 id="org3358571"><span class="section-number-4">4.24.1</span> For beginners</h4>
+<h4 id="org3358571"><span class="section-number-4">9.13.1</span> For beginners</h4>
 </div>
 <div id="outline-container-orge83f5ba" class="outline-4">
-<h4 id="orge83f5ba"><span class="section-number-4">4.24.2</span> Not for beginners</h4>
-<div class="outline-text-4" id="text-4-24-2">
+<h4 id="orge83f5ba"><span class="section-number-4">9.13.2</span> Not for beginners</h4>
+<div class="outline-text-4" id="text-9-13-2">
 <ul class="org-ul">
 <li>1990 book "The craft of Prolog" by Richard A. O'Keefe
 <ul class="org-ul">
@@ -1401,37 +1526,36 @@ The purpose of the book is to show you how you can write Prolog programs that wo
 </div>
 </div>
 <div id="outline-container-org574abf4" class="outline-3">
-<h3 id="org574abf4"><span class="section-number-3">4.25</span> What?</h3>
-<div class="outline-text-3" id="text-4-25">
+<h3 id="org574abf4"><span class="section-number-3">9.14</span> What?</h3>
+<div class="outline-text-3" id="text-9-14">
 </div>
 <div id="outline-container-orge795ae4" class="outline-4">
-<h4 id="orge795ae4"><span class="section-number-4">4.25.1</span> P# translates Prolog to C#.</h4>
-<div class="outline-text-4" id="text-4-25-1">
+<h4 id="orge795ae4"><span class="section-number-4">9.14.1</span> P# translates Prolog to C#.</h4>
+<div class="outline-text-4" id="text-9-14-1">
 <p>
 <a href="https://pdfs.semanticscholar.org/12ec/568a6583d3d66b6821f28269f06937a9f2eb.pdf">https://pdfs.semanticscholar.org/12ec/568a6583d3d66b6821f28269f06937a9f2eb.pdf</a>
 </p>
 </div>
 </div>
 <div id="outline-container-org52d5d28" class="outline-4">
-<h4 id="org52d5d28"><span class="section-number-4">4.25.2</span> "Real World Programming in SWI-Prolog"</h4>
-<div class="outline-text-4" id="text-4-25-2">
+<h4 id="org52d5d28"><span class="section-number-4">9.14.2</span> "Real World Programming in SWI-Prolog"</h4>
+<div class="outline-text-4" id="text-9-14-2">
 <p>
 <a href="http://www.pathwayslms.com/swipltuts/index.html">http://www.pathwayslms.com/swipltuts/index.html</a>
 </p>
 </div>
 </div>
 <div id="outline-container-org1975287" class="outline-4">
-<h4 id="org1975287"><span class="section-number-4">4.25.3</span> "Frequently Asked Questions for ##Prolog"</h4>
-<div class="outline-text-4" id="text-4-25-3">
+<h4 id="org1975287"><span class="section-number-4">9.14.3</span> "Frequently Asked Questions for ##Prolog"</h4>
+<div class="outline-text-4" id="text-9-14-3">
 <p>
 <a href="http://www.pathwayslms.com/swipltuts/student/">http://www.pathwayslms.com/swipltuts/student/</a>
 </p>
 </div>
 </div>
-</div>
-<div id="outline-container-org3a7676e" class="outline-3">
-<h3 id="org3a7676e"><span class="section-number-3">4.26</span> What are these trying to say?</h3>
-<div class="outline-text-3" id="text-4-26">
+<div id="outline-container-org3a7676e" class="outline-4">
+<h4 id="org3a7676e"><span class="section-number-4">9.14.4</span> What are these trying to say?</h4>
+<div class="outline-text-4" id="text-9-14-4">
 <ul class="org-ul">
 <li>1991 article "Logic Programming, Functional Programming, and Inductive Definitions" <a href="https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-205.pdf">https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-205.pdf</a>
 <ul class="org-ul">
@@ -1447,9 +1571,9 @@ Inductive definitions are more fundamental than first-order logic, and perhaps e
 </ul>
 </div>
 </div>
-<div id="outline-container-org4a50502" class="outline-3">
-<h3 id="org4a50502"><span class="section-number-3">4.27</span> Books?</h3>
-<div class="outline-text-3" id="text-4-27">
+<div id="outline-container-org4a50502" class="outline-4">
+<h4 id="org4a50502"><span class="section-number-4">9.14.5</span> Books?</h4>
+<div class="outline-text-4" id="text-9-14-5">
 <ul class="org-ul">
 <li>1995 book "Prolog Programming in Depth" <a href="http://www.lsv.fr/~reichert/Enseignement/2012/PPL/Prolog_Programming_In_Depth.pdf">http://www.lsv.fr/~reichert/Enseignement/2012/PPL/Prolog_Programming_In_Depth.pdf</a>
 <ul class="org-ul">
@@ -1516,6 +1640,7 @@ These negative rules are needed to tell us when we have an exception to a defeas
 </ul></li>
 </ul></li>
 </ul>
+</div>
 </div>
 </div>
 </div>
