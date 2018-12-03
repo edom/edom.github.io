@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Relational-multidirectional-logic programming in production in SWI-Prolog</title>
+  <title>Using Prolog</title>
   <meta name="description" content="Personal website">
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Relational-multidirectional-logic programming in production in SWI-Prolog</h1>
+    <h1 class="post-title">Using Prolog</h1>
   </header>
 
   <div class="post-content">
@@ -128,10 +128,10 @@ document.addEventListener("DOMContentLoaded", function () {
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#orgecb35de">1. Before you go full Prolog</a></li>
-<li><a href="#orge8eb55e">2. Using the interactive prompt</a></li>
-<li><a href="#orga4013bb">3. Handling errors</a></li>
-<li><a href="#orgc26ad3e">4. Writing elegant Prolog knowledge bases</a></li>
-<li><a href="#orgf2d156d">5. Speeding things up</a></li>
+<li><a href="#org44a9a25">2. Establishing a workflow</a></li>
+<li><a href="#org33d40af">3. Error handling and logging</a></li>
+<li><a href="#org867c8f2">4. Modeling things in Prolog</a></li>
+<li><a href="#orga732c17">5. Writing extensible knowledge bases</a></li>
 <li><a href="#org2537bad">6. Where things get ugly</a></li>
 <li><a href="#orgdb8d5a8">7. Writing enterprise web applications?</a></li>
 <li><a href="#org9448c8f">8. Theories</a></li>
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><a href="#orge0528f6">1.2. Let me warn you about the woes and blockers.</a></li>
 <li><a href="#org5f3d733">1.3. Let me hype you up.</a></li>
 <li><a href="#org3b2124a">1.4. Not sure yet? Try Prolog with minimal investment.</a></li>
-<li><a href="#orgc07e142">1.5. Comparison of Prolog implementations</a></li>
+<li><a href="#org8d5259e">1.5. Comparing Prolog implementations?</a></li>
 </ul>
 </div>
 </div>
@@ -182,6 +182,7 @@ intensive array processing or bare-metal performance for e.g., processing pixels
 There is no standard date/time/calendar library?
 There may be one?
 I'm still looking.
+library(julian)?
 </p>
 <ul class="org-ul">
 <li>Java 8 has "java.util.time"; previous Java versions can use "Joda Time".</li>
@@ -241,12 +242,6 @@ Your coworkers are beating you with Prolog?
 Well, what the hell are you waiting for?
 Learn Prolog now, or lose your job and die in oblivion!
 </p>
-
-<p>
-Things that I haven't found in Prolog:
-the speed of C,
-the toolchain of Go.
-</p>
 </div>
 </div>
 <div id="outline-container-org3b2124a" class="outline-3">
@@ -259,16 +254,15 @@ while doodling some code on <a href="http://pengines.swi-prolog.org/apps/swish/i
 </p>
 </div>
 </div>
-<div id="outline-container-orgc07e142" class="outline-3">
-<h3 id="orgc07e142"><span class="section-number-3">1.5</span> Comparison of Prolog implementations</h3>
+<div id="outline-container-org8d5259e" class="outline-3">
+<h3 id="org8d5259e"><span class="section-number-3">1.5</span> Comparing Prolog implementations?</h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
-<a href="https://en.wikipedia.org/wiki/Comparison_of_Prolog_implementations">https://en.wikipedia.org/wiki/Comparison_of_Prolog_implementations</a>
+I use SWI-Prolog because it's what I use in university, and because of this <a href="http://www.swi-prolog.org/features.html">SWI-Prolog sales pitch</a>.
 </p>
 
 <p>
-Comparison between SWI Prolog, YAP, GNU Prolog.
-<a href="http://www.david-reitter.com/compling/prolog/compare.html">http://www.david-reitter.com/compling/prolog/compare.html</a>
+This book assumes that the reader uses SWI-Prolog 7.6.4.
 </p>
 
 <p>
@@ -277,26 +271,29 @@ Some companies have their own Prolog implementations.
 </p>
 
 <p>
-I use SWI-Prolog because it's what I use in university, and because of this <a href="http://www.swi-prolog.org/features.html">SWI-Prolog sales pitch</a>.
+See also:
 </p>
-
-<p>
-This book assumes that the reader uses SWI-Prolog 7.6.4.
-</p>
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Comparison_of_Prolog_implementations">https://en.wikipedia.org/wiki/Comparison_of_Prolog_implementations</a></li>
+<li>Comparison between SWI Prolog, YAP, GNU Prolog <a href="http://www.david-reitter.com/compling/prolog/compare.html">http://www.david-reitter.com/compling/prolog/compare.html</a></li>
+</ul>
 </div>
 </div>
 </div>
-<div id="outline-container-orge8eb55e" class="outline-2">
-<h2 id="orge8eb55e"><span class="section-number-2">2</span> Using the interactive prompt</h2>
+<div id="outline-container-org44a9a25" class="outline-2">
+<h2 id="org44a9a25"><span class="section-number-2">2</span> Establishing a workflow</h2>
 <div class="outline-text-2" id="text-2">
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#org52e23ad">2.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-20&gt; </span></span> Installing SWI-Prolog 7.6.4 on Ubuntu 14.04</a></li>
-<li><a href="#org8579315">2.2. Establishing workflow</a></li>
-<li><a href="#org1124d06">2.3. Interacting with SWI-Prolog</a></li>
-<li><a href="#org8991268">2.4. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-30&gt; </span></span> Prolog needs static checking like Erlang Dialyzer.</a></li>
-<li><a href="#org8a2d1ea">2.5. How do I use SWI-Prolog?</a></li>
-<li><a href="#org07fd13b">2.6. SWI-Prolog, PostgreSQL, and ODBC</a></li>
+<li><a href="#org74a6cb0">2.2. Enabling readline</a></li>
+<li><a href="#orgc1e2904">2.3. Starting the interpreter and the documentation server</a></li>
+<li><a href="#org66d25a5">2.4. Thinking and editing</a></li>
+<li><a href="#org153fb8e">2.5. Rebuilding</a></li>
+<li><a href="#orgb03a2d7">2.6. Trying and manual testing</a></li>
+<li><a href="#orgf1274af">2.7. Seeing source codes and finding definitions</a></li>
+<li><a href="#org0a405a7">2.8. Troubleshooting: tracing and spying</a></li>
+<li><a href="#orgb522a1a">2.9. Committing to a Git repository</a></li>
 </ul>
 </div>
 </div>
@@ -305,16 +302,8 @@ This book assumes that the reader uses SWI-Prolog 7.6.4.
 <div class="outline-text-3" id="text-2-1">
 <p>
 If you are using Ubuntu 14.04, follow my instructions below.
-</p>
-
-<p>
 If your operating system has packaged SWI-Prolog 7.6.4 or newer, use it.
-(Thank you, volunteer package maintainers!)
-</p>
-
-<p>
-If you aren't using Ubuntu 14.04, follow the <a href="http://www.swi-prolog.org/Download.html">official instructions</a>.
-Choose the current stable release.
+Otherwise, follow the <a href="http://www.swi-prolog.org/Download.html">official instructions</a> and choose the current stable release.
 </p>
 
 <p>
@@ -393,7 +382,7 @@ Ensure that <code>$HOME/.local/bin</code> is in your <code>PATH</code>.
 For example, I have this line somewhere near the end of my <code>~/.bashrc</code> file:
 </p>
 <pre class="example">
-export PATH=$PATH:$HOME/.local/bin
+export PATH="$PATH:$HOME/.local/bin"
 </pre>
 
 <p>
@@ -407,9 +396,19 @@ SWI-Prolog version 7.6.4 for x86_64-linux
 <p>
 If you don't want to edit your bashrc, you can run swipl by its full path <code>~/.local/bin/swipl</code>.
 </p>
+</div>
+</div>
+<div id="outline-container-org74a6cb0" class="outline-3">
+<h3 id="org74a6cb0"><span class="section-number-3">2.2</span> Enabling readline</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+We want readline for history (Ctrl+R, Ctrl+S) and completion (Tab, Up, Down).
+</p>
 
 <p>
-Tell SWI-Prolog to use readline.
+To keep the entire codebase under BSD license,
+SWI-Prolog doesn't enable the GPL-licensed GNU readline by default.
+But you can tell SWI-Prolog to use readline.
 Create a FILE containing this:
 </p>
 <pre class="example">
@@ -418,102 +417,188 @@ Create a FILE containing this:
 
 <p>
 Add <code>-f FILE</code> switch to the command line you use to start <code>swipl</code>.
-Related GitHub issue <a href="https://github.com/SWI-Prolog/issues/issues/72">https://github.com/SWI-Prolog/issues/issues/72</a>.
-</p>
-</div>
-</div>
-<div id="outline-container-org8579315" class="outline-3">
-<h3 id="org8579315"><span class="section-number-3">2.2</span> Establishing workflow</h3>
-<div class="outline-text-3" id="text-2-2">
-<p>
-<code>swipl -l FILE</code>
 </p>
 
 <p>
-<code>:- [foo].</code> is shorthand for <code>:- consult(foo).</code>.
-<a href="http://www.swi-prolog.org/pldoc/man?predicate=consult/1">http://www.swi-prolog.org/pldoc/man?predicate=consult/1</a>
-</p>
-
-<p>
-We can enter temporary definitions from the prompt: <code>?- [user].</code>
-Enter definitions.
-End with a new line and Control+D.
+Related: <a href="https://github.com/SWI-Prolog/issues/issues/72">GitHub issue #72</a>: "how to build with GNU readline on linux".
 </p>
 </div>
 </div>
-<div id="outline-container-org1124d06" class="outline-3">
-<h3 id="org1124d06"><span class="section-number-3">2.3</span> Interacting with SWI-Prolog</h3>
+<div id="outline-container-orgc1e2904" class="outline-3">
+<h3 id="orgc1e2904"><span class="section-number-3">2.3</span> Starting the interpreter and the documentation server</h3>
 <div class="outline-text-3" id="text-2-3">
-<ul class="org-ul">
-<li>To show the canonical representation of a term, query <code>write_canonical(Term)</code>.</li>
-<li>To show the source of a predicate, query <code>listing(Module:Name)</code> or <code>listing(Name)</code>.</li>
-</ul>
+<p>
+I start SWI-Prolog with this command line:
+</p>
+<pre class="example">
+swipl --pldoc=DocPort -f UserInitFile -l PrologFile
+</pre>
+
+<p>
+I have enabled readline in my UserInitFile.
+</p>
+
+<p>
+I use 4002 for DocPort.
+I open <a href="http://localhost:4002/pldoc/">http://localhost:4002/pldoc/</a> in my browser.
+</p>
 </div>
 </div>
-<div id="outline-container-org8991268" class="outline-3">
-<h3 id="org8991268"><span class="section-number-3">2.4</span> <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-30&gt; </span></span> Prolog needs static checking like Erlang Dialyzer.</h3>
+<div id="outline-container-org66d25a5" class="outline-3">
+<h3 id="org66d25a5"><span class="section-number-3">2.4</span> Thinking and editing</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
-SWI-Prolog has check library?
+I edit some Prolog source files in Visual Studio Code with vim key bindings
+because I often need to duplicate a line when adding a new clause.
 </p>
 
 <p>
-Is there a Prolog totality/determinism checker?
+I add statements or comments.
 </p>
 
 <p>
-Prolog typechecking is vital to prevent stupid mistakes in a large knowledge base?
+I think a lot about names, representations, and relations.
 </p>
 
 <p>
-1997 inconclusive discussion "Prolog Type Checker"
-<a href="https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/typing/types.html">https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/typing/types.html</a>
+To edit the source of a thing in PceEmacs, I have several options:
 </p>
-</div>
-</div>
-<div id="outline-container-org8a2d1ea" class="outline-3">
-<h3 id="org8a2d1ea"><span class="section-number-3">2.5</span> How do I use SWI-Prolog?</h3>
-<div class="outline-text-3" id="text-2-5">
 <ul class="org-ul">
-<li>You write <i>rules</i> in files.
-You write <i>queries</i> in the query interpreter.
-<ul class="org-ul">
-<li>Pasting a file into the interpreter does <i>not</i> load the file.
-<ul class="org-ul">
-<li>This is contrary to Lisp/Python/Ruby interpreters.</li>
-</ul></li>
-</ul></li>
+<li>I click the "Edit file" or "Edit predicate" button in pldoc server.</li>
+<li>I query <code>edit(Name)</code> or <code>edit(Name/Arity)</code> in the interpreter.</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org07fd13b" class="outline-3">
-<h3 id="org07fd13b"><span class="section-number-3">2.6</span> SWI-Prolog, PostgreSQL, and ODBC</h3>
+<div id="outline-container-org153fb8e" class="outline-3">
+<h3 id="org153fb8e"><span class="section-number-3">2.5</span> Rebuilding</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+To see the updated documentation,
+I click "Make &amp; Reload" button in my pldoc website, if I haven't done so.
+If I have clicked that button, I simply refresh my browser with F5 or Ctrl+R.
+</p>
+
+<p>
+To test the program, I query <code>make.</code> in the interactive prompt, and I enter some queries.
+</p>
+
+<p>
+Warnings are errors.
+If there is a warning, I go back to editing.
+"Singleton variables" most likely mean there's a typo.
+</p>
+</div>
+</div>
+<div id="outline-container-orgb03a2d7" class="outline-3">
+<h3 id="orgb03a2d7"><span class="section-number-3">2.6</span> Trying and manual testing</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
-Install the Ubuntu 14.04 package <code>odbc-postgresql</code>.
+Important: <i>Prolog source file and Prolog query prompt have different syntax.</i>
+A Prolog source file contains <i>statements</i>.
+The Prolog interpreter accepts <i>queries</i>.
+Pasting a file into the interpreter does <i>not</i> load the file;
+this is contrary to Lisp/Python/Ruby interpreters.
 </p>
 
 <p>
-I want my application to self-contain its configuration.
-I don't configure ODBC INI files.
+The prompt <code>?-</code> means that the interpreter is expecting a <i>query</i>.
+However, we can enter temporary statements:
+</p>
+<ul class="org-ul">
+<li>Type the query <code>[user].</code>.
+The prompt changes to <code>|:</code>.
+We're now at the statement prompt.
+(The syntax <code>:- [foo].</code> is shorthand for <code>:- consult(foo).</code> which is documented in <a href="http://www.swi-prolog.org/pldoc/man?predicate=consult/1">consult/1</a>.)</li>
+<li>Enter several lines of statements.</li>
+<li>End with a new line and Control+D.
+We're now back at the query prompt.</li>
+</ul>
+
+<p>
+Those temporary statements disappear when the interpreter quits.
 </p>
 
 <p>
-ODBC Data Source Name (DSN) connection string
+Usually, after trying my changes, I go back to thinking and editing.
+</p>
+</div>
+</div>
+<div id="outline-container-orgf1274af" class="outline-3">
+<h3 id="orgf1274af"><span class="section-number-3">2.7</span> Seeing source codes and finding definitions</h3>
+<div class="outline-text-3" id="text-2-7">
+<p>
+To show the canonical representation (properly-parenthesized tree form) of a term, query <code>write_canonical(Term)</code>.
 </p>
 
 <p>
-Relevant commands: <code>odbcinst -j</code>
+To see the source code of a predicate, query <code>edit(Name)</code> or <code>edit(Name/Arity)</code> or <code>listing(Module:Name)</code> or <code>listing(Name)</code>.
+We can see the source code of libraries.
+We can easily find where things are defined.
+</p>
+</div>
+</div>
+<div id="outline-container-org0a405a7" class="outline-3">
+<h3 id="org0a405a7"><span class="section-number-3">2.8</span> Troubleshooting: tracing and spying</h3>
+<div class="outline-text-3" id="text-2-8">
+<p>
+Having to use the tracer means I have failed to design unsurprising programs.
+It means that my past self have failed to communicate to my future self.
 </p>
 
 <p>
-The file <code>/etc/odbcinst.ini</code> contains a list of driver names.
+Sometimes I query debug/0 to disable optimizations so that errors have full stack trace.
+Sometimes I need to restart the interpreter and query debug/0 before running my development web server.
+See also nodebug/0.
+</p>
+
+<p>
+I start tracing a goal with the query <code>trace, Goal.</code>
+In the tracer prompt:
+</p>
+<ul class="org-ul">
+<li><code>a</code> aborts (calls abort/0; goes back to toplevel interpreter prompt)</li>
+<li><code>c</code> creeps ("step into" in modern debugger parlance)</li>
+<li><code>s</code> skips ("step over" in modern debugger parlance)</li>
+<li><code>l</code> leaps ("continue" in modern debugger parlance)</li>
+<li>Type <code>/f</code> in the tracer prompt to run to the next failure.</li>
+</ul>
+
+<p>
+I stop tracing by notrace/0.
+</p>
+
+<p>
+TODO spy/1, tspy/1
+</p>
+
+<p>
+trace/0, gtrace/0, notrace/0
+</p>
+
+<p>
+These resources say something about fixing programming errors:
+</p>
+<ul class="org-ul">
+<li><a href="https://www.cs.ucsb.edu/~kyledewey/cs162w15/debugging_prolog.html">https://www.cs.ucsb.edu/~kyledewey/cs162w15/debugging_prolog.html</a></li>
+<li><a href="http://www.swi-prolog.org/pldoc/man?section=debugoverview">http://www.swi-prolog.org/pldoc/man?section=debugoverview</a></li>
+<li><a href="https://www.metalevel.at/prolog/testing">https://www.metalevel.at/prolog/testing</a></li>
+<li><a href="https://www.metalevel.at/prolog/debugging">https://www.metalevel.at/prolog/debugging</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgb522a1a" class="outline-3">
+<h3 id="orgb522a1a"><span class="section-number-3">2.9</span> Committing to a Git repository</h3>
+<div class="outline-text-3" id="text-2-9">
+<p>
+I commit my work to Git repository with Emacs Magit or git-gui.
+I sanity-check the tree with <code>gitk --all</code>.
+I push my work to my GitHub work repository.
 </p>
 </div>
 </div>
 </div>
-<div id="outline-container-orga4013bb" class="outline-2">
-<h2 id="orga4013bb"><span class="section-number-2">3</span> Handling errors</h2>
+<div id="outline-container-org33d40af" class="outline-2">
+<h2 id="org33d40af"><span class="section-number-2">3</span> Error handling and logging</h2>
 <div class="outline-text-2" id="text-3">
 <div id="text-table-of-contents">
 <ul>
@@ -618,6 +703,7 @@ References:
 <li><a href="http://www.pathwayslms.com/swipltuts/message/index.html">Anne Ogborn's "Printing Messages in SWI-Prolog"</a></li>
 <li><a href="http://www.swi-prolog.org/pldoc/man?section=printmsg">http://www.swi-prolog.org/pldoc/man?section=printmsg</a></li>
 <li><a href="http://www.swi-prolog.org/pldoc/man?section=debug">http://www.swi-prolog.org/pldoc/man?section=debug</a></li>
+<li><a href="https://www.metalevel.at/prolog/business">https://www.metalevel.at/prolog/business</a></li>
 </ul>
 
 <p>
@@ -631,59 +717,118 @@ I found that by trial-and-error.</li>
 </div>
 </div>
 </div>
-<div id="outline-container-orgc26ad3e" class="outline-2">
-<h2 id="orgc26ad3e"><span class="section-number-2">4</span> Writing elegant Prolog knowledge bases</h2>
+<div id="outline-container-org867c8f2" class="outline-2">
+<h2 id="org867c8f2"><span class="section-number-2">4</span> Modeling things in Prolog</h2>
 <div class="outline-text-2" id="text-4">
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orga74a36a">4.1. Prolog predicate parameter ordering convention: Order the parameters from the most likely to be bound</a></li>
-<li><a href="#orgeb49e89">4.2. Don't multifile if clause order matters.</a></li>
-<li><a href="#org5a9568b">4.3. Naming the parts of a list: head, tail, and butt</a></li>
-<li><a href="#orgfa3bcf2">4.4. Total relational programming? Relational programs that can be proven to terminate?</a></li>
-<li><a href="#org09b6661">4.5. Prolog procedural semantics</a>
+<li><a href="#org87adb92">4.1. Declarative reading</a></li>
+<li><a href="#org1e42883">4.2. Production prolog</a></li>
+<li><a href="#orgc9217e1">4.3. Predicate for membership</a></li>
+<li><a href="#org575e688">4.4. Designing predicates: naming is hard.</a></li>
+<li><a href="#org5a9568b">4.5. Naming the parts of a list: head, tail, and butt</a></li>
+<li><a href="#orgfa3bcf2">4.6. Total relational programming? Relational programs that can be proven to terminate?</a></li>
+<li><a href="#org09b6661">4.7. Prolog procedural semantics</a>
 <ul>
-<li><a href="#org7f63ae4">4.5.1. Swapped phrases</a></li>
-<li><a href="#org9f5c130">4.5.2. Understanding depth-first search, backtracking, choice points, performance, and cuts</a></li>
-<li><a href="#org57e49f0">4.5.3. Prolog is a depth-first brute-forcer</a></li>
+<li><a href="#org7f63ae4">4.7.1. Swapped phrases</a></li>
+<li><a href="#org9f5c130">4.7.2. Understanding depth-first search, backtracking, choice points, performance, and cuts</a></li>
+<li><a href="#org57e49f0">4.7.3. Prolog is a depth-first brute-forcer</a></li>
 </ul>
 </li>
-<li><a href="#orgeed882e">4.6. Which string representation should I use?</a>
-<ul>
-<li><a href="#orgefd1380">4.6.1. The answer: Dedicated double-quoted string type (SWI-Prolog 7)</a></li>
-<li><a href="#org3fca09d">4.6.2. Non-answers</a></li>
-</ul>
-</li>
-<li><a href="#org42e02a7">4.7. Warnings are errors!</a></li>
-<li><a href="#orgf1e542b">4.8. <span class="todo TODO">TODO</span> debugging: spy/1, tspy/1, trace/0, gtrace/0, notrace/0, debug/0, nodebug/0; stepping: creep, skip, and leap</a></li>
+<li><a href="#orgeed882e">4.8. Which string representation should I use?</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orga74a36a" class="outline-3">
-<h3 id="orga74a36a"><span class="section-number-3">4.1</span> Prolog predicate parameter ordering convention: Order the parameters from the most likely to be bound</h3>
+<div id="outline-container-org87adb92" class="outline-3">
+<h3 id="org87adb92"><span class="section-number-3">4.1</span> Declarative reading</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
-If parameter A is more likely to be more bound than parameter B, then A should come before B.
-Example: Write list_length/2 instead of length_list/2.
+<code>A :- B</code> means "to prove A, prove B".
 </p>
 
 <p>
-Not everyone follows this convention.
+<code>p(a,b) :- Q</code> is a shorthand of <code>p(A,B) :- A=a, B=b, Q</code>.
+</p>
+
+<p>
+<code>A :- B</code> is pure iff all reordering of the phrases of B doesn't change the result?
+</p>
+
+<p>
+<code>\+</code> means "not provable", not "not"
+</p>
+
+<p>
+Every variable is implicitly universally quantified.
+</p>
+
+<p>
+<code>?- Q</code> means we ask Prolog to prove <code>Q</code>.
 </p>
 </div>
 </div>
-
-<div id="outline-container-orgeb49e89" class="outline-3">
-<h3 id="orgeb49e89"><span class="section-number-3">4.2</span> Don't multifile if clause order matters.</h3>
+<div id="outline-container-org1e42883" class="outline-3">
+<h3 id="org1e42883"><span class="section-number-3">4.2</span> Production prolog</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
-Reloading changes clause order.
-<a href="http://www.swi-prolog.org/FAQ/Multifile.html">http://www.swi-prolog.org/FAQ/Multifile.html</a>
+"Production Prolog" by Michael Hendricks; Strange Loop 2014
+<a href="https://www.youtube.com/watch?v=G_eYTctGZw8">https://www.youtube.com/watch?v=G_eYTctGZw8</a>
+</p>
+<ul class="org-ul">
+<li>This mentions "Mercury's bisecting debugger"</li>
+<li>mavis library for optional type declarations</li>
+<li>julian library for dates</li>
+<li>time/1 for measuring how long a goal takes</li>
+<li>library(spawn)?</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgc9217e1" class="outline-3">
+<h3 id="orgc9217e1"><span class="section-number-3">4.3</span> Predicate for membership</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+Membership
+person(joe)
+positive(1)
+</p>
+</div>
+</div>
+<div id="outline-container-org575e688" class="outline-3">
+<h3 id="org575e688"><span class="section-number-3">4.4</span> Designing predicates: naming is hard.</h3>
+<div class="outline-text-3" id="text-4-4">
+<p>
+The name of a relation should describe the relationship.
+</p>
+
+<p>
+If we intend that there is only one relation between A and B that makes sense,
+then we may name that relation A_B.
+But:
+</p>
+<ul class="org-ul">
+<li>What if A or B contains underscores?</li>
+<li>Why do we prefer <code>father_child</code> to <code>beget</code> or <code>sire</code>?</li>
+</ul>
+
+<p>
+is_thing(A).
+</p>
+
+<p>
+A procedure's name should begin with a verb.
+</p>
+
+<p>
+Order the parameters from the most likely to be bound.
+If parameter A is more likely to be more bound than parameter B, then A should come before B.
+Example: Write list_length/2 instead of length_list/2.
+Unfortunately not everyone follows this convention.
 </p>
 </div>
 </div>
 <div id="outline-container-org5a9568b" class="outline-3">
-<h3 id="org5a9568b"><span class="section-number-3">4.3</span> Naming the parts of a list: head, tail, and butt</h3>
-<div class="outline-text-3" id="text-4-3">
+<h3 id="org5a9568b"><span class="section-number-3">4.5</span> Naming the parts of a list: head, tail, and butt</h3>
+<div class="outline-text-3" id="text-4-5">
 <ul class="org-ul">
 <li>"head" is the first element</li>
 <li>"tail" is everything but the head</li>
@@ -692,8 +837,8 @@ Reloading changes clause order.
 </div>
 </div>
 <div id="outline-container-orgfa3bcf2" class="outline-3">
-<h3 id="orgfa3bcf2"><span class="section-number-3">4.4</span> Total relational programming? Relational programs that can be proven to terminate?</h3>
-<div class="outline-text-3" id="text-4-4">
+<h3 id="orgfa3bcf2"><span class="section-number-3">4.6</span> Total relational programming? Relational programs that can be proven to terminate?</h3>
+<div class="outline-text-3" id="text-4-6">
 <p>
 A total relation is a relation that is defined for every element in its domain.
 </p>
@@ -708,12 +853,12 @@ It is too easy to write a Prolog program that doesn't terminate.
 </div>
 </div>
 <div id="outline-container-org09b6661" class="outline-3">
-<h3 id="org09b6661"><span class="section-number-3">4.5</span> Prolog procedural semantics</h3>
-<div class="outline-text-3" id="text-4-5">
+<h3 id="org09b6661"><span class="section-number-3">4.7</span> Prolog procedural semantics</h3>
+<div class="outline-text-3" id="text-4-7">
 </div>
 <div id="outline-container-org7f63ae4" class="outline-4">
-<h4 id="org7f63ae4"><span class="section-number-4">4.5.1</span> Swapped phrases</h4>
-<div class="outline-text-4" id="text-4-5-1">
+<h4 id="org7f63ae4"><span class="section-number-4">4.7.1</span> Swapped phrases</h4>
+<div class="outline-text-4" id="text-4-7-1">
 <p>
 There is only a small syntactic difference between <code>dfs</code> and <code>bfs</code> (it's just flipped order).
 </p>
@@ -735,8 +880,8 @@ Which one exploits tail call optimization (last call optimization)?
 </div>
 </div>
 <div id="outline-container-org9f5c130" class="outline-4">
-<h4 id="org9f5c130"><span class="section-number-4">4.5.2</span> Understanding depth-first search, backtracking, choice points, performance, and cuts</h4>
-<div class="outline-text-4" id="text-4-5-2">
+<h4 id="org9f5c130"><span class="section-number-4">4.7.2</span> Understanding depth-first search, backtracking, choice points, performance, and cuts</h4>
+<div class="outline-text-4" id="text-4-7-2">
 <p>
 Save this knowledge base into a file, and load it into Prolog.
 </p>
@@ -820,15 +965,15 @@ Green and blue cuts don't.</li>
 </div>
 </div>
 <div id="outline-container-org57e49f0" class="outline-4">
-<h4 id="org57e49f0"><span class="section-number-4">4.5.3</span> Prolog is a depth-first brute-forcer</h4>
-<div class="outline-text-4" id="text-4-5-3">
+<h4 id="org57e49f0"><span class="section-number-4">4.7.3</span> Prolog is a depth-first brute-forcer</h4>
+<div class="outline-text-4" id="text-4-7-3">
 <p>
 But you can emulate other search algorithms too.
 </p>
 </div>
 <ol class="org-ol">
 <li><a id="org7aa584c"></a>Non-termination pitfalls, and how to generate terms correctly<br />
-<div class="outline-text-5" id="text-4-5-3-1">
+<div class="outline-text-5" id="text-4-7-3-1">
 <p>
 Sometimes we forget that Prolog, on failure, backtracks (retries), not stops.
 </p>
@@ -894,12 +1039,11 @@ See also:
 </div>
 </div>
 <div id="outline-container-orgeed882e" class="outline-3">
-<h3 id="orgeed882e"><span class="section-number-3">4.6</span> Which string representation should I use?</h3>
-<div class="outline-text-3" id="text-4-6">
-</div>
-<div id="outline-container-orgefd1380" class="outline-4">
-<h4 id="orgefd1380"><span class="section-number-4">4.6.1</span> The answer: Dedicated double-quoted string type (SWI-Prolog 7)</h4>
-<div class="outline-text-4" id="text-4-6-1">
+<h3 id="orgeed882e"><span class="section-number-3">4.8</span> Which string representation should I use?</h3>
+<div class="outline-text-3" id="text-4-8">
+<p>
+The answer: Dedicated double-quoted string type (SWI-Prolog 7).
+</p>
 <ul class="org-ul">
 <li>"Strings are distinct from lists" <a href="http://www.swi-prolog.org/pldoc/man?section=strings">http://www.swi-prolog.org/pldoc/man?section=strings</a></li>
 <li>"Why has the representation of double quoted text changed?" <a href="http://www.swi-prolog.org/pldoc/man?section=ext-dquotes-motivation">http://www.swi-prolog.org/pldoc/man?section=ext-dquotes-motivation</a></li>
@@ -910,76 +1054,80 @@ See also:
 <li>"Situation before December 2013"</li>
 </ul></li>
 </ul>
-</div>
-</div>
-<div id="outline-container-org3fca09d" class="outline-4">
-<h4 id="org3fca09d"><span class="section-number-4">4.6.2</span> Non-answers</h4>
-<div class="outline-text-4" id="text-4-6-2">
-</div>
-<ol class="org-ol">
-<li><a id="orgc93a5c0"></a>Edinburgh style: Double-quoted string as list of integer codes (default mode of SWI-Prolog 6.6.4 on Ubuntu 14.04)<br />
-<div class="outline-text-5" id="text-4-6-2-1">
+
+<p>
+Non-answer: Edinburgh style: Double-quoted string as list of integer codes (default mode of SWI-Prolog 6.6.4 on Ubuntu 14.04):
+</p>
 <ul class="org-ul">
 <li>A Unicode character is represented as an integer that is the code of that character.</li>
 <li>A string is represented as a list of codes.
 Example: <code>"aaa" = [97,97,97]</code>.</li>
-<li>Inconvenient to debug.</li>
-<li>This behavior changes in SWI-Prolog 7.</li>
+<li>This behavior changed in SWI-Prolog 7.</li>
 <li>This was in 1993 ISO standard draft. <a href="http://fsl.cs.illinois.edu/images/9/9c/PrologStandard.pdf">http://fsl.cs.illinois.edu/images/9/9c/PrologStandard.pdf</a>
 <ul class="org-ul">
 <li>This wasn't in the final version?</li>
 </ul></li>
 </ul>
-</div>
-</li>
-<li><a id="org2c1de1d"></a>Double-quoted string as list of one-character atoms<br />
-<div class="outline-text-5" id="text-4-6-2-2">
+
+<p>
+Non-answer: Double-quoted string as list of one-character atoms:
+</p>
 <ul class="org-ul">
 <li>A Unicode character is represented as a one-character atom.</li>
 <li>A string is represented as a list of one-character atoms.
 Example: <code>"aaa" = [a,a,a]</code>.</li>
 <li>This assumes that the Prolog implementation garbage-collects atoms.</li>
-<li>More convenient to debug.</li>
 </ul>
 </div>
-</li>
-</ol>
 </div>
 </div>
-<div id="outline-container-org42e02a7" class="outline-3">
-<h3 id="org42e02a7"><span class="section-number-3">4.7</span> Warnings are errors!</h3>
-</div>
-<div id="outline-container-orgf1e542b" class="outline-3">
-<h3 id="orgf1e542b"><span class="section-number-3">4.8</span> <span class="todo TODO">TODO</span> debugging: spy/1, tspy/1, trace/0, gtrace/0, notrace/0, debug/0, nodebug/0; stepping: creep, skip, and leap</h3>
-<div class="outline-text-3" id="text-4-8">
-<p>
-debug/0 disables optimizations.
-</p>
-
-<p>
-Fixing programming errors:
-</p>
-<ul class="org-ul">
-<li><a href="https://www.cs.ucsb.edu/~kyledewey/cs162w15/debugging_prolog.html">https://www.cs.ucsb.edu/~kyledewey/cs162w15/debugging_prolog.html</a></li>
-<li><a href="http://www.swi-prolog.org/pldoc/man?section=debugoverview">http://www.swi-prolog.org/pldoc/man?section=debugoverview</a>
-<ul class="org-ul">
-<li>Type <code>/f</code> in the tracer prompt to run to the next failure.</li>
-</ul></li>
-</ul>
-
-<p>
-Singleton variables most likely mean there's a typo.
-</p>
-</div>
-</div>
-</div>
-<div id="outline-container-orgf2d156d" class="outline-2">
-<h2 id="orgf2d156d"><span class="section-number-2">5</span> Speeding things up</h2>
+<div id="outline-container-orga732c17" class="outline-2">
+<h2 id="orga732c17"><span class="section-number-2">5</span> Writing extensible knowledge bases</h2>
 <div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-orgc57b0f5" class="outline-3">
-<h3 id="orgc57b0f5"><span class="section-number-3">5.1</span> Profiling: finding where your program spends time; finding where it is slow; diagnosing slowness</h3>
+<div id="outline-container-orgf4a8c2a" class="outline-3">
+<h3 id="orgf4a8c2a"><span class="section-number-3">5.1</span> Multifile or parametrization-and-catamorphism?</h3>
 <div class="outline-text-3" id="text-5-1">
+<pre class="example">
+:- multifile foo_ext/1.
+
+foo(A) :- foo_ext(A).
+</pre>
+
+<p>
+Catamorphism:
+</p>
+<pre class="example">
+foo(F,A) :- call(F,A).
+</pre>
+
+<p>
+Don't multifile if clause order matters.
+Reloading changes clause order.
+<a href="http://www.swi-prolog.org/FAQ/Multifile.html">http://www.swi-prolog.org/FAQ/Multifile.html</a>
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org2537bad" class="outline-2">
+<h2 id="org2537bad"><span class="section-number-2">6</span> Where things get ugly</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org71a40f6" class="outline-3">
+<h3 id="org71a40f6"><span class="section-number-3">6.1</span> Cuts</h3>
+<div class="outline-text-3" id="text-6-1">
+<ul class="org-ul">
+<li>slide 5-28, pitfalls in implementing abs with cut <a href="http://users.informatik.uni-halle.de/~brass/lp06/c5_propr.pdf">http://users.informatik.uni-halle.de/~brass/lp06/c5_propr.pdf</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgf2d156d" class="outline-3">
+<h3 id="orgf2d156d"><span class="section-number-3">6.2</span> Speeding things up</h3>
+<div class="outline-text-3" id="text-6-2">
+</div>
+<div id="outline-container-orgc57b0f5" class="outline-4">
+<h4 id="orgc57b0f5"><span class="section-number-4">6.2.1</span> Profiling: finding where your program spends time; finding where it is slow; diagnosing slowness</h4>
+<div class="outline-text-4" id="text-6-2-1">
 <p>
 To run your <code>Goal</code> with profiling, simply query <code>profile(Goal)</code>.
 </p>
@@ -990,13 +1138,10 @@ Profiling couldn't be any simpler than this!
 </div>
 </div>
 </div>
-<div id="outline-container-org2537bad" class="outline-2">
-<h2 id="org2537bad"><span class="section-number-2">6</span> Where things get ugly</h2>
-<div class="outline-text-2" id="text-6">
-</div>
+
 <div id="outline-container-orga2b3e1b" class="outline-3">
-<h3 id="orga2b3e1b"><span class="section-number-3">6.1</span> Functional/expression style sometimes beats relational/unification style</h3>
-<div class="outline-text-3" id="text-6-1">
+<h3 id="orga2b3e1b"><span class="section-number-3">6.3</span> Functional/expression style sometimes beats relational/unification style</h3>
+<div class="outline-text-3" id="text-6-3">
 <pre class="example">
 -- Functional/expression style
 g (f0 x0) (f1 x1) (f2 x2)
@@ -1047,11 +1192,11 @@ Should we move from Prolog to Scheme/miniKanren or Mercury?
 </div>
 </div>
 <div id="outline-container-orgff76257" class="outline-3">
-<h3 id="orgff76257"><span class="section-number-3">6.2</span> Directives like <code>:- op</code> complicate parsing a Prolog source code.</h3>
+<h3 id="orgff76257"><span class="section-number-3">6.4</span> Directives like <code>:- op</code> complicate parsing a Prolog source code.</h3>
 </div>
 <div id="outline-container-orgcd563af" class="outline-3">
-<h3 id="orgcd563af"><span class="section-number-3">6.3</span> Zero-arity compound term</h3>
-<div class="outline-text-3" id="text-6-3">
+<h3 id="orgcd563af"><span class="section-number-3">6.5</span> Zero-arity compound term</h3>
+<div class="outline-text-3" id="text-6-5">
 <p>
 Use compound_name_arity/3 instead of functor/3, but this seems to be an SWI-Prolog extension.
 </p>
@@ -1118,20 +1263,53 @@ How do we combine closed-world assumption (logic programming / relational databa
 </ul>
 </div>
 </div>
+<div id="outline-container-org07fd13b" class="outline-3">
+<h3 id="org07fd13b"><span class="section-number-3">7.4</span> SWI-Prolog, PostgreSQL, and ODBC</h3>
+<div class="outline-text-3" id="text-7-4">
+<p>
+Install the Ubuntu 14.04 package <code>odbc-postgresql</code>.
+</p>
+
+<p>
+I want my application to self-contain its configuration.
+I don't configure ODBC INI files.
+</p>
+
+<p>
+ODBC Data Source Name (DSN) connection string
+</p>
+
+<p>
+Relevant commands: <code>odbcinst -j</code>
+</p>
+
+<p>
+The file <code>/etc/odbcinst.ini</code> contains a list of driver names.
+</p>
+
+<p>
+<a href="http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/cql.html%27)">SWI-Prolog CQL documentation</a> doesn't inspire confidence.
+</p>
 </div>
-
-
+</div>
+<div id="outline-container-org31c6bb5" class="outline-3">
+<h3 id="org31c6bb5"><span class="section-number-3">7.5</span> Deductive databases and Datalog?</h3>
+</div>
+</div>
 <div id="outline-container-org9448c8f" class="outline-2">
 <h2 id="org9448c8f"><span class="section-number-2">8</span> Theories</h2>
 <div class="outline-text-2" id="text-8">
 </div>
+<div id="outline-container-orga380548" class="outline-3">
+<h3 id="orga380548"><span class="section-number-3">8.1</span> Relational-multidirectional-logic programming?</h3>
+</div>
 <div id="outline-container-org6260cbe" class="outline-3">
-<h3 id="org6260cbe"><span class="section-number-3">8.1</span> Embedding Prolog/Haskell in Haskell/Prolog</h3>
-<div class="outline-text-3" id="text-8-1">
+<h3 id="org6260cbe"><span class="section-number-3">8.2</span> Embedding Prolog/Haskell in Haskell/Prolog</h3>
+<div class="outline-text-3" id="text-8-2">
 </div>
 <div id="outline-container-org96eedd4" class="outline-4">
-<h4 id="org96eedd4"><span class="section-number-4">8.1.1</span> Embedding Prolog in Haskell</h4>
-<div class="outline-text-4" id="text-8-1-1">
+<h4 id="org96eedd4"><span class="section-number-4">8.2.1</span> Embedding Prolog in Haskell</h4>
+<div class="outline-text-4" id="text-8-2-1">
 <ul class="org-ul">
 <li>1999 article "Embedding Prolog in Haskell" <a href="https://pdfs.semanticscholar.org/7c46/5d25205830735d0a034532746b7243221eca.pdf">https://pdfs.semanticscholar.org/7c46/5d25205830735d0a034532746b7243221eca.pdf</a>
 <ul class="org-ul">
@@ -1144,13 +1322,13 @@ in such a way that both the declarative and the procedural reading of the Prolog
 </div>
 </div>
 <div id="outline-container-org4a0c336" class="outline-4">
-<h4 id="org4a0c336"><span class="section-number-4">8.1.2</span> Embedding Haskell in Prolog: Nobody is talking about this.</h4>
+<h4 id="org4a0c336"><span class="section-number-4">8.2.2</span> Embedding Haskell in Prolog: Nobody is talking about this.</h4>
 </div>
 </div>
 
 <div id="outline-container-org1289834" class="outline-3">
-<h3 id="org1289834"><span class="section-number-3">8.2</span> How are Prolog and Lisp similar?</h3>
-<div class="outline-text-3" id="text-8-2">
+<h3 id="org1289834"><span class="section-number-3">8.3</span> How are Prolog and Lisp similar?</h3>
+<div class="outline-text-3" id="text-8-3">
 <ul class="org-ul">
 <li>Both Prolog and Lisp have symbols and cons cells.
 <ul class="org-ul">
@@ -1171,8 +1349,8 @@ I'd say Prolog = Lisp + unification + backtracking - lambda.
 </div>
 
 <div id="outline-container-org853cdaa" class="outline-3">
-<h3 id="org853cdaa"><span class="section-number-3">8.3</span> Comparison between what is difficult in various programming languages</h3>
-<div class="outline-text-3" id="text-8-3">
+<h3 id="org853cdaa"><span class="section-number-3">8.4</span> Comparison between what is difficult in various programming languages</h3>
+<div class="outline-text-3" id="text-8-4">
 <ul class="org-ul">
 <li>2014 presentation "That scripting language called Prolog" <a href="https://www.slideshare.net/SergeiWinitzki/prolog-talk">https://www.slideshare.net/SergeiWinitzki/prolog-talk</a>
 <ul class="org-ul">
@@ -1188,8 +1366,8 @@ I'd say Prolog = Lisp + unification + backtracking - lambda.
 </div>
 
 <div id="outline-container-orgf71d684" class="outline-3">
-<h3 id="orgf71d684"><span class="section-number-3">8.4</span> Comparison with other relational programming languages</h3>
-<div class="outline-text-3" id="text-8-4">
+<h3 id="orgf71d684"><span class="section-number-3">8.5</span> Comparison with other relational programming languages</h3>
+<div class="outline-text-3" id="text-8-5">
 <p>
 Comparison with miniKanren:
 </p>
@@ -1223,8 +1401,8 @@ SQL? Datalog?
 </div>
 
 <div id="outline-container-orgc9578c0" class="outline-3">
-<h3 id="orgc9578c0"><span class="section-number-3">8.5</span> Two camps in programming</h3>
-<div class="outline-text-3" id="text-8-5">
+<h3 id="orgc9578c0"><span class="section-number-3">8.6</span> Two camps in programming</h3>
+<div class="outline-text-3" id="text-8-6">
 <p>
 There are two camps in programming:
 the bottom-up camp and the top-down camp.
@@ -1250,6 +1428,15 @@ They seem to be converging to a middle ground: ugly and slow.
 
 <p>
 Why can't we get fast and elegant?
+</p>
+</div>
+</div>
+<div id="outline-container-org53b4b7c" class="outline-3">
+<h3 id="org53b4b7c"><span class="section-number-3">8.7</span> "GOEDEL is intended to be a declarative successor to Prolog."</h3>
+<div class="outline-text-3" id="text-8-7">
+<p>
+"GOEDEL is intended to be a declarative successor to Prolog."
+<a href="https://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/lang/prolog/impl/other/goedel/0.html">https://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/lang/prolog/impl/other/goedel/0.html</a>
 </p>
 </div>
 </div>
@@ -1296,6 +1483,7 @@ Why can't we get fast and elegant?
 <li><a href="#org4a50502">9.14.5. Books?</a></li>
 </ul>
 </li>
+<li><a href="#org8991268">9.15. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-30&gt; </span></span> Prolog needs static checking like Erlang Dialyzer.</a></li>
 </ul>
 </div>
 </div>
@@ -1641,6 +1829,27 @@ These negative rules are needed to tell us when we have an exception to a defeas
 </ul></li>
 </ul>
 </div>
+</div>
+</div>
+<div id="outline-container-org8991268" class="outline-3">
+<h3 id="org8991268"><span class="section-number-3">9.15</span> <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-30&gt; </span></span> Prolog needs static checking like Erlang Dialyzer.</h3>
+<div class="outline-text-3" id="text-9-15">
+<p>
+SWI-Prolog has check library?
+</p>
+
+<p>
+Is there a Prolog totality/determinism checker?
+</p>
+
+<p>
+Prolog typechecking is vital to prevent stupid mistakes in a large knowledge base?
+</p>
+
+<p>
+1997 inconclusive discussion "Prolog Type Checker"
+<a href="https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/typing/types.html">https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/typing/types.html</a>
+</p>
 </div>
 </div>
 </div>
