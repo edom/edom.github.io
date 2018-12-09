@@ -138,6 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><a href="#org9448c8f">9. Theories</a></li>
 <li><a href="#org1338566">10. <span class="todo TODO">TODO</span> Half-baked things to shuffle around</a></li>
 <li><a href="#orgd82689a">11. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-05&gt; </span></span> How to present Prolog to newcomers</a></li>
+<li><a href="#orgc47dbd3">12. Prolog community</a></li>
 </ul>
 </div>
 </div>
@@ -181,6 +182,35 @@ I'm selling you Prolog here, but let me be honest:
 Don't buy it if any of these year-2018 deal-breakers are an issue for you.
 Prolog isn't ready for these use cases in 2018; I hope these will change.
 </p>
+
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-09&gt;</span></span>
+Somewhat fatal:
+ISO Prolog open/4 has no way to open a file for writing without truncating it.
+How the hell did they overlook such a common use case in a standard?
+But some implementations have extensions to work around that.
+</p>
+
+<p>
+Comparison of some open/4 implementations:
+</p>
+<ul class="org-ul">
+<li>Prolog implementations that can open a file for both reading and writing:
+<ul class="org-ul">
+<li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-09&gt; </span></span> Amzi! Prolog open/4 has "readwrite" mode <a href="https://www.amzi.com/manuals/amzi/pro/ref_io.htm">https://www.amzi.com/manuals/amzi/pro/ref_io.htm</a></li>
+</ul></li>
+<li>Prolog implementations that can open a file for writing without truncating it:
+<ul class="org-ul">
+<li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-09&gt; </span></span> SWI-Prolog open/4 has "update" mode <a href="http://www.swi-prolog.org/pldoc/doc_for?object=open/4">http://www.swi-prolog.org/pldoc/doc_for?object=open/4</a></li>
+<li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-09&gt; </span></span> ECLiPSe Prolog open/4 has "update" mode <a href="http://eclipseclp.org/doc/bips/kernel/iostream/open-4.html">http://eclipseclp.org/doc/bips/kernel/iostream/open-4.html</a></li>
+</ul></li>
+<li>Prolog implementations that <i>cannot</i> open a file for writing without truncating it:
+<ul class="org-ul">
+<li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-09&gt; </span></span> GNU Prolog <a href="http://www.gprolog.org/manual/html_node/gprolog034.html#open/4">http://www.gprolog.org/manual/html_node/gprolog034.html#open/4</a></li>
+<li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-09&gt; </span></span> SICStus Prolog <a href="https://sicstus.sics.se/sicstus/docs/4.2.1/html/sicstus/mpg_002dref_002dopen.html">https://sicstus.sics.se/sicstus/docs/4.2.1/html/sicstus/mpg_002dref_002dopen.html</a></li>
+<li><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-09&gt; </span></span> Ciao Prolog <a href="https://ciao-lang.org/docs/1.14/13646/CiaoDE-1.14.2-13646_ciao.html/streams_basic.html#open/4">https://ciao-lang.org/docs/1.14/13646/CiaoDE-1.14.2-13646_ciao.html/streams_basic.html#open/4</a></li>
+</ul></li>
+</ul>
 
 <p>
 <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-11-30&gt;</span></span>
@@ -1409,7 +1439,7 @@ Because we want to write naive parsers that terminate.
 </p>
 </div>
 </li>
-<li><a id="org54ef81a"></a>What?<br />
+<li><a id="org4be10e4"></a>What?<br />
 <div class="outline-text-5" id="text-8-2-2-2">
 <p>
 From the source code of SWI-Prolog, with some modifications:
@@ -2002,7 +2032,7 @@ Why can't we get fast and elegant?
 <li><a href="#orge83f5ba">10.13.2. Not for beginners</a></li>
 </ul>
 </li>
-<li><a href="#org4be10e4">10.14. What?</a>
+<li><a href="#org349fd2f">10.14. What?</a>
 <ul>
 <li><a href="#orge795ae4">10.14.1. P# translates Prolog to C#.</a></li>
 <li><a href="#org52d5d28">10.14.2. "Real World Programming in SWI-Prolog"</a></li>
@@ -2241,8 +2271,8 @@ The purpose of the book is to show you how you can write Prolog programs that wo
 </div>
 </div>
 </div>
-<div id="outline-container-org4be10e4" class="outline-3">
-<h3 id="org4be10e4"><span class="section-number-3">10.14</span> What?</h3>
+<div id="outline-container-org349fd2f" class="outline-3">
+<h3 id="org349fd2f"><span class="section-number-3">10.14</span> What?</h3>
 <div class="outline-text-3" id="text-10-14">
 </div>
 <div id="outline-container-orge795ae4" class="outline-4">
@@ -2546,6 +2576,23 @@ But this beautiful dream crumbles outside <i>pure</i> logic programming.
 palindrome(L) :- reverse(L, L).
 </pre>
 </div>
+</div>
+</div>
+<div id="outline-container-orgc47dbd3" class="outline-2">
+<h2 id="orgc47dbd3"><span class="section-number-2">12</span> Prolog community</h2>
+<div class="outline-text-2" id="text-12">
+<p>
+Where is the community?
+</p>
+<ul class="org-ul">
+<li>IRC requires login.
+Where is the chat log?</li>
+<li>SWI-Prolog Google Groups (web-browsable mailing list) <a href="https://groups.google.com/forum/#!forum/swi-prolog">https://groups.google.com/forum/#!forum/swi-prolog</a></li>
+<li>comp.lang.prolog <a href="https://groups.google.com/forum/#!forum/comp.lang.prolog">https://groups.google.com/forum/#!forum/comp.lang.prolog</a></li>
+<li>StackOverflow tag swi-prolog <a href="https://stackoverflow.com/questions/tagged/swi-prolog">https://stackoverflow.com/questions/tagged/swi-prolog</a></li>
+<li>SWI-Prolog roadmap <a href="https://github.com/SWI-Prolog/roadmap">https://github.com/SWI-Prolog/roadmap</a></li>
+<li><a href="http://www.swi-prolog.org/Links.html">http://www.swi-prolog.org/Links.html</a></li>
+</ul>
 </div>
 </div>
 
