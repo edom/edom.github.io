@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Catchment area</title>
+  <meta name="description" content="Personal website">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/plan.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
+
+  
+
+    <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+    </script>
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Catchment area</h1>
+  </header>
+
+  <div class="post-content">
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org5c3735b">1. About this page</a></li>
+<li><a href="#orgd8c2408">2. ?7d: Implement PLX (Prolog-LaTeX-XML) markup language</a></li>
+<li><a href="#org5085d14">3. Write a Prolog program to interpret or translate Java source code</a></li>
+<li><a href="#org57f9c77">4. Develop non-shitty FOSS distributed/P2P alternatives to most vital services</a></li>
+<li><a href="#orgcc8e3fb">5. Write a user-first browser in Prolog</a>
+<ul>
+<li><a href="#org9d26ac2">5.1. 1h: Specify desired features and differences from mainstream browsers</a></li>
+<li><a href="#org3667241">5.2. 1h: Skim existing browsers</a></li>
+</ul>
+</li>
+<li><a href="#orgf02bcdd">6. Gui, logical/relational reactive programming, a layer on top of plgi (Prolog Gtk bindings).</a></li>
+<li><a href="#org79474aa">7. Three semantics of Horn clauses</a></li>
+<li><a href="#org17a3f50">8. Prolog meta-thinking: logic, language, query, and modeling: how many parameters should we use?</a></li>
+<li><a href="#org28bf68a">9. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-15&gt; </span></span> Modernize operating system</a>
+<ul>
+<li><a href="#org952b84d">9.1. 1d: Back up data.</a></li>
+<li><a href="#orgbca035e">9.2. <span class="todo TODO">TODO</span> 1d: Install <del>Ubuntu 18.04 after its point release</del> Debian</a></li>
+<li><a href="#org2bde36a">9.3. OS upgrade</a></li>
+</ul>
+</li>
+<li><a href="#orgcb85770">10. Things that I perhaps should do</a>
+<ul>
+<li><a href="#org07d76db">10.1. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-15&gt; </span></span> Fix possible programming error in ~/work/web in Iterables.filter</a></li>
+<li><a href="#org69f4c1a">10.2. <span class="todo TODO">TODO</span> Ask others</a>
+<ul>
+<li><a href="#org7298261">10.2.1. Who should we ask?</a></li>
+<li><a href="#orge709f2f">10.2.2. <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-17&gt; </span></span> Is there anything like Pandoc but for programming languages instead of markup languages?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org688c531">11. Modeling everything = name-property-value + subject-verb-object + time</a></li>
+<li><a href="#orgdcf269f">12. Designing the best module system in 2018: Name is not a property of anything</a>
+<ul>
+<li><a href="#orgcfce74b">12.1. Executive summary</a></li>
+<li><a href="#orgfcab65e">12.2. Philosophical investigation</a></li>
+<li><a href="#org5a09a24">12.3. Languages that does this right</a></li>
+<li><a href="#orgfa459a8">12.4. What should SWI-Prolog modules be?</a></li>
+<li><a href="#org5e5146d">12.5. Prolog module clash = game over? Can logtalk save the day?</a></li>
+</ul>
+</li>
+<li><a href="#orge719300">13. Toward a the best declarative programming language</a>
+<ul>
+<li><a href="#org66f5175">13.1. Prolog</a></li>
+<li><a href="#orgdb49f63">13.2. Combining lambda-calculus and first-order logic: combining beta-reduction, unification, and backtracking</a></li>
+<li><a href="#org73667b9">13.3. Wanted: a programming language with sound philosophical foundation, a language that strictly separates names and referents</a></li>
+</ul>
+</li>
+<li><a href="#orgd3e80e6">14. Describe a probabilistic graphical model as prolog knowledge base, and do Pearl causal calculus on them.</a></li>
+<li><a href="#org03ada77">15. 7d: Write a planner in Prolog</a></li>
+<li><a href="#orga68976c">16. Enterprise Prolog?</a>
+<ul>
+<li><a href="#orga8e0e0c">16.1. 14d: translate Java source to abstract procedural language in Prolog</a></li>
+<li><a href="#org3c84bdf">16.2. others</a></li>
+<li><a href="#org90b2ec6">16.3. Prolog SQL</a></li>
+</ul>
+</li>
+<li><a href="#orgd07dd89">17. Prolog predicate naming</a></li>
+<li><a href="#org9c2402e">18. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-14&gt; </span></span> Find a place in this website for meta-thinking</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org5c3735b" class="outline-2">
+<h2 id="org5c3735b"><span class="section-number-2">1</span> About this page</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This page is about big plans/ideas, prioritization, and effort estimation.
+</p>
+
+<p>
+Estimation may be wrong.
+</p>
+
+<p>
+If you have some common plan, get in touch, drop a comment.
+</p>
+</div>
+</div>
+<div id="outline-container-orgd8c2408" class="outline-2">
+<h2 id="orgd8c2408"><span class="section-number-2">2</span> ?7d: Implement PLX (Prolog-LaTeX-XML) markup language</h2>
+<div class="outline-text-2" id="text-2">
+<pre class="example">
+\Tag[Attr1=Val1,Attr2=Val2]{Content} translates to &lt;Tag Attr1=Val1 Attr2=Val2&gt;Content&lt;/Tag&gt;
+
+\div[class=foo]{
+  \div[class=bar]{
+  }
+}
+
+Curly braces quote/escape attribute values.
+\Tag[Attr={,}]
+\Tag[Attr={[}]
+\div[data-foo=4123]{}
+\h1{bar}
+\img[src=foo.png]
+
+
+Escape a curly brace by prepending a backslash.
+\Tag[Beg=\{,End=\}]{}
+
+\table{
+  \tr{\td{Foo}\td{Bar}}
+}
+
+\strong{\em{strong emphasized text}}
+
+\p{This is an example paragraph. It may contain \em{emphasis}.}
+\p{ Leading and trailing whitespaces are stripped away. }
+\p{\ Backslash-space escapes a space that would otherwise be ignored.}
+
+\nbsp expands to &amp;nbsp;
+</pre>
+
+<p>
+Similar but not the same
+1999 "TEXML: Typesetting XML with TEX"
+<a href="https://www.tug.org/TUG99-web/pdf/lovell.pdf">https://www.tug.org/TUG99-web/pdf/lovell.pdf</a>
+</p>
+
+<p>
+"SXML: an XML document as an S-expression"
+<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.729.3639&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.729.3639&amp;rep=rep1&amp;type=pdf</a>
+</p>
+
+<p>
+R markdown
+<a href="https://bookdown.org/">https://bookdown.org/</a>
+</p>
+
+<p>
+LaTeX syntax for XML.
+</p>
+<pre class="example">
+\tag[attr1=val1,attr2=val2]{content} = &lt;tag attr1="val1" attr2="val2"&gt;content&lt;/tag&gt;
+\amp = &amp;amp;
+\e{amp} = &amp;amp;
+</pre>
+<p>
+Make a semantic-LaTeX parser/interpreter in Prolog.
+Treat LaTeX as declarative markup language and not imperative command language.
+</p>
+<ul class="org-ul">
+<li>escaping comma <a href="https://tex.stackexchange.com/questions/70986/comma-in-macro-parameters">https://tex.stackexchange.com/questions/70986/comma-in-macro-parameters</a></li>
+<li>escaping square brackets <a href="https://tex.stackexchange.com/questions/6683/escaping-square-braces">https://tex.stackexchange.com/questions/6683/escaping-square-braces</a></li>
+<li>escaping curly braces <a href="https://tex.stackexchange.com/questions/181118/how-to-escape-curly-braces-within-texttt">https://tex.stackexchange.com/questions/181118/how-to-escape-curly-braces-within-texttt</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org5085d14" class="outline-2">
+<h2 id="org5085d14"><span class="section-number-2">3</span> Write a Prolog program to interpret or translate Java source code</h2>
+</div>
+<div id="outline-container-org57f9c77" class="outline-2">
+<h2 id="org57f9c77"><span class="section-number-2">4</span> Develop non-shitty FOSS distributed/P2P alternatives to most vital services</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Works behind NAT?
+How can A and B connect to each other if A is behind NAT gateway G1 and B is behind NAT gateway G2?
+</p>
+
+<p>
+Google search: no replacement yet!
+YaCy is not good enough.
+Can we make it in Prolog?
+</p>
+
+<p>
+Distribute the result of manual curation?
+Bundle a curation tool with a browser?
+Privacy issues?
+</p>
+
+<p>
+Facebook: Mastodon?
+</p>
+
+<p>
+YouTube: DTube, BitChute
+<a href="https://www.ghacks.net/2018/03/02/dtube-is-more-than-a-youtube-alternative/">https://www.ghacks.net/2018/03/02/dtube-is-more-than-a-youtube-alternative/</a>
+</p>
+</div>
+</div>
+<div id="outline-container-orgcc8e3fb" class="outline-2">
+<h2 id="orgcc8e3fb"><span class="section-number-2">5</span> Write a user-first browser in Prolog</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org9d26ac2" class="outline-3">
+<h3 id="org9d26ac2"><span class="section-number-3">5.1</span> 1h: Specify desired features and differences from mainstream browsers</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+Principle: the user should have maximum control.
+</p>
+
+<p>
+It is not only a browser.
+It is a tool for controlling your web experience.
+</p>
+
+<ul class="org-ul">
+<li>The browser is distributed/P2P.</li>
+<li>The browser comes with a search engine that searches your public history or your peers' public history, and distribute indexes to peers.</li>
+<li>Block all ads because advertising depends on making people addicted.</li>
+<li>Block all popups, no exception, no clickjacking.</li>
+<li>Block all "soft-popups" (displays).</li>
+<li>Run user script for certain websites.</li>
+<li>Block all cookies by default.</li>
+<li>Don't load JavaScript by default.</li>
+<li>Don't load images by default.</li>
+<li>Apply default CSS. Don't load CSS by default.</li>
+<li>Enable user-agent spoofing.</li>
+<li>For advanced users. No GUI to configure. Write Prolog code to configure the browser.</li>
+<li>Default to HTTPS when protocol is not given.</li>
+<li>No download manager. Tell the user to use wget, curl, or whatever.</li>
+<li>Like emacs but:
+<ul class="org-ul">
+<li>browser instead of text editor</li>
+<li>prolog instead of emacs lisp</li>
+</ul></li>
+<li>Browser must limit memory usage.
+See entity explosion problem.</li>
+<li>Browser should refuse to load HTML documents larger than 1 MB.</li>
+<li>User can easily change user agent. WhatsApp wrong browser detection.</li>
+<li>combine with caching, peer-to-peer caching, distributed (and social?) searching and ranking and sharing, but what about privacy and the people who try to game the system?</li>
+<li>Don't remember tabs when closed.</li>
+</ul>
+<p>
+Limit open tabs to 10. Discourage context-switching. I'm a pathological tab hoarder. Always open a configurable set of tabs on start. If you need to open more tabs, then open a google docs or a note-taking app instead.
+</p>
+</div>
+</div>
+<div id="outline-container-org3667241" class="outline-3">
+<h3 id="org3667241"><span class="section-number-3">5.2</span> 1h: Skim existing browsers</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+Is this legit?
+<a href="https://vivaldi.com">https://vivaldi.com</a>
+</p>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/Comparison_of_web_browsers">https://en.wikipedia.org/wiki/Comparison_of_web_browsers</a>
+</p>
+
+<p>
+<a href="https://www.quora.com/How-should-a-programmer-think-about-solving-problems-in-Prolog">https://www.quora.com/How-should-a-programmer-think-about-solving-problems-in-Prolog</a>
+</p>
+
+<p>
+Entity explosion problem:
+</p>
+<pre class="example">
+&lt;!ENTITY a "&amp;a;"&gt;
+&lt;!ENTITY a &lt;16 times a&gt;
+&lt;!ENTITY b "&amp;a;" &lt;16 times&gt;
+&lt;!ENTITY c "&amp;b;" &lt;16 times&gt;
+etc.
+after 10 times we have 2^40 = 1 TB!
+</pre>
+
+<p>
+Example rendering rules: nag.html:
+if website is pinterest then remove DOM element blah blah after load.
+</p>
+
+<p>
+Popular open-source browsers are highly scrutinized.
+</p>
+
+<p>
+not too related:
+"prolog on the browser"
+<a href="https://github.com/SWI-Prolog/roadmap/issues/43">https://github.com/SWI-Prolog/roadmap/issues/43</a>
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf02bcdd" class="outline-2">
+<h2 id="orgf02bcdd"><span class="section-number-2">6</span> Gui, logical/relational reactive programming, a layer on top of plgi (Prolog Gtk bindings).</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+exists W: window(W)
+exists A: textbox(A)
+value(A, yes) :- is_down(B), !.
+value(A, no).
+children(W,Cs) :- current_document(D), document_controls(D,Cs).
+"The value of the textbox is yes whenever the button is down."
+current_document/1 is a dynamic predicate.
+</p>
+
+<p>
+name_widget(main,W) :- window(W), widget_width_height(W,640,480).
+</p>
+
+<p>
+window(W) is true iff W is a window representation.
+name_widget(N,W) is true iff N refers to widget representation W.
+</p>
+
+
+<p>
+Example of some queries that we want a GUI knowledge base to answer:
+</p>
+<ul class="org-ul">
+<li>What is the width and height of the "main" window?</li>
+<li>What happens when button b1 is clicked?</li>
+<li>What has to be done to make this text box shows "yes"?</li>
+</ul>
+
+<p>
+Example time-dependent facts that we want to state:
+</p>
+<ul class="org-ul">
+<li>After button b1 is pressed, then checkbox c1 is checked.</li>
+<li>If user clicks on a link, then navigate to the target of that link.</li>
+<li>latching?</li>
+</ul>
+
+
+
+<p>
+gui(Root)
+</p>
+
+
+<p>
+Layout algorithm
+layout_one_line(Font, String, MaxWidth, Line, RemString)
+</p>
+
+
+
+<p>
+Temporal logic for GUI
+is_up(B) -&gt; green(W)
+is_down(B) -&gt; red(W)
+</p>
+
+
+<p>
+:- dynamic object_time_property_value/4
+At every event, increment current_time
+</p>
+
+<p>
+binding(W1, K1, V1, W2, K2, V2) :- &#x2026;
+</p>
+
+
+<p>
+widget_value :- current_time, widget_version_value
+force(widget_property_value(W,V)) :-
+retractall(wtpv :- T &gt;= Curtim, _), asserta((time_widget_value(T,W,V) :- T &gt;= Curtim, !)).
+</p>
+
+<p>
+Problem: slow gui update; recheck all widgets unnecessarily
+</p>
+
+<p>
+<a href="http://www.swi-prolog.org/pldoc/man?predicate=initialization/2">http://www.swi-prolog.org/pldoc/man?predicate=initialization/2</a>
+</p>
+
+<p>
+array_array_concat(A, B, C) :-
+    array_length(A, NA), &#x2026;
+    NC is NA + NB,
+   subarray_subarray_match(A, 0-NA, C, 0-NA),
+    subarray_subarray_match(B, 0-NB, C, NA-NC).
+</p>
+
+<p>
+Replace equal with match
+</p>
+</div>
+</div>
+<div id="outline-container-org79474aa" class="outline-2">
+<h2 id="org79474aa"><span class="section-number-2">7</span> Three semantics of Horn clauses</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+We use "cause semantics" for gui.
+</p>
+
+<p>
+Rule semantics
+A :- B means "If B then A".
+</p>
+
+<p>
+turn_on_air_conditioner :- air_feels_hot.
+</p>
+
+<p>
+Proof semantics of Prolog
+A :- B means to prove A, prove B.
+even(z).
+even(s(s(N))) :- even(N).
+</p>
+
+<p>
+Cause semantics of Prolog
+A :- B means B causes A.
+name_value(mytextbox, yes) :- name_isdown(mybutton, true).
+That means "pressing mybutton causes mytextbox value to be yes".
+</p>
+</div>
+</div>
+<div id="outline-container-org17a3f50" class="outline-2">
+<h2 id="org17a3f50"><span class="section-number-2">8</span> Prolog meta-thinking: logic, language, query, and modeling: how many parameters should we use?</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+Consider these models:
+</p>
+<pre class="example">
+0 john_loves_mary
+1 john_loves(mary)
+2 loves(john,mary)
+3 subject_verb_object(john,love,mary)
+</pre>
+
+<p>
+If we want to pattern match on it, or quantify it (existentially or universally), then it should be a parameter.
+Example:
+</p>
+<ul class="org-ul">
+<li>"Who does John love" can not be answered by 0.</li>
+<li>"Who loves who" can not be answered by 1.</li>
+<li>"Who does what to whom" can not be answered by 2.</li>
+<li>"Who does what to whom at what time" can not be answered by 3.</li>
+</ul>
+
+<p>
+Thus the number of parameters in our model depends on the complexity of the queries that we anticipate.
+Thus when designing a logic program, we should begin with the <i>queries</i> that we want to anticipate.
+</p>
+</div>
+</div>
+<div id="outline-container-org28bf68a" class="outline-2">
+<h2 id="org28bf68a"><span class="section-number-2">9</span> <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-15&gt; </span></span> Modernize operating system</h2>
+<div class="outline-text-2" id="text-9">
+</div>
+<div id="outline-container-org952b84d" class="outline-3">
+<h3 id="org952b84d"><span class="section-number-3">9.1</span> 1d: Back up data.</h3>
+<div class="outline-text-3" id="text-9-1">
+<p>
+Should not take more than a day.
+What takes a long time is determining what needs to be backed up.
+</p>
+</div>
+</div>
+<div id="outline-container-orgbca035e" class="outline-3">
+<h3 id="orgbca035e"><span class="section-number-3">9.2</span> <span class="todo TODO">TODO</span> 1d: Install <del>Ubuntu 18.04 after its point release</del> Debian</h3>
+<div class="outline-text-3" id="text-9-2">
+<p>
+Ubuntu 14.04 EOL is April 2019.
+</p>
+
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2018-10-26&gt; </span></span> I'm using Ubuntu 14.04.
+</p>
+
+<p>
+When Ubuntu 14.04 reaches its end of life, I'll move to Debian.
+I won't upgrade to Ubuntu 18.04.
+</p>
+<ul class="org-ul">
+<li><a href="https://micahflee.com/2013/01/why-im-leaving-ubuntu-for-debian/">https://micahflee.com/2013/01/why-im-leaving-ubuntu-for-debian/</a></li>
+<li><a href="https://www.datamation.com/open-source/ubuntu-18.04-review-tough-love.html">https://www.datamation.com/open-source/ubuntu-18.04-review-tough-love.html</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org2bde36a" class="outline-3">
+<h3 id="org2bde36a"><span class="section-number-3">9.3</span> OS upgrade</h3>
+<div class="outline-text-3" id="text-9-3">
+<p>
+Needed: apt/dpkg check all modified files.
+<a href="https://serverfault.com/questions/90400/how-to-check-for-modified-config-files-on-a-debian-system">https://serverfault.com/questions/90400/how-to-check-for-modified-config-files-on-a-debian-system</a>
+</p>
+
+<p>
+"People will recommend [Debian] 'testing' to you but I would advise against it&#x2026;"
+<a href="https://news.ycombinator.com/item?id=7076601">https://news.ycombinator.com/item?id=7076601</a>
+</p>
+
+<p>
+The most important thing distros give us is precompiled binaries for libraries.
+This greatly simplifies building a C program with lots of dependencies.
+There are too many build systems for C.
+C build system is counterproductively fragmented.
+The truth is, building a C program is as simple as "cc *.c", if there are no dependencies.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgcb85770" class="outline-2">
+<h2 id="orgcb85770"><span class="section-number-2">10</span> Things that I perhaps should do</h2>
+<div class="outline-text-2" id="text-10">
+</div>
+<div id="outline-container-org07d76db" class="outline-3">
+<h3 id="org07d76db"><span class="section-number-3">10.1</span> <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-15&gt; </span></span> Fix possible programming error in ~/work/web in Iterables.filter</h3>
+</div>
+<div id="outline-container-org69f4c1a" class="outline-3">
+<h3 id="org69f4c1a"><span class="section-number-3">10.2</span> <span class="todo TODO">TODO</span> Ask others</h3>
+<div class="outline-text-3" id="text-10-2">
+</div>
+<div id="outline-container-org7298261" class="outline-4">
+<h4 id="org7298261"><span class="section-number-4">10.2.1</span> Who should we ask?</h4>
+<div class="outline-text-4" id="text-10-2-1">
+<ul class="org-ul">
+<li>Haskell Cafe mailing list</li>
+<li>#haskell on freenode IRC</li>
+<li>Haskell reddit</li>
+<li>Abdullah</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orge709f2f" class="outline-4">
+<h4 id="orge709f2f"><span class="section-number-4">10.2.2</span> <span class="todo TODO">TODO</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-09-17&gt; </span></span> Is there anything like Pandoc but for programming languages instead of markup languages?</h4>
+<div class="outline-text-4" id="text-10-2-2">
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-14&gt;</span></span>
+Yes, it's called "universal transpiler".
+It's a Prolog project.
+It's far from done though.
+This is like pandoc but for programming languages instead of markup languages.
+</p>
+<ul class="org-ul">
+<li><a href="https://github.com/jarble/transpiler">https://github.com/jarble/transpiler</a></li>
+<li><a href="http://www.swi-prolog.org/pack/list?p=transpiler">http://www.swi-prolog.org/pack/list?p=transpiler</a></li>
+</ul>
+
+<p>
+<a href="https://www.quora.com/Is-there-a-program-which-converts-code-written-in-one-programming-language-to-code-in-another-programming-language">https://www.quora.com/Is-there-a-program-which-converts-code-written-in-one-programming-language-to-code-in-another-programming-language</a>
+</p>
+
+<p>
+Does anyone know of anything like Pandoc but for programming languages?
+</p>
+
+<p>
+For example, it would translate Haskell to Java by translating Haskell into an internal representation and then translating that internal representation to Java.
+</p>
+
+<p>
+Possible related things:
+</p>
+<ul class="org-ul">
+<li>LLVM IR</li>
+<li>GHC Core</li>
+</ul>
+
+<p>
+A person can convert a code in programming language L to an "equivalent" code in programming language M.
+This implies that there is a common semantics between L, M, and the language of thought.
+How do we write programs directly in language of thought?
+Logic is the language of thought?
+The 10 most used human language contains first-order logic.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org688c531" class="outline-2">
+<h2 id="org688c531"><span class="section-number-2">11</span> Modeling everything = name-property-value + subject-verb-object + time</h2>
+<div class="outline-text-2" id="text-11">
+<p>
+Model of everything
+Entity-attribute-value
+I call it "name-property-value" to get in line with the terms used in philosophy
+<a href="https://en.wikipedia.org/wiki/Entity%E2%80%93attribute%E2%80%93value_model">https://en.wikipedia.org/wiki/Entity–attribute–value_model</a>
+</p>
+
+<p>
+name-property-value
+</p>
+
+<p>
+"The color of mycar is black."
+:- multifile name_property_value/3.
+name_property_value(mycar, color, black).
+name_property_value(mydb, type, database).
+name_property_value(mydb, subtype, postgresql).
+name_property_value(mydb, is_a, database).
+</p>
+
+<p>
+I think, if the knowledge base is big, it will be very confusing to trace which rule causes which name to have which property.
+</p>
+
+<p>
+name_property_value(N, host, V) :-
+    name_property_value(N, type, database),
+    name_property_value(N, spec, Spec),
+    member(host(V), Spec).
+</p>
+
+<p>
+"Show me all databases."
+?- name_property_value(E, type, database).
+% press semicolon repeatedly
+</p>
+
+<p>
+"X is a database" vs "The type of X is database" (The attribute "type" of X has the value "database")
+</p>
+</div>
+</div>
+<div id="outline-container-orgdcf269f" class="outline-2">
+<h2 id="orgdcf269f"><span class="section-number-2">12</span> Designing the best module system in 2018: Name is not a property of anything</h2>
+<div class="outline-text-2" id="text-12">
+</div>
+<div id="outline-container-orgcfce74b" class="outline-3">
+<h3 id="orgcfce74b"><span class="section-number-3">12.1</span> Executive summary</h3>
+<div class="outline-text-3" id="text-12-1">
+<p>
+To avoid name clash, your module system must satisfy these:
+</p>
+<ul class="org-ul">
+<li>The user of a module, not the module itself, decides what to call that module.</li>
+</ul>
+<p>
+Modules must not name itself.
+In ontological terms, the name of a module is not a property of that module, but is something that the user of that module uses to refer to that module.
+</p>
+<ul class="org-ul">
+<li>A module can contain other modules.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgfcab65e" class="outline-3">
+<h3 id="orgfcab65e"><span class="section-number-3">12.2</span> Philosophical investigation</h3>
+<div class="outline-text-3" id="text-12-2">
+<p>
+Designing anything good:
+Name is not a property of anything.
+Name is a linguistic artifact that we use to refer to something.
+A function does not have a name.
+A predicate does not have a name.
+Languages that gets this right: JavaScript, Lisp, Scheme.
+</p>
+
+<p>
+A language must clearly separate names and referents (the things that the names refer to).
+</p>
+
+<p>
+If Prolog is to have anonymous predicates, then it works with second-order logic, no longer with first-order logic.
+</p>
+
+<p>
+If you satisfy those constraints, your module system will be free of name clashes.
+</p>
+
+<p>
+The job of a module is to disambiguate names.
+Example: which "member/2" do we mean?
+</p>
+</div>
+</div>
+<div id="outline-container-org5a09a24" class="outline-3">
+<h3 id="org5a09a24"><span class="section-number-3">12.3</span> Languages that does this right</h3>
+<div class="outline-text-3" id="text-12-3">
+<p>
+JavaScript and Ocaml's local import is interesting.
+</p>
+
+<p>
+Languages that has satisfactory module systems:
+JavaScript, TypeScript.
+JavaScript can even do local-scoped import.
+```
+let foo = require("foo.ts");
+```
+</p>
+
+<p>
+Languages that has unsafisfactory module systems:
+Ocaml, Haskell, Prolog, C, C++, Java, Scheme, Lisp.
+</p>
+</div>
+</div>
+<div id="outline-container-orgfa459a8" class="outline-3">
+<h3 id="orgfa459a8"><span class="section-number-3">12.4</span> What should SWI-Prolog modules be?</h3>
+<div class="outline-text-3" id="text-12-4">
+<p>
+We want these to separate names and referents:
+</p>
+<ul class="org-ul">
+<li>anonymous modules</li>
+<li>anonymous predicates</li>
+<li>load file content into an anonymous module</li>
+</ul>
+
+<p>
+consult(++FilePath, &#x2013;Module)
+</p>
+
+<p>
+SWI-Prolog module/1 option of load_files/2 enables the caller to separate a name and a module.
+A module still has to be named, but now the module user decides the name.
+</p>
+
+<p>
+A module is a dictionary.
+</p>
+
+<p>
+SWI-Prolog dynamic module may be saving grace.
+</p>
+
+<p>
+Prolog has dynamic scoping.
+Dynamic scoping is a mistake.
+Prolog should have lexical scoping.
+</p>
+
+<p>
+Explicit linking directive
+modulename_filepath(foo, library(mylib/foo))
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5e5146d" class="outline-3">
+<h3 id="org5e5146d"><span class="section-number-3">12.5</span> Prolog module clash = game over? Can logtalk save the day?</h3>
+<div class="outline-text-3" id="text-12-5">
+<p>
+<a href="https://logtalk.org/rationale.html">https://logtalk.org/rationale.html</a>
+</p>
+<ul class="org-ul">
+<li>comparison of the module systems of various Prolog implementations</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orge719300" class="outline-2">
+<h2 id="orge719300"><span class="section-number-2">13</span> Toward a the best declarative programming language</h2>
+<div class="outline-text-2" id="text-13">
+</div>
+<div id="outline-container-org66f5175" class="outline-3">
+<h3 id="org66f5175"><span class="section-number-3">13.1</span> Prolog</h3>
+<div class="outline-text-3" id="text-13-1">
+<p>
+"David Liddle's idea on application user interfaces give us a clue as to why lower-level languages draw more people in than higher-level ones (Liddle, 1989). He claims that the most important aspect of a good user interface is how well it leads the user to an accurate conceptual model of how the application works. If the user develops an accurate conceptual model, then the application works as expected. This leads the user to try more things, which also work as expected, leading to an even better understanding, thus drawing the user further and further into the tool."
+<a href="https://www.amzi.com/articles/prolog_under_the_hood.htm">https://www.amzi.com/articles/prolog_under_the_hood.htm</a>
+</p>
+
+<p>
+Prolog without assert?
+<a href="https://www.mercurylang.org/information/doc-latest/mercury_trans_guide/AssertRetract.html">https://www.mercurylang.org/information/doc-latest/mercury_trans_guide/AssertRetract.html</a>
+</p>
+
+<p>
+Translate
+</p>
+
+<p>
+nat(z).
+nat(s(X)) :- nat(X).
+</p>
+
+<p>
+suc(X, s(X)).
+</p>
+
+<ul class="org-ul">
+<li><a href="https://stackoverflow.com/questions/20511060/parsing-an-expression-in-prolog-and-returning-an-abstract-syntax">https://stackoverflow.com/questions/20511060/parsing-an-expression-in-prolog-and-returning-an-abstract-syntax</a>
+<ul class="org-ul">
+<li>"you did something quite smart [&#x2026;] That is fine. However, this strategy is inherently very inefficient"</li>
+<li>"There is a general way how to fix this: Add another pair of arguments to encode the length."</li>
+</ul></li>
+</ul>
+
+<p>
+1988, Towards functional programming in Prolog
+<a href="ftp://obaluae.inf.puc-rio.br/pub/docs/Publications/88_AI_Furtado_SINPLAN.Not.pdf">ftp://obaluae.inf.puc-rio.br/pub/docs/Publications/88_AI_Furtado_SINPLAN.Not.pdf</a>
+It defines several infix operators.
+"[&#x2026;] The problem of evaluating expressions combining functions and predicates
+is investigated. Examples are provided to illustrate the discussion. The paper includes a prototype implementation."
+</p>
+
+<p>
+2.7.1 "Axiomatizing Context-Free Grammars"
+<a href="http://www.mtome.com/Publications/PNLA/prolog-digital.pdf">http://www.mtome.com/Publications/PNLA/prolog-digital.pdf</a>
+See third paragraph: "the general statement made by the context-free rule [&#x2026;] can be summarized using relations on positions with the following logical statement [&#x2026;]"
+</p>
+</div>
+</div>
+<div id="outline-container-orgdb49f63" class="outline-3">
+<h3 id="orgdb49f63"><span class="section-number-3">13.2</span> Combining lambda-calculus and first-order logic: combining beta-reduction, unification, and backtracking</h3>
+<div class="outline-text-3" id="text-13-2">
+<p>
+Anonymous function: \ x -&gt; x + 1
+Anonymous predicate: \ a b c -&gt; f a, g b, h c
+fix f = f (fix f)
+</p>
+
+<p>
+father_child(dad, kid).
+father_child(daddy, kiddo).
+</p>
+
+<p>
+:- operator &#x2013;
+father(daddy) &#x2013; child(kiddo).
+</p>
+
+<p>
+father_child dad kid
+father_child daddy kiddo
+father dad &#x2013; child kid
+</p>
+
+<p>
+father_child = \ dad kid
+father_child = \ Dad Kid -&gt; Dad = dad, Kid = kid
+</p>
+
+<p>
+"First-order logic without equality"
+<a href="https://math.stackexchange.com/questions/363168/first-order-logic-without-equality">https://math.stackexchange.com/questions/363168/first-order-logic-without-equality</a>
+</p>
+
+<p>
+"Differences between logic with and without equality"
+<a href="https://mathoverflow.net/questions/316648/differences-between-logic-with-and-without-equality">https://mathoverflow.net/questions/316648/differences-between-logic-with-and-without-equality</a>
+</p>
+
+
+<p>
+Isn't this Curry language?
+Curry's slogan is "A Truly Integrated Functional Logic Language"
+</p>
+
+<p>
+There are at least two camps of the declarative programming languages:
+</p>
+<ul class="org-ul">
+<li>Start from Prolog, move toward Haskell.</li>
+<li>Start from Haskell, move toward Prolog.
+Example: Curry.</li>
+</ul>
+
+
+<p>
+Lambda-Prolog, Harrop formula
+Why was Harrop formula defined?
+What's so special about it?
+<a href="https://en.wikipedia.org/wiki/Harrop_formula">https://en.wikipedia.org/wiki/Harrop_formula</a>
+</p>
+
+<p>
+Lambda-Prolog
+</p>
+
+<p>
+<a href="https://math.stackexchange.com/questions/2494645/lambda-calculus-combined-with-first-order-logic-notation-quantifiers-propositi">https://math.stackexchange.com/questions/2494645/lambda-calculus-combined-with-first-order-logic-notation-quantifiers-propositi</a>
+</p>
+
+<p>
+"But languages aren't tools! IDEs are tools. Languages are material. See FallacyOfTheRightTool."
+<a href="http://wiki.c2.com/?QuestForThePerfectLanguage">http://wiki.c2.com/?QuestForThePerfectLanguage</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org73667b9" class="outline-3">
+<h3 id="org73667b9"><span class="section-number-3">13.3</span> Wanted: a programming language with sound philosophical foundation, a language that strictly separates names and referents</h3>
+<div class="outline-text-3" id="text-13-3">
+<p>
+An example of a language that does naming wrong is C:
+into add1 (int x) { return x + 1; }
+In that C fragment, the name "add1" is a property of the routine.
+</p>
+
+<p>
+An example of a language that does naming right is JavaScript:
+var add1 = function (x) { return x + 1; }
+In that JavaScript fragment, "add1" is not a property of the function, but "add1" is a name by which we refer to the function.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd3e80e6" class="outline-2">
+<h2 id="orgd3e80e6"><span class="section-number-2">14</span> Describe a probabilistic graphical model as prolog knowledge base, and do Pearl causal calculus on them.</h2>
+<div class="outline-text-2" id="text-14">
+<p>
+Causal calculus in prolog?
+</p>
+
+<div class="org-src-container">
+<pre class="src src-prolog"><span style="color: #0000ff;">cancer</span> :- smoking.
+
+<span style="color: #0000ff;">cancer</span> :- confounder, smoking.
+<span style="color: #0000ff;">smoking</span> :- confounder.
+
+<span style="color: #0000ff;">cancer</span> :- common.
+<span style="color: #0000ff;">smoking</span> :- common.
+</pre>
+</div>
+
+<p>
+See also ProbLog: probabilistic logic programming in Prolog.
+</p>
+</div>
+</div>
+<div id="outline-container-org03ada77" class="outline-2">
+<h2 id="org03ada77"><span class="section-number-2">15</span> 7d: Write a planner in Prolog</h2>
+<div class="outline-text-2" id="text-15">
+<p>
+A plan is a list of items.
+</p>
+
+<p>
+An item is either a group or a task.
+</p>
+
+<p>
+A group has a title and zero or more children.
+The title is an atom.
+Each child is an item.
+</p>
+
+<p>
+A task has a title, a start date estimation, an effort estimation in person-hours, actual start date (inclusive), and actual end date (exclusive).
+</p>
+
+<p>
+Example plan in Prolog:
+The canonical form:
+</p>
+<pre class="example">
+[
+    group('build house', [
+        task('lay bricks', _, 40, _, _)
+    ])
+]
+</pre>
+
+<p>
+Almost-Haskell syntax
+</p>
+<pre class="example">
+[
+    group 'build house' [
+        task 'lay bricks' 40 _,
+        task 'put roof' 40 _,
+    ],
+]
+</pre>
+
+<p>
+Lisp syntax
+</p>
+<pre class="example">
+(group 'build house' (
+    (task 'lay bricks' 40 _)
+    (task 'put roof' 40 _)
+))
+</pre>
+
+<p>
+Types
+</p>
+<pre class="example">
+type Group = Title * [Child]
+type Child = Group | Task
+type Task = Title * Estimate
+type Estimate = Person_hour
+</pre>
+</div>
+</div>
+<div id="outline-container-orga68976c" class="outline-2">
+<h2 id="orga68976c"><span class="section-number-2">16</span> Enterprise Prolog?</h2>
+<div class="outline-text-2" id="text-16">
+</div>
+<div id="outline-container-orga8e0e0c" class="outline-3">
+<h3 id="orga8e0e0c"><span class="section-number-3">16.1</span> 14d: translate Java source to abstract procedural language in Prolog</h3>
+<div class="outline-text-3" id="text-16-1">
+<ul class="org-ul">
+<li>7d: model Java lexicon and syntax in Prolog</li>
+<li>7d: Translate Java class to Prolog record + predicate</li>
+</ul>
+
+<p>
+Only allow synchronized(F) in class C iff:
+</p>
+<ul class="org-ul">
+<li>F is a private final instance field of C</li>
+<li>The type of F is java.lang.Object</li>
+<li>F is immediately initialized with new java.lang.Object()</li>
+</ul>
+<p>
+Example:
+private final Object lock = new Object();
+</p>
+</div>
+</div>
+<div id="outline-container-org3c84bdf" class="outline-3">
+<h3 id="org3c84bdf"><span class="section-number-3">16.2</span> others</h3>
+<div class="outline-text-3" id="text-16-2">
+<ul class="org-ul">
+<li>7d: Send email from Prolog with &#x2026;</li>
+<li>7d: Design Profon, write it in proton.pro</li>
+<li>1d: Profon eval_strict(?Exp, ?Res), eval_lazy(?Exp, ?Res)</li>
+<li>1d: Import from information_schema.tables</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org90b2ec6" class="outline-3">
+<h3 id="org90b2ec6"><span class="section-number-3">16.3</span> Prolog SQL</h3>
+<div class="outline-text-3" id="text-16-3">
+<ul class="org-ul">
+<li>7d: Prolog functional query language abstraction over SQL database</li>
+</ul>
+
+<p>
+Prolog null/undefined/omitted/not_loaded/z?
+</p>
+
+<p>
+Nobody has done ODBC connection pooling in Prolog.
+<a href="http://swi-prolog.996271.n3.nabble.com/ODBC-connection-pooling-td4396.html">http://swi-prolog.996271.n3.nabble.com/ODBC-connection-pooling-td4396.html</a>
+But we may not have to, because unixODBC has done that?
+<a href="http://www.unixodbc.org/doc/conn_pool.html">http://www.unixodbc.org/doc/conn_pool.html</a>
+But it suggests that perhaps we should not use pooling.
+</p>
+
+
+<p>
+"The meta predicates of this library modify the sequence of solutions of a goal.
+The modifications and the predicate names are based on the classical database operations DISTINCT, LIMIT, OFFSET, ORDER BY and GROUP BY."
+<a href="http://www.swi-prolog.org/pldoc/doc/_SWI_/library/solution_sequences.pl">http://www.swi-prolog.org/pldoc/doc/_SWI_/library/solution_sequences.pl</a>
+</p>
+
+
+
+<p>
+From the same description, Prolog should generate all of these:
+</p>
+<ul class="org-ul">
+<li>Java class for volatile storage, and</li>
+<li>Java code for persistent storage using JDBC.</li>
+</ul>
+
+
+<p>
+<a href="http://www.swi-prolog.org/pldoc/doc_for?object=section">http://www.swi-prolog.org/pldoc/doc_for?object=section</a>(%27packages/cql.html%27)
+Prolog SQL cql
+Two approach:
+Map database table to prolog predicate
+Or
+Map query to term, design a dsl
+</p>
+
+<p>
+Option 2 is easier
+It is easier to write a Prolog-backed cql storage than to write a Prolog program transforming a Prolog program to another Prolog program
+</p>
+
+
+<p>
+column/5
+</p>
+
+<p>
+/*
+sql_information_schema__column/6
+*/
+sql_information_schema__column(Database, Schema, Table, Name, Type, Nullable)
+</p>
+
+<p>
+variable name
+read_term have variable_names option
+</p>
+
+<p>
+Cognitive problem: predicate too long
+database_schema_table_column_type_nullable/6
+</p>
+
+<p>
+<a href="https://stackoverflow.com/questions/8172687/is-there-a-way-to-translate-database-table-rows-into-prolog-facts">https://stackoverflow.com/questions/8172687/is-there-a-way-to-translate-database-table-rows-into-prolog-facts</a>
+<a href="http://www.swi-prolog.org/pldoc/man?section=strings">http://www.swi-prolog.org/pldoc/man?section=strings</a>
+</p>
+
+
+<p>
+/*
+This relates a table name to its referent.
+*/
+table_database_schema_name(T, D, S, N)
+</p>
+
+<p>
+database_schema_table_column_type
+</p>
+
+<p>
+column_type(column(Database, Schema, Table, Name), Type)
+</p>
+
+
+<p>
+table_column_type(Table, Column, Type)
+</p>
+
+<p>
+table_column_nullable(T, C)
+</p>
+
+
+<p>
+<a href="http://www.swi-prolog.org/pldoc/doc_for?object=section">http://www.swi-prolog.org/pldoc/doc_for?object=section</a>(%27packages/cql.html%27)
+Prolog SQL cql
+Two approach:
+Map database table to prolog predicate
+Or
+Map query to term, design a dsl
+</p>
+
+<p>
+Option 2 is easier
+It is easier to write a Prolog-backed cql storage than to write a Prolog program transforming a Prolog program to another Prolog program
+</p>
+
+
+<p>
+column/5
+</p>
+
+<p>
+/*
+sql_information_schema__column/6
+*/
+sql_information_schema__column(Database, Schema, Table, Name, Type, Nullable)
+</p>
+
+<p>
+variable name
+read_term have variable_names option
+</p>
+
+<p>
+Cognitive problem: predicate too long
+database_schema_table_column_type_nullable/6
+</p>
+
+<p>
+<a href="https://stackoverflow.com/questions/8172687/is-there-a-way-to-translate-database-table-rows-into-prolog-facts">https://stackoverflow.com/questions/8172687/is-there-a-way-to-translate-database-table-rows-into-prolog-facts</a>
+<a href="http://www.swi-prolog.org/pldoc/man?section=strings">http://www.swi-prolog.org/pldoc/man?section=strings</a>
+</p>
+
+
+<p>
+/*
+This relates a table name to its referent.
+*/
+table_database_schema_name(T, D, S, N)
+</p>
+
+<p>
+database_schema_table_column_type
+</p>
+
+<p>
+column_type(column(Database, Schema, Table, Name), Type)
+</p>
+
+
+<p>
+table_column_type(Table, Column, Type)
+</p>
+
+<p>
+table_column_nullable(T, C)
+</p>
+
+<p>
+Prolog-SQL mapping?
+</p>
+
+
+<p>
+Table(P) means that P models a row stored in the table that Table models.
+</p>
+
+<p>
+:- small TABLE 30.
+</p>
+
+<p>
+Create TABLE(Key, Row).
+Load on-demand.
+</p>
+
+<p>
+force(TABLE(Key, Row)) runs SQL update and invalidates the table.
+Bulk copy into RAM.
+</p>
+
+<p>
+:- big TABLE(Key, Row).
+Load on-demand.
+Keys must be ground.
+Maintain cursor.
+</p>
+
+<p>
+Translate a Prolog fragment to SQL-involving Prolog fragment.
+</p>
+
+<p>
+Write your program as if all the data were in Prolog RAM?
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd07dd89" class="outline-2">
+<h2 id="orgd07dd89"><span class="section-number-2">17</span> Prolog predicate naming</h2>
+<div class="outline-text-2" id="text-17">
+<p>
+blue(X)
+has(A,B)
+can_sing(A)
+version(A,B,C)
+person_name(P,N)
+index_fibonacci
+index_list_element
+</p>
+
+<p>
+class_field
+table_column
+column_type
+</p>
+
+<p>
+class(Atom) is true iff Atom is a referent.
+</p>
+
+<p>
+table(Atom) has different namespace
+</p>
+
+<p>
+class_field(Cls, F) :- table_column(T, Col), field_name(F, N), column_name(Col, N).
+</p>
+
+<p>
+Metamodel
+A thing is modeled as an association list such as [a=b,c=d,e=f]
+alist_key_value([K=V|_],K,V).
+alist_key_value([_|R],K,V) :- alist_key_value(R,K,V).
+</p>
+
+<p>
+alist_empty
+alist_tail
+alist_head
+alist_without_keys
+alist_size
+alist_merge
+</p>
+
+<p>
+thing_prop(T,P)
+thing_prop_replaced(T0,P,T1)
+Use thing_prop_replaced(T,P,T) to get the property P of T
+</p>
+
+
+<p>
+url_page
+</p>
+
+<p>
+There is a difference between dif and \=: dif is coroutining.
+<a href="https://stackoverflow.com/questions/16560058/difference-between-x-y-and-difx-y">https://stackoverflow.com/questions/16560058/difference-between-x-y-and-difx-y</a>
+But "coroutine" is an overloaded term.
+<a href="http://www.swi-prolog.org/pldoc/man?section=delcont">http://www.swi-prolog.org/pldoc/man?section=delcont</a>
+</p>
+
+
+<p>
+Prolog predicate naming problem when there is a compound word
+integer_integer_sum(A, B, C)
+basic_block__ssa_block()
+</p>
+</div>
+</div>
+<div id="outline-container-org9c2402e" class="outline-2">
+<h2 id="org9c2402e"><span class="section-number-2">18</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-14&gt; </span></span> Find a place in this website for meta-thinking</h2>
+<div class="outline-text-2" id="text-18">
+<p>
+Meta-thinking currently resides at philo.html
+</p>
+</div>
+</div>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/plan.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/plan.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-12-14 12:56 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>
