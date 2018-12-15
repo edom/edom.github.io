@@ -128,7 +128,13 @@ document.addEventListener("DOMContentLoaded", function () {
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#org6511a22">1. About this page</a></li>
-<li><a href="#org7e6cc39">2. ?7d: Implement LMX (LaTeX-Markdown-XML) markup language</a></li>
+<li><a href="#org5720c9a">2. Write a Prolog static site generator to translate Org-Mode and Markdown to HTML</a>
+<ul>
+<li><a href="#orgc37cd11">2.1. Do I really need to do this?</a></li>
+<li><a href="#org8d302b2">2.2. Features, goals, and constraints</a></li>
+<li><a href="#org7e6cc39">2.3. ?7d: Implement LMX (LaTeX-Markdown-XML) markup language</a></li>
+</ul>
+</li>
 <li><a href="#org9139a92">3. Write a Prolog program to interpret or translate Java source code</a></li>
 <li><a href="#org650d688">4. Develop non-shitty FOSS distributed/P2P alternatives to most vital services</a></li>
 <li><a href="#org07e7541">5. Write a user-first browser in Prolog</a>
@@ -166,6 +172,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul>
 </li>
 <li><a href="#org7ed6f4e">12. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-14&gt; </span></span> Find a place in this website for meta-thinking</a></li>
+<li><a href="#org183c2fc">13. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-15&gt; </span></span> Bootstrap GHC?</a></li>
+<li><a href="#org0c26f25">14. Write a language suite in Prolog: write C and Haskell parser, interpreter, and compiler?</a></li>
 </ul>
 </div>
 </div>
@@ -186,22 +194,115 @@ We should join forces to reach our shared goals.
 </p>
 </div>
 </div>
-<div id="outline-container-org7e6cc39" class="outline-2">
-<h2 id="org7e6cc39"><span class="section-number-2">2</span> ?7d: Implement LMX (LaTeX-Markdown-XML) markup language</h2>
+<div id="outline-container-org5720c9a" class="outline-2">
+<h2 id="org5720c9a"><span class="section-number-2">2</span> Write a Prolog static site generator to translate Org-Mode and Markdown to HTML</h2>
 <div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgc37cd11" class="outline-3">
+<h3 id="orgc37cd11"><span class="section-number-3">2.1</span> Do I really need to do this?</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Let's try other options first:
+</p>
+<ul class="org-ul">
+<li>org, pandoc, pandoc-citeproc, without emacs org exporter.
+Should I trust pandoc-citeproc?</li>
+<li>Use pandoc-scholar.
+Should I trust pandoc-scholar?</li>
+<li>set up vim markdown folding, or get a markdown editor that can fold sections, maybe vscode
+<ul class="org-ul">
+<li><a href="https://vi.stackexchange.com/questions/9543/how-to-fold-markdown-using-the-built-in-markdown-mode">https://vi.stackexchange.com/questions/9543/how-to-fold-markdown-using-the-built-in-markdown-mode</a></li>
+<li>I think I'll try this.
+I prefer vim to emacs because I can move around much faster in vim.
+Vim is designed for motion.
+Emacs is designed for extensibility.</li>
+</ul></li>
+<li>regex to replace org <code>***</code> with markdown <code>###</code> (god forbid)</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org8d302b2" class="outline-3">
+<h3 id="org8d302b2"><span class="section-number-3">2.2</span> Features, goals, and constraints</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+This basically reimplements some of Pandoc in Prolog.
+</p>
+
+<p>
+I need this big yak shaving because:
+</p>
+<ul class="org-ul">
+<li>I need citations in my <a href="proglang.html">proglang.html</a>.</li>
+<li>I don't trust Emacs.</li>
+<li>I don't trust org-ref.</li>
+<li>I don't trust the interaction between org, pandoc, and pandoc-citeproc.</li>
+<li>I feel Emacs is too slow.</li>
+<li>I hate editing and compiling Pandoc; GHC is slow.</li>
+<li>Markdown is not enough.</li>
+</ul>
+
+<p>
+Problem:
+</p>
+<ul class="org-ul">
+<li>pandoc can't read org metadata/directives?</li>
+</ul>
+
+<p>
+The constraints:
+</p>
+<ul class="org-ul">
+<li>The user edits the file using unmodified Emacs Org-Mode.</li>
+</ul>
+
+<p>
+Work breakdown:
+</p>
+<ul class="org-ul">
+<li>citeproc? bibtex? biblatex? bibliography management?</li>
+<li>Citing from website.</li>
+<li>The program exports the Org files to HTML for web publishing without using the slow Emacs Org Exporter.</li>
+<li>Parse LaTeX begin end environment.</li>
+<li>YAML metadata preamble.</li>
+<li>Generate local table of contents for each section that has more one or more child.</li>
+<li>word count, to replace page numbers as navigation aid</li>
+<li>Why bibtex?
+Because Google Scholar exports bibtex.
+We can then just copy the bibtex fragment from Google Scholar.</li>
+<li>Parse Org Mode.
+<ul class="org-ul">
+<li>Inline: bold, italic, underline, code, at-at-html.</li>
+<li>Heading.</li>
+<li>Block: EXAMPLE, SRC, HTML</li>
+<li>Syntax highlighting in code blocks?
+We skip this because this is not essential.</li>
+</ul></li>
+</ul>
+
+<p>
+VERY IMPORTANT: the ability to handle citations without slowing down everything
+</p>
+
+<p>
+We can use <a href="http://www.swi-prolog.org/pack/list?p=bibtex">http://www.swi-prolog.org/pack/list?p=bibtex</a>
+</p>
+
+<p>
+We are going to use LMX instead of <a href="https://github.com/SWI-Prolog/packages-ltx2htm">https://github.com/SWI-Prolog/packages-ltx2htm</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org7e6cc39" class="outline-3">
+<h3 id="org7e6cc39"><span class="section-number-3">2.3</span> ?7d: Implement LMX (LaTeX-Markdown-XML) markup language</h3>
+<div class="outline-text-3" id="text-2-3">
 <p>
 LMX is a LaTeX-like surface syntax for XML;
 this enables you to replace the closing tag with a closing brace.
 </p>
 
 <p>
-Features:
+LMX is a combination of Org-Mode.
 </p>
-<ul class="org-ul">
-<li>citeproc? bibtex? biblatex? bibliography management?</li>
-<li>export to HTML for web publishing</li>
-<li>word count, to replace page numbers as navigation aid</li>
-</ul>
 
 <pre class="example">
 This is a paragraph.
@@ -312,6 +413,7 @@ Treat LaTeX as declarative markup language and not imperative command language.
 </ul>
 </div>
 </div>
+</div>
 <div id="outline-container-org9139a92" class="outline-2">
 <h2 id="org9139a92"><span class="section-number-2">3</span> Write a Prolog program to interpret or translate Java source code</h2>
 </div>
@@ -342,6 +444,26 @@ Facebook: Mastodon?
 <p>
 YouTube: DTube, BitChute
 <a href="https://www.ghacks.net/2018/03/02/dtube-is-more-than-a-youtube-alternative/">https://www.ghacks.net/2018/03/02/dtube-is-more-than-a-youtube-alternative/</a>
+</p>
+
+<p>
+Heroku?
+</p>
+
+<p>
+"An Open Source, Self-Hosted Heroku"
+<a href="https://news.ycombinator.com/item?id=12703121">https://news.ycombinator.com/item?id=12703121</a>
+<a href="https://www.bitmatica.com/blog/an-open-source-self-hosted-heroku/">https://www.bitmatica.com/blog/an-open-source-self-hosted-heroku/</a>
+"Internals of OpenRuko PaaS, an open source Heroku clone implementation"
+<a href="https://www.slideshare.net/rogerleite14/paa-s-26212382">https://www.slideshare.net/rogerleite14/paa-s-26212382</a>
+<a href="https://github.com/dokku/dokku">https://github.com/dokku/dokku</a>
+<a href="https://github.com/openruko">https://github.com/openruko</a>
+<a href="https://flynn.io/">https://flynn.io/</a>
+<a href="https://www.quora.com/What-are-some-open-source-Heroku-alternatives">https://www.quora.com/What-are-some-open-source-Heroku-alternatives</a>
+</p>
+
+<p>
+<a href="https://www.quora.com/What-are-some-open-source-Heroku-alternatives">https://www.quora.com/What-are-some-open-source-Heroku-alternatives</a>
 </p>
 </div>
 </div>
@@ -391,6 +513,17 @@ See entity explosion problem.</li>
 <p>
 Limit open tabs to 10. Discourage context-switching. I'm a pathological tab hoarder. Always open a configurable set of tabs on start. If you need to open more tabs, then open a google docs or a note-taking app instead.
 </p>
+
+<ul class="org-ul">
+<li>Write a fast, private, and secure web browser in Prolog.
+<ul class="org-ul">
+<li>Features:
+<ul class="org-ul">
+<li>Selectively enable JavaScript from some websites with Prolog rules.</li>
+<li>Disable clipboard hook.</li>
+</ul></li>
+</ul></li>
+</ul>
 </div>
 </div>
 <div id="outline-container-orgb7c4fcf" class="outline-3">
@@ -1005,6 +1138,29 @@ Write your program as if all the data were in Prolog RAM?
 Meta-thinking currently resides at philo.html
 </p>
 </div>
+</div>
+<div id="outline-container-org183c2fc" class="outline-2">
+<h2 id="org183c2fc"><span class="section-number-2">13</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-15&gt; </span></span> Bootstrap GHC?</h2>
+<div class="outline-text-2" id="text-13">
+<p>
+<a href="https://twitter.com/ErikDominikus/status/1073726987338842112">https://twitter.com/ErikDominikus/status/1073726987338842112</a>
+</p>
+
+<p>
+How about writing a Haskell interpreter with Prolog?
+I guess Haskell type checker takes ~100 lines of Prolog, and parser takes ~200 lines.
+It may be doable in a month.
+I have ~20 lines of Prolog type-checking Haskell AST but without type classes.
+</p>
+
+<p>
+Add ~500 more lines of Prolog metaprogram for translating lists to arrays,
+~2000 more lines for translating Prolog to optimized x86_64 native code (if not reinventing LLVM), 1 more month, and &#x2026; we may beat GHC at its own game? :)
+</p>
+</div>
+</div>
+<div id="outline-container-org0c26f25" class="outline-2">
+<h2 id="org0c26f25"><span class="section-number-2">14</span> Write a language suite in Prolog: write C and Haskell parser, interpreter, and compiler?</h2>
 </div>
 
   </div>
