@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Haskell programming language</title>
+  <meta name="description" content="Personal website">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://edom.github.io/haskell.html">
+  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
+
+  
+
+    <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+    </script>
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12628443-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+
+  
+
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
+  </div>
+</header>
+
+
+    
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Haskell programming language</h1>
+  </header>
+
+  <div class="post-content">
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#abdullah">1. Faking untagged unions and equirecursive types in Haskell</a></li>
+<li><a href="#orgf5fbc8f">2. An mess; do not see</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org83fbef0" class="outline-2">
+<h2 id="abdullah"><a id="org83fbef0"></a><span class="section-number-2">1</span> Faking untagged unions and equirecursive types in Haskell</h2>
+<div class="outline-text-2" id="text-abdullah">
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org974e9f5">1.1. Background</a></li>
+<li><a href="#orgf406d4c">1.2. What is here, and how it answers your questions</a></li>
+<li><a href="#org4f89b71">1.3. [NOTATION]</a></li>
+<li><a href="#org175843f">1.4. [DEFINE] Examples of canonical injections</a></li>
+<li><a href="#org8e1e7e0">1.5. [DATA] Inferring canonical injections for inductive data types</a></li>
+<li><a href="#orgfb4447b">1.6. [MONAD] Relationship between canonical injections and Monad instances</a></li>
+<li><a href="#org693a1b7">1.7. [HICKEY] Hickey's two wishes</a></li>
+<li><a href="#org67d9ae2">1.8. [LAMBDA] Inferring canonical injections for lambdas</a></li>
+<li><a href="#org41aeb7b">1.9. [IMPL] A possible implementation, in principle</a></li>
+<li><a href="#org08e13fd">1.10. History</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org974e9f5" class="outline-3">
+<h3 id="org974e9f5"><span class="section-number-3">1.1</span> Background</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+In Haskell, Just is the <i>only</i> sound way to make a Maybe t from t.
+We call such unambiguous construction a <i>canonical injection</i>.
+The compiler should insert canonical injections to recover from trivial type errors.
+Such recovery enables these interesting things:
+</p>
+<ul class="org-ul">
+<li>Now we can "fake" non-overlapping untagged unions (Haskell has tagged unions).
+This reduces the bureaucracy when composing data types following the free-monad/interpreter pattern;
+the compiler inserts the required Pure constructors.</li>
+<li>Now we can "fake" equirecursive types (Haskell has isorecursive types).
+We no longer have to type "In" and "out" when using "Fix";
+the compiler inserts the required bureaucracy.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgf406d4c" class="outline-3">
+<h3 id="orgf406d4c"><span class="section-number-3">1.2</span> What is here, and how it answers your questions</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+This is what I am going to do in this article, in no particular order:
+</p>
+<ul class="org-ul">
+<li>[NOTATION] defines some notations.</li>
+<li>[DEFINE] defines canonical injections.</li>
+<li>[DATA] shows the rules for inferring canonical injections for inductive data types.</li>
+<li>[LAMBDA] shows the rules for inferring canonical injections for lambdas.</li>
+<li>[HICKEY] shows that Hickey's two wishes are special cases of canonical injections.</li>
+<li>[MONAD] shows the relationship between canonical injections and Monad instances.</li>
+<li>[IMPL] sketches a possible implementation, in principle.</li>
+</ul>
+
+<p>
+This is how I answer your questions:
+</p>
+<ul class="org-ul">
+<li>Your first question is answered by [DEFINE], [DATA], and [LAMBDA].</li>
+<li>Your second question is answered by [HICKEY] and [LAMBDA].</li>
+<li>Extra things that may be of interest to you are [MONAD] and [IMPL].</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org4f89b71" class="outline-3">
+<h3 id="org4f89b71"><span class="section-number-3">1.3</span> [NOTATION]</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+Notation conventions.
+</p>
+
+<p>
+By "injection", I mean an injective function.
+</p>
+
+<p>
+"The canonical injection from A to B" means "the only sound injection from A to B".
+By "sound", I mean "not involving bottom (undefined)".
+I assume total functional programming, and I say "the only possible injection" to mean "the only sound injection".
+</p>
+</div>
+</div>
+<div id="outline-container-org175843f" class="outline-3">
+<h3 id="org175843f"><span class="section-number-3">1.4</span> [DEFINE] Examples of canonical injections</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+The compiler infers that some constructors are the only possible injections.
+</p>
+
+<p>
+Examples of automatic inference of canonical injections:
+</p>
+<ul class="org-ul">
+<li>In the case of t -&gt; Maybe t, the compiler can infer that Just is the only possible injection.</li>
+<li>In the case of a -&gt; Either a b where a != b, the compiler can infer that Left is the only possible injection.</li>
+<li>In the case of a -&gt; Either a a, there are two injections, and so there is no such thing as the only possible injection.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org8e1e7e0" class="outline-3">
+<h3 id="org8e1e7e0"><span class="section-number-3">1.5</span> [DATA] Inferring canonical injections for inductive data types</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+In general, the compiler infers canonical injections from a data definition using this rule:
+If parameter p occurs exactly once in the right-hand side of the equal sign in "data A p = &#x2026;",
+then the constructor that has p is the <i>canonical injection</i> from p to A p.
+</p>
+
+<p>
+For example, observe that, in the following definition,
+in the right-hand side of the equal sign:
+</p>
+<ul class="org-ul">
+<li>Int occurs twice,</li>
+<li>String occurs once, and</li>
+<li>p occurs once.</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-haskell">data A p = A0 Int | A1 String | A2 Int | A3 p
+</pre>
+</div>
+<p>
+Therefore, from the above definition, the compiler infers that:
+</p>
+<ul class="org-ul">
+<li>A1 : String -&gt; A p is the canonical injection from String to A p.</li>
+<li>A3 : p -&gt; A p is the canonical injection from p to A p.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgfb4447b" class="outline-3">
+<h3 id="orgfb4447b"><span class="section-number-3">1.6</span> [MONAD] Relationship between canonical injections and Monad instances</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+Let INJ be the canonical injection from p to F p.
+Let F be an instance of Monad.
+Then the compiler infers "return" and one case of "bind" as follows:
+</p>
+<div class="org-src-container">
+<pre class="src src-haskell">return = INJ
+(&gt;&gt;=) (INJ x) k = k x
+</pre>
+</div>
+
+<p>
+Indeed I think these have to be laws:
+If INJ is the canonical injection from t to F t, and F is an instance of Monad, then:
+</p>
+<ul class="org-ul">
+<li>return has to be equal to INJ,</li>
+<li>INJ x &gt;&gt;= k must be equal to k x.</li>
+</ul>
+
+<p>
+I think the above laws relate this concept of "canonical injections" with your concept of monads as "conservative extensions of spaces".
+</p>
+
+<p>
+There is also a law for the other way around:
+the <code>return</code> function must be an injection,
+although the user is responsible for ensuring that.
+I think the compiler should assume that <code>return</code> <i>is</i> a canonical injection,
+and exploit such injection with this rule:
+If an <code>x : t</code> is found where an <code>f t</code> is expected, and <code>f</code> is an instance of <code>Monad</code>, then replace <code>x : t</code> with <code>return x : f t</code>.
+</p>
+
+<p>
+This rule also works in a nested situation.
+This should typecheck:
+</p>
+<pre class="example">
+0 :: (Monad m, Monad n) =&gt; m (Maybe (n Int))
+</pre>
+</div>
+</div>
+<div id="outline-container-org693a1b7" class="outline-3">
+<h3 id="org693a1b7"><span class="section-number-3">1.7</span> [HICKEY] Hickey's two wishes</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+Yes, my rule should work in both of Hickey's cases, because the compiler should be able to infer that there is only one possible injection in each of those cases.
+Note that Hickey's cases correspond to wanting the compiler to automatically apply these canonical injections:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell">-- inj : today -&gt; yesterday,
+-- so that every caller doesn't have to be rewritten.
+
+-- Making an arg optional:
+-- yesterday: X -&gt; Y
+-- today: Maybe X -&gt; Y
+-- The canonical injection:
+-- Wherever you see that a Maybe X -&gt; Y is supplied
+-- where an X -&gt; Y is required, use this:
+inj : (Maybe X -&gt; Y) -&gt; (X -&gt; Y)
+inj f = \ x -&gt; f (Just x)
+
+-- Providing a stronger return promise:
+-- yesterday: X -&gt; Maybe Y
+-- today: X -&gt; Y
+-- The canonical injection:
+-- Wherever you see that an X -&gt; Y is supplied
+-- where an X -&gt; Maybe Y is required, use this:
+inj : (X -&gt; Y) -&gt; (X -&gt; Maybe Y)
+inj f = \ x -&gt; Just (f x)
+</pre>
+</div>
+<p>
+Note that the type of inj is "today -&gt; yesterday", not "yesterday -&gt; today". (Do you see why?)
+</p>
+</div>
+</div>
+<div id="outline-container-org67d9ae2" class="outline-3">
+<h3 id="org67d9ae2"><span class="section-number-3">1.8</span> [LAMBDA] Inferring canonical injections for lambdas</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+Here I generalize Hickey's cases to all lambdas.
+</p>
+
+<p>
+Notation convention:
+I write the dependently-typed expression "inj A B" to mean the canonical injection from A to B, if such canonical injection exists.
+The type of the expression "inj A B" is A -&gt; B.
+</p>
+
+<p>
+These two rules define canonical injections for all lambdas:
+For all types A, B, and C:
+</p>
+<div class="org-src-container">
+<pre class="src src-haskell">inj (A -&gt; C) (B -&gt; C) fac = fbc where fbc b = fac (inj B A b)
+inj (C -&gt; A) (C -&gt; B) fca = fcb where fcb c = inj A B (fca c)
+</pre>
+</div>
+
+<p>
+That should also work with currying and higher-order lambdas.
+</p>
+</div>
+</div>
+<div id="outline-container-org41aeb7b" class="outline-3">
+<h3 id="org41aeb7b"><span class="section-number-3">1.9</span> [IMPL] A possible implementation, in principle</h3>
+<div class="outline-text-3" id="text-1-9">
+<p>
+Suppose that a compiler encounters a type error.
+</p>
+
+<p>
+Let s : S be the supplied (actual) expression and type (what the user actually types).
+</p>
+
+<p>
+Let R be the required (expected) type.
+</p>
+
+<p>
+Then, if there is the canonical injection inj : S -&gt; R from S to R,
+the compiler should behave as if the user had typed "inj s" from the beginning.
+</p>
+
+<p>
+In principle, it is possible to write a Haskell interpreter in Prolog, and add our own inference rules,
+such as inferring canonical injections and inserting canonical injections.
+I think [DATA] and [LAMBDA] sufficiently define canonical injections for all Haskell 98 types.
+</p>
+</div>
+</div>
+<div id="outline-container-org08e13fd" class="outline-3">
+<h3 id="org08e13fd"><span class="section-number-3">1.10</span> History</h3>
+<div class="outline-text-3" id="text-1-10">
+<p>
+This originated as a letter to Abdullah on <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-18&gt;</span></span>.
+</p>
+
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-18&gt;</span></span>
+</p>
+
+<ul class="org-ul">
+<li>First publish date.</li>
+<li>First revision.</li>
+</ul>
+
+<p>
+Alternative titles:
+</p>
+<ul class="org-ul">
+<li>Faking untagged unions and equirecursive types in Haskell
+<ul class="org-ul">
+<li>This sounds promising.</li>
+<li>But this is misleading.
+This feature requires modifying the compiler, so the code is not "in Haskell".</li>
+</ul></li>
+<li>Inferring and inserting canonical injections in Haskell
+<ul class="org-ul">
+<li>This was the original working title.</li>
+</ul></li>
+<li>Recovering from trivial type errors in Haskell
+<ul class="org-ul">
+<li>Unclear about what is being sold.</li>
+</ul></li>
+<li>A monad is a way of conservatively extending all spaces</li>
+</ul>
+
+<p>
+The concept I'm proposing already exists with the same name ("canonical injection").
+<a href="https://en.wikipedia.org/wiki/Inclusion_map">https://en.wikipedia.org/wiki/Inclusion_map</a>
+</p>
+
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-14&gt;</span></span>
+</p>
+
+<p>
+Questions leading to this article:
+</p>
+<ul class="org-ul">
+<li>Does "algebraic subtyping" mean adding the following rule to the compiler:
+"for all x, t: everywhere an x : t is found where a Maybe t is expected, replace x : t with Just x : Maybe t"?</li>
+<li>Does "algebraic subtyping" mean that the compiler "recovers" from certain (injective) type errors?</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf5fbc8f" class="outline-2">
+<h2 id="orgf5fbc8f"><span class="section-number-2">2</span> An mess; do not see</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org0b5e10e" class="outline-3">
+<h3 id="open-adts-algebraic-data-types"><a id="org0b5e10e"></a><span class="section-number-3">2.1</span> Open ADTs (algebraic data types)</h3>
+<div class="outline-text-3" id="text-open-adts-algebraic-data-types">
+<ul class="org-ul">
+<li>"Closed" means "defined in one place".</li>
+<li>Open ADTs don't mix with exhaustive case analysis (function totality).
+
+<ul class="org-ul">
+<li><a href="https://stackoverflow.com/questions/870919/why-are-haskell-algebraic-data-types-closed">https://stackoverflow.com/questions/870919/why-are-haskell-algebraic-data-types-closed</a></li>
+<li>But what if functions are "open" too?
+
+<ul class="org-ul">
+<li><a href="https://www.andres-loeh.de/OpenDatatypes.pdf">https://www.andres-loeh.de/OpenDatatypes.pdf</a></li>
+</ul></li>
+</ul></li>
+
+<li>If <code>f : a -&gt; b</code>, then the compiler should infer <code>lift f : (Monad m) =&gt; m a -&gt; m b</code>.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org949d846" class="outline-3">
+<h3 id="can-we-extend-haskell-to-auto-fmap"><a id="org949d846"></a><span class="section-number-3">2.2</span> Can we extend Haskell to "auto-fmap"?</h3>
+<div class="outline-text-3" id="text-can-we-extend-haskell-to-auto-fmap">
+<ul class="org-ul">
+<li>Possibilities:
+
+<ul class="org-ul">
+<li>Add rewrite rules so that the compiler "recovers" from some type "errors".</li>
+<li>Extend the syntax and semantics of function application.</li>
+</ul></li>
+
+<li>Related
+
+<ul class="org-ul">
+<li>1989, article, Wadler, "Theorems for free!"</li>
+<li>The Haskell Djinn can, given a type T, infer/construct a term having type T.</li>
+</ul></li>
+
+<li>Recovering from some type errors
+
+<ul class="org-ul">
+<li>Idea
+
+<ul class="org-ul">
+<li>Extend Haskell with "implicit injections".</li>
+<li>The compiler should try in-scope injections automatically when there is a typing error, before quitting with a type error.
+
+<ul class="org-ul">
+<li>Isn't this similar to Scala implicits and implicit conversion?
+
+<ul class="org-ul">
+<li>I forgot who, but I think somebody on the Internet said that Scala implicits are a way for the compiler to recover from type errors.</li>
+</ul></li>
+</ul></li>
+
+<li>Can we do this on GHC?
+
+<ul class="org-ul">
+<li><a href="https://ghc.haskell.org/trac/ghc/wiki/Commentary/Compiler/TypeChecker">https://ghc.haskell.org/trac/ghc/wiki/Commentary/Compiler/TypeChecker</a>
+
+<ul class="org-ul">
+<li>GHC typechecker works on Haskell before it's transformed to Core.</li>
+</ul></li>
+
+<li>Write a plugin for GHC?
+
+<ul class="org-ul">
+<li>Can a GHC modify the syntax tree on type error?</li>
+</ul></li>
+
+<li>Use GHC as library?</li>
+<li>We can't use GHC rewrite rules because they are only applied when optimization is enabled.</li>
+</ul></li>
+</ul></li>
+
+<li>Define the concept of "expected type".</li>
+<li>Let <code>e</code> be an expression.</li>
+<li>Let <code>f : a -&gt; b</code>.</li>
+<li>Let <code>m</code> be an instance of Monad.</li>
+<li>If <code>e</code> has type <code>a</code>, but the compiler expects <code>e</code> to have type <code>m a</code>, then the compiler shall rewrite <code>e</code> to <code>return e</code>.</li>
+<li>If <code>e</code> has type <code>m a</code>, then the compiler rewrites <code>f e</code> to <code>map f e</code>.</li>
+</ul></li>
+
+<li>If <code>x</code> is a Monad, then these are two <i>different</i> things: <code>x : a</code> and <code>return x</code>, but they are related, in the sense that they are equivalent, in the sense that one is trivially computable/derivable from the other.</li>
+<li>Can Strathclyde Haskell Enhancement (SHE) do this?
+
+<ul class="org-ul">
+<li>It has idiom brackets.
+It translates <code>(| f a1 ... an |)</code> to <code>pure f &lt;*&gt; a1 &lt;*&gt; ... &lt;*&gt; an</code>.
+
+<ul class="org-ul">
+<li><a href="https://personal.cis.strath.ac.uk/conor.mcbride/pub/she/idiom.html">https://personal.cis.strath.ac.uk/conor.mcbride/pub/she/idiom.html</a></li>
+</ul></li>
+
+<li>Enhancement to SHE <a href="https://github.com/bezirg/she">https://github.com/bezirg/she</a>
+
+<ul class="org-ul">
+<li><a href="http://blog.bezirg.net/posts/2013-08-03-enhancement-to-the-strathclyde-haskell-enhancement.html">http://blog.bezirg.net/posts/2013-08-03-enhancement-to-the-strathclyde-haskell-enhancement.html</a></li>
+</ul></li>
+</ul></li>
+
+<li><a href="https://en.wikipedia.org/wiki/Bidirectional_transformation">https://en.wikipedia.org/wiki/Bidirectional_transformation</a>
+
+<ul class="org-ul">
+<li><a href="https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf">https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org55d8e9f" class="outline-3">
+<h3 id="auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances"><a id="org55d8e9f"></a><span class="section-number-3">2.3</span> Auto-lifting (and therefore sequencing) of function application involving Monad instances</h3>
+<div class="outline-text-3" id="text-auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">
+<ul class="org-ul">
+<li>The standard rule is:
+
+<ul class="org-ul">
+<li>If <code>x : a</code> and <code>f : a -&gt; b</code>, then <code>f x : b</code>.</li>
+</ul></li>
+
+<li>Suppose that <code>m</code> has a Monad instance.
+
+<ul class="org-ul">
+<li>If <code>x : m a</code> and <code>f : a -&gt; b</code>, then should the compiler silently translate <code>f x</code> to <code>x &gt;&gt;</code> return . f=?
+
+<ul class="org-ul">
+<li>Isn't it the only desirable way of putting together <code>f</code> and <code>x</code>?
+
+<ul class="org-ul">
+<li>Monad class requires that <code>x &gt;&gt;</code> return . f= be equivalent to <code>fmap f x</code>.
+
+<ul class="org-ul">
+<li>So there is really only one way to do it, isn't it?</li>
+</ul></li>
+
+<li>Examples of non-desirable ways: <code>unsafeCoerce</code>, <code>undefined</code>.</li>
+</ul></li>
+</ul></li>
+
+<li>Should the compiler also appropriately translate <code>f x</code> for all these combinations?
+
+<ul class="org-ul">
+<li>Possibilities for the type of <code>x</code>:
+
+<ul class="org-ul">
+<li><code>a</code></li>
+<li><code>m a</code></li>
+</ul></li>
+
+<li>Possibilities for the type of <code>f</code>:
+
+<ul class="org-ul">
+<li><code>a -&gt; b</code></li>
+<li><code>a -&gt; m b</code></li>
+<li><code>m (a -&gt; b)</code></li>
+<li><code>m a -&gt; m b</code></li>
+<li><code>m a -&gt; b</code></li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li>At first glance it seems convenient, but what are the consequences?
+
+<ul class="org-ul">
+<li>Some I can think of
+
+<ul class="org-ul">
+<li>Confusing error message
+
+<ul class="org-ul">
+<li>Suppose:
+
+<ul class="org-ul">
+<li>The programmer makes a typing mistake.</li>
+<li>The compiler infers the wrong type.</li>
+<li>The compiler performs translation based on the wrongly inferred type.</li>
+<li>The compiler produces a confusing error message.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org31f8205" class="outline-3">
+<h3 id="equirecursive-types"><a id="org31f8205"></a><span class="section-number-3">2.4</span> Equirecursive types?</h3>
+<div class="outline-text-3" id="text-equirecursive-types">
+<p>
+Haskell has isorecursive types.
+Can we make it use equirecursive types?
+</p>
+
+<ul class="org-ul">
+<li>Can we make it automatically insert roll-unroll/fold-unfold/In-out?</li>
+<li>How do we compose monads seamlessly?
+
+<ul class="org-ul">
+<li>Isorecursive types?</li>
+<li>True sum types (untagged unions)?</li>
+</ul></li>
+
+<li>"System F-omega with Equirecursive Types for Datatype-Generic Programming"?</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgbb8c16f" class="outline-3">
+<h3 id="orgbb8c16f"><span class="section-number-3">2.5</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-12-15&gt; </span></span> Bootstrap GHC?</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+<a href="https://twitter.com/ErikDominikus/status/1073726987338842112">https://twitter.com/ErikDominikus/status/1073726987338842112</a>
+</p>
+
+<p>
+How about writing a Haskell interpreter with Prolog?
+I guess Haskell type checker takes ~100 lines of Prolog, and parser takes ~200 lines.
+It may be doable in a month.
+I have ~20 lines of Prolog type-checking Haskell AST but without type classes.
+</p>
+
+<p>
+Add ~500 more lines of Prolog metaprogram for translating lists to arrays,
+~2000 more lines for translating Prolog to optimized x86_64 native code (if not reinventing LLVM), 1 more month, and &#x2026; we may beat GHC at its own game? :)
+</p>
+</div>
+</div>
+</div>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    
+    
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/haskell.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/haskell.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+
+    <footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+        <p>This page was created on 2018-07-22 02:45 +0700.</p>
+        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
+        but it's unused because this site is a wiki, not a blog.</p>
+        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
+    </div>
+
+</footer>
+
+
+  </body>
+
+</html>
