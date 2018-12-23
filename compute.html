@@ -1,21 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="">
     <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>Computation</title>
-  <meta name="description" content="Personal website">
-
-  <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="https://edom.github.io/compute.html">
-  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
-
-  
-
-    <script>
+        <meta charset="UTF-8"/>
+        <title>Computation</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
 // Help the reader estimate how much time the reading is going to take.
 // Show word count and reading time estimation in TOC entry.
 //
@@ -82,468 +71,310 @@ document.addEventListener("DOMContentLoaded", function () {
         toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
     });
 });
-    </script>
+        </script>
 
-  
-  <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-12628443-6', 'auto');
-  ga('send', 'pageview');
-
-</script>
-  
-
-  
-
-  
-  <script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    jax: ["input/TeX","input/MathML","input/AsciiMath",
-
-    "output/CommonHTML"
-
-    ],
-    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
-    TeX: {
-        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        , equationNumbers: {
-            autoNumber: "AMS"
-        }
-    },
-    "CommonHTML": {
-        scale: 100
-    },
-    "fast-preview": {
-        disabled: true,
-    }
-});
-  </script>
-<style>
-/*
-PreviewHTML produces small Times New Roman text.
-PreviewHTML scale doesn't work.
-*/
-.MathJax_PHTML { font-size: 125%; }
-</style>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
-  
-</head>
-
-
-  <body>
-
-    <header class="site-header" role="banner">
-  <div class="wrapper">
-    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
-  </div>
-</header>
-
-
-    
-  <div style="display:none;">\(
-\renewcommand\emptyset{\varnothing}
-\newcommand\abs[1]{\left|#1\right|}
-\newcommand\dom{\textrm{dom}}
-\newcommand\cod{\textrm{cod}}
-\newcommand\Bernoulli{\textrm{Bernoulli}}
-\newcommand\Binomial{\textrm{Binomial}}
-\newcommand\Expect[1]{\mathbb{E}[#1]}
-\newcommand\Nat{\mathbb{N}}
-\newcommand\Integers{\mathbb{Z}}
-\newcommand\Real{\mathbb{R}}
-\newcommand\Rational{\mathbb{Q}}
-\newcommand\Complex{\mathbb{C}}
-\newcommand\Pr{\mathrm{P}}
-\newcommand\Time{\text{Time}}
-\newcommand\DTime{\text{DTime}}
-\newcommand\NTime{\text{NTime}}
-\newcommand\TimeP{\text{P}}
-\newcommand\TimeNP{\text{NP}}
-\newcommand\TimeExp{\text{ExpTime}}
-\newcommand\norm[1]{\left\lVert#1\right\rVert}
-\newcommand\bbA{\mathbb{A}}
-\newcommand\bbC{\mathbb{C}}
-\newcommand\bbD{\mathbb{D}}
-\newcommand\bbE{\mathbb{E}}
-\newcommand\bbN{\mathbb{N}}
-\newcommand\frakI{\mathfrak{I}}
-% deprecated; use TimeExp
-\newcommand\ExpTime{\text{ExpTime}}
-\newcommand\Compute{\text{Compute}}
-\newcommand\Search{\text{Search}}
-% model theory structure
-\newcommand\struc[1]{\mathcal{#1}}
-  \)</div>
-    
-
-    <main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        <article class="post">
-
-  <header class="post-header">
-    <h1 class="post-title">Computation</h1>
-  </header>
-
-  <div class="post-content">
-    <div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#related-articles">1. Related articles</a></li>
-</ul>
-</div>
-</div>
-<ul class="org-ul">
-<li>What is the theory of computation?
-
-<ul class="org-ul">
-<li>What is it concerned with?</li>
-<li>What are its important results?</li>
-</ul></li>
-
-<li>Where should we begin?
-
-<ul class="org-ul">
-<li>Should we begin by defining a function, a machine,
-computation, complexity, or a problem class?</li>
-<li>Suppose we have a function \(f : A \to B\).</li>
-<li>Given an input function \(\alpha : A \to S\),
-an output function \(\beta : S \to B\),
-and a transition function \(m : S \to S\),
-the computation is \(f = \beta \circ m^\infty \circ \alpha\).</li>
-<li>The space of all functions from \(A\) to \(B\): \(F~A~B\).</li>
-<li>We know that a function is a kind of relation.
-A relation composes.
-\((S, \circ)\) where \(\circ\) is associative.
-There is identity relation.
-There is inverse relation.
-Therefore the relation space forms a group.
-The function space forms a semigroup.</li>
-</ul></li>
-
-<li>ontology?
-<ul class="org-ul">
-<li>(moved to <a href="philo.html">philo.html</a>)</li>
-<li>computable
-<ul class="org-ul">
-<li><a href="https://en.wikipedia.org/wiki/Computable_function">WP:Computable function</a></li>
-</ul></li>
-<li>computation</li>
-<li>problem
-<ul class="org-ul">
-<li><a href="https://en.wikipedia.org/wiki/Computational_problem">WP:Computational problem</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Decision_problem">WP:Decision problem</a></li>
-</ul></li>
-<li>computation graph
-<ul class="org-ul">
-<li>? \(M\) <i>simulates</i> \(N\) iff a subgraph of \(M\) is isomorphic to \(N\).
-<ul class="org-ul">
-<li>\(T\) is the type of terms.</li>
-<li>\(M\) is the semantic function.</li>
-</ul></li>
-<li>Shortcut
-<ul class="org-ul">
-<li>The <i>shortcut</i> of \(A\) is \(B\) where
-\[
-          B(x,y) = \text{\\(x\\) is initial, \\(y\\) is terminal, and \\(x\\) reaches \\(y\\).}
-          \]
-<ul class="org-ul">
-<li>\(A\) should be acyclic.</li>
-</ul></li>
-<li>Alternative names for shortcut:
-<a href="https://en.wikipedia.org/wiki/Disintermediation">WP:Disintermediation</a>,
-immediation,
-curtailment,
-shortening,
-abridgement.</li>
-<li>Shortcutting is idempotent:
-the shortcut of the shortcut is the shortcut itself.</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>Do not confuse a <i>problem</i> and an <i>algorithm</i> that solves that problem.
-<ul class="org-ul">
-<li>Example:
-Consider \(p(x)\) that
-wastes \(2^{|x|}\) steps,
-and then returns the leftmost bit of \(x\).
-Thus \(p \in \ExpTime\),
-but \(\Search(p) \in \Time(O(1))\),
-because every string that begins with \(1\) satisfies \(p\),
-and we can just hardcode any of those strings in the solution of \(\Search(p)\).</li>
-</ul></li>
-
-<li>rewriting system
-
-<ul class="org-ul">
-<li>What does it mean that a rewriting system <i>computes</i> a function?</li>
-<li>Given more time, a rewriting system can compute more functions.</li>
-<li>A Turing machine is a rewriting system.</li>
-<li>What is the difference between a rewriting system and a formal system?</li>
-<li>What is the difference between a formal system and a formal language?</li>
-</ul></li>
-
-<li>Computation graph?
-
-<ul class="org-ul">
-<li>What should we name this sequence?
-
-<ul class="org-ul">
-<li>The sequence: \(x, f(x), f(f(x)), \ldots, f^n(x), \ldots\)
-
-<ul class="org-ul">
-<li>\(x\) is the initial state.</li>
-<li>\(f\) is the next-state function.</li>
-</ul></li>
-
-<li>Trace? History? Path? Computation path?</li>
-<li><a href="https://en.wikipedia.org/wiki/Iterated_function">WP:Iterated function</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Iteration">WP:Iteration</a></li>
-</ul></li>
-</ul></li>
-
-<li>Function \(f\) is <i>computable</i> by formal system \(S\) iff \(S\) has a finite description of \(f\).</li>
-<li>Are there one-way functions?</li>
-<li>Mess: next-state relation
-
-<ul class="org-ul">
-<li>The <i>next-state relation</i> \(N\) is obtained from \(T\)
-by making a loop for each isolated vertex.
-For each \(x\) in the domain of \(T\), \(N(x,y) = T(x,y)\).
-For each outside \(x\), \(N(x,x)\).</li>
-<li>The computed relation of \(T\) is \(N^\infty = N^\infty \circ N\).</li>
-<li>The problem computed by the graph is the infinite self-composition of the graph's next-state function.
-Such problem is the smallest \(X\) that satisfies \(N \circ X = X\).
-It is the least fixed point of \(F\) where \(F(X) = N \circ X\).
-The nth self-composition of \(N\) is \(N^n = E \circ N^{n-1}\).</li>
-<li>An <i>infinite composition</i> \(N^\infty\) is a relation satisfying \(N^\infty \circ N = N^\infty\).
-The empty relation satisfies this.
-The other one is nontrivial.</li>
-</ul></li>
-
-<li>Problem computed by a graph
-
-<ul class="org-ul">
-<li>A graph G <i>computes</i> the problem
-\(P(G) = \{ (x,y) ~|~ \text{\\(y\\) is the nearest terminal vertex reachable from \\(x\\)} \}\).
-Because the graph is loopless, there is no path from a vertex to itself, a vertex is not reachable from itself.</li>
-</ul></li>
-</ul>
-
-<pre class="example">
-terminal(x) = not exists y : E(x,y)
-reach(x,y) = E(x,y) vee exists m ( reach(x,m) wedge reach(m,y) )
-adist(x,y,1) = E(x,y)
-adist(x,y,n) = exists m exists k : dist(x,m,k) wedge dist(m,y,n-k)
-dist(x,y,n) = adist(x,y,n) wedge neg exists m &lt; n : adist(x,y,m)
-</pre>
-
-<ul class="org-ul">
-<li>Configuration graph as formal system?
-
-<ul class="org-ul">
-<li>Configuration <i>is</i> well-formed formula.</li>
-<li>\(E(a,b)\) <i>is</i> iff \(a' \vdash b'\).</li>
-<li>Initial state <i>is</i> axiom.</li>
-<li>\(F \models P\)</li>
-</ul></li>
-</ul>
-
-<div id="outline-container-org5bf5f14" class="outline-2">
-<h2 id="related-articles"><a id="org5bf5f14"></a><span class="section-number-2">1</span> Related articles</h2>
-<div class="outline-text-2" id="text-related-articles">
-<ul class="org-ul">
-<li>related Wikipedia articles
-
-<ul class="org-ul">
-<li><a href="https://en.wikipedia.org/wiki/Logic_of_graphs">WP:Logic of graphs</a> (related to finite model theory)</li>
-<li><a href="https://en.wikipedia.org/wiki/Disjoint_union">WP:Disjoint union</a></li>
-</ul></li>
-
-<li>Introductory materials
-
-<ul class="org-ul">
-<li>Universal algebra (precursor to model theory)
-
-<ul class="org-ul">
-<li><a href="http://mathcs.chapman.edu/~jipsen/talks/BLAST2009/JipsenUAtutorial1pp.pdf">Peter Jipsen's "tutorial on universal algebra"</a>
-presumes you know some abstract algebra.</li>
-<li><a href="http://www.math.hawaii.edu/~ralph/Classes/619/UA-Valeriote.pdf">Matt Valeriote's "Lectures on universal algebra"</a></li>
-<li>Not so introductory?
-
-<ul class="org-ul">
-<li><a href="http://www.uni-log.org/joana.pdf">Joanna Grygiel's "universal algebra for logics"</a> (is this introductory?)</li>
-<li><a href="http://www.math.hawaii.edu/~ralph/Classes/619/willard-ua.pdf">An overview of modern universal algebra</a></li>
-<li><a href="http://www.dsi.unive.it/~salibra/mainfinale.pdf">Applying Universal Algebra to Lambda Calculus</a></li>
-</ul></li>
-</ul></li>
-
-<li>Model theory
-
-<ul class="org-ul">
-<li><a href="http://www.math.toronto.edu/weiss/model_theory.pdf">"Fundamentals of model theory"</a></li>
-</ul></li>
-
-<li>Finite model theory
-
-<ul class="org-ul">
-<li><a href="https://dtai.cs.kuleuven.be/krr/files/seminars/IntroToFMT-janvdbussche.pdf">Jan Van den Bussche's "Introduction to finite model theory"</a>
-seems approachable</li>
-</ul></li>
-
-<li>Hodge theory
-
-<ul class="org-ul">
-<li><a href="https://arxiv.org/abs/0807.4991">Vladimir G. Ivancevic and Tijana T. Ivancevic's "undergraduate lecture notes in de Rham&#x2013;Hodge theory"</a></li>
-</ul></li>
-</ul></li>
-
-<li>People and activities
-
-<ul class="org-ul">
-<li><a href="https://logic.rwth-aachen.de/~graedel/">Erich Grädel</a>
-
-<ul class="org-ul">
-<li>"Finite model theory studies the relationship between logical definability and computational complexity on finite structures."</li>
-<li><a href="https://logic.rwth-aachen.de/Research/AlMoTh/">Algorithmic model theory</a></li>
-<li><a href="https://logic.rwth-aachen.de/pub/graedel/AbuzaidDawGraPak17.pdf">"Definability of summation problems for abelian groups and semigroups"</a>.
-"Our interest in the Abelian Semigroup Summation Problem
-is due to the observation that it illustrates, in a mathematically
-very pure way, the basic differences between logics and algorithms,
-or between definability and complexity, that underly
-some of the most fundamental and exciting problems of logic
-in computer science."</li>
-<li><a href="https://logic.rwth-aachen.de/pub/graedel/GrPaPa17.pdf">"The model-theoretic expressiveness of propositional proof systems"</a></li>
-</ul></li>
-
-<li>Ronald Fagin</li>
-<li>Neil Immerman</li>
-<li>many others?</li>
-</ul></li>
-
-<li><a href="http://www.math.ucla.edu/~chernikov/teaching/17W-MATH285D/FiniteModelTheoryNotes.pdf">http://www.math.ucla.edu/~chernikov/teaching/17W-MATH285D/FiniteModelTheoryNotes.pdf</a></li>
-<li>external resources
-
-<ul class="org-ul">
-<li>online text books?
-
-<ul class="org-ul">
-<li><a href="http://theoryofcomputing.org/articles/main/index.html">http://theoryofcomputing.org/articles/main/index.html</a></li>
-<li><a href="http://oajse.com/subjects/computer_science.html">http://oajse.com/subjects/computer_science.html</a></li>
-</ul></li>
-
-<li>journals?
-
-<ul class="org-ul">
-<li><a href="https://www.hindawi.com/journals/ase/contents/">https://www.hindawi.com/journals/ase/contents/</a></li>
-</ul></li>
-</ul></li>
-
-<li>Predicate Computation and Search Problem
-
-<ul class="org-ul">
-<li>Isomorphism:
-
-<ul class="org-ul">
-<li>Language ~ predicate.</li>
-<li>Predicate ~ set.
-
-<ul class="org-ul">
-<li>(A predicate is a unary relation.)</li>
-</ul></li>
-</ul></li>
-
-<li>Insight?
-
-<ul class="org-ul">
-<li>Every predicate \(p\)
-gives rise to at least two problems:
-
-<ul class="org-ul">
-<li>\(\Compute(p) = \text{given \\(x\\), compute \\(p(x)\\)}\), and</li>
-<li>\(\Search(p) = \text{find any \\(x\\) such that \\(p(x)\\) is true}\).</li>
-</ul></li>
-
-<li><a href="https://en.wikipedia.org/wiki/Search_problem">https://en.wikipedia.org/wiki/Search_problem</a></li>
-</ul></li>
-
-<li>There are \(p\) with slow \(\Compute(p)\) but fast \(\Search(p)\)?</li>
-<li>There are \(p\) with fast \(\Compute(p)\) but slow \(\Search(p)\)?</li>
-<li>Conjecture:
-For every complexity class \(C\),
-there exists \(p\) such that \(\Compute(p) \in C\).</li>
-<li>Conjecture:
-For every predicate \(p\),
-there exists complexity class \(C\) such that \(\Compute(p) \in C\).</li>
-<li>Conjecture:
-For every complexity classes \(C \subset D\),
-there exists \(p\) such that \(\Compute(p) \in D-C\).</li>
-<li>Conjecture:
-For every complexity class \(C\),
-there exists \(p\) such that \(\Compute(p) \in C\) and \(\Search(p) \not\in C\).</li>
-<li>Conjecture:
-For every predicate \(p\),
-there exists complexity class \(C\) such that \(\Compute(p) \in C\) and \(\Search(p) \not\in C\).</li>
-<li>Problem formation conjecture:
-For every complexity class \(C\),
-there exists \(p,P,Q\) such that \(P(p) \in C\) and \(Q(p) \not\in C\).</li>
-<li>Conjecture of arbitrary pessimization:
-For all complexity classes \(F\) and \(S\) where \(F \subset S\),
-there exists \(p\) such that \(\Compute(p) \in S\) and \(\Search(p) \in F\).
-The letters \(F\) and \(S\) are mnemonics for "fast" and "slow".</li>
-</ul></li>
-
-<li>Lemma: There exists fast \(p\) having slow \(S(p)\).</li>
-<li>Conjecture:
-For every complexity classes \(C\),
-there exists \(p \in C\) such that \(S(p) \not\in C\).</li>
-<li>Conjecture:
-For every complexity classes \(C\) and \(D\),
-there exists \(p \in C\) such that \(S(p) \in D\).</li>
-<li>Formal languages and describable problems
-
-<ul class="org-ul">
-<li>Consider the formal language \(L\)
-with alphabet \(\{ z,s \}\)
-and formation rules</li>
-
-<li>\(z \in L\) and</li>
-<li>\(\alpha \in L \rightarrow s \alpha \in L\).
-It should be obvious that \(L\) describes the set \(\{ z, sz, ssz, \ldots \}\).
-This language solves the problem of adding a natural number by one.</li>
-</ul></li>
-
-<li>First-order logic
-
-<ul class="org-ul">
-<li>Example of terms in first-order logic:
-
-<ul class="org-ul">
-<li>\(x\)</li>
-<li>\(R(x,y)\)</li>
-<li>\(R(x) \wedge S(y)\)</li>
-</ul></li>
-</ul></li>
-</ul>
-</div>
-</div>
-
-  </div>
-
-</article>
-
-      </div>
-    </main>
-
-    
-    
-<div id="disqus_thread"></div>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
 <script>
-
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus's wiki</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Computation</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+                    <ul>
+                    <li><p>What is the theory of computation?</p>
+                    <ul>
+                    <li>What is it concerned with?</li>
+                    <li>What are its important results?</li>
+                    </ul></li>
+                    <li><p>Where should we begin?</p>
+                    <ul>
+                    <li>Should we begin by defining a function, a machine, computation, complexity, or a problem class?</li>
+                    <li>Suppose we have a function <span class="math inline">\(f : A \to B\)</span>.</li>
+                    <li>Given an input function <span class="math inline">\(\alpha : A \to S\)</span>, an output function <span class="math inline">\(\beta : S \to B\)</span>, and a transition function <span class="math inline">\(m : S \to S\)</span>, the computation is <span class="math inline">\(f = \beta \circ m^\infty \circ \alpha\)</span>.</li>
+                    <li>The space of all functions from <span class="math inline">\(A\)</span> to <span class="math inline">\(B\)</span>: <span class="math inline">\(F~A~B\)</span>.</li>
+                    <li>We know that a function is a kind of relation. A relation composes. <span class="math inline">\((S, \circ)\)</span> where <span class="math inline">\(\circ\)</span> is associative. There is identity relation. There is inverse relation. Therefore the relation space forms a group. The function space forms a semigroup.</li>
+                    </ul></li>
+                    <li>ontology?
+                    <ul>
+                    <li>(moved to <a href="file:philo.org">file:philo.org</a>)</li>
+                    <li>computable
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Computable_function">WP:Computable function</a></li>
+                    </ul></li>
+                    <li>computation</li>
+                    <li>problem
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Computational_problem">WP:Computational problem</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Decision_problem">WP:Decision problem</a></li>
+                    </ul></li>
+                    <li>computation graph
+                    <ul>
+                    <li>? <span class="math inline">\(M\)</span> <em>simulates</em> <span class="math inline">\(N\)</span> iff a subgraph of <span class="math inline">\(M\)</span> is isomorphic to <span class="math inline">\(N\)</span>.
+                    <ul>
+                    <li><span class="math inline">\(T\)</span> is the type of terms.</li>
+                    <li><span class="math inline">\(M\)</span> is the semantic function.</li>
+                    </ul></li>
+                    <li>Shortcut
+                    <ul>
+                    <li>The <em>shortcut</em> of <span class="math inline">\(A\)</span> is <span class="math inline">\(B\)</span> where <span class="math display">\[
+                       B(x,y) = \text{\\(x\\) is initial, \\(y\\) is terminal, and \\(x\\) reaches \\(y\\).}
+                       \]</span>
+                    <ul>
+                    <li><span class="math inline">\(A\)</span> should be acyclic.</li>
+                    </ul></li>
+                    <li>Alternative names for shortcut: <a href="https://en.wikipedia.org/wiki/Disintermediation">WP:Disintermediation</a>, immediation, curtailment, shortening, abridgement.</li>
+                    <li>Shortcutting is idempotent: the shortcut of the shortcut is the shortcut itself.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Do not confuse a <em>problem</em> and an <em>algorithm</em> that solves that problem.
+                    <ul>
+                    <li>Example: Consider <span class="math inline">\(p(x)\)</span> that wastes <span class="math inline">\(2^{|x|}\)</span> steps, and then returns the leftmost bit of <span class="math inline">\(x\)</span>. Thus <span class="math inline">\(p \in \ExpTime\)</span>, but <span class="math inline">\(\Search(p) \in \Time(O(1))\)</span>, because every string that begins with <span class="math inline">\(1\)</span> satisfies <span class="math inline">\(p\)</span>, and we can just hardcode any of those strings in the solution of <span class="math inline">\(\Search(p)\)</span>.</li>
+                    </ul></li>
+                    <li><p>rewriting system</p>
+                    <ul>
+                    <li>What does it mean that a rewriting system <em>computes</em> a function?</li>
+                    <li>Given more time, a rewriting system can compute more functions.</li>
+                    <li>A Turing machine is a rewriting system.</li>
+                    <li>What is the difference between a rewriting system and a formal system?</li>
+                    <li>What is the difference between a formal system and a formal language?</li>
+                    </ul></li>
+                    <li><p>Computation graph?</p>
+                    <ul>
+                    <li><p>What should we name this sequence?</p>
+                    <ul>
+                    <li><p>The sequence: <span class="math inline">\(x, f(x), f(f(x)), \ldots, f^n(x), \ldots\)</span></p>
+                    <ul>
+                    <li><span class="math inline">\(x\)</span> is the initial state.</li>
+                    <li><span class="math inline">\(f\)</span> is the next-state function.</li>
+                    </ul></li>
+                    <li>Trace? History? Path? Computation path?</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Iterated_function">WP:Iterated function</a></li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Iteration">WP:Iteration</a></p></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Function <span class="math inline">\(f\)</span> is <em>computable</em> by formal system <span class="math inline">\(S\)</span> iff <span class="math inline">\(S\)</span> has a finite description of <span class="math inline">\(f\)</span>.</li>
+                    <li>Are there one-way functions?</li>
+                    <li><p>Mess: next-state relation</p>
+                    <ul>
+                    <li>The <em>next-state relation</em> <span class="math inline">\(N\)</span> is obtained from <span class="math inline">\(T\)</span> by making a loop for each isolated vertex. For each <span class="math inline">\(x\)</span> in the domain of <span class="math inline">\(T\)</span>, <span class="math inline">\(N(x,y) = T(x,y)\)</span>. For each outside <span class="math inline">\(x\)</span>, <span class="math inline">\(N(x,x)\)</span>.</li>
+                    <li>The computed relation of <span class="math inline">\(T\)</span> is <span class="math inline">\(N^\infty = N^\infty \circ N\)</span>.</li>
+                    <li>The problem computed by the graph is the infinite self-composition of the graph's next-state function. Such problem is the smallest <span class="math inline">\(X\)</span> that satisfies <span class="math inline">\(N \circ X = X\)</span>. It is the least fixed point of <span class="math inline">\(F\)</span> where <span class="math inline">\(F(X) = N \circ X\)</span>. The nth self-composition of <span class="math inline">\(N\)</span> is <span class="math inline">\(N^n = E \circ N^{n-1}\)</span>.</li>
+                    <li>An <em>infinite composition</em> <span class="math inline">\(N^\infty\)</span> is a relation satisfying <span class="math inline">\(N^\infty \circ N = N^\infty\)</span>. The empty relation satisfies this. The other one is nontrivial.</li>
+                    </ul></li>
+                    <li><p>Problem computed by a graph</p>
+                    <ul>
+                    <li>A graph G <em>computes</em> the problem <span class="math inline">\(P(G) = \{ (x,y) ~|~ \text{\\(y\\) is the nearest terminal vertex reachable from \\(x\\)} \}\)</span>. Because the graph is loopless, there is no path from a vertex to itself, a vertex is not reachable from itself.</li>
+                    </ul></li>
+                    </ul>
+                    <pre class="example"><code>terminal(x) = not exists y : E(x,y)
+                    reach(x,y) = E(x,y) vee exists m ( reach(x,m) wedge reach(m,y) )
+                    adist(x,y,1) = E(x,y)
+                    adist(x,y,n) = exists m exists k : dist(x,m,k) wedge dist(m,y,n-k)
+                    dist(x,y,n) = adist(x,y,n) wedge neg exists m &lt; n : adist(x,y,m)
+                    </code></pre>
+                    <ul>
+                    <li><p>Configuration graph as formal system?</p>
+                    <ul>
+                    <li>Configuration <em>is</em> well-formed formula.</li>
+                    <li><span class="math inline">\(E(a,b)\)</span> <em>is</em> iff <span class="math inline">\(a&#39; \vdash b&#39;\)</span>.</li>
+                    <li>Initial state <em>is</em> axiom.</li>
+                    <li><span class="math inline">\(F \models P\)</span></li>
+                    </ul></li>
+                    </ul>
+                    <h3 id="related-articles">Related articles</h3>
+                    <ul>
+                    <li><p>related Wikipedia articles</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Logic_of_graphs">WP:Logic of graphs</a> (related to finite model theory)</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Disjoint_union">WP:Disjoint union</a></li>
+                    </ul></li>
+                    <li><p>Introductory materials</p>
+                    <ul>
+                    <li><p>Universal algebra (precursor to model theory)</p>
+                    <ul>
+                    <li><a href="http://mathcs.chapman.edu/~jipsen/talks/BLAST2009/JipsenUAtutorial1pp.pdf">Peter Jipsen's &quot;tutorial on universal algebra&quot;</a> presumes you know some abstract algebra.</li>
+                    <li><a href="http://www.math.hawaii.edu/~ralph/Classes/619/UA-Valeriote.pdf">Matt Valeriote's &quot;Lectures on universal algebra&quot;</a></li>
+                    <li><p>Not so introductory?</p>
+                    <ul>
+                    <li><a href="http://www.uni-log.org/joana.pdf">Joanna Grygiel's &quot;universal algebra for logics&quot;</a> (is this introductory?)</li>
+                    <li><a href="http://www.math.hawaii.edu/~ralph/Classes/619/willard-ua.pdf">An overview of modern universal algebra</a></li>
+                    <li><a href="http://www.dsi.unive.it/~salibra/mainfinale.pdf">Applying Universal Algebra to Lambda Calculus</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Model theory</p>
+                    <ul>
+                    <li><a href="http://www.math.toronto.edu/weiss/model_theory.pdf">&quot;Fundamentals of model theory&quot;</a></li>
+                    </ul></li>
+                    <li><p>Finite model theory</p>
+                    <ul>
+                    <li><a href="https://dtai.cs.kuleuven.be/krr/files/seminars/IntroToFMT-janvdbussche.pdf">Jan Van den Bussche's &quot;Introduction to finite model theory&quot;</a> seems approachable</li>
+                    </ul></li>
+                    <li><p>Hodge theory</p>
+                    <ul>
+                    <li><a href="https://arxiv.org/abs/0807.4991">Vladimir G. Ivancevic and Tijana T. Ivancevic's &quot;undergraduate lecture notes in de Rham–Hodge theory&quot;</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>People and activities</p>
+                    <ul>
+                    <li><p><a href="https://logic.rwth-aachen.de/~graedel/">Erich Grädel</a></p>
+                    <ul>
+                    <li>&quot;Finite model theory studies the relationship between logical definability and computational complexity on finite structures.&quot;</li>
+                    <li><a href="https://logic.rwth-aachen.de/Research/AlMoTh/">Algorithmic model theory</a></li>
+                    <li><a href="https://logic.rwth-aachen.de/pub/graedel/AbuzaidDawGraPak17.pdf">&quot;Definability of summation problems for abelian groups and semigroups&quot;</a>. &quot;Our interest in the Abelian Semigroup Summation Problem is due to the observation that it illustrates, in a mathematically very pure way, the basic differences between logics and algorithms, or between definability and complexity, that underly some of the most fundamental and exciting problems of logic in computer science.&quot;</li>
+                    <li><a href="https://logic.rwth-aachen.de/pub/graedel/GrPaPa17.pdf">&quot;The model-theoretic expressiveness of propositional proof systems&quot;</a></li>
+                    </ul></li>
+                    <li>Ronald Fagin</li>
+                    <li>Neil Immerman</li>
+                    <li><p>many others?</p></li>
+                    </ul></li>
+                    <li><a href="http://www.math.ucla.edu/~chernikov/teaching/17W-MATH285D/FiniteModelTheoryNotes.pdf">http://www.math.ucla.edu/~chernikov/teaching/17W-MATH285D/FiniteModelTheoryNotes.pdf</a></li>
+                    <li><p>external resources</p>
+                    <ul>
+                    <li><p>online text books?</p>
+                    <ul>
+                    <li><a href="http://theoryofcomputing.org/articles/main/index.html">http://theoryofcomputing.org/articles/main/index.html</a></li>
+                    <li><a href="http://oajse.com/subjects/computer_science.html">http://oajse.com/subjects/computer_science.html</a></li>
+                    </ul></li>
+                    <li><p>journals?</p>
+                    <ul>
+                    <li><a href="https://www.hindawi.com/journals/ase/contents/">https://www.hindawi.com/journals/ase/contents/</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Predicate Computation and Search Problem</p>
+                    <ul>
+                    <li><p>Isomorphism:</p>
+                    <ul>
+                    <li>Language ~ predicate.</li>
+                    <li><p>Predicate ~ set.</p>
+                    <ul>
+                    <li>(A predicate is a unary relation.)</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Insight?</p>
+                    <ul>
+                    <li><p>Every predicate <span class="math inline">\(p\)</span> gives rise to at least two problems:</p>
+                    <ul>
+                    <li><span class="math inline">\(\Compute(p) = \text{given \\(x\\), compute \\(p(x)\\)}\)</span>, and</li>
+                    <li><span class="math inline">\(\Search(p) = \text{find any \\(x\\) such that \\(p(x)\\) is true}\)</span>.</li>
+                    </ul></li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Search_problem">https://en.wikipedia.org/wiki/Search_problem</a></p></li>
+                    </ul></li>
+                    <li>There are <span class="math inline">\(p\)</span> with slow <span class="math inline">\(\Compute(p)\)</span> but fast <span class="math inline">\(\Search(p)\)</span>?</li>
+                    <li>There are <span class="math inline">\(p\)</span> with fast <span class="math inline">\(\Compute(p)\)</span> but slow <span class="math inline">\(\Search(p)\)</span>?</li>
+                    <li>Conjecture: For every complexity class <span class="math inline">\(C\)</span>, there exists <span class="math inline">\(p\)</span> such that <span class="math inline">\(\Compute(p) \in C\)</span>.</li>
+                    <li>Conjecture: For every predicate <span class="math inline">\(p\)</span>, there exists complexity class <span class="math inline">\(C\)</span> such that <span class="math inline">\(\Compute(p) \in C\)</span>.</li>
+                    <li>Conjecture: For every complexity classes <span class="math inline">\(C \subset D\)</span>, there exists <span class="math inline">\(p\)</span> such that <span class="math inline">\(\Compute(p) \in D-C\)</span>.</li>
+                    <li>Conjecture: For every complexity class <span class="math inline">\(C\)</span>, there exists <span class="math inline">\(p\)</span> such that <span class="math inline">\(\Compute(p) \in C\)</span> and <span class="math inline">\(\Search(p) \not\in C\)</span>.</li>
+                    <li>Conjecture: For every predicate <span class="math inline">\(p\)</span>, there exists complexity class <span class="math inline">\(C\)</span> such that <span class="math inline">\(\Compute(p) \in C\)</span> and <span class="math inline">\(\Search(p) \not\in C\)</span>.</li>
+                    <li>Problem formation conjecture: For every complexity class <span class="math inline">\(C\)</span>, there exists <span class="math inline">\(p,P,Q\)</span> such that <span class="math inline">\(P(p) \in C\)</span> and <span class="math inline">\(Q(p) \not\in C\)</span>.</li>
+                    <li><p>Conjecture of arbitrary pessimization: For all complexity classes <span class="math inline">\(F\)</span> and <span class="math inline">\(S\)</span> where <span class="math inline">\(F \subset S\)</span>, there exists <span class="math inline">\(p\)</span> such that <span class="math inline">\(\Compute(p) \in S\)</span> and <span class="math inline">\(\Search(p) \in F\)</span>. The letters <span class="math inline">\(F\)</span> and <span class="math inline">\(S\)</span> are mnemonics for &quot;fast&quot; and &quot;slow&quot;.</p></li>
+                    </ul></li>
+                    <li>Lemma: There exists fast <span class="math inline">\(p\)</span> having slow <span class="math inline">\(S(p)\)</span>.</li>
+                    <li>Conjecture: For every complexity classes <span class="math inline">\(C\)</span>, there exists <span class="math inline">\(p \in C\)</span> such that <span class="math inline">\(S(p) \not\in C\)</span>.</li>
+                    <li>Conjecture: For every complexity classes <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span>, there exists <span class="math inline">\(p \in C\)</span> such that <span class="math inline">\(S(p) \in D\)</span>.</li>
+                    <li><p>Formal languages and describable problems</p>
+                    <ul>
+                    <li>Consider the formal language <span class="math inline">\(L\)</span> with alphabet <span class="math inline">\(\{ z,s \}\)</span> and formation rules</li>
+                    </ul>
+                    <ol>
+                    <li><span class="math inline">\(z \in L\)</span> and</li>
+                    <li><span class="math inline">\(\alpha \in L \rightarrow s \alpha \in L\)</span>. It should be obvious that <span class="math inline">\(L\)</span> describes the set <span class="math inline">\(\{ z, sz, ssz, \ldots \}\)</span>. This language solves the problem of adding a natural number by one.</li>
+                    </ol></li>
+                    <li><p>First-order logic</p>
+                    <ul>
+                    <li><p>Example of terms in first-order logic:</p>
+                    <ul>
+                    <li><span class="math inline">\(x\)</span></li>
+                    <li><span class="math inline">\(R(x,y)\)</span></li>
+                    <li><span class="math inline">\(R(x) \wedge S(y)\)</span></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
 /**
 *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
 *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
@@ -559,21 +390,17 @@ s.setAttribute('data-timestamp', +new Date());
 })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    
-
-    <footer class="site-footer h-card">
-    <data class="u-url" href="/"></data>
-
-    <div class="wrapper">
-        <p>This page was created on 2017-06-29 22:40 +0700.</p>
-        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
-        but it's unused because this site is a wiki, not a blog.</p>
-        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
-    </div>
-
-</footer>
-
-
-  </body>
-
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2017-06-29 22:40 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
 </html>

@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Justifying natural knowledge</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus's wiki</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Justifying natural knowledge</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+                    <div class="local_table_of_contents">
+                    <ul>
+                    <li><span class="section_number">1</span><span class="section_title"><a href="#overview">Overview</a></span><span class="word_count">(173w~1m)</span></li>
+                    <li><span class="section_number">2</span><span class="section_title"><a href="#matter">Matter</a></span><span class="word_count">(1028w~6m)</span></li>
+                    <li><span class="section_number">3</span><span class="section_title"><a href="#lets-go-back-to-prehistoric-times.">Let's go back to prehistoric times.</a></span><span class="word_count">(1267w~7m)</span></li>
+                    <li><span class="section_number">4</span><span class="section_title"><a href="#this-is-a-big-hole-of-things-not-yet-justified.">(This is a big hole of things not yet justified.)</a></span><span class="word_count">(10w~1m)</span></li>
+                    <li><span class="section_number">5</span><span class="section_title"><a href="#modern-physics">Modern physics?</a></span><span class="word_count">(524w~3m)</span></li>
+                    <li><span class="section_number">6</span><span class="section_title"><a href="#chemistry-1">Chemistry</a></span><span class="word_count">(21w~1m)</span></li>
+                    <li><span class="section_number">7</span><span class="section_title"><a href="#astronomy">Astronomy</a></span><span class="word_count">(238w~2m)</span></li>
+                    <li><span class="section_number">8</span><span class="section_title"><a href="#quantum-venn-diagram-paradox">Quantum Venn diagram paradox</a></span><span class="word_count">(800w~4m)</span></li>
+                    <li><span class="section_number">9</span><span class="section_title"><a href="#biology">Biology</a></span><span class="word_count">(428w~3m)</span></li>
+                    <li><span class="section_number">10</span><span class="section_title"><a href="#physics">Physics</a></span><span class="word_count">(1058w~6m)</span></li>
+                    <li><span class="section_number">11</span><span class="section_title"><a href="#fixing-reification-fallacies-we-often-conflate-a-representation-of-a-thing-and-the-thing-itself.">Fixing reification fallacies; we often conflate a representation of a thing and the thing itself.</a></span><span class="word_count">(292w~2m)</span></li>
+                    <li><span class="section_number">12</span><span class="section_title"><a href="#colors-1">Colors</a></span><span class="word_count">(111w~1m)</span></li>
+                    <li><span class="section_number">13</span><span class="section_title"><a href="#probability-arises-from-basic-physical-laws">Probability arises from basic physical laws?</a></span><span class="word_count">(6w~1m)</span></li>
+                    </ul>
+                    </div>
+                    <h2 id="overview"><span class="section_number">1</span><span class="section_title">Overview</span></h2>
+                    <div class="local_table_of_contents">
+                    <ul>
+                    <li><span class="section_number">1.1</span><span class="section_title"><a href="#target-audience">Target audience:</a></span><span class="word_count">(12w~1m)</span></li>
+                    <li><span class="section_number">1.2</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(35w~1m)</span></li>
+                    <li><span class="section_number">1.3</span><span class="section_title"><a href="#brief-excursion-to-philosophy">Brief excursion to philosophy</a></span><span class="word_count">(128w~1m)</span></li>
+                    </ul>
+                    </div>
+                    <h3 id="target-audience"><span class="section_number">1.1</span><span class="section_title">Target audience:</span></h3>
+                    <ul>
+                    <li>Everyone who wants to justify physics.</li>
+                    <li>Everyone who wants to formalize physics.</li>
+                    </ul>
+                    <h3 id="what"><span class="section_number">1.2</span><span class="section_title">What</span></h3>
+                    <ul>
+                    <li>Natural knowledge is knowledge about nature (reality).</li>
+                    <li>This page tries to list natural knowledge, sorted descending by verifiability.</li>
+                    <li>This page tries to teach natural knowledge in the fastest way possible.
+                    <ul>
+                    <li>Knowledge is presented top-down:
+                    <ul>
+                    <li>A child verifies its parent.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul>
+                    <h3 id="brief-excursion-to-philosophy"><span class="section_number">1.3</span><span class="section_title">Brief excursion to philosophy</span></h3>
+                    <div class="local_table_of_contents">
+                    <ul>
+                    <li><span class="section_number">1.3.1</span><span class="section_title"><a href="#truth-is-a-continuum-not-binary-true-and-false.">Truth is a continuum (not binary true-and-false).</a></span><span class="word_count">(11w~1m)</span></li>
+                    <li><span class="section_number">1.3.2</span><span class="section_title"><a href="#brief-excursion-to-epistemology">Brief excursion to epistemology</a></span><span class="word_count">(26w~1m)</span></li>
+                    <li><span class="section_number">1.3.3</span><span class="section_title"><a href="#a-problem-with-physics-too-many-unjustified-tacit-assumptions.">A problem with physics: too many unjustified tacit assumptions.</a></span><span class="word_count">(90w~1m)</span></li>
+                    </ul>
+                    </div>
+                    <h4 id="truth-is-a-continuum-not-binary-true-and-false."><span class="section_number">1.3.1</span><span class="section_title">Truth is a continuum (not binary true-and-false).</span></h4>
+                    <p>(Why are we saying this?)</p>
+                    <h4 id="brief-excursion-to-epistemology"><span class="section_number">1.3.2</span><span class="section_title">Brief excursion to epistemology</span></h4>
+                    <ul>
+                    <li>We assume that there are three sources of knowledge:
+                    <ul>
+                    <li>observation (the senses)</li>
+                    <li>definition (fiat, agreement between speakers of the same language)</li>
+                    <li>inference (logic, rules of thought)</li>
+                    </ul></li>
+                    </ul>
+                    <h4 id="a-problem-with-physics-too-many-unjustified-tacit-assumptions."><span class="section_number">1.3.3</span><span class="section_title">A problem with physics: too many unjustified tacit assumptions.</span></h4>
+                    <ul>
+                    <li>Every scientific revolution invalidates some tacit assumptions?</li>
+                    <li>Physics is mathematics + engineering + philosophy.
+                    <ul>
+                    <li>If we skip the mathematics, we can't measure.</li>
+                    <li>If we skip the engineering, we can't experiment.</li>
+                    <li>If we skip the philosophy, we can't progress.
+                    <ul>
+                    <li>We will make unjustified tacit assumptions.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Tacit_assumption">WP:Tacit assumption</a></li>
+                    <li><a href="https://www.researchgate.net/publication/295525659_Tacit_assumptions_or_Implicit_assumptions_if_they_are_flawed_leads_to_paradoxical_paradigm_and_scientific_crisis">Tacit assumptions or Implicit assumptions (if they are flawed) leads to paradoxical paradigm and scientific crisis</a></li>
+                    <li><a href="https://www.researchgate.net/post/How_to_expose_insidious_tacit_assumptions_which_sidetrack_scientific_progress_into_wrong_path_leading_to_scientific_crisis_if_not_exposed">How to expose insidious tacit assumptions, which sidetrack scientific progress into wrong path (leading to scientific crisis), if not exposed?</a></li>
+                    <li><a href="https://www.jstor.org/stable/986647">1975, article, paywall, &quot;Tacit Assumptions in Fundamental Particle Physics&quot;</a>
+                    <ul>
+                    <li><a href="http://www.iaea.org/inis/collection/NCLCollectionStore/_Public/06/183/6183879.pdf">unpaywalled</a></li>
+                    </ul></li>
+                    </ul>
+                    <h2 id="matter"><span class="section_number">2</span><span class="section_title">Matter</span></h2>
+                    <div class="local_table_of_contents">
+                    <ul>
+                    <li><span class="section_number">2.1</span><span class="section_title"><a href="#obvious-things-mass-weight-volume-density">Obvious things: mass, weight, volume, density</a></span><span class="word_count">(185w~1m)</span></li>
+                    <li><span class="section_number">2.2</span><span class="section_title"><a href="#fire-light-and-heat">Fire, light, and heat</a></span><span class="word_count">(198w~1m)</span></li>
+                    <li><span class="section_number">2.3</span><span class="section_title"><a href="#metal-rock-ore-mineral-mining-smelting">Metal, rock, ore, mineral, mining, smelting</a></span><span class="word_count">(210w~2m)</span></li>
+                    <li><span class="section_number">2.4</span><span class="section_title"><a href="#unread">Unread</a></span><span class="word_count">(4w~1m)</span></li>
+                    <li><span class="section_number">2.5</span><span class="section_title"><a href="#chemistry">Chemistry</a></span><span class="word_count">(21w~1m)</span></li>
+                    <li><span class="section_number">2.6</span><span class="section_title"><a href="#chemical-element">Chemical element</a></span><span class="word_count">(178w~1m)</span></li>
+                    <li><span class="section_number">2.7</span><span class="section_title"><a href="#atomic-theory">Atomic theory</a></span><span class="word_count">(153w~1m)</span></li>
+                    <li><span class="section_number">2.8</span><span class="section_title"><a href="#electrochemistry">Electrochemistry</a></span><span class="word_count">(12w~1m)</span></li>
+                    <li><span class="section_number">2.9</span><span class="section_title"><a href="#what-1">What?</a></span><span class="word_count">(75w~1m)</span></li>
+                    </ul>
+                    </div>
+                    <h3 id="obvious-things-mass-weight-volume-density"><span class="section_number">2.1</span><span class="section_title">Obvious things: mass, weight, volume, density</span></h3>
+                    <ul>
+                    <li>Define: <em>Mass</em> is the amount of matter.
+                    <ul>
+                    <li>The <em>mass</em> of a thing is the amount of matter in that thing.</li>
+                    <li>Tacit assumption: Things are made of a finite amount of matter.
+                    <ul>
+                    <li>Water is made of water matter.</li>
+                    <li>Iron is made of iron matter.</li>
+                    <li>X is made of X matter, etc.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Define: <em>Weight</em> is what a weight scale measures.</li>
+                    <li>Define: <em>Volume</em> is what volume meter measures.
+                    <ul>
+                    <li>Submerge X completely into a bucket full of water.</li>
+                    <li>The <em>volume</em> of X is the amount of water that spills.</li>
+                    </ul></li>
+                    <li>Define: <em>Volume</em> is amount of space occupied.
+                    <ul>
+                    <li>Tacit assumption: Space exists.</li>
+                    <li>Tacit assumption: Space can be occupied.</li>
+                    </ul></li>
+                    <li>Define: <em>Density</em> is mass per volume.</li>
+                    <li>Observe: Mass is not weight.
+                    <ul>
+                    <li>Jump around while measuring the weight of something.</li>
+                    <li>The weight scale glitches.</li>
+                    </ul></li>
+                    <li>Assume: The mass of <span class="math inline">\( n \)</span> copies of X is <span class="math inline">\( n \)</span> times the mass of X.
+                    <ul>
+                    <li>Problems
+                    <ul>
+                    <li>What do we mean by a <em>copy</em> of X? An <em>instance</em> of X?</li>
+                    <li>Tacit assumption: Copies of a thing are made of the same kind of matter.</li>
+                    <li>Tacit assumption: Things of the same type behave in the same way.</li>
+                    </ul></li>
+                    <li>Observe: The weight of <span class="math inline">\( n \)</span> copies of X is <span class="math inline">\( n \)</span> times the weight of X.</li>
+                    <li>Assume: Weight is proportional to mass.</li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/History_of_measurement">WP:History of measurement</a></li>
+                    </ul>
+                    <h3 id="fire-light-and-heat"><span class="section_number">2.2</span><span class="section_title">Fire, light, and heat</span></h3>
+                    <ul>
+                    <li>Observe: Fire.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Control_of_fire_by_early_humans">WP:Control of fire by early humans</a>
+                    <ul>
+                    <li>Infer: The first human encounter of fire is accidental.
+                    <ul>
+                    <li>Assume: There existed a time when no human had encountered fire.</li>
+                    <li>Possible scenarios:
+                    <ul>
+                    <li>Someone encountered a plant burning due to lightning or volcanism.</li>
+                    <li>Someone focused sunlight onto leaf using natural glass, out of pure curiosity.
+                    <ul>
+                    <li>Not implausible, but isn't this less likely than accidental discovery of fire due to lightning or volcanism?</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://www.quora.com/How-did-humanity-find-out-how-to-make-fire">Quora: How did humanity find out how to make fire?</a></li>
+                    <li><a href="https://www.acsh.org/news/2016/07/23/how-and-when-did-humans-discover-fire">acsh.org: How And When Did Humans Discover Fire?</a></li>
+                    <li><a href="https://www.sapiens.org/archaeology/neanderthal-fire/">sapiens.org: Who Started the First Fire?</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Fire_making">WP:Fire making</a>
+                    <ul>
+                    <li>&quot;Fire occurs naturally as a result of volcanic activity, meteorites, and lightning strikes.&quot;
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Wildfire">WP:Wildfire</a></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Define: To <em>burn</em> something is to put it in fire.</li>
+                    <li>Define: Something is <em>burning</em> if it is exhibiting fire.</li>
+                    <li>Define: Flame.</li>
+                    <li>What is the difference between <a href="https://en.wikipedia.org/wiki/Flame">WP:Flame</a> and <a href="https://en.wikipedia.org/wiki/Fire">WP:Fire</a>?</li>
+                    <li>Define: Heat
+                    <ul>
+                    <li><em>Heat</em> is what we feel with our skin near a fire.</li>
+                    <li>We feel <em>more heat</em> as we approach a fire.</li>
+                    </ul></li>
+                    <li>Define: Light.</li>
+                    <li>Define: Shadow.</li>
+                    <li>Infer: Light travels in straight line.
+                    <ul>
+                    <li>Observe: The shape of the shadow.</li>
+                    <li>Observe: two fires, two shadows.
+                    <ul>
+                    <li>Stand between two fires.</li>
+                    <li>Observe: two shadows of you.</li>
+                    </ul></li>
+                    <li>Observe: Light can be blocked. (Experiment using two hands and a fire.)</li>
+                    </ul></li>
+                    <li>Infer: Heat behaves like light.
+                    <ul>
+                    <li>Observe: Heat can be blocked. (Experiment using two hands and a fire.)</li>
+                    </ul></li>
+                    <li>Observe: Water boils and evaporates when heated.</li>
+                    </ul>
+                    <h3 id="metal-rock-ore-mineral-mining-smelting"><span class="section_number">2.3</span><span class="section_title">Metal, rock, ore, mineral, mining, smelting</span></h3>
+                    <ul>
+                    <li>Define: A <em>metal</em> is a thing with these behaviors:
+                    <ul>
+                    <li>It shines under sunlight.</li>
+                    <li>It heats up easily when exposed to sunlight or fire.</li>
+                    <li>It doesn't burn, unlike leaf or wood.</li>
+                    </ul></li>
+                    <li>What metals have been known for a long time?
+                    <ul>
+                    <li><a href="http://www.makin-metals.com/about/history-of-metals-infographic/">Infographic: History of Metals Timeline</a></li>
+                    <li>Define: a <em>native metal</em> is a metal readily found in nature.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Native_metal">WP:Native metal</a>
+                    <ul>
+                    <li>Example: copper.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://www.quora.com/Which-is-the-first-metal-to-be-discovered-by-man">Quora: Which is the first metal to be discovered by man?</a>
+                    <ul>
+                    <li>Copper, probably around 9000 BC.</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Chalcolithic">WP:Chalcolithic</a>: Copper-Stone Age before Bronze Age.</li>
+                    </ul></li>
+                    <li>Define: Iron.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Ancient_iron_production">WP:Ancient iron production</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Iron_Age">WP:Iron Age</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Metallurgy#History">WP:Metallurgy, history</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Ferrous_metallurgy">WP:Ferrous metallurgy</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Archaeometallurgy">WP:Archaeometallurgy</a></li>
+                    </ul></li>
+                    <li>Define: Copper.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Native_copper">W:Native copper</a></li>
+                    </ul></li>
+                    <li>Define: Alloy.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Alloy">WP:Alloy</a></li>
+                    </ul></li>
+                    <li>Assume: Bronze is an alloy, 88% copper, 12% tin.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Bronze">WP:Bronze</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Assume: A <em>rock</em> is a hard thing.</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Mineralogy">WP:Mineralogy</a></li>
+                    <li>Define: To <em>mine</em> is to extract mineral.</li>
+                    <li>Ore, mineral, smelting
+                    <ul>
+                    <li>Define: An <em>ore</em> is a rock that contains metal.
+                    <ul>
+                    <li>An iron ore is a rock that contains iron.</li>
+                    <li>A copper ore is a rock that contains copper.</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Ore">WP:Ore</a></li>
+                    </ul></li>
+                    <li>Define: <em>Ore</em> is synonym for <em>mineral</em>.</li>
+                    <li>Define: Mineral
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Mineral">WP:Mineral</a>
+                    <ul>
+                    <li>&quot;A mineral is a naturally occurring chemical compound&quot;</li>
+                    </ul></li>
+                    <li><a href="https://en.wiktionary.org/wiki/mineral#Etymology">Wiktionary:mineral, etymology</a>
+                    <ul>
+                    <li>&quot;from Latin 'minera' ('ore')&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/History_of_mineralogy">WP:History of mineralogy</a></li>
+                    <li>Assume: Burning an ore produces metal.</li>
+                    <li>Define: To <em>smelt</em> is to extract metal from ore.</li>
+                    </ul></li>
+                    <li>Before smelting, there was charcoal.
+                    <ul>
+                    <li>Charcoal is produced by heating wood without air.
+                    <ul>
+                    <li>The water evaporates.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Charcoal">WP:Charcoal</a></li>
+                    <li>What is the difference between charcoal, ash, and soot?
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Ash">WP:Ash</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Soot">WP:Soot</a></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>What is the first smelt metal?
+                    <ul>
+                    <li><a href="https://www.britannica.com/technology/smelting">https://www.britannica.com/technology/smelting</a>
+                    <ul>
+                    <li>&quot;The first metal to be smelted in the ancient Middle East was probably copper (by 5000 BCE), followed by tin, lead, and silver.&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul>
+                    <h3 id="unread"><span class="section_number">2.4</span><span class="section_title">Unread</span></h3>
+                    <ul>
+                    <li><a href="https://www.school-for-champions.com/science/matter_theories.htm">2016, &quot;Theories of matter&quot;</a></li>
+                    <li><a href="http://www.edu.pe.ca/queencharlotte/homework/mmorrison/9science/matter/section2_1.pdf">http://www.edu.pe.ca/queencharlotte/homework/mmorrison/9science/matter/section2_1.pdf</a></li>
+                    </ul>
+                    <h3 id="chemistry"><span class="section_number">2.5</span><span class="section_title">Chemistry</span></h3>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Chemistry#History">WP:Chemistry, history</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/History_of_chemistry">WP:History of chemistry</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Three-age_system">WP:Three-age system</a></li>
+                    <li>Define: <em>Natural</em> means not man-made.</li>
+                    <li>Define: Rust.</li>
+                    <li>Assume: Rust occurs naturally.</li>
+                    <li>Observe: Rust becomes iron when burned?</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Potash#History_of_production">WP:Potash, history of production</a>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Leaching_(chemistry)">WP:Leaching</a></li>
+                    </ul></li>
+                    </ul>
+                    <h3 id="chemical-element"><span class="section_number">2.6</span><span class="section_title">Chemical element</span></h3>
+                    <ul>
+                    <li>Require: closed vessel
+                    <ul>
+                    <li>Which &quot;vessel&quot; is meant?
+                    <ul>
+                    <li>&quot;Vessel&quot; might mean &quot;bowl&quot;. (<a href="https://en.wikipedia.org/wiki/Vessel">WP:Vessel</a>, <a href="https://en.wiktionary.org/wiki/vessel">Wiktionary:vessel</a>)</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Pressure_vessel#History_of_pressure_vessels">WP:Pressure vessel, history</a> (1495, Leonardo da Vinci, or earlier)</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>How did the concept of &quot;chemical element&quot; evolve?
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Chemical_element#History">WP:Chemical element, history</a>
+                    <ul>
+                    <li>1661, Robert Boyle, &quot;corpuscularism&quot;
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Corpuscularianism">WP:Corpuscularianism</a>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Chemical_revolution">WP:Chemical revolution</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://www.sciencehistory.org/historical-profile/robert-boyle">https://www.sciencehistory.org/historical-profile/robert-boyle</a>
+                    <ul>
+                    <li>&quot;In his experiments Boyle made many important observations, including that of the weight gain by metals when they are heated to become calxes.&quot;
+                    <ul>
+                    <li>Calcination, calx, phlogiston, oxygen
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Calx">WP:Calx</a> &quot;is a substance formed from an ore or mineral that has been heated.&quot;</li>
+                    <li>[WP:Calcination] is &quot;heating to high temperatures in air or oxygen&quot; (IUPAC).</li>
+                    <li><a href="https://en.wiktionary.org/wiki/calx#Noun">Wiktionary:calx</a>
+                    <ul>
+                    <li>&quot;(archaic) The substance which remains after a metal or mineral has been thoroughly burnt, seen as being the essential substance left after the expulsion of phlogiston.&quot;</li>
+                    </ul></li>
+                    <li>Observe: Burning copper in air produces copper calx (copper oxide).</li>
+                    <li><a href="http://chemed.chem.purdue.edu/demos/main_pages/9.9.html">http://chemed.chem.purdue.edu/demos/main_pages/9.9.html</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Phlogiston_theory">WP:Phlogiston theory</a>
+                    <ul>
+                    <li>1667</li>
+                    <li>&quot;[…] from the Ancient Greek φλογιστόν phlogistón (burning up), from φλόξ phlóx (flame)&quot;</li>
+                    <li>How was it superseded?
+                    <ul>
+                    <li>Invalidated by experiment:
+                    <ul>
+                    <li>&quot;some metals gained mass when they burned, even though they were supposed to have lost phlogiston.&quot;</li>
+                    </ul></li>
+                    <li>Replaced by Lavoisier's oxygen theory in the 1780s
+                    <ul>
+                    <li>&quot;[…] combustion requires a gas that has mass (oxygen) and could be measured by means of weighing closed vessels.&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>How were the first elements isolated/produced/extracted/purified?</li>
+                    </ul>
+                    <h3 id="atomic-theory"><span class="section_number">2.7</span><span class="section_title">Atomic theory</span></h3>
+                    <ul>
+                    <li>Require: Chemical element</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Atom#First_evidence-based_theory">WP:Atom, first evidence-based theory</a>
+                    <ul>
+                    <li>John Dalton (1766–1844)</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Law_of_multiple_proportions">WP:Law of multiple proportions</a>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Stoichiometry">WP:Stoichiometry</a>
+                    <ul>
+                    <li><a href="http://chemed.chem.purdue.edu/genchem/history/stoichiometry.html">The origins of stoichiometry</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Jeremias_Benjamin_Richter">WP:Jeremias Benjamin Richter</a> (1762–1807)</li>
+                    <li>Observe:
+                    <ul>
+                    <li>Burning wood produces <em>ash</em>.</li>
+                    <li>Burning <em>more</em> wood produces <em>more</em> ash.</li>
+                    <li>The amount of ash produced is <em>proportional</em> to the amount of wood burned:
+                    <ul>
+                    <li>If burning <span class="math inline">\( x \)</span> amount of wood produces <span class="math inline">\( y \)</span> amount grams of ash, then burning <span class="math inline">\( a \cdot x \)</span> amount grams of wood produces <span class="math inline">\( a \cdot y \)</span> amount of ash.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Require: A chemical reaction that is available to prehistoric humans, and whose reactants and products are easy to weigh.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Chemical_reaction#History">WP:Chemical reaction, history</a>
+                    <ul>
+                    <li>&quot;combustion in fire, fermentation and the reduction of ores to metals were known since antiquity&quot;</li>
+                    </ul></li>
+                    <li>Chemical reaction notation example: wood + air + fire -&gt; ash</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Observe: <a href="https://en.wikipedia.org/wiki/Conservation_of_mass">WP:Conservation of mass</a>
+                    <ul>
+                    <li>Burn up a piece of wood in a sealed container.</li>
+                    <li>Observe: The mass of the container is unchanged.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>What was Democritus's justification?
+                    <ul>
+                    <li><a href="http://people.wku.edu/jan.garrett/democ.htm">http://people.wku.edu/jan.garrett/democ.htm</a></li>
+                    <li>Is it in Roberto Torretti's 1999 book &quot;The philosophy of physics&quot;?</li>
+                    </ul></li>
+                    <li>Section: Compound, bond, molecule, ion
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Molecule">WP:Molecule</a>
+                    <ul>
+                    <li>Define: Something is either a <em>molecule</em> or an <em>ion</em>.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul>
+                    <h3 id="electrochemistry"><span class="section_number">2.8</span><span class="section_title">Electrochemistry</span></h3>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Electrolysis">WP:Electrolysis</a></li>
+                    <li>Electrochemical cell
+                    <ul>
+                    <li>Reduction-oxidation (redox) reaction
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Electric_battery">WP:Electric battery</a>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Electrochemical_cell">WP:Electrochemical cell</a>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Voltaic_pile">WP:Voltaic pile</a>
+                    <ul>
+                    <li>Alessandro Volta (1745–1827)
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/History_of_the_battery">WP:History of the battery</a></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul>
+                    <h3 id="what-1"><span class="section_number">2.9</span><span class="section_title">What?</span></h3>
+                    <ul>
+                    <li>Define: <em>Glass</em> is transparent (see-through) solid.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/History_of_glass">WP:History of glass</a></li>
+                    </ul></li>
+                    <li>Why is the symbol Na read &quot;sodium&quot; in English?
+                    <ul>
+                    <li><a href="https://www.quora.com/Who-renamed-Natrium-and-Kalium-to-Sodium-and-Potassium-Why">Quora: Who renamed Natrium and Kalium to Sodium and Potassium? Why?</a>
+                    <ul>
+                    <li>Because people are too proud of themselves?
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Not_invented_here">WP:Not invented here</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Law_of_triviality">WP:Law of triviality</a>: &quot;members of an organisation give disproportionate weight to trivial issues&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Observe: Water dissolves salt.
+                    <ul>
+                    <li>Solution of salt in water?</li>
+                    <li>Mixture of water matter and salt matter?</li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Fick%27s_laws_of_diffusion">WP:Fick's laws of diffusion</a>, Adolf Fick, 1855
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Adolf_Eugen_Fick">WP:Adolf Eugen Fick</a> (1829–1901)</li>
+                    </ul></li>
+                    <li>Reaction between two solids
+                    <ul>
+                    <li><a href="https://www.youtube.com/watch?v=SjeyjmUSzKk">YT:Chemical Reaction Between Two Solids</a></li>
+                    </ul></li>
+                    </ul>
+                    <h2 id="lets-go-back-to-prehistoric-times."><span class="section_number">3</span><span class="section_title">Let's go back to prehistoric times.</span></h2>
+                    <ul>
+                    <li>Let's begin with very wrong ideas.
+                    <ul>
+                    <li>We're &quot;cheating&quot;: we have hindsight; they didn't.</li>
+                    </ul></li>
+                    <li>We will revise knowledge as we go. We will become less wrong.</li>
+                    <li>We might will never be 0% wrong.
+                    <ul>
+                    <li>But knowledge doesn't have to be 100% true in order to be useful.</li>
+                    </ul></li>
+                    </ul>
+                    <div class="local_table_of_contents">
+                    <ul>
+                    <li><span class="section_number">3.1</span><span class="section_title"><a href="#falling">Falling</a></span><span class="word_count">(310w~2m)</span></li>
+                    <li><span class="section_number">3.2</span><span class="section_title"><a href="#electromagnetism">Electromagnetism</a></span><span class="word_count">(604w~4m)</span></li>
+                    <li><span class="section_number">3.3</span><span class="section_title"><a href="#unplaced">Unplaced</a></span><span class="word_count">(263w~2m)</span></li>
+                    <li><span class="section_number">3.4</span><span class="section_title"><a href="#unread-1">Unread</a></span><span class="word_count">(13w~1m)</span></li>
+                    <li><span class="section_number">3.5</span><span class="section_title"><a href="#chemical-analysis-analytical-chemistry-how-do-we-know-what-something-is-what-is-in-it-what-it-is-made-of">Chemical analysis / Analytical chemistry: how do we know what something is, what is in it, what it is made of?</a></span><span class="word_count">(28w~1m)</span></li>
+                    <li><span class="section_number">3.6</span><span class="section_title"><a href="#predicting-chemical-reactions">Predicting chemical reactions?</a></span><span class="word_count">(9w~1m)</span></li>
+                    </ul>
+                    </div>
+                    <h3 id="falling"><span class="section_number">3.1</span><span class="section_title">Falling</span></h3>
+                    <ul>
+                    <li>Define: The <em>Earth</em> is where we stand.</li>
+                    <li>Define: <em>Duration</em> is what a timer measures.</li>
+                    <li>Define: <em>Position</em> is where something is.</li>
+                    <li>Define: <em>Velocity</em> is the rate of change of position.</li>
+                    <li>Define: <em>Acceleration</em> is the rate of change of velocity.</li>
+                    <li>Define: <em>Speed</em> is the magnitude of velocity.</li>
+                    <li>Define: <em>Time</em> is duration.</li>
+                    <li>Define: The <em>distance</em> between two points A and B is <span class="math inline">\( v \cdot t \)</span>,
+                    <ul>
+                    <li>iff <span class="math inline">\( t \)</span> is the minimum time required by something with constant speed <span class="math inline">\( v \)</span> to go from A to B.</li>
+                    </ul></li>
+                    <li>Define: <em>Length</em> is what a ruler measures.</li>
+                    <li>Define: <em>Acceleration</em> is the rate of change of velocity.</li>
+                    <li>Infer: Things fall <em>with constant acceleration</em> toward the Earth.
+                    <ul>
+                    <li>That is: ( h = k ⋅ t<sup>2</sup> ) where
+                    <ul>
+                    <li><span class="math inline">\( h \)</span> is height of fall;</li>
+                    <li><span class="math inline">\( t \)</span> is time of fall;</li>
+                    <li><span class="math inline">\( k \)</span> is a constant.</li>
+                    </ul></li>
+                    <li>Observe: Things <em>fall</em> toward the Earth.</li>
+                    <li>Observe: Time of fall depends on height only and not mass.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Galileo%27s_Leaning_Tower_of_Pisa_experiment">WP:Galileo's Leaning Tower of Pisa experiment</a>
+                    <ul>
+                    <li>Two balls having different weight, dropped from the same height, will reach the Earth at the same time.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Infer: Things fall with the same acceleration everywhere on Earth.
+                    <ul>
+                    <li>Observe: <em>Catenary</em> is symmetrical.
+                    <ul>
+                    <li>Tie a rope to two upright posts.</li>
+                    <li>Keep the rope loose, but don't let it touch the ground.</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Catenary">WP:Catenary</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Infer: Every part of a thing falls with the same acceleration.
+                    <ul>
+                    <li>Observe:
+                    <ul>
+                    <li>Break a thing into several parts (pieces).</li>
+                    <li>Drop the parts.</li>
+                    <li>Every part falls with the same acceleration.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Observe: Cavendish torsion balance experiment (1797–1798)
+                    <ul>
+                    <li>This experiment finds out the density of the Earth.</li>
+                    <li>That is related to the gravitational constant <span class="math inline">\( G \)</span>.</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Cavendish_experiment">WP:Cavendish experiment</a></li>
+                    </ul></li>
+                    <li>Infer: <a href="https://en.wikipedia.org/wiki/Newton%27s_law_of_universal_gravitation">WP:Newton's law of universal gravitation</a>
+                    <ul>
+                    <li><span class="math inline">\( F = G \cdot m_1 \cdot m_2 / r^2 \)</span></li>
+                    <li>What is the justification?
+                    <ul>
+                    <li>Does Newton justify Kepler?</li>
+                    <li>Does Kepler justify Newton?</li>
+                    </ul></li>
+                    <li>How did Newton arrive at this?</li>
+                    <li>Infer: <a href="https://en.wikipedia.org/wiki/Kepler%27s_laws_of_planetary_motion">WP:Kepler's laws of planetary motion</a>
+                    <ul>
+                    <li>Observe: Tycho Brahe's data</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Define: A person is <em>experiencing weightlessness</em> iff his weight is zero (the weight scale says zero).</li>
+                    <li>Assume: Einstein's equivalence principle?
+                    <ul>
+                    <li>A free-falling person will experience weightlessness.</li>
+                    <li>A person in void (zero gravity, absence of any other mass) will also experience weightlessness.</li>
+                    <li>Those two phenomenons are <em>the same phenomenon</em>.</li>
+                    </ul></li>
+                    </ul>
+                    <h3 id="electromagnetism"><span class="section_number">3.2</span><span class="section_title">Electromagnetism</span></h3>
+                    <ul>
+                    <li>Electromagnetism unifies optics, electricity, and magnetism.</li>
+                    <li>Define: <a href="https://en.wikipedia.org/wiki/Lodestone">WP:Lodestone</a>.</li>
+                    <li>Define: A <em>magnet</em> is a piece of lodestone.</li>
+                    <li>Electricity
+                    <ul>
+                    <li>Observe: Electricity
+                    <ul>
+                    <li>Rub amber with cat fur.</li>
+                    <li>The amber can now <em>attract</em> feathers.</li>
+                    <li>Define: Such rubbed amber <em>exhibits electricity</em>.</li>
+                    <li>These things might be easier to find in the 21st century:
+                    <ul>
+                    <li>Glass (instead of amber).</li>
+                    <li>Silk or wool (instead of cat fur).</li>
+                    <li>Pieces of paper (instead of feather).</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Charge
+                    <ul>
+                    <li>Define: To <em>charge</em> a thing is to make it exhibit electricity.</li>
+                    <li>Observe: Ways to charge a thing
+                    <ul>
+                    <li>Rubbing
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Triboelectric_effect">WP:Triboelectric effect</a>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Triboelectric_effect#Triboelectric_series">WP:Triboelectric series</a></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Electrostatic_generator">WP:Electrostatic generator</a>
+                    <ul>
+                    <li>frictional machines, Otto von Guericke, around 1663</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Influencing
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Electrostatic_induction">WP:Electrostatic induction</a></li>
+                    <li>Let A be a charged thing.</li>
+                    <li>Let B be an uncharged thing.</li>
+                    <li>Putting A near B charges B.</li>
+                    <li>Putting A away from B uncharges B.</li>
+                    </ul></li>
+                    <li>Touching
+                    <ul>
+                    <li>Let A be a charged thing.</li>
+                    <li>Let B be an uncharged thing.</li>
+                    <li>If A and B touch, then B becomes charged.</li>
+                    <li>If A and B are separated after touching, then B is still charged.</li>
+                    <li>Assume: This doesn't work if B is a metal?</li>
+                    <li>Observe: Two things equalizes their electric charge when they touch?</li>
+                    </ul></li>
+                    <li>Conduction
+                    <ul>
+                    <li>Let A be a charged thing.</li>
+                    <li>Let B be an uncharged thing.</li>
+                    <li>Let C be a piece of iron.</li>
+                    <li>Let C touch both A and B, but without A touching B directly.</li>
+                    <li>Remove C.</li>
+                    <li>Verify that B is now charged.</li>
+                    <li>Assume: This still holds if the iron in C is replaced with any other metal.</li>
+                    <li>Define: Iron is a <em>conductor</em>.</li>
+                    <li>Assume: Every metal is a conductor.</li>
+                    <li>Define: Everything is either a conductor or an <em>isolator</em>.</li>
+                    <li>Assume: An isolator is a thing that can be charged by rubbing.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Two ways of charging: <em>vitreously</em> and <em>resinously</em>
+                    <ul>
+                    <li>Inferences
+                    <ul>
+                    <li>Infer: There are two kinds of charged things.</li>
+                    <li>Infer: Two similarly charged things repel each other.</li>
+                    <li>Infer: Two differently charged things attract each other.</li>
+                    </ul></li>
+                    <li>Observe:
+                    <ul>
+                    <li>Rub glass G with silk S.</li>
+                    <li>Rub glass H with silk T.</li>
+                    <li>The glasses <em>repel</em> each other (G-H).</li>
+                    <li>The silks <em>repel</em> each other (S-T).</li>
+                    <li>A glass and a silk <em>attract</em> each other (G-S, G-T, H-S, H-T).</li>
+                    <li>Define: A rubbed glass is <em>vitreously charged</em>.
+                    <ul>
+                    <li>&quot;Vitreous&quot; is a Latinate word that means &quot;glassy&quot;.</li>
+                    <li><a href="https://en.wiktionary.org/wiki/vitreous">Wiktionary:vitreous</a>
+                    <ul>
+                    <li>1733, <a href="https://en.wikipedia.org/wiki/Charles_Fran%C3%A7ois_de_Cisternay_du_Fay">WP:Charles François de Cisternay du Fay</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Define: A thing is <em>resinously charged</em> iff it is charged but not vitreously.</li>
+                    <li><a href="https://physics.stackexchange.com/questions/266246/how-did-physicists-know-that-there-are-two-kind-of-charges/266250">Phys. SE 266246: How did physicists know that there are two kind of charges?</a></li>
+                    </ul></li>
+                    <li>Superseded theories
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Fluid_theory_of_electricity">WP:Fluid theory of electricity</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Assume: An <em>electrometer</em> measures the <em>strength</em> of electricity exhibited by a thing.
+                    <ul>
+                    <li>Assume: The strength of electricity exhibited by a rubbed amber can be measured by the amount of paper it can pull.</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Electrometer">WP:Electrometer</a></li>
+                    <li>How do we know whether a thing is charged, if we don't care about the exact amount of charge?
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Electroscope">WP:Electroscope</a>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Versorium">WP:Versorium</a></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>What?
+                    <ul>
+                    <li>Define: <em>Positive charge</em> is the charge left on a glass rod after being rubbed with silk.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Electric_charge">WP:Electric charge</a>
+                    <ul>
+                    <li>&quot;It is arbitrary which polarity is called positive and which is called negative.&quot;</li>
+                    <li>&quot;Positive charge can be defined as the charge left on a glass rod after being rubbed with silk.&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Coulomb's torsion balance
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Coulomb%27s_law">WP:Coulomb's law</a>
+                    <ul>
+                    <li><span class="math inline">\( F = k \cdot q_1 \cdot q_2 / r^2 \)</span></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Observe: Rubbing a piece of iron doesn't charge it?</li>
+                    <li>Observe: Electric charge can be stored.</li>
+                    <li>Observe: Electric charge can be unloaded.</li>
+                    <li><a href="https://physics.stackexchange.com/questions/23572/how-does-an-object-regains-its-neutrality-after-being-charged-by-rubbing">Phys. SE 23572: How does an object regains its neutrality after being charged by rubbing?</a></li>
+                    </ul></li>
+                    <li>todo:
+                    <ul>
+                    <li>Conductors and isolators</li>
+                    <li>Infer: Metal and electricity
+                    <ul>
+                    <li>Observe: Iron doesn't exhibit electricity after being rubbed.</li>
+                    <li>Observe: Iron exhibits electricity by influence.</li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Electrical_conductor">WP:Electrical conductor</a>
+                    <ul>
+                    <li><a href="https://www.quora.com/Why-do-conductors-not-produce-static-electricity">https://www.quora.com/Why-do-conductors-not-produce-static-electricity</a></li>
+                    <li><a href="https://www.scientificamerican.com/article/static-science-how-well-do-different-materials-make-static-electricity/">https://www.scientificamerican.com/article/static-science-how-well-do-different-materials-make-static-electricity/</a></li>
+                    <li><a href="https://www.reddit.com/r/askscience/comments/2ujpw8/why_does_metal_eg_a_metal_slide_not_produce_static/">https://www.reddit.com/r/askscience/comments/2ujpw8/why_does_metal_eg_a_metal_slide_not_produce_static/</a></li>
+                    </ul></li>
+                    <li>Capacitor</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Leyden_jar">WP:Leyden jar</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Magnetism
+                    <ul>
+                    <li>Observe: Two magnets attract or repel each other.</li>
+                    <li>Observe: A magnet and a piece of iron attract each other.</li>
+                    <li>…</li>
+                    <li>todo: Magnetic pole</li>
+                    <li>Infer: The Earth is a magnet.
+                    <ul>
+                    <li>Observe: Every resting magnetic needle near you points to the same direction (except if you're at the Earth's magnetic poles).</li>
+                    <li>Observe: The Earth has magnetic poles.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/North_Magnetic_Pole#Expeditions_and_measurements">WP:North Magnetic Pole, expeditions</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/South_Magnetic_Pole#Expeditions">WP:South Magnetic Pole, expeditions</a></li>
+                    <li>Observe: They are moving.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Polar_drift">WP:Polar drift</a></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Magnetism#History">WP:Magnetism, history</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/De_Magnete">WP:De Magnete</a> (1600)</li>
+                    </ul></li>
+                    <li>Observe: <a href="https://en.wikipedia.org/wiki/Oersted%27s_law">WP:Oersted's law</a>: Electrical current in a wire deflects nearby magnetic needles.</li>
+                    <li>todo:
+                    <ul>
+                    <li>Reversibility between motor and generator
+                    <ul>
+                    <li>Input electricity, output mechanicity.</li>
+                    <li>Input mechanicity, output electricity.</li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Homopolar_motor">https://en.wikipedia.org/wiki/Homopolar_motor</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Homopolar_generator">https://en.wikipedia.org/wiki/Homopolar_generator</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Electric_motor">https://en.wikipedia.org/wiki/Electric_motor</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Electric_generator">https://en.wikipedia.org/wiki/Electric_generator</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Electromagnetic_induction">https://en.wikipedia.org/wiki/Electromagnetic_induction</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Faraday%27s_law_of_induction">https://en.wikipedia.org/wiki/Faraday%27s_law_of_induction</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Biot%E2%80%93Savart_law">https://en.wikipedia.org/wiki/Biot%E2%80%93Savart_law</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Lenz%27s_law">https://en.wikipedia.org/wiki/Lenz%27s_law</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Maxwell%27s_equations">https://en.wikipedia.org/wiki/Maxwell%27s_equations</a></li>
+                    </ul></li>
+                    <li>Summaries
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Electricity#History">WP:Electricity, history</a>
+                    <ul>
+                    <li>William Gilbert (1544–1603) distinguished the lodestone effect from the amber effect.
+                    <ul>
+                    <li>Rods of amber could be rubbed with cat's fur to attract light things like feathers.</li>
+                    <li>&quot;Electric&quot; means &quot;like amber&quot;.</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Amber">WP:Amber</a></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/History_of_electromagnetic_theory">WP:History of electromagnetic theory</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Timeline_of_electromagnetism_and_classical_optics">WP:Timeline of electromagnetism and classical optics</a></li>
+                    </ul>
+                    <h3 id="unplaced"><span class="section_number">3.3</span><span class="section_title">Unplaced</span></h3>
+                    <ul>
+                    <li>Infer: Law of the lever: <span class="math inline">\( F_1 \cdot r_1 = F_2 \cdot r_2 \)</span>.
+                    <ul>
+                    <li>Move the fulcrum, or slide the lever along the fulcrum.</li>
+                    </ul></li>
+                    <li>Observe: A burning leaf stops burning if it's enclosed.</li>
+                    <li>Observe: Food spoils. Food goes rancid.</li>
+                    <li><a href="https://physics.stackexchange.com/questions/259021/how-do-flames-neutralize-a-static-charge">Phys. SE 259021: How do flames neutralize a static charge?</a></li>
+                    <li>Left and right
+                    <ul>
+                    <li>We can define left and right absolutely due to parity violation.</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Wu_experiment">WP:Wu experiment</a>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Parity_(physics)#Parity_violation">WP:Parity, violation</a></li>
+                    </ul></li>
+                    <li><a href="https://physics.stackexchange.com/questions/18729/absolute-defintion-of-the-right-i-e-not-left-direction">Phys. SE 18729: absolute defintion of the right (i. e. not left) direction</a></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Buoyancy">WP:Buoyancy</a></li>
+                    <li>Observe: Salt conducts electricity?</li>
+                    <li>Geology
+                    <ul>
+                    <li>Mineral distribution hypothesis?
+                    <ul>
+                    <li>Assume:
+                    <ul>
+                    <li>The Earth was once a hot liquid.</li>
+                    <li>The surface cooled down and solidified.</li>
+                    </ul></li>
+                    <li>Infer:
+                    <ul>
+                    <li>Denser minerals should sink towards the core of Earth.</li>
+                    <li>As we dig deeper, the Earth should be more dense.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="http://www.bgs.ac.uk/mineralsUK/mineralsYou/wheredo.html">Where do minerals come from?</a>
+                    <ul>
+                    <li>&quot;Minerals are concentrated by igneous, sedimentary and metamorphic processes&quot;</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Structure_of_the_Earth">WP:Structure of the Earth</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>How do we know that light <em>is</em> an electromagnetic wave?
+                    <ul>
+                    <li>We know that light behaves like an electromagnetic wave, from
+                    <ul>
+                    <li>the speed of light, and</li>
+                    <li>the wave behavior of light.</li>
+                    </ul></li>
+                    <li>But that's all; how do we know that it <em>is</em> it?</li>
+                    </ul></li>
+                    <li>Formal Physics
+                    <ul>
+                    <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4066961/">2012, article, &quot;Physics and proof theory&quot;</a></li>
+                    </ul></li>
+                    <li>Unread
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/History_of_science">WP:History of science</a></li>
+                    <li>Experiments
+                    <ul>
+                    <li><a href="https://www.explainthatstuff.com/great-physics-experiments.html">https://www.explainthatstuff.com/great-physics-experiments.html</a></li>
+                    <li><a href="https://www.quora.com/What-are-some-of-the-most-important-experiments-in-physics">https://www.quora.com/What-are-some-of-the-most-important-experiments-in-physics</a></li>
+                    <li><a href="https://www.telegraph.co.uk/news/science/science-news/3341042/Top-ten-greatest-experiments.html">https://www.telegraph.co.uk/news/science/science-news/3341042/Top-ten-greatest-experiments.html</a></li>
+                    <li><a href="https://www.space.com/36307-5-most-ingenious-experiments.html">https://www.space.com/36307-5-most-ingenious-experiments.html</a></li>
+                    <li><a href="https://explorable.com/physics-experiments">https://explorable.com/physics-experiments</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/List_of_experiments#Physics">https://en.wikipedia.org/wiki/List_of_experiments#Physics</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Experimental_physics#Famous_experiments">https://en.wikipedia.org/wiki/Experimental_physics#Famous_experiments</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=HXLj5J4I1nY">de Sitter's Observations - Intro to Physics</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Scientific theory
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Scientific_theory#Unification">https://en.wikipedia.org/wiki/Scientific_theory#Unification</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Superseded_scientific_theories#Physics">https://en.wikipedia.org/wiki/Superseded_scientific_theories#Physics</a></li>
+                    </ul></li>
+                    <li>Define: <em>Force</em> is what a force meter measures.
+                    <ul>
+                    <li>A <a href="https://en.wikipedia.org/wiki/Force_meter">WP:Force meter</a> is a spring.</li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Weighing_scale">WP:Weighing scale</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Hooke%27s_law">WP:Hooke's law</a>
+                    <ul>
+                    <li>Let X be a thing.</li>
+                    <li>Hang a copy of X on a spring. The spring lengthens by <span class="math inline">\( x \)</span> from its resting length.</li>
+                    <li>Hang two copies of X on a spring. The spring lengthens by <span class="math inline">\( 2 \cdot x \)</span> from its resting length.</li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Universal_testing_machine">https://en.wikipedia.org/wiki/Universal_testing_machine</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Dynamometer">https://en.wikipedia.org/wiki/Dynamometer</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Bucket_argument">https://en.wikipedia.org/wiki/Bucket_argument</a></li>
+                    <li>1999, book, Roberto Torretti, &quot;The philosophy of physics&quot;</li>
+                    <li>Electric current
+                    <ul>
+                    <li>Detour: Justification of electric current requires chemistry.</li>
+                    <li><a href="http://www.need.org/Files/curriculum/infobook/Elec3I.pdf">http://www.need.org/Files/curriculum/infobook/Elec3I.pdf</a></li>
+                    <li><a href="http://practicalphysics.org/electric-charge-and-current-short-history.html">http://practicalphysics.org/electric-charge-and-current-short-history.html</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Electric_current">https://en.wikipedia.org/wiki/Electric_current</a></li>
+                    </ul></li>
+                    <li><a href="https://www.quora.com/Will-the-theories-of-relativity-and-quantum-mechanics-merge-With-what-result">Quora: Will the theories of relativity and quantum mechanics merge? With what result?</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Scientific_Revolution">https://en.wikipedia.org/wiki/Scientific_Revolution</a></li>
+                    <li>Define: Sundial.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Sundial">WP:Sundial</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Analemma">WP:Analemma</a>; solar analemma = figure eight pattern of the sun on the sky across the year</li>
+                    </ul></li>
+                    </ul>
+                    <h3 id="unread-1"><span class="section_number">3.4</span><span class="section_title">Unread</span></h3>
+                    <ul>
+                    <li>Ampere's experiments
+                    <ul>
+                    <li><a href="http://farside.ph.utexas.edu/teaching/302l/lectures/node70.html">Ampère's Experiments</a></li>
+                    <li><a href="http://www.larouchepub.com/eiw/public/1992/eirv19n20-19920515/eirv19n20-19920515_030-the_ampere_crucial_experiments.pdf">http://www.larouchepub.com/eiw/public/1992/eirv19n20-19920515/eirv19n20-19920515_030-the_ampere_crucial_experiments.pdf</a></li>
+                    </ul></li>
+                    <li><a href="https://newrepublic.com/article/118655/theoretical-phyisicist-explains-why-science-not-about-certainty">https://newrepublic.com/article/118655/theoretical-phyisicist-explains-why-science-not-about-certainty</a></li>
+                    <li><a href="https://www.reddit.com/r/askscience/comments/1xxbq0/in_quantum_physics_observer_effect_what_qualifies/">Reddit: In quantum physic's 'observer effect', what qualifies as an 'observer'?</a></li>
+                    </ul>
+                    <h3 id="chemical-analysis-analytical-chemistry-how-do-we-know-what-something-is-what-is-in-it-what-it-is-made-of"><span class="section_number">3.5</span><span class="section_title">Chemical analysis / Analytical chemistry: how do we know what something is, what is in it, what it is made of?</span></h3>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Analytical_chemistry">https://en.wikipedia.org/wiki/Analytical_chemistry</a>
+                    <ul>
+                    <li>collection of classical tests</li>
+                    <li>some risk of false positive/negative</li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Mass_spectrometry">https://en.wikipedia.org/wiki/Mass_spectrometry</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Gas_chromatography">https://en.wikipedia.org/wiki/Gas_chromatography</a></li>
+                    </ul>
+                    <h3 id="predicting-chemical-reactions"><span class="section_number">3.6</span><span class="section_title">Predicting chemical reactions?</span></h3>
+                    <ul>
+                    <li>2011 &quot;Learning to Predict Chemical Reactions&quot; <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3193800/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3193800/</a></li>
+                    </ul>
+                    <h2 id="this-is-a-big-hole-of-things-not-yet-justified."><span class="section_number">4</span><span class="section_title">(This is a big hole of things not yet justified.)</span></h2>
+                    <h2 id="modern-physics"><span class="section_number">5</span><span class="section_title">Modern physics?</span></h2>
+                    <div class="local_table_of_contents">
+                    <ul>
+                    <li><span class="section_number">5.1</span><span class="section_title"><a href="#general-relativity">General relativity</a></span><span class="word_count">(46w~1m)</span></li>
+                    <li><span class="section_number">5.2</span><span class="section_title"><a href="#quantum-mechanics">Quantum mechanics</a></span><span class="word_count">(370w~2m)</span></li>
+                    <li><span class="section_number">5.3</span><span class="section_title"><a href="#why-at-stp-is-hydrogen-gaseous-is-lithium-solid-and-is-radon-gaseous-why-is-there-no-apparent-relationship-between-the-mass-of-an-element-and-the-phase-of-a-homogenous-mixture">Why, at STP, is hydrogen gaseous, is lithium solid, and is radon gaseous? Why is there no apparent relationship between the mass of an element and the phase of a homogenous mixture?</a></span><span class="word_count">(49w~1m)</span></li>
+                    <li><span class="section_number">5.4</span><span class="section_title"><a href="#colors">Colors</a></span><span class="word_count">(61w~1m)</span></li>
+                    </ul>
+                    </div>
+                    <h3 id="general-relativity"><span class="section_number">5.1</span><span class="section_title">General relativity</span></h3>
+                    <ul>
+                    <li>Matter bends spacetime.
+                    <ul>
+                    <li>Matter bends spacetime, especially the spacetime <em>near that matter</em>.</li>
+                    <li>What does it mean?</li>
+                    </ul></li>
+                    <li>Spacetime curvature accelerates matter.</li>
+                    <li>Einstein could predict some things from philosophy/reasoning/logic/language/German/English without mathematics/analysis/calculus/differential-geometry/calculations/numbers.
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Introduction_to_general_relativity">https://en.wikipedia.org/wiki/Introduction_to_general_relativity</a></li>
+                    <li>He used philosophy to derive the mathematics, not the other way around.</li>
+                    </ul></li>
+                    <li><a href="https://www.quora.com/What-is-the-most-misunderstood-thing-in-physics">https://www.quora.com/What-is-the-most-misunderstood-thing-in-physics</a>
+                    <ul>
+                    <li>See &quot;You can never actually fall into a black hole.&quot;</li>
+                    </ul></li>
+                    </ul>
+                    <h3 id="quantum-mechanics"><span class="section_number">5.2</span><span class="section_title">Quantum mechanics</span></h3>
+                    <div class="local_table_of_contents">
+                    <ul>
+                    <li><span class="section_number">5.2.1</span><span class="section_title"><a href="#which-one-of-these-are-ontologically-justified">Which one of these are ontologically justified?</a></span><span class="word_count">(167w~1m)</span></li>
+                    <li><span class="section_number">5.2.2</span><span class="section_title"><a href="#what-is-a-wave">What is a wave?</a></span><span class="word_count">(13w~1m)</span></li>
+                    <li><span class="section_number">5.2.3</span><span class="section_title"><a href="#path-to-understanding-quantum-mechanics">Path to understanding quantum mechanics?</a></span><span class="word_count">(48w~1m)</span></li>
+                    <li><span class="section_number">5.2.4</span><span class="section_title"><a href="#double-slit-experiments">Double-slit experiments?</a></span><span class="word_count">(144w~1m)</span></li>
+                    </ul>
+                    </div>
+                    <h4 id="which-one-of-these-are-ontologically-justified"><span class="section_number">5.2.1</span><span class="section_title">Which one of these are ontologically justified?</span></h4>
+                    <ul>
+                    <li>Matter can <em>behave</em> as a wave or a particle?
+                    <ul>
+                    <li>In what way?</li>
+                    </ul></li>
+                    <li>Matter <em>is</em> both a wave and a particle?
+                    <ul>
+                    <li>Refutation?
+                    <ul>
+                    <li>A water wave is not water.
+                    <ul>
+                    <li>Wave is the name we give to periodic motion.
+                    <ul>
+                    <li>We can perceive a wave because we can interact with the constituents of the wave.
+                    <ul>
+                    <li>If light is a wave, then light should have constituents.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Observe: double-slit experiment: shooting electrons through two slits.
+                    <ul>
+                    <li>de Broglie hypothesis relates the momentum and wavelength.</li>
+                    </ul></li>
+                    <li>Observe: quantum tunneling.
+                    <ul>
+                    <li>How do we explain quantum tunneling without probabilities?</li>
+                    <li>How does QFT explain electron tunneling?</li>
+                    </ul></li>
+                    <li>How does QFT (quantum field theory) describe an electron?
+                    <ul>
+                    <li><a href="https://www.symmetrymagazine.org/article/july-2013/real-talk-everything-is-made-of-fields">https://www.symmetrymagazine.org/article/july-2013/real-talk-everything-is-made-of-fields</a></li>
+                    <li><a href="http://www.quantum-field-theory.net/electron-look-like/">http://www.quantum-field-theory.net/electron-look-like/</a></li>
+                    </ul></li>
+                    <li>2013 &quot;Particles, Fields and The Future of Physics - A Lecture by Sean Carroll&quot; <a href="https://www.youtube.com/watch?v=gEKSpZPByD0">https://www.youtube.com/watch?v=gEKSpZPByD0</a>
+                    <ul>
+                    <li>lecture for public audience</li>
+                    <li>30:40
+                    <ul>
+                    <li>The mass of a particle is the energy required to get the corresponding quantum field to vibrate.</li>
+                    <li>There is a field for every type of particle. There is an electron field, there is a photon field, and so on.</li>
+                    <li>Particle interaction is the coupling between different fields.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>QED (quantum electrodynamics) <a href="http://hyperphysics.phy-astr.gsu.edu/hbase/Forces/qed.html">http://hyperphysics.phy-astr.gsu.edu/hbase/Forces/qed.html</a>
+                    <ul>
+                    <li>Feynman diagram is one way of teaching QED.</li>
+                    </ul></li>
+                    </ul>
+                    <h4 id="what-is-a-wave"><span class="section_number">5.2.2</span><span class="section_title">What is a wave?</span></h4>
+                    <ul>
+                    <li>A water wave does not require the water to <em>flow</em>.</li>
+                    </ul>
+                    <h4 id="path-to-understanding-quantum-mechanics"><span class="section_number">5.2.3</span><span class="section_title">Path to understanding quantum mechanics?</span></h4>
+                    <ul>
+                    <li>Electrons fired toward a screen behind two slits show interference pattern.</li>
+                    <li>Hydrogen absorption/emission spectrum</li>
+                    <li><a href="https://en.m.wikipedia.org/wiki/Planck%27s_law">https://en.m.wikipedia.org/wiki/Planck%27s_law</a></li>
+                    <li>A small hole on a closed box approximates a black body. The hole looks black from outside. Heating the box changes the hole's color.</li>
+                    <li>What is a concrete example of a potential barrier?</li>
+                    </ul>
+                    <h4 id="double-slit-experiments"><span class="section_number">5.2.4</span><span class="section_title">Double-slit experiments?</span></h4>
+                    <ul>
+                    <li>How do we detect electrons? <a href="https://en.wikipedia.org/wiki/Electron_capture_detector">https://en.wikipedia.org/wiki/Electron_capture_detector</a></li>
+                    <li>What is used to detect electrons in the double slit experiment? <a href="https://www.reddit.com/r/askscience/comments/3ebcw6/what_is_used_to_detect_electrons_in_the_double/">https://www.reddit.com/r/askscience/comments/3ebcw6/what_is_used_to_detect_electrons_in_the_double/</a></li>
+                    <li><a href="https://physics.stackexchange.com/questions/364312/how-does-the-electron-detector-detect-electrons-dbl-slit">https://physics.stackexchange.com/questions/364312/how-does-the-electron-detector-detect-electrons-dbl-slit</a> &quot;How Do We Know Protons, Electrons, and Quarks really Exist?&quot;</li>
+                    <li><a href="https://www.nsta.org/publications/news/story.aspx?id=51054">https://www.nsta.org/publications/news/story.aspx?id=51054</a></li>
+                    <li>How do we know electrons exist? <a href="https://www.quora.com/How-do-we-know-electrons-exist">https://www.quora.com/How-do-we-know-electrons-exist</a></li>
+                    <li>Unread
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Matter_wave">https://en.wikipedia.org/wiki/Matter_wave</a></li>
+                    <li>2017 article &quot;On the self-interference in electron scattering: Copenhagen, Bohmian and geometrical interpretations of quantum mechanics&quot; <a href="https://arxiv.org/abs/1710.02583">https://arxiv.org/abs/1710.02583</a></li>
+                    <li>I don't understand the question enough to determine why it is downvoted. &quot;Can the intensity distribution behind edges and slits be explained by the interaction with the surface electrons of the edges?&quot; <a href="https://physics.stackexchange.com/questions/158105/can-the-intensity-distribution-behind-edges-and-slits-be-explaint-by-the-interac">https://physics.stackexchange.com/questions/158105/can-the-intensity-distribution-behind-edges-and-slits-be-explaint-by-the-interac</a></li>
+                    <li><a href="https://www.reddit.com/r/Physics/comments/4ugmc7/can_someone_explain_the_double_slit_experiment/">https://www.reddit.com/r/Physics/comments/4ugmc7/can_someone_explain_the_double_slit_experiment/</a>
+                    <ul>
+                    <li>2013 article &quot;Controlled double-slit electron diffraction&quot; <a href="http://iopscience.iop.org/article/10.1088/1367-2630/15/3/033018/meta">http://iopscience.iop.org/article/10.1088/1367-2630/15/3/033018/meta</a></li>
+                    </ul></li>
+                    <li>Variation of double slit experiments?
+                    <ul>
+                    <li>Double slit with nuclear decay?</li>
+                    <li>Double slit with tracers? (What is a tracer?)</li>
+                    </ul></li>
+                    <li>What is an atom and how do we know? <a href="https://www.youtube.com/watch?v=LhveTGblGHY">https://www.youtube.com/watch?v=LhveTGblGHY</a></li>
+                    <li>Variations, modifications, and expansions
+                    <ul>
+                    <li><a href="https://noetic.org/research/projects/next-generation-double-slit">https://noetic.org/research/projects/next-generation-double-slit</a></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul>
+                    <ol>
+                    <li><p>Quantum eraser?</p></li>
+                    <li><p>Afshar experiment?</p>
+                    <ul>
+                    <li><a href="http://steve-patterson.com/quantum-physics-abuse-reason/">http://steve-patterson.com/quantum-physics-abuse-reason/</a>
+                    <ul>
+                    <li>Afshar experiment</li>
+                    <li>Weak measurement</li>
+                    </ul></li>
+                    <li>How do we know where an electron is? How do we measure the position of an electron? How do we measure the momentum/energy of an electron?</li>
+                    </ul></li>
+                    </ol>
+                    <h3 id="why-at-stp-is-hydrogen-gaseous-is-lithium-solid-and-is-radon-gaseous-why-is-there-no-apparent-relationship-between-the-mass-of-an-element-and-the-phase-of-a-homogenous-mixture"><span class="section_number">5.3</span><span class="section_title">Why, at STP, is hydrogen gaseous, is lithium solid, and is radon gaseous? Why is there no apparent relationship between the mass of an element and the phase of a homogenous mixture?</span></h3>
+                    <ul>
+                    <li>Radon atom is much heavier compared to hydrogen atom.</li>
+                    <li>Intermolecular interaction?</li>
+                    <li>Why different elements have different boiling points?</li>
+                    <li>periodic table <a href="https://ptable.com/">https://ptable.com/</a></li>
+                    </ul>
+                    <h3 id="colors"><span class="section_number">5.4</span><span class="section_title">Colors</span></h3>
+                    <ul>
+                    <li>What is color?
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Color">https://en.wikipedia.org/wiki/Color</a></li>
+                    </ul></li>
+                    <li>monochrome vs polychrome</li>
+                    <li>subjective color vs objective color</li>
+                    <li>What is the difference between the purple that is red-blue mixture and the purple that is monochromatic purple laser?</li>
+                    <li>Why is red+blue+green light = white, but red+blue+green ink = something dark?
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Additive_color">https://en.wikipedia.org/wiki/Additive_color</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Subtractive_color">https://en.wikipedia.org/wiki/Subtractive_color</a></li>
+                    </ul></li>
+                    <li>Shaded checkerboard color optical illusion.</li>
+                    <li>&quot;Why aren't there printers that use red-green-blue ink cartridges?&quot; <a href="https://graphicdesign.stackexchange.com/questions/108620/why-arent-there-printers-that-use-red-green-blue-ink-cartridges">https://graphicdesign.stackexchange.com/questions/108620/why-arent-there-printers-that-use-red-green-blue-ink-cartridges</a></li>
+                    <li>Mary's room <a href="https://en.wikipedia.org/wiki/Knowledge_argument">https://en.wikipedia.org/wiki/Knowledge_argument</a>
+                    <ul>
+                    <li>We aren't going down this rabbit hole for now.</li>
+                    </ul></li>
+                    </ul>
+                    <h2 id="chemistry-1"><span class="section_number">6</span><span class="section_title">Chemistry</span></h2>
+                    <ul>
+                    <li><p>How do we identify something? How do we know what something is?</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Analytical_chemistry">WP:Analytical chemistry</a></li>
+                    </ul></li>
+                    <li><p>How do we make something?</p>
+                    <ul>
+                    <li>synthetic chemistry, <a href="https://en.wikipedia.org/wiki/Chemical_synthesis">WP:Chemical synthesis</a></li>
+                    </ul></li>
+                    <li><p>Ontology</p>
+                    <ul>
+                    <li>atom</li>
+                    <li>molecule</li>
+                    <li>electron</li>
+                    <li>nucleus</li>
+                    <li>orbital</li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Chemistry">WP:Chemistry</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Standard_Model">WP:Standard Model</a></li>
+                    </ul>
+                    <h2 id="astronomy"><span class="section_number">7</span><span class="section_title">Astronomy</span></h2>
+                    <ul>
+                    <li><p>Reading sky map to find celestial objects</p>
+                    <ul>
+                    <li>Other names: star chart, star map, sky map</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Celestial_sphere">WP:Celestial sphere</a></li>
+                    <li>The sky looks as if it were projected to a spherical screen?</li>
+                    <li>If a space object is far enough, it will look as if it were fixed in the sky.</li>
+                    <li><p>Suppose you found something in the sky. How do you tell your friends where that thing is? How do you tell them where to look at in the sky?</p>
+                    <ul>
+                    <li><p>Use <em>equatorial coordinate system</em>: Right ascension, Declination, and Epoch</p>
+                    <ul>
+                    <li><p>Example: Alpha Centauri A. (<a href="https://en.wikipedia.org/wiki/Alpha_Centauri">WP</a>)</p>
+                    <ul>
+                    <li>Right ascension 14 h 39 m 35.06311 s</li>
+                    <li>Declination -60 deg 50 min 15.0992 sec</li>
+                    <li>Epoch J2000</li>
+                    </ul></li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Epoch_(astronomy)">WP:Epoch</a></p>
+                    <ul>
+                    <li>J2000 is the Gregorian date 2000-01-01 12:00 TT (terrestrial time).</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Celestial_coordinate_system">https://en.wikipedia.org/wiki/Celestial_coordinate_system</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Star_chart">https://en.wikipedia.org/wiki/Star_chart</a></li>
+                    <li>Equatorial coordinate system</li>
+                    <li><p>Still unanswered: How to read star chart? What are equatorial coordinates?</p></li>
+                    </ul></li>
+                    <li><p>Distance</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Parsec">https://en.wikipedia.org/wiki/Parsec</a></li>
+                    <li><p>1 au (astronomical unit) is roughly the distance between the Sun and the Earth.</p>
+                    <ul>
+                    <li>1 au is about 150 million km.</li>
+                    <li>1 au is about 6 light minutes.</li>
+                    </ul></li>
+                    <li><p>1 ly is 1 light year.</p>
+                    <ul>
+                    <li><p>It's a unit of length, not time.</p>
+                    <ul>
+                    <li>A <em>light year</em> is the distance traveled by light in one year.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Parsec is also a unit of length.</li>
+                    <li><p>1 pc is about 3.26 ly.</p></li>
+                    </ul></li>
+                    <li><p>Objects, ontology, hierarchy?</p>
+                    <ul>
+                    <li>planet</li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Stellar_evolution">https://en.wikipedia.org/wiki/Stellar_evolution</a></p>
+                    <ul>
+                    <li><p>star</p>
+                    <ul>
+                    <li>&quot;A star is a luminous sphere of plasma held together by its own gravity.&quot;</li>
+                    <li>Every star begins from collapsing clouds of gas and dust?</li>
+                    <li><p>A star is a self-sustaining fusion nuclear reactor.</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Stellar_nucleosynthesis">WP:Stellar nucleosynthesis</a></li>
+                    </ul></li>
+                    <li>protostar</li>
+                    <li>main-sequence star</li>
+                    <li>supernova</li>
+                    <li>brown dwarf</li>
+                    <li><p>white dwarf</p></li>
+                    </ul></li>
+                    <li><p>solar system</p>
+                    <ul>
+                    <li>&quot;sol&quot; is Latin word for &quot;sun&quot;</li>
+                    </ul></li>
+                    <li>galaxy</li>
+                    <li>nebula</li>
+                    <li><p>constellation (con + stella)</p>
+                    <ul>
+                    <li>&quot;stella&quot; is Latin word for &quot;star&quot;</li>
+                    <li>&quot;constellation&quot; means &quot;bunch of stars&quot;</li>
+                    </ul></li>
+                    <li>satellite</li>
+                    <li>moon</li>
+                    <li>comet</li>
+                    <li>asteroid</li>
+                    <li><p>black hole</p></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Related fields of study?</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Cosmology">https://en.wikipedia.org/wiki/Cosmology</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Cosmogony">https://en.wikipedia.org/wiki/Cosmogony</a></li>
+                    </ul></li>
+                    <li><p>When does gravity exceed electrostatic repulsion?</p>
+                    <ul>
+                    <li><a href="https://physics.stackexchange.com/questions/13971/minimum-number-of-atoms-in-star">https://physics.stackexchange.com/questions/13971/minimum-number-of-atoms-in-star</a></li>
+                    <li><a href="http://www.jgiesen.de/astro/stars/star.htm">http://www.jgiesen.de/astro/stars/star.htm</a></li>
+                    </ul></li>
+                    </ul>
+                    <h2 id="quantum-venn-diagram-paradox"><span class="section_number">8</span><span class="section_title">Quantum Venn diagram paradox</span></h2>
+                    <ul>
+                    <li>Three polarizers.
+                    <ul>
+                    <li>Bell's Theorem: The Quantum Venn Diagram Paradox <a href="https://www.youtube.com/watch?v=zcqZHYo7ONs">https://www.youtube.com/watch?v=zcqZHYo7ONs</a>
+                    <ul>
+                    <li>It is surprising that adding a third filter <em>increases</em> brightness. We think that a filter should only decrease, not increase brightness.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul>
+                    <div class="local_table_of_contents">
+                    <ul>
+                    <li><span class="section_number">8.1</span><span class="section_title"><a href="#philosophy">Philosophy</a></span><span class="word_count">(693w~4m)</span></li>
+                    <li><span class="section_number">8.2</span><span class="section_title"><a href="#rebooting-human-knowledge-after-mass-destruction">Rebooting human knowledge after mass destruction</a></span><span class="word_count">(77w~1m)</span></li>
+                    </ul>
+                    </div>
+                    <h3 id="philosophy"><span class="section_number">8.1</span><span class="section_title">Philosophy</span></h3>
+                    <ul>
+                    <li><p>Some branches of philosophy</p>
+                    <ul>
+                    <li>Epistemology (how do we know?)</li>
+                    <li>Ontology (what exists?)</li>
+                    <li>Ethics (morality; what should be?)</li>
+                    </ul></li>
+                    <li><p>Epistemology</p>
+                    <ul>
+                    <li><p>There are two kinds of knowledge: <em>prior</em> and <em>posterior</em>.</p>
+                    <ul>
+                    <li>Prior (before-the-fact) knowledge is obtained by inferring theorems from axioms through the rules of logic.</li>
+                    <li>Posterior (after-the-fact) knowledge is obtained by observation from the real world through the physical senses.</li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/A_priori_and_a_posteriori">WP:a priori and a posteriori</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Epistemology">WP:Epistemology</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Empiricism">WP:Empiricism</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Experimentalism">WP:Experimentalism</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Occam%27s_razor">WP:Occam's razor</a></li>
+                    <li>In physics, we know things from experiments and inference.</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Scientific_method">https://en.wikipedia.org/wiki/Scientific_method</a></li>
+                    <li><p>[wenning2009scientific] explains scientific epistemology (about 15 pages).</p>
+                    <ul>
+                    <li><a href="http://www2.phy.ilstu.edu/pte/publications/scientific_epistemology.pdf">http://www2.phy.ilstu.edu/pte/publications/scientific_epistemology.pdf</a></li>
+                    </ul></li>
+                    <li><p>What does &quot;to know&quot; mean?</p>
+                    <ul>
+                    <li><p>Some possibilities</p>
+                    <ul>
+                    <li>To <em>know</em> an object is to be familiar with that object.</li>
+                    <li>To <em>know</em> an object is to be able to <em>use</em> that object.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Ontology</p>
+                    <ul>
+                    <li><p>Measurabilism</p>
+                    <ul>
+                    <li>A thing exists if and only if it can be measured.</li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Mike_Alder#Newton.27s_flaming_laser_sword">WP:Mike Alder, Newton's flaming laser sword</a></p>
+                    <ul>
+                    <li>&quot;What cannot be settled by experiment is not worth debating.&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Ontology">WP:Ontology</a></li>
+                    <li>Ontology defines objects, their properties, and their relationships?</li>
+                    <li>&quot;Object&quot; is another word for &quot;thing&quot;?</li>
+                    <li><p><em>Entity</em> is distinguishable object.</p>
+                    <ul>
+                    <li>An entity has identity.</li>
+                    <li>An entity can be distinguished from other entities.</li>
+                    </ul></li>
+                    <li><p><a href="http://www-ksl.stanford.edu/knowledge-sharing/papers/engmath.html">An Ontology for Engineering Mathematics</a></p></li>
+                    </ul></li>
+                    <li><p>Thoughts</p>
+                    <ul>
+                    <li>If our past is better than our present, then we have failed.</li>
+                    </ul></li>
+                    <li><p>How to study philosophy without wasting time?</p>
+                    <ul>
+                    <li><a href="https://philosophy.stackexchange.com/questions/21292/do-some-continental-philosophers-deliberately-obfuscate-their-writing-why">Phil. SE 21292: Do some continental philosophers deliberately obfuscate their writing? Why?</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Pseudophilosophy">WP:Pseudophilosophy</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Sophist">WP:Sophist</a></li>
+                    <li><p>philosophy vs science</p>
+                    <ul>
+                    <li><p><a href="https://hsm.stackexchange.com/questions/2608/why-and-when-did-some-areas-separate-themselves-from-philosophy-and-some-not">HSM SE 2608: Why and when did some areas separate themselves from philosophy and some not?</a></p>
+                    <ul>
+                    <li><p><a href="http://www.slate.com/blogs/quora/2014/12/17/when_did_science_and_philosophy_separate_into_different_fields_of_study.html">When Did Science and Philosophy Separate Into Different Fields of Study?</a></p>
+                    <ul>
+                    <li><a href="https://www.quora.com/Where-and-why-did-scientists-and-philosophers-branch-out-and-what-is-the-significance-of-philosophy-in-the-field-of-science">Quora: Where and why did scientists and philosophers branch out, and what is the significance of philosophy in the field of science?</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p><a href="https://www.quora.com/Why-are-the-sciences-separate-from-philosophy">Quora: Why are the sciences separate from philosophy?</a></p></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Ungrouped</p>
+                    <ul>
+                    <li>What is the difference: egoism, egotism, individualism?</li>
+                    </ul></li>
+                    <li><p>Ethics</p>
+                    <ul>
+                    <li><p>question group</p>
+                    <ul>
+                    <li>Is it good to force someone to do something even if such forcing makes the world better off?</li>
+                    <li>Is it good to make a few people worse off to make many people better off?</li>
+                    <li>Which should we value more: individual liberty or collective good?</li>
+                    </ul></li>
+                    <li><p><a href="http://www.philosophyexperiments.com/">test your morality online</a></p>
+                    <ul>
+                    <li><a href="http://www.philosophyexperiments.com/moralityplay/">test your moral parsimony</a></li>
+                    </ul></li>
+                    <li><p>For the sake of logical consistency</p>
+                    <ul>
+                    <li><p>Amorality</p>
+                    <ul>
+                    <li>Everyone does whatever they want.</li>
+                    <li>The only reason for not doing something is fear?</li>
+                    <li>Is amorality the only consistent moral system?</li>
+                    <li>Intention doesn't matter.</li>
+                    <li>Intention doesn't change the morality of a situation.</li>
+                    <li><p>amoral vs immoral</p>
+                    <ul>
+                    <li>amorality = absence of morality</li>
+                    <li>immorality = what majority thinks bad</li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Amorality">WP:Amorality</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Immorality">WP:Immorality</a></li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Moral_nihilism">WP:Moral nihilism</a></p>
+                    <ul>
+                    <li>What's the difference?</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>What is this position named?</p>
+                    <ul>
+                    <li>Something is morally right iff the majority says so.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Evolution_of_morality">WP:Evolution of morality</a></p></li>
+                    </ul></li>
+                    <li><p>How do I avoid forgetting things?</p>
+                    <ul>
+                    <li><p>Make forgetting impossible.</p>
+                    <ul>
+                    <li>Everything has its place.</li>
+                    <li>This doesn't apply to dementia.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>pointing out 21th century unwisdom</p>
+                    <ul>
+                    <li><p><a href="https://www.youtube.com/watch?v=O5BeLinyfpg">Adam Ruins Everything - Why Weddings Are A Total Rip-Off</a></p>
+                    <ul>
+                    <li>&quot;Despite your family's wishes, weddings are pointless and expensive displays of wealth.&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>&quot;It is sometimes said, common sense is very rare.&quot; (François-Marie Arouet a.k.a. Voltaire (1694–1778) in &quot;Philosophical Dictionary&quot; (1767))</li>
+                    <li>too long, need summary: <a href="https://waitbutwhy.com/2018/04/picking-career.html">How to Pick a Career (That Actually Fits You)</a></li>
+                    <li><p>chubbyemu</p>
+                    <ul>
+                    <li><a href="https://www.youtube.com/watch?v=hvPy4aqr5tA">this kid thinks he knows everything</a>: &quot;Successful people feel gratitude. Unsuccessful people feel entitlement.&quot;</li>
+                    <li><a href="https://www.youtube.com/watch?v=asF4IEqvYw8">You Can't Be Whatever You Want To Be</a></li>
+                    </ul></li>
+                    <li><a href="https://www.youtube.com/watch?v=R9OCA6UFE-0">The philosophy of Stoicism - Massimo Pigliucci</a></li>
+                    <li><p>Machiavelli is misunderstood.</p>
+                    <ul>
+                    <li><a href="http://brimanning.com/misunderstood-machiavelli">Misunderstood Machiavelli</a></li>
+                    <li><a href="https://www.theguardian.com/books/2017/mar/03/have-we-got-machiavelli-all-wrong">Have we got Machiavelli all wrong?</a></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Paradox_of_hedonism">WP:Paradox of hedonism</a></li>
+                    <li><p>Is forcing moral?</p>
+                    <ul>
+                    <li>Is it good, to give people something they did not ask for?</li>
+                    <li>Is it good, to force people to do something that betters them but unwanted by them?</li>
+                    </ul></li>
+                    <li>Is it good, to give people something they did not ask for?</li>
+                    <li>Does morality depend on intention or outcome?</li>
+                    <li><p>Why do young people (below 30 years old) have impractical expectations?</p>
+                    <ul>
+                    <li>Because their frontal cortex hasn't fully developed?</li>
+                    </ul></li>
+                    <li><p>Ontology, hierarchy, knowledge organization</p>
+                    <ul>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Porphyrian_tree">WP:Porphyrian tree</a></p>
+                    <ul>
+                    <li><a href="https://link.springer.com/chapter/10.1007/978-1-84628-710-7_2">Ontology in Computer Science</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>What is the difference between data, information, belief, knowledge, wisdom?</li>
+                    <li><a href="https://en.wikipedia.org/wiki/First_principle">WP:First principle</a></li>
+                    <li><p>Pop material</p>
+                    <ul>
+                    <li><p><a href="https://www.whatisitliketobeaphilosopher.com/">https://www.whatisitliketobeaphilosopher.com/</a></p>
+                    <ul>
+                    <li>Biographical interviews.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Science and Popper's falsifiability?</li>
+                    <li><p>Knowledge is a tower.</p>
+                    <ul>
+                    <li>It is built from the bottom upward.</li>
+                    <li>Concepts stand on other concepts.</li>
+                    <li><p>The bottom of that tower is everything we know from our senses?</p>
+                    <ul>
+                    <li>Or is it logic?</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Abductive reasoning?</p>
+                    <ul>
+                    <li>We know Y from experiment.</li>
+                    <li>Find a theory X that explains Y.</li>
+                    </ul></li>
+                    <li><p>Linguistics?</p>
+                    <ul>
+                    <li><p>What is a question?</p>
+                    <ul>
+                    <li>What are its answers?</li>
+                    <li><a href="https://plato.stanford.edu/entries/questions/">https://plato.stanford.edu/entries/questions/</a></li>
+                    </ul></li>
+                    <li><p>How do we answer &quot;What is X&quot;?</p>
+                    <ul>
+                    <li>Semantics of the copula (&quot;be&quot;)?</li>
+                    <li>Depends on the language?</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Semantics_of_logic">WP:Semantics of logic</a>?</li>
+                    <li>&quot;X is Y&quot; means &quot;X is another word for Y&quot;.</li>
+                    <li><p>&quot;X is a Y&quot; means &quot;X is an instance of Y&quot;.</p>
+                    <ul>
+                    <li>X a special kind of Y</li>
+                    <li>There exists Z such that &quot;X is a Y that Z&quot;</li>
+                    </ul></li>
+                    <li><p>&quot;X is a Y that Z&quot; means that every X is an instance of Y that satisfies Z.</p></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Distraction</p>
+                    <ul>
+                    <li><p>How do we justify knowledge?</p>
+                    <ul>
+                    <li><p>How do we justify knowledge from observation?</p>
+                    <ul>
+                    <li><a href="https://philosophy.stackexchange.com/questions/15463/why-distrust-our-senses">Philo. SE 15463: Why distrust our senses?</a></li>
+                    </ul></li>
+                    <li><p>How do we justify knowledge from inference?</p>
+                    <ul>
+                    <li>Why does logic work? Why is Nature logical?</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Syllogism">WP:Syllogism</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Modus_ponens">WP:Modus ponens</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Deductive_reasoning">WP:Deductive reasoning</a></li>
+                    <li><a href="https://philosophy.stackexchange.com/questions/22103/how-to-justify-the-use-of-logic">Philo. SE 22103: How to justify the use of logic?</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Epistemology">WP:Epistemology</a></li>
+                    <li><p><a href="https://plato.stanford.edu/entries/epistemology/">SEP:Epistemology</a></p></li>
+                    </ul></li>
+                    <li><a href="https://www.youtube.com/watch?v=GcJxRqTs5nk">Moral behavior in animals | Frans de Waal</a></li>
+                    <li>Definition of &quot;selfish&quot;? Does intention matter?</li>
+                    </ul>
+                    <h3 id="rebooting-human-knowledge-after-mass-destruction"><span class="section_number">8.2</span><span class="section_title">Rebooting human knowledge after mass destruction</span></h3>
+                    <ul>
+                    <li><p>How do we reboot human knowledge from zero?</p>
+                    <ul>
+                    <li><p>There are some ways in which everything might be destroyed:</p>
+                    <ul>
+                    <li>the next world war</li>
+                    <li>the next big space object impact</li>
+                    </ul></li>
+                    <li><p>We must survive.</p>
+                    <ul>
+                    <li><p>Find, gather, and follow the survivalists.</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Survivalism">WP:Survivalism</a></li>
+                    </ul></li>
+                    <li><p>We must drink.</p>
+                    <ul>
+                    <li>Settle near a clean river.</li>
+                    </ul></li>
+                    <li><p>We must eat.</p>
+                    <ul>
+                    <li><p>Forage.</p>
+                    <ul>
+                    <li>Hunt some game/meat.</li>
+                    <li>Gather edible plants.</li>
+                    <li><a href="https://www.reddit.com/r/AskHistorians/comments/2zsm4z/how_often_did_prehistoric_man_eat_meat/">https://www.reddit.com/r/AskHistorians/comments/2zsm4z/how_often_did_prehistoric_man_eat_meat/</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Optimal_foraging_theory">WP:Optimal foraging theory</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Foraging">WP:Foraging</a></li>
+                    </ul></li>
+                    <li><p>How do we forage with less effort?</p>
+                    <ul>
+                    <li>Weapon. Sharp edges.</li>
+                    <li>Fire. Cooking.</li>
+                    <li>Husbandry. Raise. Farm. Ranch. Agriculture. Crops.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Try to restore some of the Internet (Google, Wikipedia) before the survivalists die???</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul>
+                    <h2 id="biology"><span class="section_number">9</span><span class="section_title">Biology</span></h2>
+                    <ul>
+                    <li>How do we cure death?</li>
+                    <li>How do we live forever?</li>
+                    <li>Why do we age?</li>
+                    <li>Why don't limbs regrow after amputation?</li>
+                    <li>How do we reverse-engineer the genetic code?</li>
+                    <li><p>If we want to live forever, then which should we bet on: biology or artificial intelligence?</p>
+                    <ul>
+                    <li><p>What is digital &quot;immortality&quot;?</p>
+                    <ul>
+                    <li>You teach computers your thoughts. Then they mimic you. People can interact with &quot;you&quot; through computers. Then &quot;you&quot; would be digitally &quot;immortal&quot;. But you'll still die. &quot;You&quot; is the machine's model of you.</li>
+                    <li>It's like hiring someone to imitate you for life.</li>
+                    <li><p>Is it legit?</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Digital_immortality">Wikipedia: Digital immortality</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Can we reach immortality by replacing all organs (except the brain) with artificial organs?</p></li>
+                    </ul></li>
+                    <li><p>Does fasting help someone heal from a disease?</p>
+                    <ul>
+                    <li>Hypothesis: it might help healing because when you not don't eat, your body's immune system can focus on fighting the disease.</li>
+                    <li>Hypothesis: it might worsen the disease because your body doesn't get enough nutrient to fight the disease.</li>
+                    <li>Hypothesis: it might have no effect.</li>
+                    </ul></li>
+                    <li><p>bacteriophage might help us fight antibiotic-resistant bacteria</p>
+                    <ul>
+                    <li><a href="https://www.youtube.com/watch?v=YI3tsmFsrOg">kurzgezagt video</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=jTwEVK7TMWI">seeker video</a></li>
+                    </ul></li>
+                    <li>wings at first evolved to help climb steep angles (trees) <a href="https://www.youtube.com/watch?v=JMuzlEQz3uo">The Origin of Flight–What Use is Half a Wing? - HHMI BioInteractive Video</a></li>
+                    <li>CRISPR is a gene editing technology <a href="https://en.wikipedia.org/wiki/CRISPR">WP: CRISPR</a></li>
+                    <li>Toxin, venom, poison, what's the difference?</li>
+                    <li><p>Undigested</p>
+                    <ul>
+                    <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2868533/">Opinion: Biology is the new physics (to be revolutionized by math)</a></li>
+                    <li><a href="https://design.tutsplus.com/articles/human-anatomy-fundamentals-advanced-body-proportions--vector-19869">https://design.tutsplus.com/articles/human-anatomy-fundamentals-advanced-body-proportions--vector-19869</a></li>
+                    </ul></li>
+                    <li><p><a href="https://www.youtube.com/watch?v=-_tvJtUHnmU">AeroFarms (Newark, New Jersey) uses no soil and 95% less water</a></p>
+                    <ul>
+                    <li>large-scale hydroponics?</li>
+                    </ul></li>
+                    <li><a href="https://www.youtube.com/watch?v=DsVzKCk066g">WHY Exercise is so Underrated (Brain Power &amp; Movement Link)</a></li>
+                    <li><a href="https://gizmodo.com/mutated-plastic-munching-enzyme-accidentally-created-du-1825319901">Mutated Plastic-Munching Enzyme Accidentally Created During Lab Experiment</a></li>
+                    <li><p>Anatomy</p>
+                    <ul>
+                    <li><a href="https://www.shoulderdoc.co.uk/article/1177">Bones &amp; Joints of the Shoulder</a></li>
+                    <li><a href="http://www.fpnotebook.com/mobile/Ortho/Exam/HpRngOfMtn.htm">Hip range of motion</a></li>
+                    <li><p>Where are the sinuses?</p>
+                    <ul>
+                    <li><a href="http://www.cancerresearchuk.org/about-cancer/nasal-sinus-cancer/about">http://www.cancerresearchuk.org/about-cancer/nasal-sinus-cancer/about</a></li>
+                    <li><p>choana: connection between nose and mouth</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Posterior_nasal_apertures">https://en.wikipedia.org/wiki/Posterior_nasal_apertures</a></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/TOFI">WP:TOFI</a> (thin outside fat inside)</li>
+                    <li>2018, <a href="https://www.youtube.com/watch?v=F21DwTdBrvo">How Long Do You Remain Conscious If Your Head Is Chopped Off?</a> A few seconds, around 15 seconds.</li>
+                    <li>2018, <a href="https://www.youtube.com/watch?v=ImkuUN2mSdw">This Unorthodox Procedure Makes Short People A Foot Taller</a> Distraction osteogenesis. Breaking the leg bones. Undesirable side effects.</li>
+                    <li><p>Why don't we throw away our trash to volcanos?</p>
+                    <ul>
+                    <li><p><a href="https://www.reddit.com/r/explainlikeimfive/comments/2suzan/eli5_why_dont_we_dump_our_trash_in_volcanos/">https://www.reddit.com/r/explainlikeimfive/comments/2suzan/eli5_why_dont_we_dump_our_trash_in_volcanos/</a></p>
+                    <ul>
+                    <li>Local incineration is cheaper.</li>
+                    </ul></li>
+                    <li><a href="https://www.quora.com/Ecology-Why-not-dump-garbage-into-a-volcano">https://www.quora.com/Ecology-Why-not-dump-garbage-into-a-volcano</a></li>
+                    <li><p><a href="https://www.popsci.com/why-dont-we-just-throw-all-our-garbage-into-volcanos">https://www.popsci.com/why-dont-we-just-throw-all-our-garbage-into-volcanos</a></p></li>
+                    </ul></li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Marshall_Warren_Nirenberg">https://en.wikipedia.org/wiki/Marshall_Warren_Nirenberg</a></p>
+                    <ul>
+                    <li>some experiments in molecular biology</li>
+                    </ul></li>
+                    <li><a href="https://www.youtube.com/watch?v=MFgwUWHnVv8">Teenage dolphins getting high, recreational drug use, pufferfish, neurotoxin</a></li>
+                    <li><p><a href="https://www.youtube.com/watch?v=ovo_T0KqdYg">Neuro-parasitogy of the Jewel Wasp and its Zombie Cockroach Host</a></p>
+                    <ul>
+                    <li><p>Ampulex compressa, Periplaneta americana</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Alien_(creature_in_Alien_franchise)">https://en.wikipedia.org/wiki/Alien_(creature_in_Alien_franchise)</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Is nattokinase real? <a href="https://www.healthyhabits.com/hh_news/warfarin-rat-poison-riches/">https://www.healthyhabits.com/hh_news/warfarin-rat-poison-riches/</a></li>
+                    <li>2018, article, <a href="https://www.lesswrong.com/posts/E4cKD9iTWHaE7f3AJ/melatonin-much-more-than-you-wanted-to-know">Melatonin: Much More Than You Wanted To Know</a></li>
+                    <li><p>proper posture animations</p>
+                    <ul>
+                    <li><a href="https://www.youtube.com/watch?v=eb4rKCM3BKM">https://www.youtube.com/watch?v=eb4rKCM3BKM</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=6SkKPgKX_gY">https://www.youtube.com/watch?v=6SkKPgKX_gY</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=n78PS4zq3D8">https://www.youtube.com/watch?v=n78PS4zq3D8</a></li>
+                    </ul></li>
+                    <li><p>animals that photosynthesize</p>
+                    <ul>
+                    <li><a href="https://www.nationalgeographic.com/animals/2018/07/solar-powered-photosynthetic-sea-slugs-in-decline-news/">https://www.nationalgeographic.com/animals/2018/07/solar-powered-photosynthetic-sea-slugs-in-decline-news/</a></li>
+                    </ul></li>
+                    <li><p>Reversing global warming</p>
+                    <ul>
+                    <li><p>Reversing desertification</p>
+                    <ul>
+                    <li><p><a href="https://www.youtube.com/watch?v=vpTHi7O66pI">How to green the world's deserts and reverse climate change | Allan Savory</a></p>
+                    <ul>
+                    <li>Use livestock to mimick natural predators to make livestock move around.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>We might be able to use <a href="https://www.youtube.com/watch?v=xp0O2vi8DX4">Tali Sharot's TEDx talk</a> to reduce global warming (the way the electric company manipulates her into using less electricity).</p></li>
+                    </ul></li>
+                    <li><p>&quot;How to build synthetic DNA and send it across the internet - Dan Gibson&quot;, <a href="https://www.youtube.com/watch?v=6ElobAhlQo0">youtube</a></p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Gibson_assembly">https://en.wikipedia.org/wiki/Gibson_assembly</a></li>
+                    </ul></li>
+                    <li><a href="https://www.boredpanda.com/chinese-family-before-and-after-6-month-weight-loss-results-fan/">https://www.boredpanda.com/chinese-family-before-and-after-6-month-weight-loss-results-fan/</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=2mIeuTjDqwQ">Your Skin Cells Could Make a Baby, Will This Be the End of Infertility?</a></li>
+                    <li><p>falling asleep quickly</p>
+                    <ul>
+                    <li><p><a href="https://www.businessinsider.com/a-secret-military-technique-could-help-you-fall-asleep-in-2-minutes-2018-9/?IR=T">A secret military technique could help you fall asleep in 2 minutes - Business Insider</a></p>
+                    <ul>
+                    <li>Relax all muscles</li>
+                    <li>Think &quot;don't think&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul>
+                    <h2 id="physics"><span class="section_number">10</span><span class="section_title">Physics</span></h2>
+                    <ul>
+                    <li><p>In the 21st century</p>
+                    <ul>
+                    <li><p>Every branch of physics is about constructing a mathematical model of nature.</p>
+                    <ul>
+                    <li><p>Every branch is interested in different aspects of nature.</p>
+                    <ul>
+                    <li>Example: Mechanics is interested in motion.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Physics can't be separated from philosophy, mathematics, and engineering?</li>
+                    <li><p>Philosophy of physics</p>
+                    <ul>
+                    <li><p>The epistemology (how-do-we-know) of physics is the scientific method.</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Scientific_method">WP:Scientific method</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Hypothetico-deductive_model">WP:Hypothetico-deductive model</a></li>
+                    <li><p>If theory and experiment disagree, experiment wins.</p>
+                    <ul>
+                    <li>Unless the experiment is faulty.</li>
+                    </ul></li>
+                    <li><p>Are there alternatives?</p></li>
+                    </ul></li>
+                    <li><p>The ontology?</p>
+                    <ul>
+                    <li>Something is defined by its properties?</li>
+                    <li>Something is defined by its behaviors (relation to others)?</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Intrinsic_and_extrinsic_properties_(philosophy)">WP:Intrinsic and extrinsic properties</a></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Philosophy_of_physics">WP:Philosophy of physics</a></li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Philosophy_of_science">WP:Philosophy of science</a></p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Demarcation_problem">WP:Demarcation problem</a>: What is science? What isn't?</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Newton's insight</p>
+                    <ul>
+                    <li>Both the apple and the moon fall toward the Earth <em>in the same way</em> (due to the same cause: &quot;gravity&quot;).</li>
+                    </ul></li>
+                    <li><p>Ontology</p>
+                    <ul>
+                    <li><p>an attempt</p>
+                    <ul>
+                    <li><p>undefined terms</p>
+                    <ul>
+                    <li>touch</li>
+                    </ul></li>
+                    <li><p>A <em>matter</em> is something we can touch.</p>
+                    <ul>
+                    <li>The air is also a matter because we can feel it with our sense of touch.</li>
+                    <li><p>Problem: subjective definition</p>
+                    <ul>
+                    <li><p>What about people without sense of touch?</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Anaphia">WP:Anaphia</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Hypoesthesia">WP:Hypoesthesia</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Is there a definition that doesn't depend on our senses?</p>
+                    <ul>
+                    <li><p>Is such definition even possible?</p>
+                    <ul>
+                    <li><p>Should &quot;matter&quot; be undefined?</p>
+                    <ul>
+                    <li>Is physics about explaining our perceptions?</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>A matter is something that exists?</p>
+                    <ul>
+                    <li><p>But how do we know that it exists if not from our senses?</p>
+                    <ul>
+                    <li><p>Is there a teapot orbiting the sun?</p>
+                    <ul>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Russell%27s_teapot">WP:Russell's teapot</a></p>
+                    <ul>
+                    <li><p>How do we prove non-existence?</p>
+                    <ul>
+                    <li><p>Do we have to?</p>
+                    <ul>
+                    <li><p>Yes?</p>
+                    <ul>
+                    <li><p>Who claims, proves.</p>
+                    <ul>
+                    <li>If you claim that someone raped you, you have to prove it.</li>
+                    <li><p>Problem?</p>
+                    <ul>
+                    <li><p>If you claim that someone has <em>never</em> raped you, you have to prove it.</p>
+                    <ul>
+                    <li><p>But how?</p>
+                    <ul>
+                    <li>Let there be three people X, Y, Z.</li>
+                    <li>Z (probably a judge in a court) doesn't know either X or Y.</li>
+                    <li><p>How does X prove, to Z, that Y has never raped X?</p>
+                    <ul>
+                    <li><p>There are things that are true but unprovable?</p>
+                    <ul>
+                    <li>Is God true but unprovable (if there is a coherent definition of &quot;God&quot;)?</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>This can be used as a joke?</p>
+                    <ul>
+                    <li>X: &quot;Hey, do you know? Y has never raped me, but I can't prove it.&quot;</li>
+                    <li>Z: &quot;So, what are you suggesting?&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>How do we prove that Y has never transferred anything to X's bank account?</p>
+                    <ul>
+                    <li><p>We assume that the bank is honest and maintains correct records.</p>
+                    <ul>
+                    <li><p>Why should Z accept this assumption?</p>
+                    <ul>
+                    <li>Should Z still accept this assumption if X owned the bank?</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>The bank record is finite.</li>
+                    <li><p>Then we only need to check exhaustively whether there is anything from Y in the records.</p></li>
+                    </ul></li>
+                    <li><p>How do we prove that there isn't a teapot orbiting the sun?</p>
+                    <ul>
+                    <li>We can't visit every point in space.</li>
+                    <li>We can't exhaustive-check the entire Universe.</li>
+                    <li>We can't.</li>
+                    <li><p>But we can say that it's <em>implausible</em>.</p>
+                    <ul>
+                    <li>Why? How?</li>
+                    <li>What if there is really a teapot-shaped space rock orbiting the sun?</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>How do you prove that two people have never met before?</li>
+                    <li><p>How to prove libel?</p>
+                    <ul>
+                    <li><p>Suppose:</p>
+                    <ul>
+                    <li>X did rape Y.</li>
+                    <li>Y claims that X raped Y, but can't prove it.</li>
+                    </ul></li>
+                    <li><p>Then can X countersue Y with libel?</p></li>
+                    </ul></li>
+                    </ul></li>
+                    <li>If you claim that God exists, you have to prove it.</li>
+                    <li>If you claim that God doesn't exist, you also have to prove it.</li>
+                    <li>If you don't claim that God exists or not, then you don't have to prove anything.</li>
+                    <li><p>If you <em>believe</em> something, then you don't have to prove anything to others, as long as you don't claim it before them.</p>
+                    <ul>
+                    <li>Our belief is a claim we make before ourselves. If we can prove it, good for us. If we can't prove it, it's our problem.</li>
+                    <li>But, spreading a belief is making a claim before others. It has to be proven.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>concepts</p>
+                    <ul>
+                    <li><p>mass, acceleration, force</p>
+                    <ul>
+                    <li><p>Mass is resistance to force.</p>
+                    <ul>
+                    <li><p>Isn't this definition circular?</p>
+                    <ul>
+                    <li>Force accelerates mass.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li>Mass is the amount of matter.</li>
+                    <li><a href="https://en.wikipedia.org/wiki/Mass">WP:Mass</a></li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Matter">WP:Matter</a></p></li>
+                    </ul></li>
+                    <li><p>work</p>
+                    <ul>
+                    <li><p>Work is weight lifted through a height. (Coriolis 1826; <a href="https://en.wikipedia.org/wiki/Work_(physics)">WP:Work</a>)</p>
+                    <ul>
+                    <li><span class="math inline">\(F \cdot h\)</span> is the work done by lifting a weight <span class="math inline">\(F\)</span> through a height <span class="math inline">\(h\)</span>.</li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Theoretical physics</p>
+                    <ul>
+                    <li><p>Unifying quantum mechanics and general relativity?</p>
+                    <ul>
+                    <li><p>Unifying quantum mechanics and special relativity</p>
+                    <ul>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Quantum_electrodynamics">WP:Quantum electrodynamics</a></p>
+                    <ul>
+                    <li>&quot;is the first theory where full agreement between quantum mechanics and special relativity is achieved&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Hamiltonian mechanics in Minkowski spacetime?</p></li>
+                    </ul></li>
+                    <li><p>Relativity</p>
+                    <ul>
+                    <li><a href="https://brilliant.org/wiki/general-relativity-overview/">https://brilliant.org/wiki/general-relativity-overview/</a></li>
+                    </ul></li>
+                    <li><p>Undigested</p>
+                    <ul>
+                    <li><a href="https://arxiv.org/abs/math/0409576">The changing concept of matter in H. Weyl's thought, 1918-1930</a></li>
+                    <li><a href="https://arxiv.org/abs/math/0409571">Introducing Groups into Quantum Theory (1926 – 1930)</a></li>
+                    <li><a href="https://arxiv.org/abs/1804.01714">On the wonderfulness of Noether's theorems, 100 years later, and Routh reduction</a></li>
+                    <li>concise (50-page) introduction to differential geometry for advanced undergraduate majoring in physics <a href="http://physics.sharif.edu/~gr/ref/Differential%20Geometry%20in%20Physics,%20Gabriel%20Lugo,%201998%20%5Bebook%5D.pdf">http://physics.sharif.edu/~gr/ref/Differential%20Geometry%20in%20Physics,%20Gabriel%20Lugo,%201998%20[ebook].pdf</a></li>
+                    <li><a href="https://people.math.ethz.ch/~salamon/PREPRINTS/diffgeo.pdf">https://people.math.ethz.ch/~salamon/PREPRINTS/diffgeo.pdf</a></li>
+                    <li><p>How should we learn general relativity?</p>
+                    <ul>
+                    <li><p>How should we learn differential geometry?</p>
+                    <ul>
+                    <li>Should we use spherical trigonometry as an introduction to differential geometry?</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="http://www.cs.ox.ac.uk/people/bob.coecke/">Bob Coecke, categorical quantum mechanics</a></li>
+                    <li><a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.35.763">Why John von Neumann did not Like the Hilbert Space formalism of quantum mechanics (and what he liked instead)</a></li>
+                    <li>What are the von Neumann–Dirac axioms?</li>
+                    <li><p>quark fusion</p>
+                    <ul>
+                    <li><a href="https://www.youtube.com/watch?v=dGDiS8Dv8a8">Scientists Accidentally Discovered Quark Fusion, Could It Be the Future of Energy?</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Entropic_force">WP:Entropic force</a></p>
+                    <ul>
+                    <li><a href="http://entropicai.blogspot.co.id/2017/06/fractal-optimising-first-paper.html">http://entropicai.blogspot.co.id/2017/06/fractal-optimising-first-paper.html</a></li>
+                    </ul></li>
+                    <li><p>A crystal is a repeating structure.</p>
+                    <ul>
+                    <li>A time crystal or space-time crystal is a structure that repeats in time, as well as in space. (<a href="https://en.wikipedia.org/wiki/Time_crystal">WP: Time crystal</a>)</li>
+                    </ul></li>
+                    <li>An explanation of parallel transport <a href="https://physics.stackexchange.com/a/232119">https://physics.stackexchange.com/a/232119</a></li>
+                    <li><p>Futurism</p>
+                    <ul>
+                    <li>Interesting idea: harnessing energy from spinning black hole ergosphere, and making a black hole bomb. Penrose process. <a href="https://www.youtube.com/watch?v=ulCdoCfw-bY">kurzgesagt video</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Stellar_engine">https://en.wikipedia.org/wiki/Stellar_engine</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Astronomical_engineering">https://en.wikipedia.org/wiki/Astronomical_engineering</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Megascale_engineering">https://en.wikipedia.org/wiki/Megascale_engineering</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Kardashev_scale">https://en.wikipedia.org/wiki/Kardashev_scale</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>Nuclear energy</p>
+                    <ul>
+                    <li>Is there any way to convert nuclear energy into electrical energy without going through heat and turbines?</li>
+                    <li><a href="https://whatisnuclear.com/recycling.html">Nuclear recycling</a></li>
+                    </ul></li>
+                    <li><p>Undigested information fragments</p>
+                    <ul>
+                    <li><p>ECAT, LENR (low-energy nuclear reaction), cold fusion</p>
+                    <ul>
+                    <li><a href="http://ecat.com/">http://ecat.com/</a></li>
+                    <li><a href="http://e-catworld.com/what-is-the-e-cat/">http://e-catworld.com/what-is-the-e-cat/</a></li>
+                    </ul></li>
+                    <li><p>nuclear fusion</p>
+                    <ul>
+                    <li><a href="http://news.mit.edu/2015/small-modular-efficient-fusion-plant-0810">http://news.mit.edu/2015/small-modular-efficient-fusion-plant-0810</a></li>
+                    <li><a href="http://www.lockheedmartin.com/us/products/compact-fusion.html">http://www.lockheedmartin.com/us/products/compact-fusion.html</a></li>
+                    </ul></li>
+                    <li><p>DC-powered home</p>
+                    <ul>
+                    <li>Different sockets in addition to AC sockets.</li>
+                    <li><a href="http://www.mnn.com/green-tech/research-innovations/stories/the-home-of-tomorrow-will-run-on-direct-current">http://www.mnn.com/green-tech/research-innovations/stories/the-home-of-tomorrow-will-run-on-direct-current</a></li>
+                    </ul></li>
+                    <li><p>Given a bomb power in kiloton TNT, find the detonation altitude that maximizes destruction. See the blast curve.</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Effects_of_nuclear_explosions#Blast_damage">WP: Blast damage</a></li>
+                    <li><img src="https://en.wikipedia.org/wiki/File:Blastcurves_psi.svg" /></li>
+                    <li><a href="https://en.wikipedia.org/wiki/NUKEMAP">WP:NUKEMAP</a></li>
+                    </ul></li>
+                    <li><p>computers</p>
+                    <ul>
+                    <li><a href="https://www.youtube.com/watch?v=rUMx1Rmijzc">Photonic Chips Will Change Computing Forever… If We Can Get Them Right</a></li>
+                    </ul></li>
+                    <li><p>lasers</p>
+                    <ul>
+                    <li>jellyfish for polariton lasers <a href="https://www.youtube.com/watch?v=OpVvR6pa7g8">Jellyfish Lasers Are Revolutionizing Quantum Physics</a></li>
+                    </ul></li>
+                    <li><p>chemistry</p>
+                    <ul>
+                    <li>This is not an introduction to computational chemistry: <a href="https://www.wavefun.com/support/AGuidetoMM.pdf">A Guide to Molecular Mechanics and Quantum Chemical Calculations, 2003, Warren J. Hehre</a></li>
+                    </ul></li>
+                    <li><p>nuclear</p>
+                    <ul>
+                    <li>Isotope vs nuclide <a href="https://en.m.wikipedia.org/wiki/Isotope">https://en.m.wikipedia.org/wiki/Isotope</a></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>engineering</p>
+                    <ul>
+                    <li><p><a href="https://www.youtube.com/watch?v=Qf-D1Upn-KU">How to save 51 billion lives for 68 cents with simple Engineering</a></p>
+                    <ul>
+                    <li>Some constraints are good for creativity.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p>space</p>
+                    <ul>
+                    <li><p>How big is a rocket?</p>
+                    <ul>
+                    <li>The F-1 engine of Saturn V rocket burns 3,000 kg of fuel every second. <a href="https://www.thevintagenews.com/2018/04/03/jeff-bezos/">https://www.thevintagenews.com/2018/04/03/jeff-bezos/</a></li>
+                    <li>It looks like a flying skyscraper?</li>
+                    </ul></li>
+                    <li><a href="https://www.youtube.com/watch?v=yL7EEXg2niU">This Massive Asteroid Is Headed for Earth…. What Now?</a></li>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Rockoon">WP: rockoon</a> (rocket-balloon)</p></li>
+                    </ul></li>
+                    <li><p>Other external resources</p>
+                    <ul>
+                    <li><p>Overview</p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Physics">WP:Physics</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Outline_of_physics">WP:Outline of physics</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Portal:Physics">WP:Portal:Physics</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=ZihywtixUYo">YT:The Map of Physics</a></li>
+                    </ul></li>
+                    <li><a href="https://www.youtube.com/user/minutephysics/videos">YT:minutephysics user</a></li>
+                    <li><a href="https://www.youtube.com/channel/UC1jsSfjt8MPRqK254HV1i9Q/videos">YT:GraduatePhysics channel</a></li>
+                    <li><a href="https://www.youtube.com/playlist?list=PL8dPuuaLjXtN0ge7yDk_UA0ldZJdhwkoV">YT:CrashCourse Physics playlist for AP Physics 1 and 2</a></li>
+                    <li><p><a href="https://www.youtube.com/watch?v=sJG-rXBbmCc">YT:For the Love of Physics - Walter Lewin - May 16, 2011</a></p>
+                    <ul>
+                    <li><p>around 35:40</p>
+                    <ul>
+                    <li>Cloud is white due to Mie scattering.</li>
+                    <li>Sky is blue due to Rayleigh scattering.</li>
+                    <li>Scattering depends on particle size.</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><p><a href="https://www.youtube.com/watch?v=8LHhpPtRMmU">Will We Ever Time Travel? Scientists Say 'No' Based on This New Discovery</a></p>
+                    <ul>
+                    <li>This youtube video title needs to be declickbaited. What new discovery?</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Problem_of_induction">https://en.wikipedia.org/wiki/Problem_of_induction</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Uniformitarianism">https://en.wikipedia.org/wiki/Uniformitarianism</a></li>
+                    <li><p>We assume the <em>principle of the uniformity of nature</em>:</p>
+                    <ul>
+                    <li>The laws of nature is the same everywhere everytime [hume1793inquiry].</li>
+                    </ul></li>
+                    <li><p>Simulation hypothesis</p>
+                    <ul>
+                    <li><p><a href="https://en.wikipedia.org/wiki/Simulation_hypothesis">WP:Simulation hypothesis</a></p>
+                    <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Simulation_hypothesis#Testing_the_hypothesis_physically">section: testing the hypothesis physically</a></li>
+                    </ul></li>
+                    <li><p>Is the Universe a simulation? Testing the simulation hypothesis</p>
+                    <ul>
+                    <li><p>How do we find out if we are in a simulation?</p>
+                    <ul>
+                    <li><a href="https://www.technologyreview.com/s/429561/the-measurement-that-would-reveal-the-universe-as-a-computer-simulation/">https://www.technologyreview.com/s/429561/the-measurement-that-would-reveal-the-universe-as-a-computer-simulation/</a></li>
+                    <li>Look for numerical errors in the Universe. [UniNumError] <a href="https://arxiv.org/abs/1210.1847">https://arxiv.org/abs/1210.1847</a>
+                    <ul>
+                    <li>2012 article &quot;Constraints on the Universe as a Numerical Simulation&quot;</li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="http://www.washington.edu/news/2012/12/10/do-we-live-in-a-computer-simulation-uw-researchers-say-idea-can-be-tested/">http://www.washington.edu/news/2012/12/10/do-we-live-in-a-computer-simulation-uw-researchers-say-idea-can-be-tested/</a></li>
+                    <li><a href="http://www.huffingtonpost.co.uk/2012/12/12/physicists-universe-simulation-test-university-of-washington-matrix_n_2282745.html">http://www.huffingtonpost.co.uk/2012/12/12/physicists-universe-simulation-test-university-of-washington-matrix_n_2282745.html</a></li>
+                    <li><p>anisotropy of space?</p></li>
+                    </ul></li>
+                    </ul></li>
+                    <li><a href="https://www.youtube.com/watch?v=MBnnXbOM5S4">YT:The more general uncertainty principle, beyond quantum</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Amplituhedron">https://en.wikipedia.org/wiki/Amplituhedron</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Theoretical_physics">https://en.wikipedia.org/wiki/Theoretical_physics</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Protoscience">https://en.wikipedia.org/wiki/Protoscience</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Pseudoscience">https://en.wikipedia.org/wiki/Pseudoscience</a></li>
+                    <li><a href="https://newrepublic.com/article/118655/theoretical-phyisicist-explains-why-science-not-about-certainty">https://newrepublic.com/article/118655/theoretical-phyisicist-explains-why-science-not-about-certainty</a></li>
+                    <li><p>Free electron can't absorb photon</p>
+                    <ul>
+                    <li><a href="https://physics.stackexchange.com/questions/225522/free-electron-cant-absorb-a-photon">https://physics.stackexchange.com/questions/225522/free-electron-cant-absorb-a-photon</a></li>
+                    <li><a href="https://www.quora.com/If-photons-can-be-absorbed-by-electrons-why-can-photons-not-be-absorbed-by-free-electrons">https://www.quora.com/If-photons-can-be-absorbed-by-electrons-why-can-photons-not-be-absorbed-by-free-electrons</a></li>
+                    </ul></li>
+                    <li><p>theoretical physics meta-research</p>
+                    <ul>
+                    <li><a href="https://www.kth.se/en/sci/phd/programs/physics/forskning/aktuell-forskning-inom-teoretisk-fysik-1.76843">https://www.kth.se/en/sci/phd/programs/physics/forskning/aktuell-forskning-inom-teoretisk-fysik-1.76843</a></li>
+                    <li><a href="https://www.quora.com/What-are-some-of-the-best-Physics-blogs">https://www.quora.com/What-are-some-of-the-best-Physics-blogs</a></li>
+                    <li><a href="https://blog.feedspot.com/physics_blogs/">https://blog.feedspot.com/physics_blogs/</a></li>
+                    </ul></li>
+                    <li><p>high-energy physics information system</p>
+                    <ul>
+                    <li><a href="https://inspirehep.net/">https://inspirehep.net/</a></li>
+                    </ul></li>
+                    <li><p>Unchecked physical theories? Non-mainstream? Suspicious? Not yet mainstream or will never be mainstream?</p>
+                    <ul>
+                    <li><a href="http://www.unifiedphysics.com/">http://www.unifiedphysics.com/</a></li>
+                    </ul></li>
+                    <li>2018 quantum entanglement size record: trillions of atoms? <a href="https://www.youtube.com/watch?v=LAvfPof1ySI">https://www.youtube.com/watch?v=LAvfPof1ySI</a></li>
+                    <li><p>Getting started</p>
+                    <ul>
+                    <li>physics expository works <a href="https://physics.stackexchange.com/questions/194300/physics-journals-that-focus-on-expository-work">https://physics.stackexchange.com/questions/194300/physics-journals-that-focus-on-expository-work</a></li>
+                    </ul></li>
+                    <li><p>Keeping up with recent research</p>
+                    <ul>
+                    <li>&quot;Newly published articles in physics&quot; <a href="http://www.scholarpedia.org/article/Encyclopedia:Physics">http://www.scholarpedia.org/article/Encyclopedia:Physics</a></li>
+                    </ul></li>
+                    <li><p>Finding literature</p>
+                    <ul>
+                    <li><a href="http://de.physnet.net/PhysNet/physnet.html">PhysNet</a></li>
+                    <li><a href="http://de.physnet.net/PhysNet/physdoc.html">PhysNet PhysDoc: Physics Documents Worldwide</a></li>
+                    </ul></li>
+                    </ul>
+                    <h2 id="fixing-reification-fallacies-we-often-conflate-a-representation-of-a-thing-and-the-thing-itself."><span class="section_number">11</span><span class="section_title">Fixing reification fallacies; we often conflate a representation of a thing and the thing itself.</span></h2>
+                    <p><a href="https://rationalwiki.org/wiki/Mistaking_the_map_for_the_territory">https://rationalwiki.org/wiki/Mistaking_the_map_for_the_territory</a></p>
+                    <p>Light is neither particle nor wave. Light may <em>behave</em> like particle. Light may behave like wave. It is categorically impossible for something to be both a particle and a wave.</p>
+                    <p>A picture of a duck is not a duck. But we often conflate them. The picture <em>depicts</em> a duck. The picture is not a duck.</p>
+                    <p><a href="https://en.wikipedia.org/wiki/The_Treachery_of_Images">https://en.wikipedia.org/wiki/The_Treachery_of_Images</a></p>
+                    <p>This is rampant in mathematics. For example, which are the natural numbers: 0,1,2; or z,sz,ssz? Neither. Those are only representations of natural numbers. The essence of natural numbers is <em>succession</em>:</p>
+                    <ul>
+                    <li>There exists exactly one natural number that is not the successor of any other natural numbers.</li>
+                    <li>The successor of a natural number is another natural number.</li>
+                    </ul>
+                    <p>But it is shorter to say &quot;Let 0 <em>be</em> a natural number&quot; than &quot;Let 0 <em>represent</em> a natural number&quot;, and the writer actually means the latter while writing the former, and the reader implicitly understands that.</p>
+                    <p>Is a function a tuple, or does the tuple represent the function?</p>
+                    <p>2001, &quot;How we confuse symbols and things&quot; <a href="https://arachnoid.com/lutusp/symbols.html">https://arachnoid.com/lutusp/symbols.html</a></p>
+                    <p><a href="https://en.wikipedia.org/wiki/Reification_(fallacy)">https://en.wikipedia.org/wiki/Reification_(fallacy)</a></p>
+                    <ul>
+                    <li>The representation is not the thing.</li>
+                    <li>The model is not the reality.</li>
+                    <li>The map is not the territory.</li>
+                    <li>The ceremony is not the faith.</li>
+                    <li>The uniform is not the power.</li>
+                    <li>The money is not the wealth.</li>
+                    <li>The manliness is not the man.</li>
+                    <li>The marriage is not the relationship.</li>
+                    <li>The speech is not the thought.</li>
+                    <li>The publication is not the science.</li>
+                    <li>The school is not the education.</li>
+                    </ul>
+                    <p>What?</p>
+                    <ul>
+                    <li>&quot;Ontology of Mathematics&quot; <a href="https://philpapers.org/browse/ontology-of-mathematics">https://philpapers.org/browse/ontology-of-mathematics</a>
+                    <ul>
+                    <li>&quot;A good introductory survey is Horsten 2008. A readable introduction to philosophy of mathematics is Shapiro 2000. A nice, albeit somewhat biased survey of ontological options can be found in the first few chapters of Chihara 1990. A very nice introduction to the development of foundations of mathematics and the interaction between foundations, epistemology and ontology of mathematics is Giaquinto 2002.&quot;</li>
+                    </ul></li>
+                    </ul>
+                    <h2 id="colors-1"><span class="section_number">12</span><span class="section_title">Colors</span></h2>
+                    <div class="local_table_of_contents">
+                    <ul>
+                    <li><span class="section_number">12.1</span><span class="section_title"><a href="#light-travels-in-straight-line.-the-proof-is-the-shape-of-shadows.">Light travels in straight line. The proof is the shape of shadows.</a></span><span class="word_count">(12w~1m)</span></li>
+                    <li><span class="section_number">12.2</span><span class="section_title"><a href="#we-dont-see-the-objects-themselves.-we-see-only-the-light-arriving-at-our-eyes.">We don't see the objects themselves. We see only the light arriving at our eyes.</a></span><span class="word_count">(15w~1m)</span></li>
+                    <li><span class="section_number">12.3</span><span class="section_title"><a href="#what-2">What</a></span><span class="word_count">(26w~1m)</span></li>
+                    <li><span class="section_number">12.4</span><span class="section_title"><a href="#understanding-metamerism-is-the-key-to-understanding-color-perception.">Understanding metamerism is the key to understanding color perception.</a></span><span class="word_count">(46w~1m)</span></li>
+                    <li><span class="section_number">12.5</span><span class="section_title"><a href="#newtons-prism-splits-sunlight-into-spectrum">Newton's prism splits sunlight into spectrum?</a></span><span class="word_count">(6w~1m)</span></li>
+                    <li><span class="section_number">12.6</span><span class="section_title"><a href="#good-question-about-the-meaning-of-the-wavelength-of-a-photon">Good question about the meaning of the wavelength of a photon</a></span><span class="word_count">(11w~1m)</span></li>
+                    </ul>
+                    </div>
+                    <h3 id="light-travels-in-straight-line.-the-proof-is-the-shape-of-shadows."><span class="section_number">12.1</span><span class="section_title">Light travels in straight line. The proof is the shape of shadows.</span></h3>
+                    <h3 id="we-dont-see-the-objects-themselves.-we-see-only-the-light-arriving-at-our-eyes."><span class="section_number">12.2</span><span class="section_title">We don't see the objects themselves. We see only the light arriving at our eyes.</span></h3>
+                    <h3 id="what-2"><span class="section_number">12.3</span><span class="section_title">What</span></h3>
+                    <p><a href="https://en.wikipedia.org/wiki/Color_of_chemicals">https://en.wikipedia.org/wiki/Color_of_chemicals</a></p>
+                    <p>Red is a <em>color category</em>, not a color. What?</p>
+                    <p><a href="https://www.quora.com/What-is-the-difference-between-polychromatic-and-monochromatic-light">https://www.quora.com/What-is-the-difference-between-polychromatic-and-monochromatic-light</a></p>
+                    <p>Chroma vs color</p>
+                    <p>&quot;Color Perception&quot; <a href="http://hyperphysics.phy-astr.gsu.edu/hbase/vision/colper.html">http://hyperphysics.phy-astr.gsu.edu/hbase/vision/colper.html</a></p>
+                    <p>Trichromatic vision Three kinds of cone cells Tristimulus Young–Helmholtz trichromatic theory <a href="https://en.wikipedia.org/wiki/Trichromacy">https://en.wikipedia.org/wiki/Trichromacy</a> <a href="https://en.wikipedia.org/wiki/Young%E2%80%93Helmholtz_theory">https://en.wikipedia.org/wiki/Young%E2%80%93Helmholtz_theory</a> <a href="https://en.wikipedia.org/wiki/Tristimulus_colorimeter">https://en.wikipedia.org/wiki/Tristimulus_colorimeter</a></p>
+                    <p><a href="https://biology.stackexchange.com/questions/58759/can-human-perception-differentiate-between-monochromatic-and-polychromatic-light">https://biology.stackexchange.com/questions/58759/can-human-perception-differentiate-between-monochromatic-and-polychromatic-light</a></p>
+                    <h3 id="understanding-metamerism-is-the-key-to-understanding-color-perception."><span class="section_number">12.4</span><span class="section_title">Understanding metamerism is the key to understanding color perception.</span></h3>
+                    <p><a href="https://en.wikipedia.org/wiki/Metamerism_(color)">https://en.wikipedia.org/wiki/Metamerism_(color)</a> Purple vs violet <a href="https://en.wikipedia.org/wiki/Purple">https://en.wikipedia.org/wiki/Purple</a> History of color theory Television <a href="https://en.wikipedia.org/wiki/Color_vision">https://en.wikipedia.org/wiki/Color_vision</a></p>
+                    <p><a href="https://www.hunterlab.com/blog/color-measurement-2/understanding-tristimulus-values-taking-guesswork-color-measurement-instrumentation/">https://www.hunterlab.com/blog/color-measurement-2/understanding-tristimulus-values-taking-guesswork-color-measurement-instrumentation/</a></p>
+                    <p><a href="https://en.wikipedia.org/wiki/CIE_1931_color_space">https://en.wikipedia.org/wiki/CIE_1931_color_space</a></p>
+                    <p>&quot;The CIE 1931 color spaces were the first defined quantitative links between distributions of wavelengths in the electromagnetic visible spectrum, and physiologically perceived colors in human color vision.&quot;</p>
+                    <p><a href="https://en.wikipedia.org/wiki/CIE_1931_color_space#Meaning_of_X,_Y_and_Z">https://en.wikipedia.org/wiki/CIE_1931_color_space#Meaning_of_X,_Y_and_Z</a></p>
+                    <h3 id="newtons-prism-splits-sunlight-into-spectrum"><span class="section_number">12.5</span><span class="section_title">Newton's prism splits sunlight into spectrum?</span></h3>
+                    <h3 id="good-question-about-the-meaning-of-the-wavelength-of-a-photon"><span class="section_number">12.6</span><span class="section_title">Good question about the meaning of the wavelength of a photon</span></h3>
+                    <p><a href="https://physics.stackexchange.com/questions/267034/what-exactly-is-meant-by-the-wavelength-of-a-photon">https://physics.stackexchange.com/questions/267034/what-exactly-is-meant-by-the-wavelength-of-a-photon</a></p>
+                    <h2 id="probability-arises-from-basic-physical-laws"><span class="section_number">13</span><span class="section_title">Probability arises from basic physical laws?</span></h2>
+                    <ul>
+                    <li><a href="https://www.theatlantic.com/science/archive/2018/11/science-full-mavericks-like-my-grandfather-was-his-physics-theory-right/574573/">https://www.theatlantic.com/science/archive/2018/11/science-full-mavericks-like-my-grandfather-was-his-physics-theory-right/574573/</a></li>
+                    <li><a href="https://www.researchers.one/article/2018-10-6">https://www.researchers.one/article/2018-10-6</a></li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/nature.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/nature.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2018-04-11 04:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
