@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Parsing</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus's wiki</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Parsing</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what-is-parsing">What is parsing?</a></span><span class="word_count">(175w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#direct-left-recursive-parsers-in-prolog">&lt;2018-11-02&gt; Direct left-recursive parsers in Prolog</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#relational-parsing-parsing-with-prolog-my-train-of-thought">Relational parsing; parsing with Prolog; my train of thought</a></span><span class="word_count">(840w~5m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#metainterpreter-for-left-recursive-parsing">Metainterpreter for left-recursive parsing?</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#left-recursive-parsing">Left-recursive parsing</a></span><span class="word_count">(53w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#what-1">What</a></span><span class="word_count">(8w~1m)</span></li>
+</ul>
+</div>
+<h2 id="what-is-parsing"><span class="section_number">1</span><span class="section_title">What is parsing?</span></h2>
+<p>Parsing is relating strings and trees.</p>
+<p>A <em>parser</em> is a relation <span class="math inline">\(P \subseteq C^* \times T\)</span>. The set <span class="math inline">\(C\)</span> is the <em>alphabet</em>: it may be the set of Unicode character code points, or it may be the set of the tokens that a <em>lexical analyzer</em> may produce. The set <span class="math inline">\(C^*\)</span> is the Kleene closure of <span class="math inline">\(C\)</span>. The set <span class="math inline">\(T\)</span> is the set of <em>syntax trees</em>.</p>
+<p>If the parser is a function <span class="math inline">\(P : C^* \to T\)</span>, then the grammar is <em>unambiguous</em>.</p>
+<p>A <em>lexer</em> is a degenerate<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> parser: it is a parser whose codomain is a list (which is a degenerate tree).</p>
+<p>Parsing is the inverse of <em>tree linearization</em>.</p>
+<p>The parser is <em>parallelizable</em> if there exists a relatively fast function <span class="math inline">\(combine\)</span> such that for all <span class="math inline">\(x,y \in C^*\)</span>: <span class="math display">\[
+P(xy) = combine(P(x), P(y))
+\]</span></p>
+<p><a href="http://matt.might.net/articles/parsing-with-derivatives/">http://matt.might.net/articles/parsing-with-derivatives/</a></p>
+<p><a href="https://github.com/webyrd/relational-parsing-with-derivatives/blob/master/README.md">https://github.com/webyrd/relational-parsing-with-derivatives/blob/master/README.md</a></p>
+<p>An <em>incremental</em> parser is a relation <span class="math inline">\(step \subseteq C \times T \times T\)</span>.</p>
+<p>How do IDEs not have to reparse the entire document when the user presses one keystroke?</p>
+<p><a href="https://blog.github.com/2018-10-31-atoms-new-parsing-system/">https://blog.github.com/2018-10-31-atoms-new-parsing-system/</a></p>
+<p>Differentiating Parsers <a href="http://lambda-the-ultimate.org/node/3704">http://lambda-the-ultimate.org/node/3704</a></p>
+<p>The idea is to output to all possible continuations? <span class="math inline">\(incrementalize : (C^* \to T) \to (C^* \to T^*)\)</span>?</p>
+<h2 id="direct-left-recursive-parsers-in-prolog"><span class="section_number">2</span><span class="section_title">&lt;2018-11-02&gt; Direct left-recursive parsers in Prolog</span></h2>
+<p>The key: unify terminals before recursing into nonterminals.</p>
+<pre class="example"><code>% S is a list of character codes.
+binary_operator([0&#39;+]).
+binary_operator([0&#39;*]).
+
+digit(C) :- code_type(C, digit).
+
+number(S) :-
+    digit([S])
+;   append([[A], B], S), digit(A), number(B);
+
+expression(S) :-
+    number(S)
+;   binary_operator(B), append([A, B, C], S), expression(A), expression(C).
+</code></pre>
+<h2 id="relational-parsing-parsing-with-prolog-my-train-of-thought"><span class="section_number">3</span><span class="section_title">Relational parsing; parsing with Prolog; my train of thought</span></h2>
+<p>Parsing is turning a list into a tree.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#approaches">Approaches</a></span><span class="word_count">(66w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#determining-the-groundness-of-the-length-of-the-lists-involved-in-append3-and-append2">Determining the groundness of the length of the lists involved in append/3 and append/2</a></span><span class="word_count">(245w~2m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#naive-approach-with-recognizer-membership-predicate">Naive approach with recognizer / membership predicate</a></span><span class="word_count">(226w~2m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#prefix-remover-difference-list-recognizer-list-partitioner">Prefix remover / difference-list recognizer / list partitioner</a></span><span class="word_count">(156w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#definite-clause-grammars">Definite clause grammars</a></span><span class="word_count">(89w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#context-sensitive-grammars">Context-sensitive grammars?</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">3.7</span><span class="section_title"><a href="#libraries">Libraries?</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">3.8</span><span class="section_title"><a href="#left-recursion">Left recursion</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">3.9</span><span class="section_title"><a href="#precedence-parsing">Precedence parsing?</a></span><span class="word_count">(12w~1m)</span></li>
+</ul>
+</div>
+<h3 id="approaches"><span class="section_number">3.1</span><span class="section_title">Approaches</span></h3>
+<ul>
+<li>2002 course notes <a href="http://www.cs.sfu.ca/~cameron/Teaching/383/DCG.html">http://www.cs.sfu.ca/~cameron/Teaching/383/DCG.html</a></li>
+<li>1987 article &quot;Parsing and compiling using Prolog&quot; <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.101.9739&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.101.9739&amp;rep=rep1&amp;type=pdf</a></li>
+<li>relational approach
+<ul>
+<li>recognizer: <code>digit(Input)</code>
+<ul>
+<li>recognizer with explicit search strategy</li>
+</ul></li>
+<li>prefix remover: <code>digit(Input, Unparsed_suffix)</code>
+<ul>
+<li>This is the approach used by Prolog DCG (definite clause grammar).</li>
+</ul></li>
+<li>prefix extractor: <code>digit(Input, Parsed_prefix, Unparsed_suffix)</code>
+<ul>
+<li>This enables us to get the parsed input without <code>append/3</code>.</li>
+</ul></li>
+<li>concrete syntax tree parser: <code>digit(Input, Parsed, Unparsed)</code> where <code>Parsed = number(Children)</code>.
+<ul>
+<li>An example of <code>Parsed</code> is <code>number(digit(1), number(digit(2)))</code>.</li>
+</ul></li>
+<li>interpreter</li>
+</ul></li>
+<li>functional approach
+<ul>
+<li>parser combinator</li>
+</ul></li>
+<li>generator approach
+<ul>
+<li>parser generator</li>
+<li>parsing expression grammar</li>
+</ul></li>
+<li>procedural approach
+<ul>
+<li>recursive-descent</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Garden-path_sentence">https://en.wikipedia.org/wiki/Garden-path_sentence</a></li>
+</ul>
+<h3 id="determining-the-groundness-of-the-length-of-the-lists-involved-in-append3-and-append2"><span class="section_number">3.2</span><span class="section_title">Determining the groundness of the length of the lists involved in append/3 and append/2</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.2.1</span><span class="section_title"><a href="#why-do-we-care">Why do we care?</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">3.2.2</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(198w~1m)</span></li>
+<li><span class="section_number">3.2.3</span><span class="section_title"><a href="#how-do-we-generate-a-long-list-in-prolog-for-testing">How do we generate a long list in Prolog, for testing?</a></span><span class="word_count">(24w~1m)</span></li>
+</ul>
+</div>
+<h4 id="why-do-we-care"><span class="section_number">3.2.1</span><span class="section_title">Why do we care?</span></h4>
+<p>Because we want to write naive parsers that terminate.</p>
+<h4 id="what"><span class="section_number">3.2.2</span><span class="section_title">What?</span></h4>
+<p>From the source code of SWI-Prolog, with some modifications:</p>
+<ul>
+<li><a href="http://www.swi-prolog.org/pldoc/doc/_SWI_/library/lists.pl?show=src#append/3">http://www.swi-prolog.org/pldoc/doc/_SWI_/library/lists.pl?show=src#append/3</a></li>
+</ul>
+<p>&quot;Ground&quot; here is an adjective, not a noun. A term is <em>ground</em> iff it has no variables. A term is non-ground otherwise.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb2-1" title="1">append([]<span class="kw">,</span> <span class="dt">L</span><span class="kw">,</span> <span class="dt">L</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb2-2" title="2">append([<span class="dt">H</span><span class="fu">|</span><span class="dt">T</span>]<span class="kw">,</span> <span class="dt">L</span><span class="kw">,</span> [<span class="dt">H</span><span class="fu">|</span><span class="dt">R</span>]) <span class="kw">:-</span></a>
+<a class="sourceLine" id="cb2-3" title="3">    append(<span class="dt">T</span><span class="kw">,</span> <span class="dt">L</span><span class="kw">,</span> <span class="dt">R</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb2-4" title="4"></a>
+<a class="sourceLine" id="cb2-5" title="5">append([]<span class="kw">,</span> [])<span class="kw">.</span></a>
+<a class="sourceLine" id="cb2-6" title="6">append([<span class="dt">L</span><span class="fu">|</span><span class="dt">Ls</span>]<span class="kw">,</span> <span class="dt">As</span>) <span class="kw">:-</span></a>
+<a class="sourceLine" id="cb2-7" title="7">    append(<span class="dt">L</span><span class="kw">,</span> <span class="dt">Ws</span><span class="kw">,</span> <span class="dt">As</span>)<span class="kw">,</span></a>
+<a class="sourceLine" id="cb2-8" title="8">    append(<span class="dt">Ls</span><span class="kw">,</span> <span class="dt">Ws</span>)<span class="kw">.</span></a></code></pre></div>
+<p>We say that a list is <em>length-ground</em> iff its length is ground, and <em>length-unground</em> otherwise. The elements don't have to be ground.</p>
+<ul>
+<li>The empty list is length-ground.</li>
+<li>A list [_|T] is length-ground iff T is length-ground.</li>
+<li>If a variable gets unified with a length-ground list, then the variable is length-ground.</li>
+</ul>
+<p>To analyze length-groundedness, we &quot;reverse&quot; the program.</p>
+<pre class="example"><code>% append(T, L, R)
+append([], L, L).
+append(T, L, R) =&gt; append([H|T], L, [H|R]).
+</code></pre>
+<p>(Length-ground = proper list?)</p>
+<p>Now we can infer these about append(T, L, R):</p>
+<ul>
+<li>If T = [], then L and R have the same length-groundness.</li>
+<li>The recursive case:
+<ul>
+<li>Iff T is length-ground, then [H|T] is length-ground.</li>
+<li>Iff R is length-ground, then [H|R] is length-ground.</li>
+</ul></li>
+<li>If we want L to be length-ground, then R has to be length-ground.</li>
+<li>Thus we can infer that L and R have the same length-groundness regardless of the length-groundness of T.</li>
+</ul>
+<p>If append(A, B, C) succeeds, then:</p>
+<ul>
+<li>If A = [], then B and C have the same length-groundness.</li>
+<li>If two of A, B, C are length-ground, then the other one is length-ground?</li>
+<li>If two of A, B, C are length-unground, then the other one is length-unground?</li>
+</ul>
+<p>What?</p>
+<ul>
+<li>2002 article &quot;Efficient Groundness Analysis in Prolog&quot; <a href="https://arxiv.org/abs/cs/0201012">https://arxiv.org/abs/cs/0201012</a>
+<ul>
+<li><a href="https://github.com/pschachte/groundness">https://github.com/pschachte/groundness</a></li>
+</ul></li>
+</ul>
+<h4 id="how-do-we-generate-a-long-list-in-prolog-for-testing"><span class="section_number">3.2.3</span><span class="section_title">How do we generate a long list in Prolog, for testing?</span></h4>
+<ol>
+<li><p>How do we say &quot;A is a list of 100 equal elements&quot; in Prolog?</p></li>
+</ol>
+<h3 id="naive-approach-with-recognizer-membership-predicate"><span class="section_number">3.3</span><span class="section_title">Naive approach with recognizer / membership predicate</span></h3>
+<p>A <em>recognizer</em> is a unary predicate that takes a list of character codes.</p>
+<p>Another possible names for recognizer are <em>acceptor</em>, <em>determiner</em>, <em>decider</em>, <em>membership predicate</em>.</p>
+<p>Example: The following <code>digit</code> predicate recognizes ASCII decimal digits.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb4-1" title="1">digit([<span class="dt">D</span>]) <span class="kw">:-</span> code_type(<span class="dt">D</span><span class="kw">,</span> digit)<span class="kw">.</span></a></code></pre></div>
+<p>We can build recognizers on other recognizers. For example, here we use <code>digit</code> to define <code>number_</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb5-1" title="1"><span class="co">% We append underscore because =number= is a reserved Prolog predicate.</span></a>
+<a class="sourceLine" id="cb5-2" title="2">number_([<span class="dt">H</span>]) <span class="kw">:-</span> digit([<span class="dt">H</span>])<span class="kw">.</span></a>
+<a class="sourceLine" id="cb5-3" title="3">number_([<span class="dt">H</span><span class="fu">|</span><span class="dt">T</span>]) <span class="kw">:-</span> digit([<span class="dt">H</span>])<span class="kw">,</span> number_(<span class="dt">T</span>)<span class="kw">.</span></a></code></pre></div>
+<p>That Prolog knowledge base corresponds to this context-free grammar:</p>
+<pre><code>digit ::= &lt;a digit character as defined by Unicode&gt;
+number ::= digit | digit number
+</code></pre>
+<p>Exercise:</p>
+<ul>
+<li>Here you will compare depth-first search and iterative deepening search, and understand search completeness.</li>
+<li>Try the query <code>number_(S)</code>.</li>
+<li>Try the query <code>length(S,_), number_(S)</code>.</li>
+<li>If you keep pressing semicolon in the first query, will you ever encounter <code>S = [48,49]</code>?</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.3.1</span><span class="section_title"><a href="#a-cool-thing-recognizers-are-generators.">A cool thing: recognizers are generators.</a></span><span class="word_count">(33w~1m)</span></li>
+<li><span class="section_number">3.3.2</span><span class="section_title"><a href="#left-recursion-thwarts-the-naive-approach.">Left recursion thwarts the naive approach.</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">3.3.3</span><span class="section_title"><a href="#can-memoization-tabling-help-speed-up-the-naive-approach">Can memoization (tabling) help speed up the naive approach?</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">3.3.4</span><span class="section_title"><a href="#another-naive-approach-that-works.">Another naive approach that works.</a></span><span class="word_count">(68w~1m)</span></li>
+</ul>
+</div>
+<h4 id="a-cool-thing-recognizers-are-generators."><span class="section_number">3.3.1</span><span class="section_title">A cool thing: recognizers are generators.</span></h4>
+<p>The predicate <code>number_</code> can be used not only to recognize strings, but also to <em>generate</em> all such strings.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb7-1" title="1"><span class="co">% Press ; to generate the next possibility.</span></a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="co">% Press . to stop.</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="fu">?-</span> length(<span class="dt">S</span><span class="kw">,</span><span class="dt">_</span>)<span class="kw">,</span> number_(<span class="dt">S</span>)<span class="kw">.</span></a></code></pre></div>
+<p>To understand how that works, we have to understand Prolog backtracking.</p>
+<h4 id="left-recursion-thwarts-the-naive-approach."><span class="section_number">3.3.2</span><span class="section_title">Left recursion thwarts the naive approach.</span></h4>
+<p>Problem: The following <code>expression</code> doesn't terminate.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb8-1" title="1">operator([<span class="dt">A</span>]) <span class="kw">:-</span> string_codes(<span class="ot">&quot;+&quot;</span><span class="kw">,</span> <span class="dt">Ops</span>)<span class="kw">,</span> member(<span class="dt">A</span><span class="kw">,</span> <span class="dt">Ops</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb8-2" title="2"></a>
+<a class="sourceLine" id="cb8-3" title="3">expression(<span class="dt">E</span>) <span class="kw">:-</span> number_(<span class="dt">E</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb8-4" title="4">expression(<span class="dt">E</span>) <span class="kw">:-</span> <span class="kw">true</span></a>
+<a class="sourceLine" id="cb8-5" title="5">    <span class="kw">,</span> append([<span class="dt">A</span>, <span class="dt">B</span>, <span class="dt">C</span>]<span class="kw">,</span> <span class="dt">E</span>)</a>
+<a class="sourceLine" id="cb8-6" title="6">    <span class="kw">,</span> expression(<span class="dt">A</span>)</a>
+<a class="sourceLine" id="cb8-7" title="7">    <span class="kw">,</span> operator(<span class="dt">B</span>)</a>
+<a class="sourceLine" id="cb8-8" title="8">    <span class="kw">,</span> expression(<span class="dt">C</span>)</a>
+<a class="sourceLine" id="cb8-9" title="9">    <span class="kw">.</span></a></code></pre></div>
+<p>The corresponding context-free grammar is left-recursive:</p>
+<pre><code>expression ::= number | expression operator expression
+</code></pre>
+<p>We don't want to sacrifice the elegance of the description.</p>
+<h4 id="can-memoization-tabling-help-speed-up-the-naive-approach"><span class="section_number">3.3.3</span><span class="section_title">Can memoization (tabling) help speed up the naive approach?</span></h4>
+<p>No.</p>
+<h4 id="another-naive-approach-that-works."><span class="section_number">3.3.4</span><span class="section_title">Another naive approach that works.</span></h4>
+<p>This one works.</p>
+<p>The key is:</p>
+<ul>
+<li>Put grounding goals first. A grounding goal is a goal that grounds its variables.</li>
+<li><p>Be careful with the pattern <code>g, u</code> where <code>g</code> generates ungrounded terms and <code>u</code> fails, because it may cause infinite loop when Prolog backtracks, because Prolog continues to generate fresh variables. For example, this doesn't terminate:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb10-1" title="1"><span class="fu">?-</span> length(<span class="dt">L</span><span class="kw">,</span> <span class="dt">N</span>)<span class="kw">,</span> <span class="kw">fail.</span></a></code></pre></div>
+<ul>
+<li>If <code>p</code> may generate infinite choice points, then <code>p, fail</code> doesn't terminate.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb11-1" title="1">digit([<span class="dt">C</span>]) <span class="kw">:-</span> code_type(<span class="dt">C</span><span class="kw">,</span> digit)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb11-2" title="2"></a>
+<a class="sourceLine" id="cb11-3" title="3">number_([<span class="dt">H</span>]) <span class="kw">:-</span> digit([<span class="dt">H</span>])<span class="kw">.</span></a>
+<a class="sourceLine" id="cb11-4" title="4">number_([<span class="dt">H</span><span class="fu">|</span><span class="dt">T</span>]) <span class="kw">:-</span> digit([<span class="dt">H</span>])<span class="kw">,</span> number_(<span class="dt">T</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb11-5" title="5"></a>
+<a class="sourceLine" id="cb11-6" title="6">operator([<span class="bn">0&#39;+</span>])<span class="kw">.</span></a>
+<a class="sourceLine" id="cb11-7" title="7"></a>
+<a class="sourceLine" id="cb11-8" title="8"><span class="co">% expression(Meaning,Codes) may not work if Codes is ungrounded.</span></a>
+<a class="sourceLine" id="cb11-9" title="9">expression(<span class="dt">number</span>(<span class="dt">E</span>)<span class="kw">,</span> <span class="dt">E</span>) <span class="kw">:-</span> number_(<span class="dt">E</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb11-10" title="10">expression(plus(<span class="dt">MA</span><span class="kw">,</span><span class="dt">MC</span>)<span class="kw">,</span> <span class="dt">E</span>) <span class="kw">:-</span> <span class="kw">true</span></a>
+<a class="sourceLine" id="cb11-11" title="11">    <span class="kw">,</span> operator(<span class="dt">EB</span>) <span class="co">% Put grounding goals first.</span></a>
+<a class="sourceLine" id="cb11-12" title="12">    <span class="kw">,</span> append([<span class="dt">EA</span>,<span class="dt">EB</span>,<span class="dt">EC</span>]<span class="kw">,</span> <span class="dt">E</span>) <span class="co">% Thus B is grounded.</span></a>
+<a class="sourceLine" id="cb11-13" title="13">    <span class="kw">,</span> expression(<span class="dt">MA</span><span class="kw">,</span><span class="dt">EA</span>)</a>
+<a class="sourceLine" id="cb11-14" title="14">    <span class="kw">,</span> expression(<span class="dt">MC</span><span class="kw">,</span><span class="dt">EC</span>)</a>
+<a class="sourceLine" id="cb11-15" title="15">    <span class="kw">.</span></a></code></pre></div>
+<h3 id="prefix-remover-difference-list-recognizer-list-partitioner"><span class="section_number">3.4</span><span class="section_title">Prefix remover / difference-list recognizer / list partitioner</span></h3>
+<p>We can turn the naive recognizer <code>digit/1</code> into difference-list recognizer <code>digit/2</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb12-1" title="1">digit([<span class="dt">D</span>]) <span class="kw">:-</span> code_type(<span class="dt">D</span><span class="kw">,</span> digit)<span class="kw">.</span></a></code></pre></div>
+<ul>
+<li>The first parameter is the input string, say Input.</li>
+<li>The second parameter is the recognized prefix of Input.</li>
+<li>The third parameter is the unrecognized suffix of Input.</li>
+</ul>
+<p>In the following, P stands for Parsed, and U stands for Unparsed.</p>
+<p>We can turn the recognizer into:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb13-1" title="1"><span class="co">% Prefix remover.</span></a>
+<a class="sourceLine" id="cb13-2" title="2">digit([<span class="dt">P</span><span class="fu">|</span><span class="dt">U</span>]<span class="kw">,</span> <span class="dt">U</span>) <span class="kw">:-</span> code_type(<span class="dt">P</span><span class="kw">,</span> digit)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb13-3" title="3"></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="co">% List partitioner.</span></a>
+<a class="sourceLine" id="cb13-5" title="5">digit([<span class="dt">P</span><span class="fu">|</span><span class="dt">U</span>]<span class="kw">,</span> [<span class="dt">P</span>]<span class="kw">,</span> <span class="dt">U</span>) <span class="kw">:-</span> code_type(<span class="dt">P</span><span class="kw">,</span> digit)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb13-6" title="6"></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="co">% The list partitioner can be derived from the prefix remover:</span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="co">% digit(U0, P0, U1) :- digit(U0, U1), append(P0, U1, U0).</span></a>
+<a class="sourceLine" id="cb13-9" title="9"></a>
+<a class="sourceLine" id="cb13-10" title="10">number_(<span class="dt">U0</span><span class="kw">,</span> <span class="dt">U1</span>) <span class="kw">:-</span> digit(<span class="dt">U0</span><span class="kw">,</span> <span class="dt">U1</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb13-11" title="11"></a>
+<a class="sourceLine" id="cb13-12" title="12">number_(<span class="dt">U0</span><span class="kw">,</span> <span class="dt">P0</span><span class="kw">,</span> <span class="dt">U1</span>) <span class="kw">:-</span> digit(<span class="dt">U0</span><span class="kw">,</span> <span class="dt">P0</span><span class="kw">,</span> <span class="dt">U1</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb13-13" title="13">number_(<span class="dt">U0</span><span class="kw">,</span> <span class="dt">P2</span><span class="kw">,</span> <span class="dt">U2</span>) <span class="kw">:-</span> <span class="kw">true</span></a>
+<a class="sourceLine" id="cb13-14" title="14">    <span class="kw">,</span> digit(<span class="dt">U0</span><span class="kw">,</span> <span class="dt">P0</span><span class="kw">,</span> <span class="dt">U1</span>)</a>
+<a class="sourceLine" id="cb13-15" title="15">    <span class="kw">,</span> number_(<span class="dt">U1</span><span class="kw">,</span> <span class="dt">P1</span><span class="kw">,</span> <span class="dt">U2</span>)</a>
+<a class="sourceLine" id="cb13-16" title="16">    <span class="kw">,</span> append(<span class="dt">P0</span><span class="kw">,</span> <span class="dt">P1</span><span class="kw">,</span> <span class="dt">P2</span>)</a>
+<a class="sourceLine" id="cb13-17" title="17">    <span class="kw">.</span></a></code></pre></div>
+<p>The meaning of <code>number_(U0, P0, U1)</code> is:</p>
+<ul>
+<li>P0 is a number.</li>
+<li>P0 is a prefix of U0.</li>
+<li>U0 is the concatenation of P0 and U1.</li>
+</ul>
+<p>Observe how we &quot;thread&quot; the state. The calls in the body follow the pattern <code>something(U&lt;n&gt;, P&lt;n&gt;, U&lt;n+1&gt;)</code>.</p>
+<p>We can translate a recognizer into a difference-list recognizer.</p>
+<p>The cool thing is that each parameter works both ways.</p>
+<ul>
+<li>The query <code>string_codes(&quot;123&quot;, A), number_(A, A, [])</code> asks Prolog to find out whether &quot;123&quot; parses as a number.</li>
+<li>The query <code>length(A, _), number_(A, A, []).</code> asks Prolog to find a string that parse as a number. You can keep pressing <code>;</code> to generate the next strings.</li>
+</ul>
+<div class="sourceCode" id="cb14"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb14-1" title="1">operator([<span class="dt">P</span><span class="fu">|</span><span class="dt">U</span>]<span class="kw">,</span> [<span class="dt">P</span>]<span class="kw">,</span> <span class="dt">U</span>) <span class="kw">:-</span> string_codes(<span class="ot">&quot;+&quot;</span><span class="kw">,</span> <span class="dt">Codes</span>)<span class="kw">,</span> member(<span class="dt">P</span><span class="kw">,</span> <span class="dt">Codes</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb14-2" title="2"></a>
+<a class="sourceLine" id="cb14-3" title="3">expression(<span class="dt">U0</span><span class="kw">,</span> <span class="dt">P0</span><span class="kw">,</span> <span class="dt">U1</span>) <span class="kw">:-</span> number_(<span class="dt">U0</span><span class="kw">,</span> <span class="dt">P0</span><span class="kw">,</span> <span class="dt">U1</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb14-4" title="4">expression(<span class="dt">U0</span><span class="kw">,</span> <span class="dt">P0</span><span class="kw">,</span> <span class="dt">U1</span>) <span class="kw">:-</span> <span class="kw">true</span></a>
+<a class="sourceLine" id="cb14-5" title="5">    <span class="kw">,</span> expression(<span class="dt">U0</span><span class="kw">,</span> <span class="dt">P0</span><span class="kw">,</span> <span class="dt">U1</span>)</a>
+<a class="sourceLine" id="cb14-6" title="6">    <span class="kw">,</span> operator(<span class="dt">U1</span><span class="kw">,</span> <span class="dt">P1</span><span class="kw">,</span> <span class="dt">U2</span>)</a>
+<a class="sourceLine" id="cb14-7" title="7">    <span class="kw">,</span> expression(<span class="dt">U2</span><span class="kw">,</span> <span class="dt">P2</span><span class="kw">,</span> <span class="dt">U3</span>)</a>
+<a class="sourceLine" id="cb14-8" title="8">    <span class="kw">.</span></a></code></pre></div>
+<h3 id="definite-clause-grammars"><span class="section_number">3.5</span><span class="section_title">Definite clause grammars</span></h3>
+<ul>
+<li>The DCG clause <code>left --&gt; right</code> desugars/expands/translates into the definite clause <code>left(U0, U1) :- ...</code> where:
+<ul>
+<li>U0 is the input.</li>
+<li>U1 is the suffix of U0 that is not recognized by the DCG clause.</li>
+<li>The string recognized by the clause is the difference between U0 and U1. That string is the P such that U0 = P + U1 where + denotes list concatenation.</li>
+</ul></li>
+<li>&quot;Interesting Things about Prolog&quot; <a href="https://gist.github.com/CMCDragonkai/89a6c502ca7272e5e7464c0fc8667f4d">https://gist.github.com/CMCDragonkai/89a6c502ca7272e5e7464c0fc8667f4d</a>
+<ul>
+<li>&quot;Definite clause grammars (DCG) make the difference list pattern into a first class primitive with the <code>--&gt;</code> operator.&quot;</li>
+</ul></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.5.1</span><span class="section_title"><a href="#why-does-this-naive-dcg-fail">Why does this naive DCG fail?</a></span><span class="word_count">(6w~1m)</span></li>
+</ul>
+</div>
+<h4 id="why-does-this-naive-dcg-fail"><span class="section_number">3.5.1</span><span class="section_title">Why does this naive DCG fail?</span></h4>
+<div class="sourceCode" id="cb15"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb15-1" title="1">digit <span class="kw">--&gt;</span> [<span class="dt">Code</span>]<span class="kw">,</span> <span class="kw">{</span>code_type(<span class="dt">Code</span><span class="kw">,</span> digit)<span class="kw">}.</span></a>
+<a class="sourceLine" id="cb15-2" title="2"></a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="dt">number</span> <span class="kw">--&gt;</span></a>
+<a class="sourceLine" id="cb15-4" title="4">    digit<span class="kw">,</span> <span class="dt">number</span></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="kw">;</span>   digit</a>
+<a class="sourceLine" id="cb15-6" title="6"><span class="kw">.</span></a>
+<a class="sourceLine" id="cb15-7" title="7"></a>
+<a class="sourceLine" id="cb15-8" title="8">operator <span class="kw">--&gt;</span> <span class="ot">&quot;+&quot;</span><span class="kw">.</span></a>
+<a class="sourceLine" id="cb15-9" title="9"></a>
+<a class="sourceLine" id="cb15-10" title="10">expression <span class="kw">--&gt;</span></a>
+<a class="sourceLine" id="cb15-11" title="11">    <span class="dt">number</span></a>
+<a class="sourceLine" id="cb15-12" title="12"><span class="kw">;</span>   expression<span class="kw">,</span> operator<span class="kw">,</span> expression</a>
+<a class="sourceLine" id="cb15-13" title="13"><span class="kw">.</span></a></code></pre></div>
+<h3 id="context-sensitive-grammars"><span class="section_number">3.6</span><span class="section_title">Context-sensitive grammars?</span></h3>
+<p>We can add context by adding parameter.</p>
+<h3 id="libraries"><span class="section_number">3.7</span><span class="section_title">Libraries?</span></h3>
+<ul>
+<li><a href="https://github.com/cbaziotis/prolog-cfg-parser">https://github.com/cbaziotis/prolog-cfg-parser</a></li>
+<li>This isn't Prolog, but this looks awesome <a href="https://github.com/Engelberg/instaparse/blob/master/README.md">https://github.com/Engelberg/instaparse/blob/master/README.md</a></li>
+</ul>
+<h3 id="left-recursion"><span class="section_number">3.8</span><span class="section_title">Left recursion</span></h3>
+<p>Mathematics handles left recursion just fine. Computers should too. We shouldn't chicken out. We shouldn't compromise by working around our grammar descriptions.</p>
+<h3 id="precedence-parsing"><span class="section_number">3.9</span><span class="section_title">Precedence parsing?</span></h3>
+<ul>
+<li>1996 article &quot;An Operator Precedence Parser for Standard Prolog Text&quot; <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/%28SICI%291097-024X%28199607%2926%3A7%3C763%3A%3AAID-SPE33%3E3.0.CO%3B2-L">https://onlinelibrary.wiley.com/doi/abs/10.1002/%28SICI%291097-024X%28199607%2926%3A7%3C763%3A%3AAID-SPE33%3E3.0.CO%3B2-L</a></li>
+</ul>
+<h2 id="metainterpreter-for-left-recursive-parsing"><span class="section_number">4</span><span class="section_title">Metainterpreter for left-recursive parsing?</span></h2>
+<p>&quot;Parsing with left-recursive grammars&quot; <a href="https://www.metalevel.at/acomip/">https://www.metalevel.at/acomip/</a></p>
+<h2 id="left-recursive-parsing"><span class="section_number">5</span><span class="section_title">Left-recursive parsing</span></h2>
+<p>2009 Direct Left-Recursive Parsing Expressing Grammars <a href="https://www.semanticscholar.org/paper/Direct-Left-Recursive-Parsing-Expressing-Grammars-Tratt/b1e8309db5537fb15f51071fcdc39e139659ed15">https://www.semanticscholar.org/paper/Direct-Left-Recursive-Parsing-Expressing-Grammars-Tratt/b1e8309db5537fb15f51071fcdc39e139659ed15</a></p>
+<p>2008 Packrat Parsers Can Support Left Recursion</p>
+<p>Naive recognizer + memoization</p>
+<p>list_not_empty</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb16-1" title="1">exp(<span class="dt">S</span>) <span class="kw">:-</span> is_list(<span class="dt">S</span>)<span class="kw">,</span> append([<span class="dt">A</span>,[<span class="bn">0&#39;+</span>],<span class="dt">C</span>]<span class="kw">,</span><span class="dt">S</span>)<span class="kw">,</span> exp(<span class="dt">A</span>)<span class="kw">,</span> exp(<span class="dt">C</span>)<span class="kw">.</span></a></code></pre></div>
+<p>Consume before recursing?</p>
+<p>We can't piggyback Prolog's unification for lambda calculus substitution, because Prolog unifies same-named variables while lambda-calculus shadows same-named variables.</p>
+<p>If the recursive call has smaller arguments than the parent call does, then the predicate should terminate.</p>
+<h2 id="what-1"><span class="section_number">6</span><span class="section_title">What</span></h2>
+<p>1997 inconclusive discussion &quot;Prolog Parser in Prolog&quot; <a href="https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/grammars/parser.html">https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/grammars/parser.html</a></p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Degeneracy_(mathematics)">https://en.wikipedia.org/wiki/Degeneracy_(mathematics)</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/parse.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/parse.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2018-04-11 00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

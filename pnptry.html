@@ -159,720 +159,720 @@ document.addEventListener("DOMContentLoaded", function () {
                     </header>
                 </article>
                 <div class="post-content">
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">1</span><span class="section_title"><a href="#note">Note</a></span><span class="word_count">(38w~1m)</span></li>
-                    <li><span class="section_number">2</span><span class="section_title"><a href="#understand-the-problem"><span class="todo TODO">TODO</span> Understand the problem</a></span><span class="word_count">(4w~1m)</span></li>
-                    <li><span class="section_number">3</span><span class="section_title"><a href="#finding-an-search-problem-that-forces-a-dtm-to-traverse-the-search-space">Finding an search problem that forces a DTM to traverse the search space</a></span><span class="word_count">(244w~2m)</span></li>
-                    <li><span class="section_number">4</span><span class="section_title"><a href="#questions">Questions</a></span><span class="word_count">(18w~1m)</span></li>
-                    <li><span class="section_number">5</span><span class="section_title"><a href="#plan">Plan</a></span><span class="word_count">(63w~1m)</span></li>
-                    <li><span class="section_number">6</span><span class="section_title"><a href="#meta-research">Meta-research</a></span><span class="word_count">(52w~1m)</span></li>
-                    <li><span class="section_number">7</span><span class="section_title"><a href="#another-attempt">Another attempt?</a></span><span class="word_count">(156w~1m)</span></li>
-                    <li><span class="section_number">8</span><span class="section_title"><a href="#other-peoples-works-that-may-be-related">Other people's works that may be related</a></span><span class="word_count">(26w~1m)</span></li>
-                    <li><span class="section_number">9</span><span class="section_title"><a href="#circuit-complexity">Circuit complexity</a></span><span class="word_count">(809w~5m)</span></li>
-                    <li><span class="section_number">10</span><span class="section_title"><a href="#computational-complexity">Computational complexity</a></span><span class="word_count">(1216w~7m)</span></li>
-                    <li><span class="section_number">11</span><span class="section_title"><a href="#what-is-a-machine-what-is-the-essence-of-a-machine">What is a machine? What is the essence of a machine?</a></span><span class="word_count">(11w~1m)</span></li>
-                    <li><span class="section_number">12</span><span class="section_title"><a href="#why-do-we-use-turing-machines-instead-of-lambda-calculus-when-discussing-computational-complexity">Why do we use Turing machines instead of lambda calculus when discussing computational complexity?</a></span><span class="word_count">(14w~1m)</span></li>
-                    <li><span class="section_number">13</span><span class="section_title"><a href="#theory-of-deciders">Theory of deciders?</a></span><span class="word_count">(828w~5m)</span></li>
-                    <li><span class="section_number">14</span><span class="section_title"><a href="#p-vs-np">P vs NP?</a></span><span class="word_count">(158w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h2 id="note"><span class="section_number">1</span><span class="section_title">Note</span></h2>
-                    <p>This is a proof <em>attempt</em>, not a proof.</p>
-                    <p>Last update was 2018-04-28.</p>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">1.1</span><span class="section_title"><a href="#note-the-conversion-of-this-page-from-markdown-to-org-mode-using-pandoc-may-introduce-some-errors-beside-my-errors-that-are-already-in-the-page-before-conversion.">Note: The conversion of this page from Markdown to Org Mode using Pandoc may introduce some errors, beside my errors that are already in the page before conversion.</a></span><span class="word_count">(28w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="note-the-conversion-of-this-page-from-markdown-to-org-mode-using-pandoc-may-introduce-some-errors-beside-my-errors-that-are-already-in-the-page-before-conversion."><span class="section_number">1.1</span><span class="section_title">Note: The conversion of this page from Markdown to Org Mode using Pandoc may introduce some errors, beside my errors that are already in the page before conversion.</span></h3>
-                    <h2 id="understand-the-problem"><span class="section_number">2</span><span class="section_title"><span class="todo TODO">TODO</span> Understand the problem</span></h2>
-                    <h2 id="finding-an-search-problem-that-forces-a-dtm-to-traverse-the-search-space"><span class="section_number">3</span><span class="section_title">Finding an search problem that forces a DTM to traverse the search space</span></h2>
-                    <p>Let <span class="math inline">\(
-                    \newcommand\SetOutcome{\mathbb{F}}
-                    \newcommand\SetBit{\mathbb{B}}
-                    \newcommand\SetPred{\mathbb{P}}
-                    \newcommand\FunSat{\text{sat}}
-                    \newcommand\FunMinTime{\text{MinTime}}
-                    \newcommand\FunLen{\text{Len}}
-                    \mathbb{B}= { 0, 1 } \)</span> be the set of <em>bits</em>.</p>
-                    <p>Let <span class="math inline">\(\mathbb{B}^*\)</span> be the <em>Kleene closure</em> of <span class="math inline">\(\mathbb{B}\)</span>.</p>
-                    <p>Let <span class="math inline">\( \mathbb{F} = \{ \text{accept}, \text{reject} \} \)</span> be the set of <em>final states</em>.</p>
-                    <p>A <em>predicate</em> is a function in <span class="math inline">\(\mathbb{B}^* \to \mathbb{B}\)</span>.</p>
-                    <p>Let <span class="math inline">\(\mathbb{P}\)</span> be the set of all <em>computable predicates</em>.</p>
-                    <p>Let <span class="math inline">\(p \in \mathbb{P}\)</span> be a computable predicate.</p>
-                    <p>Let <span class="math inline">\(\text{Len}(x)\)</span> be the <em>length</em> of the string <span class="math inline">\(x \in \mathbb{B}^*\)</span>.</p>
-                    <p>Let the function <span class="math inline">\(\text{sat}: \mathbb{P}\times \Nat \to \mathbb{F}\)</span> be</p>
-                    <span class="math display">\[\begin{equation*}
-                    \text{sat}(p,n) =
-                    \begin{cases}
-                        \text{accept} &amp; \text{if \( \exists x \in \mathbb{B}^n : p(x) = 1 \);}
-                        \\
-                        \text{reject} &amp; \text{otherwise.}
-                    \end{cases}
-                    \end{equation*}
-                    \]</span>
-                    <p>Let <span class="math inline">\(\text{MinTime}_M(p,x)\)</span> be the <em>shortest time</em> (the minimum number of steps) required by machine <span class="math inline">\(M\)</span> to compute <span class="math inline">\(p(x)\)</span> (to compute the predicate <span class="math inline">\(p\)</span> with input <span class="math inline">\(x\)</span>).</p>
-                    <p>Let <span class="math inline">\(N\)</span> be an NTM (non-deterministic Turing machine).</p>
-                    <p>Let <span class="math inline">\(D\)</span> be a DTM (deterministic Turing machine).</p>
-                    <p>Such NTM <span class="math inline">\(N\)</span> can compute <span class="math inline">\(\text{sat}(p,n)\)</span> in <span class="math inline">\(O(n + \max_{x \in \mathbb{B}^n} \text{MinTime}_N(p,x))\)</span> steps. This is such algorithm:</p>
-                    <pre class="example"><code>function sat (p, n) {
-                        var x: array [1..n] of bit
-                        for i := 1 to n {
-                            x[i] := guess
-                        }
-                        if p(x) { accept }
-                        else { reject }
-                    }
-                    </code></pre>
-                    <p>Such DTM <span class="math inline">\(D\)</span> can compute <span class="math inline">\(\text{sat}(p,n)\)</span> in <span class="math inline">\(O(\sum_{x \in \mathbb{B}^n} \text{MinTime}_D(p,x))\)</span> steps. This is such algorithm:</p>
-                    <pre class="example"><code>function sat (p, n) {
-                        for x in B^n {
-                            if p(x) { accept }
-                        }
-                        reject
-                    }
-                    </code></pre>
-                    <p><strong>Conjecture:</strong> There exists a computable predicate <span class="math inline">\(p \in \mathbb{P}\)</span> such that</p>
-                    <ol>
-                    <li><span class="math inline">\( \text{MinTime}_D(p,x) = \text{MinTime}_N(p,x) \)</span>,</li>
-                    <li><span class="math inline">\(\text{MinTime}_D(p,x) \in O([\text{Len}(x)]^k)\)</span> where <span class="math inline">\(k &gt; 1\)</span>,</li>
-                    <li><span class="math inline">\(N\)</span> optimally computes <span class="math inline">\(\text{sat}(p,n)\)</span> in <span class="math inline">\(O(n^k)\)</span> time, and</li>
-                    <li><span class="math inline">\(D\)</span> optimally computes <span class="math inline">\(\text{sat}(p,n)\)</span> in <span class="math inline">\(O(2^n \cdot n^k)\)</span> time.</li>
-                    </ol>
-                    <p>If that conjecture is true, then <span class="math inline">\(\TimeP \neq \TimeNP\)</span>.</p>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">3.1</span><span class="section_title"><a href="#equivalent-question-is-there-a-problem-whose-optimal-solution-is-exhaustive-search">Equivalent question: Is there a problem whose optimal solution is exhaustive search?</a></span><span class="word_count">(42w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="equivalent-question-is-there-a-problem-whose-optimal-solution-is-exhaustive-search"><span class="section_number">3.1</span><span class="section_title">Equivalent question: Is there a problem whose optimal solution is exhaustive search?</span></h3>
-                    <ul>
-                    <li><a href="https://www.cs.cmu.edu/~ryanw/improved-algs-lbs2.pdf">2010 Ryan Williams &quot;Improving Exhaustive Search Implies Superpolynomial Lower Bounds&quot;</a>: &quot;The P vs NP problem arose from the question of whether exhaustive search is necessary for problems with short verifiable solutions.&quot;</li>
-                    </ul>
-                    <h2 id="questions"><span class="section_number">4</span><span class="section_title">Questions</span></h2>
-                    <p>Can we apply pigeonhole principle to the computation graph?</p>
-                    <p>What problems are equivalent to the P vs NP problem?</p>
-                    <h2 id="plan"><span class="section_number">5</span><span class="section_title">Plan</span></h2>
-                    <ul>
-                    <li><p>Reading list</p>
-                    <ul>
-                    <li><a href="https://en.wikipedia.org/wiki/Natural_proof">WP: Natural proof</a></li>
-                    <li><p>approaches:</p>
-                    <ul>
-                    <li>Fagin, Immerman, …: descriptive complexity theory</li>
-                    <li><p>Mulmuley, Sohoni, …: geometric complexity theory</p>
-                    <ul>
-                    <li><a href="https://arxiv.org/abs/0709.0746">2007 Mulmuley and Sohoni, &quot;Geometric Complexity Theory: Introduction&quot;</a></li>
-                    <li><a href="https://arxiv.org/abs/1305.7387">2013 Landsberg &quot;Geometric Complexity Theory: an introduction for geometers&quot;</a></li>
-                    <li><a href="https://arxiv.org/abs/1509.02503">2015 Landsberg &quot;An introduction to geometric complexity theory&quot;</a></li>
-                    <li><a href="https://www.cse.buffalo.edu//~regan/papers/pdf/Reg02MSFD.pdf">Kenneth W. Regan's &quot;Understanding the Mulmuley-Sohoni Approach to P vs. NP&quot;</a></li>
-                    <li><a href="https://people.mpi-inf.mpg.de/~cikenmey/teaching/summer18/firstintrotogct/index.html">Christian Ikenmeyer's 2018 course</a></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p><a href="http://michaelnielsen.org/polymath1/index.php?title=Deolalikar_P_vs_NP_paper">A clearing house for Deolalikar P vs NP paper</a></p></li>
-                    </ul></li>
-                    <li><p>Undigested</p>
-                    <ul>
-                    <li>One-way function implies something about P vs NP?</li>
-                    </ul></li>
-                    </ul>
-                    <h2 id="meta-research"><span class="section_number">6</span><span class="section_title">Meta-research</span></h2>
-                    <ul>
-                    <li><p>Where are progress tracked?</p>
-                    <ul>
-                    <li><a href="https://rjlipton.wordpress.com/2017/02/05/a-panel-on-p-vs-np/">2017 Richard J. Lipton and Kenneth W. Regan</a></li>
-                    <li><a href="http://www.win.tue.nl/~gwoegi/P-versus-NP.htm">2016 Gerhard J. Woeginger</a></li>
-                    <li><a href="http://blog.computationalcomplexity.org/2015/08/have-we-made-progress-on-p-vs-np.html">2015 Lance Fortnow and Bill Gasarch</a></li>
-                    <li><a href="https://www.reddit.com/r/math/comments/1krrkx/what_progress_has_been_made_on_the_p_vs_np/">2014 reddit</a></li>
-                    <li><a href="http://www.ncmis.cas.cn/kxcb/jclyzs/201204/W020120424627425387644.pdf">2009 Lance Fortnow &quot;The status of the P versus NP problem&quot;</a></li>
-                    </ul></li>
-                    <li><p>What is the P vs NP problem?</p>
-                    <ul>
-                    <li>Official problem description: <a href="http://www.claymath.org/sites/default/files/pvsnp.pdf">The P versus NP problem, by Stephen Cook, for the Clay Millennium Prize Problems</a></li>
-                    </ul></li>
-                    </ul>
-                    <h2 id="another-attempt"><span class="section_number">7</span><span class="section_title">Another attempt?</span></h2>
-                    <ul>
-                    <li>This is an older attempt.</li>
-                    <li>This should be merged to the attempt above.</li>
-                    <li><p>Let:</p>
-                    <ul>
-                    <li><span class="math inline">\(f\)</span> be a predicate</li>
-                    <li><span class="math inline">\(k\)</span> be a natural number</li>
-                    <li><span class="math inline">\(Sat(f,k)\)</span> be the problem of finding a string <span class="math inline">\(x\)</span> of length <span class="math inline">\(k\)</span> such that <span class="math inline">\(f(x) = 1\)</span></li>
-                    </ul></li>
-                    <li>Lemma: If <span class="math inline">\(f \in \TimeP\)</span> then <span class="math inline">\(Sat(f,k) \in \TimeNP\)</span>. (This should be obvious and simple to prove?)</li>
-                    <li><p>Conjecture: There exists a predicate whose search cannot be faster than brute force.</p>
-                    <ul>
-                    <li>Formally: There exists <span class="math inline">\(f \in \TimeP\)</span> such that <span class="math inline">\(Sat(f,k) \not \in \TimeP\)</span>.</li>
-                    </ul></li>
-                    <li>That lemma and that conjecture, if proven true, would imply <span class="math inline">\(\TimeP \subset \TimeNP\)</span>.</li>
-                    <li>We try to prove that conjecture by diagonalization/pigeonholing? The set <span class="math inline">\( {0,1}^k \to {0,1} \)</span> has <span class="math inline">\(2^{2^k}\)</span> elements, because by combinatorics, in the truth table, there are <span class="math inline">\(2^k\)</span> rows, and each row has <span class="math inline">\(2\)</span> possibilities. There are <span class="math inline">\(2^{2^k}\)</span> possible <span class="math inline">\(k\)</span>-letter-string predicates. Suppose that a deterministic machine can solve <span class="math inline">\(Sat(f,k)\)</span> for all <span class="math inline">\(f\)</span> in <span class="math inline">\(O(poly(k))\)</span> time. (Can we apply pigeonhole principle to the configuration graph?)</li>
-                    <li><p>Every predicate can be stated in disjunctive normal form.</p></li>
-                    </ul>
-                    <h2 id="other-peoples-works-that-may-be-related"><span class="section_number">8</span><span class="section_title">Other people's works that may be related</span></h2>
-                    <ul>
-                    <li>2017-11-22 news about NEXP and ACC <a href="https://news.mit.edu/2017/faculty-profile-ryan-williams-1122">https://news.mit.edu/2017/faculty-profile-ryan-williams-1122</a></li>
-                    <li>an explanation in English <a href="https://danielmiessler.com/study/pvsnp/">https://danielmiessler.com/study/pvsnp/</a></li>
-                    <li>2011 book &quot;Why Philosophers Should Care About Computational Complexity&quot; <a href="https://eccc.weizmann.ac.il/report/2011/108/">https://eccc.weizmann.ac.il/report/2011/108/</a></li>
-                    </ul>
-                    <h2 id="circuit-complexity"><span class="section_number">9</span><span class="section_title">Circuit complexity</span></h2>
-                    <ul>
-                    <li><a href="https://en.wikipedia.org/wiki/Circuit_complexity">WP:Circuit complexity</a></li>
-                    </ul>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">9.1</span><span class="section_title"><a href="#the-shortest-n-parameter-boolean-predicate-equivalence-class-representative-problem">The shortest <span class="math inline">\(n\)</span>-parameter boolean predicate equivalence class representative problem</a></span><span class="word_count">(807w~5m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="the-shortest-n-parameter-boolean-predicate-equivalence-class-representative-problem"><span class="section_number">9.1</span><span class="section_title">The shortest <span class="math inline">\(n\)</span>-parameter boolean predicate equivalence class representative problem</span></h3>
-                    <ul>
-                    <li><p>Let <span class="math inline">\(E_n\)</span> be the set of all <em>Boolean <span class="math inline">\(n\)</span>-expressions</em>.</p>
-                    <ul>
-                    <li>An <em><span class="math inline">\(n\)</span>-expression</em> is an expression that has at most <span class="math inline">\(n\)</span> variables.</li>
-                    <li><p>Formally, the syntax of <span class="math inline">\(E_n\)</span> is:</p>
-                    <ul>
-                    <li><p>Constant expressions:</p>
-                    <ul>
-                    <li><span class="math inline">\(0 \in E_n\)</span>.</li>
-                    <li><span class="math inline">\(1 \in E_n\)</span>.</li>
-                    </ul></li>
-                    <li><p>Variable expressions:</p>
-                    <ul>
-                    <li><p>If <span class="math inline">\(k \in \Nat\)</span> and <span class="math inline">\(0 \le k &lt; n\)</span>, then <span class="math inline">\(x_k \in E_n\)</span>.</p>
-                    <ul>
-                    <li><p>The expression <span class="math inline">\(x_k\)</span> is purely symbolic.</p>
-                    <ul>
-                    <li>The <span class="math inline">\(x\)</span> does not mean anything.</li>
-                    </ul></li>
-                    </ul></li>
-                    </ul></li>
-                    <li>If <span class="math inline">\(\alpha \in E_n\)</span>, then <span class="math inline">\((\neg \alpha) \in E_n\)</span>.</li>
-                    <li>If <span class="math inline">\(\alpha \in E_n\)</span> and <span class="math inline">\(\beta \in E_n\)</span>, then <span class="math inline">\((\alpha \wedge \beta) \in E_n\)</span>.</li>
-                    <li>If <span class="math inline">\(\alpha \in E_n\)</span> and <span class="math inline">\(\beta \in E_n\)</span>, then <span class="math inline">\((\alpha \vee \beta) \in E_n\)</span>.</li>
-                    <li><p>Nothing else is in <span class="math inline">\(E_n\)</span>.</p></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p>Let the <em>size</em> of a formula be the number of operators in it.</p>
-                    <ul>
-                    <li>We write <span class="math inline">\(C(\phi)\)</span> for the size of the formula <span class="math inline">\(\phi\)</span>.</li>
-                    <li>We say that <span class="math inline">\(\alpha\)</span> is <em>smaller</em> than <span class="math inline">\(\beta\)</span> iff <span class="math inline">\(C(\alpha) &lt; C(\beta)\)</span>.</li>
-                    <li><p>Formally we define <span class="math inline">\(C(\phi)\)</span> as:</p>
-                    <span class="math display">\[\begin{align*}
-                     C(\neg \alpha) &amp;= 1 + C(\alpha),
-                     \\
-                     C(\alpha \wedge \beta) &amp;= 1 + C(\alpha) + C(\beta),
-                     \\
-                     C(\alpha \vee \beta) &amp;= 1 + C(\alpha) + C(\beta),
-                     \\
-                     C(\alpha) &amp;= 0 \text{ otherwise}.
-                    \end{align*}
-                    \]</span></li>
-                    </ul></li>
-                    <li><p>Given a formula <span class="math inline">\(\phi \in E_n\)</span> and an <em>assignment</em> <span class="math inline">\(a : \{0,1\}^n\)</span>, we can <em>interpret</em> the formula <span class="math inline">\(\phi\)</span>.</p>
-                    <ul>
-                    <li>The result of interpreting <span class="math inline">\(\phi\)</span> with assignment <span class="math inline">\(a\)</span> is written <span class="math inline">\(\phi|_a\)</span>, and is obtained by replacing each <span class="math inline">\(x_k\)</span> with <span class="math inline">\(a_k\)</span> and evaluating the expression to either zero or one.</li>
-                    <li><p>This interpretation enables us to define <em>equivalence</em>,</p>
-                    <ul>
-                    <li><p>Formally, we say that two formulas <span class="math inline">\(\alpha, \beta \in E_n\)</span> are <em>equivalent</em>, written <span class="math inline">\(\alpha \equiv \beta\)</span>, iff for every assignment <span class="math inline">\(a \in \{0,1\}^n\)</span>, it holds that <span class="math inline">\(\alpha|_a = \beta|_a\)</span>. Then, we define the <em>equivalence class</em> of a formula <span class="math inline">\(\phi \in E_n\)</span> as <span class="math inline">\([\phi] = \{ \alpha ~|~ \alpha \equiv \phi, ~ \alpha \in E_n \}\)</span>.</p>
-                    <ul>
-                    <li>Every element of that equivalence class is called a <em>representative</em> of that class. Note that equivalence is not equality: <span class="math inline">\(x_0 \wedge x_0\)</span> and <span class="math inline">\(x_0\)</span> are equivalent but not equal.</li>
-                    </ul></li>
-                    <li>Two formulas are equivalent iff they always give matching results for all assignments.</li>
-                    <li>Two formulas are equal iff they look the same.</li>
-                    <li><p>Equivalence is the comparison of meaning, whereas equality is the comparison of form.</p></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p>The set <span class="math inline">\(E_n\)</span> has exactly <span class="math inline">\(2^{2^n}\)</span> equivalence classes.</p>
-                    <ul>
-                    <li>We label those classes <span class="math inline">\(K(n,0), K(n,1), \ldots K(n,2^{2^n}-1)\)</span>.</li>
-                    <li><p>Define <span class="math inline">\(Q(n,k)\)</span> as the shortest representative of <span class="math inline">\(K(n,k)\)</span>.</p>
-                    <ul>
-                    <li><p>Here are some examples of the shortest representatives that can be verified by hand:</p>
-                    <span class="math display">\[\begin{align*}
-                     Q(0,0) &amp;= 0
-                     \\ Q(0,1) &amp;= 1
-                     \\ Q(1,0) &amp;= 0
-                     \\ Q(1,1) &amp;= x_0
-                     \\ Q(1,2) &amp;= \neg x_0
-                     \\ Q(1,3) &amp;= 1
-                     \\ Q(2,1) &amp;= x_0 \wedge x_1
-                     \\ Q(2,2) &amp;= \neg x_0 \wedge x_1
-                     \\ Q(2,3) &amp;= x_0
-                     \\ Q(2,6) &amp;= \neg (x_0 \wedge x_1) \wedge (x_0 \vee x_1)
-                     \\ Q(2,7) &amp;= x_0 \vee x_1
-                     \\ Q(2,9) &amp;= (x_0 \wedge x_1) \vee \neg (x_0 \vee x_1)
-                    \end{align*}
-                    \]</span></li>
-                    </ul></li>
-                    </ul></li>
-                    <li>It should be apparent that <span class="math inline">\(Q(n,2^{2^n}-1-k) = \neg Q(n,k)\)</span>. It should be apparent that <span class="math inline">\(Q(2,6)\)</span> is XOR and <span class="math inline">\(Q(2,9)\)</span> is bi-implication. It should be apparent that <span class="math inline">\(Q(2,6)\)</span> and <span class="math inline">\(Q(2,9)\)</span> are the longest expressions for <span class="math inline">\(n = 2\)</span>, and both of them have size <span class="math inline">\(4\)</span>.</li>
-                    <li><strong>Problem statement</strong>: For each <span class="math inline">\(n\)</span>, find <span class="math inline">\(k\)</span> such that <span class="math inline">\(Q(n,k)\)</span> is the longest among all possible <span class="math inline">\(k\)</span>.</li>
-                    <li><a href="https://en.wikipedia.org/wiki/Parity_function">WP:Parity function</a>? &quot;The <span class="math inline">\(n\)</span>-variable parity function and its negation are the only Boolean functions for which all disjunctive normal forms have the maximal number of <span class="math inline">\(2^{n - 1}\)</span> monomials of length <span class="math inline">\(n\)</span> and all conjunctive normal forms have the maximal number of <span class="math inline">\(2^{n - 1}\)</span> clauses of length <span class="math inline">\(n\)</span>. (Ingo Wegener, Randall J. Pruim, <em>Complexity Theory</em>, 2005, ISBN 3-540-21045-8, p. 260)&quot;</li>
-                    <li><p>Relationship between <span class="math inline">\(n\)</span>-expressions and <span class="math inline">\(n\)</span>-cubes</p>
-                    <ul>
-                    <li>Here we imagine what it is like to apply geometric operations to Boolean expressions.</li>
-                    <li><p>Draw</p>
-                    <ul>
-                    <li>Draw the outline of a square on a white paper.</li>
-                    <li>Draw two lines that divide the square into four smaller subsquares.</li>
-                    <li><p>Color the top right subsquare red.</p>
-                    <ul>
-                    <li>The resulting picture represents <span class="math inline">\(x_0 \wedge x_1\)</span>.</li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p>The result of rotating <span class="math inline">\(x_0 \wedge x_1\)</span> 90 degrees counterclockwise is <span class="math inline">\(\neg x_0 \wedge x_1\)</span>.</p>
-                    <ul>
-                    <li>Rotated once again, it becomes <span class="math inline">\(\neg x_0 \wedge \neg x_1\)</span>.</li>
-                    <li>Rotated once again, it becomes <span class="math inline">\(x_0 \wedge \neg x_1\)</span>. _ Rotated once again, it comes back to <span class="math inline">\(x_0 \wedge x_1\)</span>.</li>
-                    </ul></li>
-                    <li><p>Define <span class="math inline">\(R_2(\phi)\)</span> as the counterclockwise-rotated <span class="math inline">\(\phi\)</span> where <span class="math inline">\(\phi \in E_2\)</span>.</p>
-                    <ul>
-                    <li>Then <span class="math inline">\(R(x_0) = x_1\)</span> and <span class="math inline">\(R(x_1) = \neg x_0\)</span>.</li>
-                    </ul></li>
-                    <li>Other operations: horizontal flip, vertical flip, negation.</li>
-                    <li><span class="math inline">\((R_2)^4(\phi) = \phi\)</span>.</li>
-                    <li>On the 3-cube, there are 3 counterclockwise rotations.</li>
-                    <li><p>Each <span class="math inline">\(n\)</span>-expression of the form <span class="math inline">\(x_k\)</span> divides the <span class="math inline">\(n\)</span>-cube into two region.</p></li>
-                    </ul></li>
-                    <li><p>Unnecessary</p>
-                    <ul>
-                    <li>We define the shorthand <span class="math inline">\(\alpha &lt; \beta\)</span> to mean that <span class="math inline">\(\alpha\)</span> is shorter than <span class="math inline">\(\beta\)</span>. Now we can <em>order</em> the equivalence classes in <span class="math inline">\(E_n\)</span> by their sizes. For every <span class="math inline">\(E_n\)</span>, there exists at least one <em>infimum</em> (greatest lower bound). For every <span class="math inline">\(A \subseteq E_n\)</span>, we say that <span class="math inline">\(\alpha \in \inf(A)\)</span> iff <span class="math inline">\(\alpha \le \phi\)</span> for every <span class="math inline">\(\phi \in E_n\)</span>.</li>
-                    <li>A <em>bit</em> is either zero or one.</li>
-                    <li><p>We define the mapping <span class="math inline">\(N_n : \{0,1\}^n \to \Nat\)</span> as a mapping from the <span class="math inline">\(n\)</span>-dimensional bit vector <span class="math inline">\(x = (x_0,\ldots,x_{n-1})\)</span> to the natural number <span class="math inline">\(N_n(x) = \sum_{k=0}^{n-1} x_k 2^k\)</span>.</p>
-                    <ul>
-                    <li><span class="math inline">\(N_n(x)\)</span> is the number whose <span class="math inline">\(n\)</span>-bit binary right-to-left encoding is the <span class="math inline">\(n\)</span>-dimensional bit vector <span class="math inline">\(x\)</span>.</li>
-                    </ul></li>
-                    <li><p>We define the bit vector identifying the predicate as</p>
-                    <span class="math display">\[\begin{align*}
-                       B_n(\phi) = N_{2^n}( \phi(N_n^{-1}(0)), \ldots, \phi(N_n^{-1}(2^n-1)))
-                    \end{align*}
-                    \]</span></li>
-                    </ul></li>
-                    <li>Shannon 1949 proved that almost all <span class="math inline">\(n\)</span>-argument boolean functions require circuits of size <span class="math inline">\(\Theta(2^n/n)\)</span>. (citation?)</li>
-                    <li>For small numbers, we can enumerate the answers by hand.</li>
-                    <li><p>A formula is <em>canonical</em> iff it cannot be shortened.</p></li>
-                    </ul>
-                    <p>What is the longest possible canonical description length of a predicate that takes <span class="math inline">\(k\)</span> arguments?</p>
-                    <pre class="example"><code>0000 | 0
-                    0001 | a \wedge b
-                    0010 | a \wedge \neg b
-                    0011 | a
-                    0100 | \neg a \wedge b
-                    0101 | b
-                    0110 | (a \wedge \neg b) \vee (\neg a \wedge b)
-                    0111 | a \vee b
-                    1000 | \neg (a \vee b)
-                    1001 | (a \wedge b) \vee \neg (a \vee b)
-                    1010 | \neg b
-                    1011 | a \vee \neg b
-                    1100 | \neg a
-                    1101 | \neg a \vee b
-                    1110 | \neg (a \wedge b)
-                    1111 | 1
-                    </code></pre>
-                    <p>Conjecture: The longest 2-argument predicate is 0110.</p>
-                    <p>Conjecture: <span class="math inline">\((a \wedge \neg b) \vee (\neg a \wedge b)\)</span> is the shortest description of 0110.</p>
-                    <p>What we are asking here is Sipser 1997's <em>circuit-size complexity</em>?</p>
-                    <ul>
-                    <li>How are circuit complexity and proof complexity related?</li>
-                    <li><p>Simplification rewrite rules:</p>
-                    <span class="math display">\[\begin{align*}
-                     \neg (\neg \alpha) = \alpha
-                     \\
-                     \alpha \wedge \neg \alpha = 0
-                     \\
-                     \alpha \vee \neg \alpha = 1
-                     \\
-                     \alpha \vee 1 = 1
-                     \\
-                     \alpha \wedge 0 = 0
-                     \\
-                     \neg 0 = 1
-                     \\
-                     \neg 1 = 0
-                     \\
-                     \neg \alpha \wedge \neg \beta = \neg (\alpha \vee \beta)
-                     \\
-                     \neg \alpha \vee \neg \beta = \neg (\alpha \wedge \beta)
-                     \\
-                     (\alpha \wedge \beta) \vee (\alpha \wedge \gamma) = \alpha \wedge (\beta \vee \gamma)
-                    \end{align*}
-                    \]</span></li>
-                    <li><p>Is this the problem we're talking about?</p>
-                    <ul>
-                    <li><a href="https://en.wikipedia.org/wiki/Circuit_minimization_for_Boolean_functions">WP:Circuit minimization for Boolean functions</a></li>
-                    <li><a href="http://www.cs.sfu.ca/~kabanets/papers/mincircuit.pdf">Circuit Minimization Problem</a>, 1999, Valentine Kabanets and Jin-Yi Cai</li>
-                    <li><a href="http://www.cs.yale.edu/homes/peralta/CircuitStuff/CMT.html">Yale CS Circuit Minimization Team Work</a></li>
-                    <li><p>what?</p>
-                    <ul>
-                    <li><a href="https://en.wikipedia.org/wiki/Infimum_and_supremum#Formal_definition">WP:Infimum and supremum</a></li>
-                    </ul></li>
-                    </ul></li>
-                    </ul>
-                    <h2 id="computational-complexity"><span class="section_number">10</span><span class="section_title">Computational complexity</span></h2>
-                    <ul>
-                    <li><p>world effort</p>
-                    <ul>
-                    <li><p><a href="https://www.nada.kth.se/~viggo/wwwcompendium/wwwcompendium.html">A compendium of NP optimization problems</a></p>
-                    <ul>
-                    <li>Smallest equivalent something: <a href="https://en.wikipedia.org/wiki/Skeleton_(category_theory)">https://en.wikipedia.org/wiki/Skeleton_(category_theory)</a></li>
-                    <li>Minimum equivalent graph, also called transitive reduction. <a href="https://en.wikipedia.org/wiki/Transitive_reduction">https://en.wikipedia.org/wiki/Transitive_reduction</a> <a href="https://www.nada.kth.se/~viggo/wwwcompendium/node49.html">https://www.nada.kth.se/~viggo/wwwcompendium/node49.html</a></li>
-                    </ul></li>
-                    <li><p><a href="https://polymathprojects.org/2013/11/04/polymath9-pnp/">2013 Polymath project: Polymath 9: Discretized Borel Determinacy</a></p>
-                    <ul>
-                    <li><a href="https://gowers.wordpress.com/2013/10/24/what-i-did-in-my-summer-holidays/">https://gowers.wordpress.com/2013/10/24/what-i-did-in-my-summer-holidays/</a></li>
-                    <li><a href="https://gowers.wordpress.com/2013/11/03/dbd1-initial-post/">https://gowers.wordpress.com/2013/11/03/dbd1-initial-post/</a></li>
-                    </ul></li>
-                    <li><p><a href="https://cstheory.stackexchange.com/questions/4090/ways-for-a-mathematician-to-stay-informed-of-current-research-in-complexity-theo">https://cstheory.stackexchange.com/questions/4090/ways-for-a-mathematician-to-stay-informed-of-current-research-in-complexity-theo</a></p></li>
-                    </ul></li>
-                    <li><p>open access journals</p>
-                    <ul>
-                    <li><a href="https://lmcs.episciences.org/browse/latest">Logical methods in computer science</a></li>
-                    </ul></li>
-                    <li><p>recent publication trackers</p>
-                    <ul>
-                    <li><p>arxiv list of recent submissions</p>
-                    <ul>
-                    <li><a href="https://arxiv.org/list/cs/recent">computer science</a></li>
-                    <li><a href="https://arxiv.org/list/cs.CC/recent">computational complexity theory</a></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p>NP-complete problems</p>
-                    <ul>
-                    <li><a href="https://en.wikipedia.org/wiki/List_of_NP-complete_problems">WP:List of NP-complete problems</a></li>
-                    <li><a href="https://mathoverflow.net/questions/72628/number-theory-and-np-complete">https://mathoverflow.net/questions/72628/number-theory-and-np-complete</a></li>
-                    <li><a href="https://cstheory.stackexchange.com/questions/14124/is-there-a-natural-problem-on-the-naturals-that-is-np-complete">https://cstheory.stackexchange.com/questions/14124/is-there-a-natural-problem-on-the-naturals-that-is-np-complete</a></li>
-                    </ul></li>
-                    <li><p>descriptive complexity theory</p>
-                    <ul>
-                    <li><p>Immerman and Vardi shows that FO(LFP) corresponds with P.</p>
-                    <ul>
-                    <li>What does a FO(LFP) formula look like?</li>
-                    <li><a href="http://michaelnielsen.org/polymath1/index.php?title=Immerman-Vardi_theorem">Immerman–Vardi theorem</a></li>
-                    <li><a href="https://complexityzoo.uwaterloo.ca/Complexity_Zoo:F#folfp">FO(LFP) on Complexity Zoo</a></li>
-                    </ul></li>
-                    <li>Fagin (?) proved that NP = ESO (existential second-order logic).</li>
-                    <li><p>Immerman (?) proved that P = FO(LFP) (first-order logic with least fixed point).</p>
-                    <ul>
-                    <li><p>Therefore, to prove that P does not equal NP, construct a sentence that is in ESO but not in FO(LFP).</p>
-                    <ul>
-                    <li><p>Easier said than done?</p>
-                    <ul>
-                    <li><p>Learn finite model theory?</p>
-                    <ul>
-                    <li><a href="https://logic.rwth-aachen.de/~graedel/yurifest.pdf">Erich Grädel and Martin Grohe, &quot;Is polynomial time choiceless?&quot;</a>. Choiceless polynomial time logic would imply <span class="math inline">\(\TimeP \neq \TimeNP\)</span>?</li>
-                    <li><a href="http://researcher.ibm.com/researcher/files/us-fagin/tcs93.pdf">Ronald Fagin's perspective on finite model theory</a></li>
-                    </ul></li>
-                    </ul></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><a href="https://people.cs.umass.edu/~immerman/pub/ch0_1_2.pdf">https://people.cs.umass.edu/~immerman/pub/ch0_1_2.pdf</a></li>
-                    <li><a href="http://www.gpwu.ac.jp/~satoru/lnlg05kuroda.pdf">Descriptive Complexity and Language-Theoretic Complexity</a> by Satoru Kuroda</li>
-                    <li><a href="https://people.cs.umass.edu/~immerman/pub/ExperimentalDC.pdf">Experimental descriptive complexity</a> by Neil Immerman et al</li>
-                    <li><p><a href="http://arxiv.org/pdf/cs/0409039v11.pdf">http://arxiv.org/pdf/cs/0409039v11.pdf</a> On Certain Modular Equations Marius Constantin Ionescu</p>
-                    <ul>
-                    <li>is this valid?</li>
-                    </ul></li>
-                    <li><a href="http://mathworld.wolfram.com/Computation.html">http://mathworld.wolfram.com/Computation.html</a></li>
-                    <li><a href="http://mathworld.wolfram.com/PrincipleofComputationalEquivalence.html">http://mathworld.wolfram.com/PrincipleofComputationalEquivalence.html</a></li>
-                    <li><a href="http://mathworld.wolfram.com/ComputationalIrreducibility.html">http://mathworld.wolfram.com/ComputationalIrreducibility.html</a></li>
-                    <li><p><a href="https://en.wikipedia.org/wiki/Algebraic_logic">https://en.wikipedia.org/wiki/Algebraic_logic</a></p></li>
-                    </ul></li>
-                    <li><a href="http://blog.computationalcomplexity.org/2010/05/structure-or-lack-thereof-of-data.html">http://blog.computationalcomplexity.org/2010/05/structure-or-lack-thereof-of-data.html</a></li>
-                    <li><p>Plan for the P vs NP problem?</p>
-                    <ul>
-                    <li>Relate configuration graph and problem theory</li>
-                    <li><p>Unexplored ideas:</p>
-                    <ul>
-                    <li>Machine is not computation.</li>
-                    <li>Machine <em>is</em> formal system.</li>
-                    <li>Computation <em>is</em> repeated function application.</li>
-                    <li><em>Under what conditions does nondeterminism give extra power?</em></li>
-                    </ul></li>
-                    <li><p>Where is computation theory, computability theory, complexity theory now?</p></li>
-                    </ul></li>
-                    <li><p>Complexity axioms</p>
-                    <ul>
-                    <li>Blum's?</li>
-                    <li>Here we axiomatize machine-independent <em>complexity</em>.</li>
-                    <li>Recall that a problem <span class="math inline">\(P\)</span> is a subset of <span class="math inline">\(X \times Y\)</span>. We posit, without referring to any model of computation, that every question <span class="math inline">\(x\)</span> has a <em>complexity</em> <span class="math inline">\(m(x)\)</span>, usually a number. The function <span class="math inline">\(m\)</span> is a <em>complexity measure</em> of <span class="math inline">\(P\)</span> iff it satisfies the axioms below.</li>
-                    <li><p>For help, we define <span class="math inline">\(S(k)\)</span> as the set of all questions with the same complexity <span class="math inline">\(k\)</span>, that is <span class="math inline">\(S(k) = \{ x ~|~ m(x) = k \}\)</span>. Then, the <em>complexity axioms</em> are:</p>
-                    <ul>
-                    <li>Every <span class="math inline">\(S(k)\)</span> is finite.</li>
-                    <li>There are always more complex questions than less complex questions, because, for example, longer strings can encode more questions. Formally, if <span class="math inline">\(i &lt; j\)</span> then <span class="math inline">\(|S(i)| &lt; |S(j)|\)</span>.</li>
-                    </ul></li>
-                    <li>Note that the complexity measure is <span class="math inline">\(m\)</span>, not <span class="math inline">\(S\)</span>.</li>
-                    <li><p>Computation graph axiom:</p>
-                    <ul>
-                    <li>A machine can only manipulate one symbol at a time. Formally, if <span class="math inline">\(E(a,b)\)</span> then <span class="math inline">\(|m(a) - m(b)| \le 1\)</span>.</li>
-                    <li>The out-degree of a vertex of a nondeterministic graph may exceed 1 but cannot exceed a constant.</li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p>Machine, algorithm, and complexity</p>
-                    <ul>
-                    <li>The <a href="https://en.wikipedia.org/wiki/Worst-case_complexity#Definition">time complexity</a> of machine <span class="math inline">\(m\)</span> for input <span class="math inline">\(x\)</span> is <span class="math inline">\(t(m,x)\)</span>, the number of steps <span class="math inline">\(m\)</span> makes between the beginning and the halting. The <em>worst-case time complexity</em> of <span class="math inline">\(m\)</span> for input <em>size</em> <span class="math inline">\(n\)</span> is <span class="math inline">\(T(m,n) = \left\vert \max_{|x| = n} t(m,x) \right\vert\)</span>. We can also write asymptotic statements such as <span class="math inline">\(T(m,n) \in O(f(n))\)</span>.</li>
-                    <li>An algorithm <span class="math inline">\(a\)</span> implies a machine <span class="math inline">\(m(a)\)</span>.</li>
-                    <li>An <em>algorithm</em> solves a <em>problem</em>. A problem can be solved by many algorithms with different resource usage characteristics.</li>
-                    <li>The what (?) time complexity class of a problem is the worst-case time complexity of the most efficient algorithm solving that problem.</li>
-                    <li>Machine <em>is</em> algorithm.</li>
-                    <li>A <em>machine</em> <span class="math inline">\(M\)</span> is a <em>transition relation</em> <span class="math inline">\(T\)</span> (an <em>acyclic</em> binary relation). <span class="math display">\[
-                     T(x,y) = \text{\(M\) can state-transition from \(x\) to \(y\).}
-                     \]</span></li>
-                    <li><span class="math inline">\(M\)</span> <em>computes</em> <span class="math inline">\(P\)</span> iff a subgraph of the shortcut of <span class="math inline">\(T\)</span> is isomorphic to <span class="math inline">\(P\)</span>. (If <span class="math inline">\(T\)</span> were cyclic, this definition would fail.)</li>
-                    <li>Related: <a href="https://en.wikipedia.org/wiki/Graph_isomorphism">graph isomorphism</a>, <a href="https://en.wikipedia.org/wiki/Subgraph_isomorphism_problem">subgraph isomorphism problem</a>.</li>
-                    <li><em>Deterministic</em> machine equals <em>functional</em> relation.</li>
-                    <li><span class="math inline">\(G\)</span> <em>accepts</em> <span class="math inline">\(v\)</span> iff <span class="math inline">\(F^\infty(\{v\}) = \emptyset\)</span> where <span class="math inline">\(F\)</span> is the graph's fringe function. The <em>language</em> recognized by <span class="math inline">\(G\)</span> is the largest <span class="math inline">\(L \subseteq V\)</span> such that <span class="math inline">\(F^\infty(L) = \emptyset\)</span>.</li>
-                    <li>A Turing machine is <span class="math inline">\((C,I,f)\)</span> where <span class="math inline">\(C\)</span> is countable and <span class="math inline">\(f\)</span> is recursive.</li>
-                    <li><a href="https://en.wikipedia.org/wiki/Register_machine">https://en.wikipedia.org/wiki/Register_machine</a></li>
-                    <li>Example: a state of a Turing machine is <span class="math inline">\((c,l,h,r)\)</span> where <span class="math inline">\(c\)</span> is a configuration, <span class="math inline">\(l\)</span> is the tape content to the left of the head, <span class="math inline">\(h\)</span> is the tape content at the head, and <span class="math inline">\(r\)</span> is the tape content to the right of the head.</li>
-                    <li>A problem class is a function.</li>
-                    <li>A <em>problem</em> is a member of <span class="math inline">\(S\)</span>.</li>
-                    <li>A <em>problem class</em> is a subset of <span class="math inline">\(S\)</span>.</li>
-                    <li>Sometimes we can <em>reduce</em> a problem <span class="math inline">\(p : P\)</span> into another problem <span class="math inline">\(q : Q\)</span> by an injective reduction <span class="math inline">\(r : P \to Q\)</span>.</li>
-                    </ul></li>
-                    <li><p>Space and time complexity</p>
-                    <ul>
-                    <li>Can we deal with complexity without ever defining machine and computation (besides assuming they exist)?</li>
-                    <li><span class="math inline">\( \newcommand\ftime{\text{time}}  \newcommand\fspace{\text{space}}  \newcommand\fsize{\text{size}} \)</span>We are interested at the number of steps a machine makes for an input before terminating. We define <span class="math inline">\(\ftime~f~x\)</span> as the <em>running time</em> of the machine <span class="math inline">\(f\)</span> for input (initial state) <span class="math inline">\(x\)</span>.</li>
-                    <li>We also define <span class="math inline">\(\fsize~x\)</span> as the <em>size</em> of the state <span class="math inline">\(x\)</span>.</li>
-                    <li>(Concrete) Formally, <span class="math inline">\(\ftime~f~x = n\)</span> iff <span class="math inline">\(n\)</span> is the smallest natural number such that <span class="math inline">\(f^{n+1}~x = f^n~x\)</span>.</li>
-                    <li>We apply general algebraic thinking again, this time about congruences. Let <span class="math inline">\(T~f~n = \{ x ~|~ \ftime~f~x = n \}\)</span> be the set of all inputs that <span class="math inline">\(f\)</span> handles in <span class="math inline">\(n\)</span> steps. We can also let <span class="math inline">\(U~n = \{ (f,x) ~|~ \ftime~f~x = n \}\)</span>? [ <em>λ</em> f . <em>λ</em> n . { x <sub>|</sub> <sub>f</sub>x = n } \ <em>λ</em> n . { (f,x) <sub>|</sub> <sub>f</sub>x = n } \ <em>λ</em> m . <em>λ</em> n . { (f,x) <sub>|</sub> ~x = m, ~ <sub>f</sub>x = n } ]</li>
-                    <li>We define <span class="math inline">\(\fspace : M~S \to S \to \Nat\)</span>, where <span class="math inline">\(\fspace~f~x\)</span> is the size of the biggest state in <span class="math inline">\(\{ f^n~x ~|~ n \in \Nat \}\)</span>.</li>
-                    <li>The other option is to require that each machine <span class="math inline">\(f\)</span> have a <span class="math inline">\(t : S \to \Nat\)</span> where <span class="math inline">\(t~(f~x) = 1 + t~x\)</span>.</li>
-                    </ul></li>
-                    <li><p>Complexity as an ordering of questions</p>
-                    <ul>
-                    <li><p>Postulate: For every pair of questions, we can always decide which is more complex. Therefore, complexity is a <em>total ordering</em> of questions. We write <span class="math inline">\(x &lt; y\)</span> iff <span class="math inline">\(x\)</span> is less complex than <span class="math inline">\(y\)</span>. Then the complexity axioms are:</p>
-                    <ul>
-                    <li>For each <span class="math inline">\(y\)</span>, there are finitely many <span class="math inline">\(x\)</span> such that <span class="math inline">\(x \le y\)</span>.</li>
-                    <li>For each <span class="math inline">\(x\)</span>, there are infinitely many <span class="math inline">\(y\)</span> such that <span class="math inline">\(x \le y\)</span>. (Is this required?)</li>
-                    </ul></li>
-                    <li>A <em>reduction</em> <span class="math inline">\(r\)</span> from problem <span class="math inline">\(P\)</span> to problem <span class="math inline">\(Q\)</span> is an order-preserving (but not necessarily order-reflecting) function that maps <span class="math inline">\(P\)</span>-questions to <span class="math inline">\(Q\)</span>-questions. Formally, for all <span class="math inline">\(x, y \in P\)</span>, if <span class="math inline">\(x \le y\)</span> then <span class="math inline">\(r(x) \le r(y)\)</span>, but the converse does not need to hold. (Are we sure we don't need order-reflecting?)</li>
-                    <li><p>Rabin complexity axioms? Still with the same <span class="math inline">\(m\)</span> here. For help, let <span class="math inline">\(L(k) = \{ x ~|~ m(x) \le k \}\)</span> be the set of all questions that are not more complex than <span class="math inline">\(k\)</span>. Then the axioms are:</p>
-                    <ul>
-                    <li>Every <span class="math inline">\(L(k)\)</span> is finite.</li>
-                    <li>For every <span class="math inline">\(i\)</span>, there exists <span class="math inline">\(j &gt; i\)</span> such that <span class="math inline">\(L(i) \subset L(j)\)</span>. We say that <span class="math inline">\(L\)</span> is <em>eventually increasing</em>.</li>
-                    <li>The limit of <span class="math inline">\(L(k)\)</span> as <span class="math inline">\(k\)</span> grows unbounded is <span class="math inline">\(X\)</span>, the set of all questions.</li>
-                    <li>(That is not what Rabin says? He uses Post canonical system and Curry-Howard correspondence?)</li>
-                    </ul></li>
-                    <li><p>Corollary:</p>
-                    <ul>
-                    <li><span class="math inline">\(L\)</span> is nondecreasing: If <span class="math inline">\(i &lt; j\)</span> then <span class="math inline">\(L(i) \subseteq L(j)\)</span>.</li>
-                    </ul></li>
-                    <li><p><a href="https://en.wikipedia.org/wiki/Order_theory">WP:Order theory</a></p></li>
-                    </ul></li>
-                    <li><p>Articles</p>
-                    <ul>
-                    <li><a href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">WP:Boolean satisfiability problem</a></li>
-                    <li><p><a href="http://www.dcs.gla.ac.uk/~pat/cpM/papers/cheeseman91where.pdf">Where the really hard problems are</a>, Cheeseman, Kanefsky, and Taylor,</p>
-                    <ul>
-                    <li>&quot;Almost all k-colorable graphs are easy to color&quot;, J. S. Turner, 1988</li>
-                    </ul></li>
-                    <li><p>Blum</p>
-                    <ul>
-                    <li><a href="https://www.researchgate.net/profile/Juris_Hartmanis/publication/242506038_On_the_Computational_Complexity_of_Algorithms/links/53fcd0a40cf2364ccc04db1d.pdf">On the computational complexity of algorithms</a>, J. Hartmanis and R. E. Stearns, 1965</li>
-                    </ul></li>
-                    <li><p><a href="http://www.sciencedirect.com/science/article/pii/0022000078900089">The complexity of total order structures</a>, Dan Moore, 1978</p></li>
-                    </ul></li>
-                    <li><p>Books</p>
-                    <ul>
-                    <li><a href="http://theory.cs.princeton.edu/complexity/">Computational Complexity: A Modern Approach, by Sanjeev Arora and Boaz Barak</a>, more than 400 pages, no finite model theory</li>
-                    <li><a href="http://cglab.ca/~michiel/TheoryOfComputation/TheoryOfComputation.pdf">Introduction to Theory of Computation, by Anil Maheshwari and Michiel Smid</a>, more than 200 pages</li>
-                    </ul></li>
-                    <li><p><a href="http://port70.net/~nsz/articles/classic/blum_complexity_1976.pdf">Blum 1976 &quot;a machine independent theory of the complexity of recursive functions&quot;</a>, 15 pages</p>
-                    <ul>
-                    <li><p><a href="https://www.cs.toronto.edu/~sacook/homepage/rabin_thesis.pdf">Michael O. Rabin's 1960 technical report</a></p>
-                    <ul>
-                    <li><a href="https://cstheory.stackexchange.com/questions/34236/rabins-degree-of-difficulty-of-computing-a-function-and-a-partial-ordering-of">from cstheory stackexchange</a></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><a href="https://en.wikipedia.org/wiki/Proof_complexity">https://en.wikipedia.org/wiki/Proof_complexity</a></li>
-                    <li><p>A question related to P vs NP</p>
-                    <ul>
-                    <li>Proving lower bound is much harder than proving upper bound.</li>
-                    <li><p>Unsolved problem: How do we prove that an algorithm is the fastest solution of a problem? In order to prove that an algorithm is the fastest, it suffices us to prove that there is no faster algorithm for the same problem, but this is easier said than done.</p>
-                    <ul>
-                    <li><a href="https://cs.stackexchange.com/questions/38357/is-it-really-possible-to-prove-lower-bounds">https://cs.stackexchange.com/questions/38357/is-it-really-possible-to-prove-lower-bounds</a></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><a href="https://en.wikipedia.org/wiki/Time_hierarchy_theorem">https://en.wikipedia.org/wiki/Time_hierarchy_theorem</a></li>
-                    <li><a href="https://en.wikipedia.org/wiki/Constructible_function">https://en.wikipedia.org/wiki/Constructible_function</a></li>
-                    <li><p>Entertainment</p>
-                    <ul>
-                    <li><a href="http://beza1e1.tuxen.de/articles/accidentally_turing_complete.html">http://beza1e1.tuxen.de/articles/accidentally_turing_complete.html</a></li>
-                    </ul></li>
-                    </ul>
-                    <h2 id="what-is-a-machine-what-is-the-essence-of-a-machine"><span class="section_number">11</span><span class="section_title">What is a machine? What is the essence of a machine?</span></h2>
-                    <h2 id="why-do-we-use-turing-machines-instead-of-lambda-calculus-when-discussing-computational-complexity"><span class="section_number">12</span><span class="section_title">Why do we use Turing machines instead of lambda calculus when discussing computational complexity?</span></h2>
-                    <ul>
-                    <li><a href="https://cstheory.stackexchange.com/questions/23798/p-and-np-classes-explanation-through-lambda-calculus">https://cstheory.stackexchange.com/questions/23798/p-and-np-classes-explanation-through-lambda-calculus</a></li>
-                    </ul>
-                    <h2 id="theory-of-deciders"><span class="section_number">13</span><span class="section_title">Theory of deciders?</span></h2>
-                    <p>We explore the theory of <em>deciders</em> (which are just unary algebras). We try to describe computation without being tied to a machine model. We hope we can lower bound and upper bound of computation complexity.</p>
-                    <p>There are two ways to define a <em>decider</em>: the algebraic way and the logic way. The logic way naturally gives rise to graph. However, the following is the algebraic definition.</p>
-                    <p>$\newcommand \newcommand \newcommand \newcommand \newcommand \newcommand \newcommand$A <em>decider</em> <span class="math inline">\(\calD\)</span> is an algebra <span class="math inline">\((S,f,0,1)\)</span> satisfying these:</p>
-                    <span class="math display">\[\begin{align*}
-                    f~0 = 0
-                    \\
-                    f~1 = 1
-                    \end{align*}
-                    \]</span>
-                    <p>where the set <span class="math inline">\(S\)</span> is the <em>underlying set</em>, the function <span class="math inline">\(f\)</span> is the <em>transition function</em>, the element <span class="math inline">\(0\)</span> is the <em>rejecting state</em>, and the element <span class="math inline">\(1\)</span> is the <em>accepting state</em>. A <em>state</em> is an element of the underlying set. The accepting and rejecting state are collectively known as <em>terminal</em> states.</p>
-                    <p>Deciders and predicates are closely related: a decider with transition function <span class="math inline">\(f\)</span> <em>computes</em> a predicate <span class="math inline">\(c~f\)</span> satisfying these:</p>
-                    <span class="math display">\[\begin{align*}
-                    c~f \circ f &amp;= c~f
-                    \\ f \circ c~f &amp;= c~f
-                    \end{align*}
-                    \]</span>
-                    <p>where <span class="math inline">\(c : (S \to S) \to (S \to \{0,1\})\)</span> is the <em>short-circuiting function</em>. The function <span class="math inline">\(c~f\)</span> is also called the short-circuited <span class="math inline">\(f\)</span>.</p>
-                    <p>We want to <em>compose</em>, build deciders from deciders. Why? Finite primitives?</p>
-                    <p><span class="math inline">\((A,f,0,1)\)</span> becomes <span class="math inline">\((A, \neg f,1,0)\)</span>.</p>
-                    <p><span class="math inline">\((A,f)\)</span> and <span class="math inline">\((B,g)\)</span> becomes <span class="math inline">\((2 \times A \times B, f \wedge g)\)</span>. Let <span class="math inline">\(h = f \wedge g\)</span>.</p>
-                    <span class="math display">\[\begin{align*}
-                    h~0 = 0
-                    \\ h~1 = 1
-                    \\ h~1 = 1
-                    \end{align*}
-                    \]</span>
-                    <p><span class="math inline">\(A\)</span>-deciders form a <em>Boolean algebra</em>, But why should we bother showing this? <span class="math inline">\((\neg f)~x = \neg~(f~x)\)</span>. <span class="math inline">\((f \wedge g)~x = f~x \wedge g~x\)</span>. <span class="math inline">\((f \vee g)~x = f~x \vee g~x\)</span>.</p>
-                    <p>A decider is too general, so we want to restrict it.</p>
-                    <p>The questions are:</p>
-                    <ul>
-                    <li>Does a restriction affect what the decider can compute?</li>
-                    <li>Does a restriction affect the running time of the decider for a given input?</li>
-                    </ul>
-                    <p>$\newcommand$We can <em>constrain the transition function</em> by <em>distance constraining</em>. We assume the existence of a <em>distance function</em> <span class="math inline">\(d : V \to V \to \Nat\)</span> such that <span class="math inline">\(f\)</span> has to satisfy <span class="math inline">\(d~x~(f~x) \le k\)</span> where <span class="math inline">\(k\)</span> is a constant, usually 1. The structure <span class="math inline">\((S,d)\)</span> then becomes a <em>metric space</em>. The distance function must satisfy:</p>
-                    <span class="math display">\[\begin{align*}
-                    d~x~x &amp;= 0
-                    \\ d~x~y &amp;= d~y~x
-                    \end{align*}
-                    \]</span>
-                    <p>We can <em>constrain the transition function</em> by <em>vertex label constraining</em>. Let there be a vertex labeling <span class="math inline">\(m : V \to \Nat\)</span>. (We are silently assuming that <span class="math inline">\(V\)</span> is countable.) The labeling <span class="math inline">\(m\)</span> is surjective but not necessarily injective. This labeling divides the graph into maximal subconnected subcomponents? The constraints are:</p>
-                    <ul>
-                    <li>Each label is used finitely many times. There are only finitely many vertices with the same label.</li>
-                    <li>The function <span class="math inline">\(f\)</span> must satisfy <span class="math inline">\(|m~(f~x) - m~x| \le d\)</span> where <span class="math inline">\(d\)</span> is a finite number, usually 1.</li>
-                    </ul>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">13.1</span><span class="section_title"><a href="#what-class-does-this-constrained-decider-correspond-to">What class does this constrained decider correspond to?</a></span><span class="word_count">(99w~1m)</span></li>
-                    <li><span class="section_number">13.2</span><span class="section_title"><a href="#finite">Finite</a></span><span class="word_count">(20w~1m)</span></li>
-                    <li><span class="section_number">13.3</span><span class="section_title"><a href="#relationship-with-predicates">Relationship with predicates</a></span><span class="word_count">(94w~1m)</span></li>
-                    <li><span class="section_number">13.4</span><span class="section_title"><a href="#logic-calculus-decider">Logic calculus decider</a></span><span class="word_count">(29w~1m)</span></li>
-                    <li><span class="section_number">13.5</span><span class="section_title"><a href="#decider">Decider</a></span><span class="word_count">(105w~1m)</span></li>
-                    <li><span class="section_number">13.6</span><span class="section_title"><a href="#descriptivealgorithmic-complexity">Descriptive/algorithmic complexity</a></span><span class="word_count">(54w~1m)</span></li>
-                    <li><span class="section_number">13.7</span><span class="section_title"><a href="#inefficientizing">Inefficientizing</a></span><span class="word_count">(39w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="what-class-does-this-constrained-decider-correspond-to"><span class="section_number">13.1</span><span class="section_title">What class does this constrained decider correspond to?</span></h3>
-                    <p>We can also <em>constrain the state size</em>.</p>
-                    <p>We posit the existence of a <em>state size function</em> <span class="math inline">\(s : A \to \Nat\)</span> where:</p>
-                    <ul>
-                    <li>There are exactly <span class="math inline">\(2^n\)</span> states of size <span class="math inline">\(n\)</span>.</li>
-                    <li>If <span class="math inline">\(s~x \neq s~y\)</span> then <span class="math inline">\(x \neq y\)</span>.</li>
-                    </ul>
-                    <p><span class="math display">\[
-                    \forall n \in \Nat: |\{ x ~|~ s~x = n\} = 2^n|
-                    \]</span></p>
-                    <p>We then further constrain the transition function <span class="math inline">\(f\)</span> such that <span class="math inline">\(|s~(f~x) - s~x| \le 1\)</span>.</p>
-                    <p>We can constrain the transition function <span class="math inline">\(f\)</span> such that <span class="math inline">\(s~x - s~(f~x) = -1\)</span>.</p>
-                    <p>An alternative to this is defining fringe functions <span class="math inline">\(A \to P~A\)</span>, and work with the generated <span class="math inline">\((P~A, F)\)</span>.</p>
-                    <h3 id="finite"><span class="section_number">13.2</span><span class="section_title">Finite</span></h3>
-                    <p>A decider is <em>finite</em> iff its underlying set is finite.</p>
-                    <p>If <span class="math inline">\(S\)</span> is finite then <span class="math inline">\(S \to S\)</span> is also finite.</p>
-                    <h3 id="relationship-with-predicates"><span class="section_number">13.3</span><span class="section_title">Relationship with predicates</span></h3>
-                    <p>The set of all <span class="math inline">\(A\)</span>-deciders is isomorphic to the set of all <em><span class="math inline">\(A\)</span>-predicates</em>. If <span class="math inline">\(|A| = n\)</span> then there are <span class="math inline">\(2^n\)</span> different <span class="math inline">\(A\)</span>-predicates (extensionally).</p>
-                    <p>A <em>total</em> decider has total <span class="math inline">\(c~f\)</span>. A <em>partial</em> decider has partial <span class="math inline">\(c~f\)</span>.</p>
-                    <p>A state <span class="math inline">\(s\)</span> is <em>eventually terminal</em> iff <span class="math inline">\(c~f~s\)</span> is defined, is <em>eventually rejecting</em> iff <span class="math inline">\(c~f~s = 0\)</span>, and is <em>eventually accepting</em> iff <span class="math inline">\(c~f~s = 1\)</span>.</p>
-                    <p>The <em>generating set</em> <span class="math inline">\(G\)</span> is the set of all <span class="math inline">\(x\)</span> that is not in the range of <span class="math inline">\(f\)</span>.</p>
-                    <span class="math display">\[\begin{align*}
-                    G = A - \{ f~x | x \in A \}
-                    \end{align*}
-                    \]</span>
-                    <p>The generating set is the set of <em>initial states</em>.</p>
-                    <p>A state is <em>initial</em> iff it is in <span class="math inline">\(G\)</span>.</p>
-                    <h3 id="logic-calculus-decider"><span class="section_number">13.4</span><span class="section_title">Logic calculus decider</span></h3>
-                    <p>Let each vertex represent a logic expression.</p>
-                    <p>Let an edge from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span> mean that there is an inference rule that step-reduces the expression <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span>.</p>
-                    <h3 id="decider"><span class="section_number">13.5</span><span class="section_title">Decider</span></h3>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">13.5.1</span><span class="section_title"><a href="#logical-definition">Logical definition</a></span><span class="word_count">(105w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="logical-definition"><span class="section_number">13.5.1</span><span class="section_title">Logical definition</span></h4>
-                    <p>A <em>decider</em> is <span class="math inline">\((V,E,A)\)</span> with signature <span class="math inline">\((2,1,1)\)</span>. A decider is a directed graph with some special vertexes. A <em>state</em> is a vertex.</p>
-                    <p><span class="math inline">\(A~x\)</span> is true iff <span class="math inline">\(x\)</span> is an <em>accepting</em> vertex.</p>
-                    <p><span class="math inline">\(E~x~y\)</span> is true iff <span class="math inline">\(y\)</span> is a successor of <span class="math inline">\(x\)</span>. The relation <span class="math inline">\(E~x~y\)</span> is true iff there is an edge from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span>.</p>
-                    <p>The decider is <em>deterministic</em> iff <span class="math inline">\(E\)</span> is injective: <span class="math display">\[
-                    E~x~y \wedge E~x~z \implies y = z
-                    \]</span></p>
-                    <p><span class="math inline">\(E\)</span> is injective iff each vertex has out-degree one or less.</p>
-                    <ol>
-                    <li><p>Path-existence predicate</p>
-                    <p><span class="math inline">\(P~x~y\)</span> means there is path from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span>.</p>
-                    <span class="math display">\[\begin{align*}
-                    E~x~y &amp;\implies P~x~y
-                    \\ E~x~y \wedge P~y~z &amp;\implies P~x~z
-                    \\ \alpha~x &amp;= P~x~y \wedge A~y
-                    \end{align*}
-                    \]</span>
-                    <span class="math display">\[\begin{align*}
-                    E~x~y &amp;\implies \neg A~x
-                    \end{align*}
-                    \]</span>
-                    <span class="math display">\[\begin{align*}
-                    E~x~y &amp;\vdash P~x~y
-                    \\ E~x~y , P~y~z &amp;\vdash P~x~z
-                    \\ E~x~y , A~x &amp;\vdash
-                    \end{align*}
-                    \]</span>
-                    <p>Defining the predicate <span class="math inline">\(T\)</span>:</p>
-                    <p><span class="math inline">\(T~x~n\)</span> means there exists a path of length <span class="math inline">\(n\)</span> from <span class="math inline">\(x\)</span> to a terminal vertex.</p>
-                    <span class="math display">\[\begin{align*}
-                    A~x &amp;\implies T~x~0
-                    \\ R~x &amp;\implies T~x~0
-                    \\ E~x~y \wedge T~y~k &amp;\implies T~x~(1 + k)
-                    \end{align*}
-                    \]</span></li>
-                    </ol>
-                    <h3 id="descriptivealgorithmic-complexity"><span class="section_number">13.6</span><span class="section_title">Descriptive/algorithmic complexity</span></h3>
-                    <p>Suppose that there is a <em>complexity</em> function that maps a predicate to a complexity measure.</p>
-                    <p><span class="math inline">\(c : (A \to \Bool) \to C\)</span>.</p>
-                    <p>Assume that <span class="math inline">\(c_L~p\)</span> is the length of the shortest <span class="math inline">\(L\)</span>-program for the predicate <span class="math inline">\(p\)</span>. What does this even mean?</p>
-                    <p>Can a function be stated as a combination of other functions? What combination?</p>
-                    <p><a href="https://en.wikipedia.org/wiki/Logic_of_graphs">Logic of graphs</a></p>
-                    <h3 id="inefficientizing"><span class="section_number">13.7</span><span class="section_title">Inefficientizing</span></h3>
-                    <p>Given an <span class="math inline">\(A\)</span>-decider and infinite <span class="math inline">\(A\)</span>, we can always construct another <span class="math inline">\(A\)</span>-decider that computes the same predicate but with more states.</p>
-                    <p>Given a non-oracle <span class="math inline">\(A\)</span>-decider, we can always construct another <span class="math inline">\(A\)</span>-decider that computes the same predicate but with less states.</p>
-                    <h2 id="p-vs-np"><span class="section_number">14</span><span class="section_title">P vs NP?</span></h2>
-                    <p>Forward question: Given a predicate p, what is the minimum circuit-size complexity of p?</p>
-                    <p>Reverse question: Given a minimum circuit-size complexity, how complex can a predicate with that number of operators be?</p>
-                    <p>Baca wiki SAT &amp; papers first</p>
-                    <p>We say that a predicate k-to-1 iff its domain is 0,1<sup>k</sup> and it is true for exactly one input string and false for every other. Let Pk be the set of all k-to-1 predicates.</p>
-                    <p>Logical methods in computer science (open access journal)</p>
-                    <p>what is this book? should we read it? is it related to P vs NP? <a href="http://www-2.dc.uba.ar/materias/azar/bibliografia/Downey2010AlgorithmicRandomness.pdf">http://www-2.dc.uba.ar/materias/azar/bibliografia/Downey2010AlgorithmicRandomness.pdf</a></p>
-                    <p>Formal Systems and Machines: An Isomorphism <a href="http://legacy.earlham.edu/~peters/courses/logsys/machines.htm">http://legacy.earlham.edu/~peters/courses/logsys/machines.htm</a></p>
-                    <p>Forallx: <a href="https://www.fecundity.com/logic/download.html">https://www.fecundity.com/logic/download.html</a></p>
-                    <p>Franz Baader: <a href="https://lat.inf.tu-dresden.de/">https://lat.inf.tu-dresden.de/</a> baader/index-en.html</p>
-                    <p>High-Level Descriptions of Computation <a href="https://courses.engr.illinois.edu/cs373/sp2013/Lectures/lec21.pdf">https://courses.engr.illinois.edu/cs373/sp2013/Lectures/lec21.pdf</a></p>
-                    <p><a href="http://cstheory.stackexchange.com/questions/1955/books-on-automata-theory-for-self-study">http://cstheory.stackexchange.com/questions/1955/books-on-automata-theory-for-self-study</a></p>
-                    <p><a href="http://cstheory.stackexchange.com/questions/3253/what-books-should-everyone-read">http://cstheory.stackexchange.com/questions/3253/what-books-should-everyone-read</a></p>
-                    <p>A Turing Machine Distance Hierarchy <a href="http://www2.cs.cas.cz/~sima/lata13.pdf">http://www2.cs.cas.cz/~sima/lata13.pdf</a></p>
-                    <p>T(m,n) = set of all problems solvable by m in n steps</p>
-                    <p>T(m,O(f(n)))</p>
-                    <p>P(m) = sum k in Nat T(m,O(n<sup>k</sup>))</p>
-                    <p>P(m1) = P(m2)?</p>
-                    <p>P(DTM) = P(NTM)?</p>
-                    <p>Problem = set of q-a pairs</p>
-                    <p>Cclass = set of problems</p>
-                    <p>i &lt; j implies T(m,i) subset T(m,j) ?</p>
-                    <p><a href="https://en.wikipedia.org/wiki/Computational_complexity_theory#Computational_problems">https://en.wikipedia.org/wiki/Computational_complexity_theory#Computational_problems</a></p>
-                    <p>Cite: <a href="http://www.math.toronto.edu/weiss/model_theory.pdf">http://www.math.toronto.edu/weiss/model_theory.pdf</a></p>
-                    <p>Fundamentals of Model Theory <a href="http://www.math.toronto.edu/weiss/model_theory.pdf">http://www.math.toronto.edu/weiss/model_theory.pdf</a></p>
-                    <p>Wilfrid Hodges Model Theory draft <a href="http://wilfridhodges.co.uk/history07.pdf">http://wilfridhodges.co.uk/history07.pdf</a></p>
-                    <p><a href="http://w3.impa.br/~hossein/myarticles/hodgetheory.pdf">http://w3.impa.br/~hossein/myarticles/hodgetheory.pdf</a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#note">Note</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#understand-the-problem"><span class="todo TODO">TODO</span> Understand the problem</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#finding-an-search-problem-that-forces-a-dtm-to-traverse-the-search-space">Finding an search problem that forces a DTM to traverse the search space</a></span><span class="word_count">(244w~2m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#questions">Questions</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#plan">Plan</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#meta-research">Meta-research</a></span><span class="word_count">(52w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#another-attempt">Another attempt?</a></span><span class="word_count">(156w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#other-peoples-works-that-may-be-related">Other people's works that may be related</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#circuit-complexity">Circuit complexity</a></span><span class="word_count">(809w~5m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#computational-complexity">Computational complexity</a></span><span class="word_count">(1216w~7m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#what-is-a-machine-what-is-the-essence-of-a-machine">What is a machine? What is the essence of a machine?</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#why-do-we-use-turing-machines-instead-of-lambda-calculus-when-discussing-computational-complexity">Why do we use Turing machines instead of lambda calculus when discussing computational complexity?</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#theory-of-deciders">Theory of deciders?</a></span><span class="word_count">(828w~5m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#p-vs-np">P vs NP?</a></span><span class="word_count">(158w~1m)</span></li>
+</ul>
+</div>
+<h2 id="note"><span class="section_number">1</span><span class="section_title">Note</span></h2>
+<p>This is a proof <em>attempt</em>, not a proof.</p>
+<p>Last update was 2018-04-28.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#note-the-conversion-of-this-page-from-markdown-to-org-mode-using-pandoc-may-introduce-some-errors-beside-my-errors-that-are-already-in-the-page-before-conversion.">Note: The conversion of this page from Markdown to Org Mode using Pandoc may introduce some errors, beside my errors that are already in the page before conversion.</a></span><span class="word_count">(28w~1m)</span></li>
+</ul>
+</div>
+<h3 id="note-the-conversion-of-this-page-from-markdown-to-org-mode-using-pandoc-may-introduce-some-errors-beside-my-errors-that-are-already-in-the-page-before-conversion."><span class="section_number">1.1</span><span class="section_title">Note: The conversion of this page from Markdown to Org Mode using Pandoc may introduce some errors, beside my errors that are already in the page before conversion.</span></h3>
+<h2 id="understand-the-problem"><span class="section_number">2</span><span class="section_title"><span class="todo TODO">TODO</span> Understand the problem</span></h2>
+<h2 id="finding-an-search-problem-that-forces-a-dtm-to-traverse-the-search-space"><span class="section_number">3</span><span class="section_title">Finding an search problem that forces a DTM to traverse the search space</span></h2>
+<p>Let <span class="math inline">\(
+\newcommand\SetOutcome{\mathbb{F}}
+\newcommand\SetBit{\mathbb{B}}
+\newcommand\SetPred{\mathbb{P}}
+\newcommand\FunSat{\text{sat}}
+\newcommand\FunMinTime{\text{MinTime}}
+\newcommand\FunLen{\text{Len}}
+\mathbb{B}= { 0, 1 } \)</span> be the set of <em>bits</em>.</p>
+<p>Let <span class="math inline">\(\mathbb{B}^*\)</span> be the <em>Kleene closure</em> of <span class="math inline">\(\mathbb{B}\)</span>.</p>
+<p>Let <span class="math inline">\( \mathbb{F} = \{ \text{accept}, \text{reject} \} \)</span> be the set of <em>final states</em>.</p>
+<p>A <em>predicate</em> is a function in <span class="math inline">\(\mathbb{B}^* \to \mathbb{B}\)</span>.</p>
+<p>Let <span class="math inline">\(\mathbb{P}\)</span> be the set of all <em>computable predicates</em>.</p>
+<p>Let <span class="math inline">\(p \in \mathbb{P}\)</span> be a computable predicate.</p>
+<p>Let <span class="math inline">\(\text{Len}(x)\)</span> be the <em>length</em> of the string <span class="math inline">\(x \in \mathbb{B}^*\)</span>.</p>
+<p>Let the function <span class="math inline">\(\text{sat}: \mathbb{P}\times \Nat \to \mathbb{F}\)</span> be</p>
+<span class="math display">\[\begin{equation*}
+\text{sat}(p,n) =
+\begin{cases}
+    \text{accept} &amp; \text{if \( \exists x \in \mathbb{B}^n : p(x) = 1 \);}
+    \\
+    \text{reject} &amp; \text{otherwise.}
+\end{cases}
+\end{equation*}
+\]</span>
+<p>Let <span class="math inline">\(\text{MinTime}_M(p,x)\)</span> be the <em>shortest time</em> (the minimum number of steps) required by machine <span class="math inline">\(M\)</span> to compute <span class="math inline">\(p(x)\)</span> (to compute the predicate <span class="math inline">\(p\)</span> with input <span class="math inline">\(x\)</span>).</p>
+<p>Let <span class="math inline">\(N\)</span> be an NTM (non-deterministic Turing machine).</p>
+<p>Let <span class="math inline">\(D\)</span> be a DTM (deterministic Turing machine).</p>
+<p>Such NTM <span class="math inline">\(N\)</span> can compute <span class="math inline">\(\text{sat}(p,n)\)</span> in <span class="math inline">\(O(n + \max_{x \in \mathbb{B}^n} \text{MinTime}_N(p,x))\)</span> steps. This is such algorithm:</p>
+<pre class="example"><code>function sat (p, n) {
+    var x: array [1..n] of bit
+    for i := 1 to n {
+        x[i] := guess
+    }
+    if p(x) { accept }
+    else { reject }
+}
+</code></pre>
+<p>Such DTM <span class="math inline">\(D\)</span> can compute <span class="math inline">\(\text{sat}(p,n)\)</span> in <span class="math inline">\(O(\sum_{x \in \mathbb{B}^n} \text{MinTime}_D(p,x))\)</span> steps. This is such algorithm:</p>
+<pre class="example"><code>function sat (p, n) {
+    for x in B^n {
+        if p(x) { accept }
+    }
+    reject
+}
+</code></pre>
+<p><strong>Conjecture:</strong> There exists a computable predicate <span class="math inline">\(p \in \mathbb{P}\)</span> such that</p>
+<ol>
+<li><span class="math inline">\( \text{MinTime}_D(p,x) = \text{MinTime}_N(p,x) \)</span>,</li>
+<li><span class="math inline">\(\text{MinTime}_D(p,x) \in O([\text{Len}(x)]^k)\)</span> where <span class="math inline">\(k &gt; 1\)</span>,</li>
+<li><span class="math inline">\(N\)</span> optimally computes <span class="math inline">\(\text{sat}(p,n)\)</span> in <span class="math inline">\(O(n^k)\)</span> time, and</li>
+<li><span class="math inline">\(D\)</span> optimally computes <span class="math inline">\(\text{sat}(p,n)\)</span> in <span class="math inline">\(O(2^n \cdot n^k)\)</span> time.</li>
+</ol>
+<p>If that conjecture is true, then <span class="math inline">\(\TimeP \neq \TimeNP\)</span>.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#equivalent-question-is-there-a-problem-whose-optimal-solution-is-exhaustive-search">Equivalent question: Is there a problem whose optimal solution is exhaustive search?</a></span><span class="word_count">(42w~1m)</span></li>
+</ul>
+</div>
+<h3 id="equivalent-question-is-there-a-problem-whose-optimal-solution-is-exhaustive-search"><span class="section_number">3.1</span><span class="section_title">Equivalent question: Is there a problem whose optimal solution is exhaustive search?</span></h3>
+<ul>
+<li><a href="https://www.cs.cmu.edu/~ryanw/improved-algs-lbs2.pdf">2010 Ryan Williams &quot;Improving Exhaustive Search Implies Superpolynomial Lower Bounds&quot;</a>: &quot;The P vs NP problem arose from the question of whether exhaustive search is necessary for problems with short verifiable solutions.&quot;</li>
+</ul>
+<h2 id="questions"><span class="section_number">4</span><span class="section_title">Questions</span></h2>
+<p>Can we apply pigeonhole principle to the computation graph?</p>
+<p>What problems are equivalent to the P vs NP problem?</p>
+<h2 id="plan"><span class="section_number">5</span><span class="section_title">Plan</span></h2>
+<ul>
+<li><p>Reading list</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Natural_proof">WP: Natural proof</a></li>
+<li><p>approaches:</p>
+<ul>
+<li>Fagin, Immerman, …: descriptive complexity theory</li>
+<li><p>Mulmuley, Sohoni, …: geometric complexity theory</p>
+<ul>
+<li><a href="https://arxiv.org/abs/0709.0746">2007 Mulmuley and Sohoni, &quot;Geometric Complexity Theory: Introduction&quot;</a></li>
+<li><a href="https://arxiv.org/abs/1305.7387">2013 Landsberg &quot;Geometric Complexity Theory: an introduction for geometers&quot;</a></li>
+<li><a href="https://arxiv.org/abs/1509.02503">2015 Landsberg &quot;An introduction to geometric complexity theory&quot;</a></li>
+<li><a href="https://www.cse.buffalo.edu//~regan/papers/pdf/Reg02MSFD.pdf">Kenneth W. Regan's &quot;Understanding the Mulmuley-Sohoni Approach to P vs. NP&quot;</a></li>
+<li><a href="https://people.mpi-inf.mpg.de/~cikenmey/teaching/summer18/firstintrotogct/index.html">Christian Ikenmeyer's 2018 course</a></li>
+</ul></li>
+</ul></li>
+<li><p><a href="http://michaelnielsen.org/polymath1/index.php?title=Deolalikar_P_vs_NP_paper">A clearing house for Deolalikar P vs NP paper</a></p></li>
+</ul></li>
+<li><p>Undigested</p>
+<ul>
+<li>One-way function implies something about P vs NP?</li>
+</ul></li>
+</ul>
+<h2 id="meta-research"><span class="section_number">6</span><span class="section_title">Meta-research</span></h2>
+<ul>
+<li><p>Where are progress tracked?</p>
+<ul>
+<li><a href="https://rjlipton.wordpress.com/2017/02/05/a-panel-on-p-vs-np/">2017 Richard J. Lipton and Kenneth W. Regan</a></li>
+<li><a href="http://www.win.tue.nl/~gwoegi/P-versus-NP.htm">2016 Gerhard J. Woeginger</a></li>
+<li><a href="http://blog.computationalcomplexity.org/2015/08/have-we-made-progress-on-p-vs-np.html">2015 Lance Fortnow and Bill Gasarch</a></li>
+<li><a href="https://www.reddit.com/r/math/comments/1krrkx/what_progress_has_been_made_on_the_p_vs_np/">2014 reddit</a></li>
+<li><a href="http://www.ncmis.cas.cn/kxcb/jclyzs/201204/W020120424627425387644.pdf">2009 Lance Fortnow &quot;The status of the P versus NP problem&quot;</a></li>
+</ul></li>
+<li><p>What is the P vs NP problem?</p>
+<ul>
+<li>Official problem description: <a href="http://www.claymath.org/sites/default/files/pvsnp.pdf">The P versus NP problem, by Stephen Cook, for the Clay Millennium Prize Problems</a></li>
+</ul></li>
+</ul>
+<h2 id="another-attempt"><span class="section_number">7</span><span class="section_title">Another attempt?</span></h2>
+<ul>
+<li>This is an older attempt.</li>
+<li>This should be merged to the attempt above.</li>
+<li><p>Let:</p>
+<ul>
+<li><span class="math inline">\(f\)</span> be a predicate</li>
+<li><span class="math inline">\(k\)</span> be a natural number</li>
+<li><span class="math inline">\(Sat(f,k)\)</span> be the problem of finding a string <span class="math inline">\(x\)</span> of length <span class="math inline">\(k\)</span> such that <span class="math inline">\(f(x) = 1\)</span></li>
+</ul></li>
+<li>Lemma: If <span class="math inline">\(f \in \TimeP\)</span> then <span class="math inline">\(Sat(f,k) \in \TimeNP\)</span>. (This should be obvious and simple to prove?)</li>
+<li><p>Conjecture: There exists a predicate whose search cannot be faster than brute force.</p>
+<ul>
+<li>Formally: There exists <span class="math inline">\(f \in \TimeP\)</span> such that <span class="math inline">\(Sat(f,k) \not \in \TimeP\)</span>.</li>
+</ul></li>
+<li>That lemma and that conjecture, if proven true, would imply <span class="math inline">\(\TimeP \subset \TimeNP\)</span>.</li>
+<li>We try to prove that conjecture by diagonalization/pigeonholing? The set <span class="math inline">\( {0,1}^k \to {0,1} \)</span> has <span class="math inline">\(2^{2^k}\)</span> elements, because by combinatorics, in the truth table, there are <span class="math inline">\(2^k\)</span> rows, and each row has <span class="math inline">\(2\)</span> possibilities. There are <span class="math inline">\(2^{2^k}\)</span> possible <span class="math inline">\(k\)</span>-letter-string predicates. Suppose that a deterministic machine can solve <span class="math inline">\(Sat(f,k)\)</span> for all <span class="math inline">\(f\)</span> in <span class="math inline">\(O(poly(k))\)</span> time. (Can we apply pigeonhole principle to the configuration graph?)</li>
+<li><p>Every predicate can be stated in disjunctive normal form.</p></li>
+</ul>
+<h2 id="other-peoples-works-that-may-be-related"><span class="section_number">8</span><span class="section_title">Other people's works that may be related</span></h2>
+<ul>
+<li>2017-11-22 news about NEXP and ACC <a href="https://news.mit.edu/2017/faculty-profile-ryan-williams-1122">https://news.mit.edu/2017/faculty-profile-ryan-williams-1122</a></li>
+<li>an explanation in English <a href="https://danielmiessler.com/study/pvsnp/">https://danielmiessler.com/study/pvsnp/</a></li>
+<li>2011 book &quot;Why Philosophers Should Care About Computational Complexity&quot; <a href="https://eccc.weizmann.ac.il/report/2011/108/">https://eccc.weizmann.ac.il/report/2011/108/</a></li>
+</ul>
+<h2 id="circuit-complexity"><span class="section_number">9</span><span class="section_title">Circuit complexity</span></h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Circuit_complexity">WP:Circuit complexity</a></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#the-shortest-n-parameter-boolean-predicate-equivalence-class-representative-problem">The shortest <span class="math inline">\(n\)</span>-parameter boolean predicate equivalence class representative problem</a></span><span class="word_count">(807w~5m)</span></li>
+</ul>
+</div>
+<h3 id="the-shortest-n-parameter-boolean-predicate-equivalence-class-representative-problem"><span class="section_number">9.1</span><span class="section_title">The shortest <span class="math inline">\(n\)</span>-parameter boolean predicate equivalence class representative problem</span></h3>
+<ul>
+<li><p>Let <span class="math inline">\(E_n\)</span> be the set of all <em>Boolean <span class="math inline">\(n\)</span>-expressions</em>.</p>
+<ul>
+<li>An <em><span class="math inline">\(n\)</span>-expression</em> is an expression that has at most <span class="math inline">\(n\)</span> variables.</li>
+<li><p>Formally, the syntax of <span class="math inline">\(E_n\)</span> is:</p>
+<ul>
+<li><p>Constant expressions:</p>
+<ul>
+<li><span class="math inline">\(0 \in E_n\)</span>.</li>
+<li><span class="math inline">\(1 \in E_n\)</span>.</li>
+</ul></li>
+<li><p>Variable expressions:</p>
+<ul>
+<li><p>If <span class="math inline">\(k \in \Nat\)</span> and <span class="math inline">\(0 \le k &lt; n\)</span>, then <span class="math inline">\(x_k \in E_n\)</span>.</p>
+<ul>
+<li><p>The expression <span class="math inline">\(x_k\)</span> is purely symbolic.</p>
+<ul>
+<li>The <span class="math inline">\(x\)</span> does not mean anything.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>If <span class="math inline">\(\alpha \in E_n\)</span>, then <span class="math inline">\((\neg \alpha) \in E_n\)</span>.</li>
+<li>If <span class="math inline">\(\alpha \in E_n\)</span> and <span class="math inline">\(\beta \in E_n\)</span>, then <span class="math inline">\((\alpha \wedge \beta) \in E_n\)</span>.</li>
+<li>If <span class="math inline">\(\alpha \in E_n\)</span> and <span class="math inline">\(\beta \in E_n\)</span>, then <span class="math inline">\((\alpha \vee \beta) \in E_n\)</span>.</li>
+<li><p>Nothing else is in <span class="math inline">\(E_n\)</span>.</p></li>
+</ul></li>
+</ul></li>
+<li><p>Let the <em>size</em> of a formula be the number of operators in it.</p>
+<ul>
+<li>We write <span class="math inline">\(C(\phi)\)</span> for the size of the formula <span class="math inline">\(\phi\)</span>.</li>
+<li>We say that <span class="math inline">\(\alpha\)</span> is <em>smaller</em> than <span class="math inline">\(\beta\)</span> iff <span class="math inline">\(C(\alpha) &lt; C(\beta)\)</span>.</li>
+<li><p>Formally we define <span class="math inline">\(C(\phi)\)</span> as:</p>
+<span class="math display">\[\begin{align*}
+ C(\neg \alpha) &amp;= 1 + C(\alpha),
+ \\
+ C(\alpha \wedge \beta) &amp;= 1 + C(\alpha) + C(\beta),
+ \\
+ C(\alpha \vee \beta) &amp;= 1 + C(\alpha) + C(\beta),
+ \\
+ C(\alpha) &amp;= 0 \text{ otherwise}.
+\end{align*}
+\]</span></li>
+</ul></li>
+<li><p>Given a formula <span class="math inline">\(\phi \in E_n\)</span> and an <em>assignment</em> <span class="math inline">\(a : \{0,1\}^n\)</span>, we can <em>interpret</em> the formula <span class="math inline">\(\phi\)</span>.</p>
+<ul>
+<li>The result of interpreting <span class="math inline">\(\phi\)</span> with assignment <span class="math inline">\(a\)</span> is written <span class="math inline">\(\phi|_a\)</span>, and is obtained by replacing each <span class="math inline">\(x_k\)</span> with <span class="math inline">\(a_k\)</span> and evaluating the expression to either zero or one.</li>
+<li><p>This interpretation enables us to define <em>equivalence</em>,</p>
+<ul>
+<li><p>Formally, we say that two formulas <span class="math inline">\(\alpha, \beta \in E_n\)</span> are <em>equivalent</em>, written <span class="math inline">\(\alpha \equiv \beta\)</span>, iff for every assignment <span class="math inline">\(a \in \{0,1\}^n\)</span>, it holds that <span class="math inline">\(\alpha|_a = \beta|_a\)</span>. Then, we define the <em>equivalence class</em> of a formula <span class="math inline">\(\phi \in E_n\)</span> as <span class="math inline">\([\phi] = \{ \alpha ~|~ \alpha \equiv \phi, ~ \alpha \in E_n \}\)</span>.</p>
+<ul>
+<li>Every element of that equivalence class is called a <em>representative</em> of that class. Note that equivalence is not equality: <span class="math inline">\(x_0 \wedge x_0\)</span> and <span class="math inline">\(x_0\)</span> are equivalent but not equal.</li>
+</ul></li>
+<li>Two formulas are equivalent iff they always give matching results for all assignments.</li>
+<li>Two formulas are equal iff they look the same.</li>
+<li><p>Equivalence is the comparison of meaning, whereas equality is the comparison of form.</p></li>
+</ul></li>
+</ul></li>
+<li><p>The set <span class="math inline">\(E_n\)</span> has exactly <span class="math inline">\(2^{2^n}\)</span> equivalence classes.</p>
+<ul>
+<li>We label those classes <span class="math inline">\(K(n,0), K(n,1), \ldots K(n,2^{2^n}-1)\)</span>.</li>
+<li><p>Define <span class="math inline">\(Q(n,k)\)</span> as the shortest representative of <span class="math inline">\(K(n,k)\)</span>.</p>
+<ul>
+<li><p>Here are some examples of the shortest representatives that can be verified by hand:</p>
+<span class="math display">\[\begin{align*}
+ Q(0,0) &amp;= 0
+ \\ Q(0,1) &amp;= 1
+ \\ Q(1,0) &amp;= 0
+ \\ Q(1,1) &amp;= x_0
+ \\ Q(1,2) &amp;= \neg x_0
+ \\ Q(1,3) &amp;= 1
+ \\ Q(2,1) &amp;= x_0 \wedge x_1
+ \\ Q(2,2) &amp;= \neg x_0 \wedge x_1
+ \\ Q(2,3) &amp;= x_0
+ \\ Q(2,6) &amp;= \neg (x_0 \wedge x_1) \wedge (x_0 \vee x_1)
+ \\ Q(2,7) &amp;= x_0 \vee x_1
+ \\ Q(2,9) &amp;= (x_0 \wedge x_1) \vee \neg (x_0 \vee x_1)
+\end{align*}
+\]</span></li>
+</ul></li>
+</ul></li>
+<li>It should be apparent that <span class="math inline">\(Q(n,2^{2^n}-1-k) = \neg Q(n,k)\)</span>. It should be apparent that <span class="math inline">\(Q(2,6)\)</span> is XOR and <span class="math inline">\(Q(2,9)\)</span> is bi-implication. It should be apparent that <span class="math inline">\(Q(2,6)\)</span> and <span class="math inline">\(Q(2,9)\)</span> are the longest expressions for <span class="math inline">\(n = 2\)</span>, and both of them have size <span class="math inline">\(4\)</span>.</li>
+<li><strong>Problem statement</strong>: For each <span class="math inline">\(n\)</span>, find <span class="math inline">\(k\)</span> such that <span class="math inline">\(Q(n,k)\)</span> is the longest among all possible <span class="math inline">\(k\)</span>.</li>
+<li><a href="https://en.wikipedia.org/wiki/Parity_function">WP:Parity function</a>? &quot;The <span class="math inline">\(n\)</span>-variable parity function and its negation are the only Boolean functions for which all disjunctive normal forms have the maximal number of <span class="math inline">\(2^{n - 1}\)</span> monomials of length <span class="math inline">\(n\)</span> and all conjunctive normal forms have the maximal number of <span class="math inline">\(2^{n - 1}\)</span> clauses of length <span class="math inline">\(n\)</span>. (Ingo Wegener, Randall J. Pruim, <em>Complexity Theory</em>, 2005, ISBN 3-540-21045-8, p. 260)&quot;</li>
+<li><p>Relationship between <span class="math inline">\(n\)</span>-expressions and <span class="math inline">\(n\)</span>-cubes</p>
+<ul>
+<li>Here we imagine what it is like to apply geometric operations to Boolean expressions.</li>
+<li><p>Draw</p>
+<ul>
+<li>Draw the outline of a square on a white paper.</li>
+<li>Draw two lines that divide the square into four smaller subsquares.</li>
+<li><p>Color the top right subsquare red.</p>
+<ul>
+<li>The resulting picture represents <span class="math inline">\(x_0 \wedge x_1\)</span>.</li>
+</ul></li>
+</ul></li>
+<li><p>The result of rotating <span class="math inline">\(x_0 \wedge x_1\)</span> 90 degrees counterclockwise is <span class="math inline">\(\neg x_0 \wedge x_1\)</span>.</p>
+<ul>
+<li>Rotated once again, it becomes <span class="math inline">\(\neg x_0 \wedge \neg x_1\)</span>.</li>
+<li>Rotated once again, it becomes <span class="math inline">\(x_0 \wedge \neg x_1\)</span>. _ Rotated once again, it comes back to <span class="math inline">\(x_0 \wedge x_1\)</span>.</li>
+</ul></li>
+<li><p>Define <span class="math inline">\(R_2(\phi)\)</span> as the counterclockwise-rotated <span class="math inline">\(\phi\)</span> where <span class="math inline">\(\phi \in E_2\)</span>.</p>
+<ul>
+<li>Then <span class="math inline">\(R(x_0) = x_1\)</span> and <span class="math inline">\(R(x_1) = \neg x_0\)</span>.</li>
+</ul></li>
+<li>Other operations: horizontal flip, vertical flip, negation.</li>
+<li><span class="math inline">\((R_2)^4(\phi) = \phi\)</span>.</li>
+<li>On the 3-cube, there are 3 counterclockwise rotations.</li>
+<li><p>Each <span class="math inline">\(n\)</span>-expression of the form <span class="math inline">\(x_k\)</span> divides the <span class="math inline">\(n\)</span>-cube into two region.</p></li>
+</ul></li>
+<li><p>Unnecessary</p>
+<ul>
+<li>We define the shorthand <span class="math inline">\(\alpha &lt; \beta\)</span> to mean that <span class="math inline">\(\alpha\)</span> is shorter than <span class="math inline">\(\beta\)</span>. Now we can <em>order</em> the equivalence classes in <span class="math inline">\(E_n\)</span> by their sizes. For every <span class="math inline">\(E_n\)</span>, there exists at least one <em>infimum</em> (greatest lower bound). For every <span class="math inline">\(A \subseteq E_n\)</span>, we say that <span class="math inline">\(\alpha \in \inf(A)\)</span> iff <span class="math inline">\(\alpha \le \phi\)</span> for every <span class="math inline">\(\phi \in E_n\)</span>.</li>
+<li>A <em>bit</em> is either zero or one.</li>
+<li><p>We define the mapping <span class="math inline">\(N_n : \{0,1\}^n \to \Nat\)</span> as a mapping from the <span class="math inline">\(n\)</span>-dimensional bit vector <span class="math inline">\(x = (x_0,\ldots,x_{n-1})\)</span> to the natural number <span class="math inline">\(N_n(x) = \sum_{k=0}^{n-1} x_k 2^k\)</span>.</p>
+<ul>
+<li><span class="math inline">\(N_n(x)\)</span> is the number whose <span class="math inline">\(n\)</span>-bit binary right-to-left encoding is the <span class="math inline">\(n\)</span>-dimensional bit vector <span class="math inline">\(x\)</span>.</li>
+</ul></li>
+<li><p>We define the bit vector identifying the predicate as</p>
+<span class="math display">\[\begin{align*}
+   B_n(\phi) = N_{2^n}( \phi(N_n^{-1}(0)), \ldots, \phi(N_n^{-1}(2^n-1)))
+\end{align*}
+\]</span></li>
+</ul></li>
+<li>Shannon 1949 proved that almost all <span class="math inline">\(n\)</span>-argument boolean functions require circuits of size <span class="math inline">\(\Theta(2^n/n)\)</span>. (citation?)</li>
+<li>For small numbers, we can enumerate the answers by hand.</li>
+<li><p>A formula is <em>canonical</em> iff it cannot be shortened.</p></li>
+</ul>
+<p>What is the longest possible canonical description length of a predicate that takes <span class="math inline">\(k\)</span> arguments?</p>
+<pre class="example"><code>0000 | 0
+0001 | a \wedge b
+0010 | a \wedge \neg b
+0011 | a
+0100 | \neg a \wedge b
+0101 | b
+0110 | (a \wedge \neg b) \vee (\neg a \wedge b)
+0111 | a \vee b
+1000 | \neg (a \vee b)
+1001 | (a \wedge b) \vee \neg (a \vee b)
+1010 | \neg b
+1011 | a \vee \neg b
+1100 | \neg a
+1101 | \neg a \vee b
+1110 | \neg (a \wedge b)
+1111 | 1
+</code></pre>
+<p>Conjecture: The longest 2-argument predicate is 0110.</p>
+<p>Conjecture: <span class="math inline">\((a \wedge \neg b) \vee (\neg a \wedge b)\)</span> is the shortest description of 0110.</p>
+<p>What we are asking here is Sipser 1997's <em>circuit-size complexity</em>?</p>
+<ul>
+<li>How are circuit complexity and proof complexity related?</li>
+<li><p>Simplification rewrite rules:</p>
+<span class="math display">\[\begin{align*}
+ \neg (\neg \alpha) = \alpha
+ \\
+ \alpha \wedge \neg \alpha = 0
+ \\
+ \alpha \vee \neg \alpha = 1
+ \\
+ \alpha \vee 1 = 1
+ \\
+ \alpha \wedge 0 = 0
+ \\
+ \neg 0 = 1
+ \\
+ \neg 1 = 0
+ \\
+ \neg \alpha \wedge \neg \beta = \neg (\alpha \vee \beta)
+ \\
+ \neg \alpha \vee \neg \beta = \neg (\alpha \wedge \beta)
+ \\
+ (\alpha \wedge \beta) \vee (\alpha \wedge \gamma) = \alpha \wedge (\beta \vee \gamma)
+\end{align*}
+\]</span></li>
+<li><p>Is this the problem we're talking about?</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Circuit_minimization_for_Boolean_functions">WP:Circuit minimization for Boolean functions</a></li>
+<li><a href="http://www.cs.sfu.ca/~kabanets/papers/mincircuit.pdf">Circuit Minimization Problem</a>, 1999, Valentine Kabanets and Jin-Yi Cai</li>
+<li><a href="http://www.cs.yale.edu/homes/peralta/CircuitStuff/CMT.html">Yale CS Circuit Minimization Team Work</a></li>
+<li><p>what?</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Infimum_and_supremum#Formal_definition">WP:Infimum and supremum</a></li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="computational-complexity"><span class="section_number">10</span><span class="section_title">Computational complexity</span></h2>
+<ul>
+<li><p>world effort</p>
+<ul>
+<li><p><a href="https://www.nada.kth.se/~viggo/wwwcompendium/wwwcompendium.html">A compendium of NP optimization problems</a></p>
+<ul>
+<li>Smallest equivalent something: <a href="https://en.wikipedia.org/wiki/Skeleton_(category_theory)">https://en.wikipedia.org/wiki/Skeleton_(category_theory)</a></li>
+<li>Minimum equivalent graph, also called transitive reduction. <a href="https://en.wikipedia.org/wiki/Transitive_reduction">https://en.wikipedia.org/wiki/Transitive_reduction</a> <a href="https://www.nada.kth.se/~viggo/wwwcompendium/node49.html">https://www.nada.kth.se/~viggo/wwwcompendium/node49.html</a></li>
+</ul></li>
+<li><p><a href="https://polymathprojects.org/2013/11/04/polymath9-pnp/">2013 Polymath project: Polymath 9: Discretized Borel Determinacy</a></p>
+<ul>
+<li><a href="https://gowers.wordpress.com/2013/10/24/what-i-did-in-my-summer-holidays/">https://gowers.wordpress.com/2013/10/24/what-i-did-in-my-summer-holidays/</a></li>
+<li><a href="https://gowers.wordpress.com/2013/11/03/dbd1-initial-post/">https://gowers.wordpress.com/2013/11/03/dbd1-initial-post/</a></li>
+</ul></li>
+<li><p><a href="https://cstheory.stackexchange.com/questions/4090/ways-for-a-mathematician-to-stay-informed-of-current-research-in-complexity-theo">https://cstheory.stackexchange.com/questions/4090/ways-for-a-mathematician-to-stay-informed-of-current-research-in-complexity-theo</a></p></li>
+</ul></li>
+<li><p>open access journals</p>
+<ul>
+<li><a href="https://lmcs.episciences.org/browse/latest">Logical methods in computer science</a></li>
+</ul></li>
+<li><p>recent publication trackers</p>
+<ul>
+<li><p>arxiv list of recent submissions</p>
+<ul>
+<li><a href="https://arxiv.org/list/cs/recent">computer science</a></li>
+<li><a href="https://arxiv.org/list/cs.CC/recent">computational complexity theory</a></li>
+</ul></li>
+</ul></li>
+<li><p>NP-complete problems</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/List_of_NP-complete_problems">WP:List of NP-complete problems</a></li>
+<li><a href="https://mathoverflow.net/questions/72628/number-theory-and-np-complete">https://mathoverflow.net/questions/72628/number-theory-and-np-complete</a></li>
+<li><a href="https://cstheory.stackexchange.com/questions/14124/is-there-a-natural-problem-on-the-naturals-that-is-np-complete">https://cstheory.stackexchange.com/questions/14124/is-there-a-natural-problem-on-the-naturals-that-is-np-complete</a></li>
+</ul></li>
+<li><p>descriptive complexity theory</p>
+<ul>
+<li><p>Immerman and Vardi shows that FO(LFP) corresponds with P.</p>
+<ul>
+<li>What does a FO(LFP) formula look like?</li>
+<li><a href="http://michaelnielsen.org/polymath1/index.php?title=Immerman-Vardi_theorem">Immerman–Vardi theorem</a></li>
+<li><a href="https://complexityzoo.uwaterloo.ca/Complexity_Zoo:F#folfp">FO(LFP) on Complexity Zoo</a></li>
+</ul></li>
+<li>Fagin (?) proved that NP = ESO (existential second-order logic).</li>
+<li><p>Immerman (?) proved that P = FO(LFP) (first-order logic with least fixed point).</p>
+<ul>
+<li><p>Therefore, to prove that P does not equal NP, construct a sentence that is in ESO but not in FO(LFP).</p>
+<ul>
+<li><p>Easier said than done?</p>
+<ul>
+<li><p>Learn finite model theory?</p>
+<ul>
+<li><a href="https://logic.rwth-aachen.de/~graedel/yurifest.pdf">Erich Grädel and Martin Grohe, &quot;Is polynomial time choiceless?&quot;</a>. Choiceless polynomial time logic would imply <span class="math inline">\(\TimeP \neq \TimeNP\)</span>?</li>
+<li><a href="http://researcher.ibm.com/researcher/files/us-fagin/tcs93.pdf">Ronald Fagin's perspective on finite model theory</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="https://people.cs.umass.edu/~immerman/pub/ch0_1_2.pdf">https://people.cs.umass.edu/~immerman/pub/ch0_1_2.pdf</a></li>
+<li><a href="http://www.gpwu.ac.jp/~satoru/lnlg05kuroda.pdf">Descriptive Complexity and Language-Theoretic Complexity</a> by Satoru Kuroda</li>
+<li><a href="https://people.cs.umass.edu/~immerman/pub/ExperimentalDC.pdf">Experimental descriptive complexity</a> by Neil Immerman et al</li>
+<li><p><a href="http://arxiv.org/pdf/cs/0409039v11.pdf">http://arxiv.org/pdf/cs/0409039v11.pdf</a> On Certain Modular Equations Marius Constantin Ionescu</p>
+<ul>
+<li>is this valid?</li>
+</ul></li>
+<li><a href="http://mathworld.wolfram.com/Computation.html">http://mathworld.wolfram.com/Computation.html</a></li>
+<li><a href="http://mathworld.wolfram.com/PrincipleofComputationalEquivalence.html">http://mathworld.wolfram.com/PrincipleofComputationalEquivalence.html</a></li>
+<li><a href="http://mathworld.wolfram.com/ComputationalIrreducibility.html">http://mathworld.wolfram.com/ComputationalIrreducibility.html</a></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Algebraic_logic">https://en.wikipedia.org/wiki/Algebraic_logic</a></p></li>
+</ul></li>
+<li><a href="http://blog.computationalcomplexity.org/2010/05/structure-or-lack-thereof-of-data.html">http://blog.computationalcomplexity.org/2010/05/structure-or-lack-thereof-of-data.html</a></li>
+<li><p>Plan for the P vs NP problem?</p>
+<ul>
+<li>Relate configuration graph and problem theory</li>
+<li><p>Unexplored ideas:</p>
+<ul>
+<li>Machine is not computation.</li>
+<li>Machine <em>is</em> formal system.</li>
+<li>Computation <em>is</em> repeated function application.</li>
+<li><em>Under what conditions does nondeterminism give extra power?</em></li>
+</ul></li>
+<li><p>Where is computation theory, computability theory, complexity theory now?</p></li>
+</ul></li>
+<li><p>Complexity axioms</p>
+<ul>
+<li>Blum's?</li>
+<li>Here we axiomatize machine-independent <em>complexity</em>.</li>
+<li>Recall that a problem <span class="math inline">\(P\)</span> is a subset of <span class="math inline">\(X \times Y\)</span>. We posit, without referring to any model of computation, that every question <span class="math inline">\(x\)</span> has a <em>complexity</em> <span class="math inline">\(m(x)\)</span>, usually a number. The function <span class="math inline">\(m\)</span> is a <em>complexity measure</em> of <span class="math inline">\(P\)</span> iff it satisfies the axioms below.</li>
+<li><p>For help, we define <span class="math inline">\(S(k)\)</span> as the set of all questions with the same complexity <span class="math inline">\(k\)</span>, that is <span class="math inline">\(S(k) = \{ x ~|~ m(x) = k \}\)</span>. Then, the <em>complexity axioms</em> are:</p>
+<ul>
+<li>Every <span class="math inline">\(S(k)\)</span> is finite.</li>
+<li>There are always more complex questions than less complex questions, because, for example, longer strings can encode more questions. Formally, if <span class="math inline">\(i &lt; j\)</span> then <span class="math inline">\(|S(i)| &lt; |S(j)|\)</span>.</li>
+</ul></li>
+<li>Note that the complexity measure is <span class="math inline">\(m\)</span>, not <span class="math inline">\(S\)</span>.</li>
+<li><p>Computation graph axiom:</p>
+<ul>
+<li>A machine can only manipulate one symbol at a time. Formally, if <span class="math inline">\(E(a,b)\)</span> then <span class="math inline">\(|m(a) - m(b)| \le 1\)</span>.</li>
+<li>The out-degree of a vertex of a nondeterministic graph may exceed 1 but cannot exceed a constant.</li>
+</ul></li>
+</ul></li>
+<li><p>Machine, algorithm, and complexity</p>
+<ul>
+<li>The <a href="https://en.wikipedia.org/wiki/Worst-case_complexity#Definition">time complexity</a> of machine <span class="math inline">\(m\)</span> for input <span class="math inline">\(x\)</span> is <span class="math inline">\(t(m,x)\)</span>, the number of steps <span class="math inline">\(m\)</span> makes between the beginning and the halting. The <em>worst-case time complexity</em> of <span class="math inline">\(m\)</span> for input <em>size</em> <span class="math inline">\(n\)</span> is <span class="math inline">\(T(m,n) = \left\vert \max_{|x| = n} t(m,x) \right\vert\)</span>. We can also write asymptotic statements such as <span class="math inline">\(T(m,n) \in O(f(n))\)</span>.</li>
+<li>An algorithm <span class="math inline">\(a\)</span> implies a machine <span class="math inline">\(m(a)\)</span>.</li>
+<li>An <em>algorithm</em> solves a <em>problem</em>. A problem can be solved by many algorithms with different resource usage characteristics.</li>
+<li>The what (?) time complexity class of a problem is the worst-case time complexity of the most efficient algorithm solving that problem.</li>
+<li>Machine <em>is</em> algorithm.</li>
+<li>A <em>machine</em> <span class="math inline">\(M\)</span> is a <em>transition relation</em> <span class="math inline">\(T\)</span> (an <em>acyclic</em> binary relation). <span class="math display">\[
+ T(x,y) = \text{\(M\) can state-transition from \(x\) to \(y\).}
+ \]</span></li>
+<li><span class="math inline">\(M\)</span> <em>computes</em> <span class="math inline">\(P\)</span> iff a subgraph of the shortcut of <span class="math inline">\(T\)</span> is isomorphic to <span class="math inline">\(P\)</span>. (If <span class="math inline">\(T\)</span> were cyclic, this definition would fail.)</li>
+<li>Related: <a href="https://en.wikipedia.org/wiki/Graph_isomorphism">graph isomorphism</a>, <a href="https://en.wikipedia.org/wiki/Subgraph_isomorphism_problem">subgraph isomorphism problem</a>.</li>
+<li><em>Deterministic</em> machine equals <em>functional</em> relation.</li>
+<li><span class="math inline">\(G\)</span> <em>accepts</em> <span class="math inline">\(v\)</span> iff <span class="math inline">\(F^\infty(\{v\}) = \emptyset\)</span> where <span class="math inline">\(F\)</span> is the graph's fringe function. The <em>language</em> recognized by <span class="math inline">\(G\)</span> is the largest <span class="math inline">\(L \subseteq V\)</span> such that <span class="math inline">\(F^\infty(L) = \emptyset\)</span>.</li>
+<li>A Turing machine is <span class="math inline">\((C,I,f)\)</span> where <span class="math inline">\(C\)</span> is countable and <span class="math inline">\(f\)</span> is recursive.</li>
+<li><a href="https://en.wikipedia.org/wiki/Register_machine">https://en.wikipedia.org/wiki/Register_machine</a></li>
+<li>Example: a state of a Turing machine is <span class="math inline">\((c,l,h,r)\)</span> where <span class="math inline">\(c\)</span> is a configuration, <span class="math inline">\(l\)</span> is the tape content to the left of the head, <span class="math inline">\(h\)</span> is the tape content at the head, and <span class="math inline">\(r\)</span> is the tape content to the right of the head.</li>
+<li>A problem class is a function.</li>
+<li>A <em>problem</em> is a member of <span class="math inline">\(S\)</span>.</li>
+<li>A <em>problem class</em> is a subset of <span class="math inline">\(S\)</span>.</li>
+<li>Sometimes we can <em>reduce</em> a problem <span class="math inline">\(p : P\)</span> into another problem <span class="math inline">\(q : Q\)</span> by an injective reduction <span class="math inline">\(r : P \to Q\)</span>.</li>
+</ul></li>
+<li><p>Space and time complexity</p>
+<ul>
+<li>Can we deal with complexity without ever defining machine and computation (besides assuming they exist)?</li>
+<li><span class="math inline">\( \newcommand\ftime{\text{time}}  \newcommand\fspace{\text{space}}  \newcommand\fsize{\text{size}} \)</span>We are interested at the number of steps a machine makes for an input before terminating. We define <span class="math inline">\(\ftime~f~x\)</span> as the <em>running time</em> of the machine <span class="math inline">\(f\)</span> for input (initial state) <span class="math inline">\(x\)</span>.</li>
+<li>We also define <span class="math inline">\(\fsize~x\)</span> as the <em>size</em> of the state <span class="math inline">\(x\)</span>.</li>
+<li>(Concrete) Formally, <span class="math inline">\(\ftime~f~x = n\)</span> iff <span class="math inline">\(n\)</span> is the smallest natural number such that <span class="math inline">\(f^{n+1}~x = f^n~x\)</span>.</li>
+<li>We apply general algebraic thinking again, this time about congruences. Let <span class="math inline">\(T~f~n = \{ x ~|~ \ftime~f~x = n \}\)</span> be the set of all inputs that <span class="math inline">\(f\)</span> handles in <span class="math inline">\(n\)</span> steps. We can also let <span class="math inline">\(U~n = \{ (f,x) ~|~ \ftime~f~x = n \}\)</span>? [ <em>λ</em> f . <em>λ</em> n . { x <sub>|</sub> <sub>f</sub>x = n } \ <em>λ</em> n . { (f,x) <sub>|</sub> <sub>f</sub>x = n } \ <em>λ</em> m . <em>λ</em> n . { (f,x) <sub>|</sub> ~x = m, ~ <sub>f</sub>x = n } ]</li>
+<li>We define <span class="math inline">\(\fspace : M~S \to S \to \Nat\)</span>, where <span class="math inline">\(\fspace~f~x\)</span> is the size of the biggest state in <span class="math inline">\(\{ f^n~x ~|~ n \in \Nat \}\)</span>.</li>
+<li>The other option is to require that each machine <span class="math inline">\(f\)</span> have a <span class="math inline">\(t : S \to \Nat\)</span> where <span class="math inline">\(t~(f~x) = 1 + t~x\)</span>.</li>
+</ul></li>
+<li><p>Complexity as an ordering of questions</p>
+<ul>
+<li><p>Postulate: For every pair of questions, we can always decide which is more complex. Therefore, complexity is a <em>total ordering</em> of questions. We write <span class="math inline">\(x &lt; y\)</span> iff <span class="math inline">\(x\)</span> is less complex than <span class="math inline">\(y\)</span>. Then the complexity axioms are:</p>
+<ul>
+<li>For each <span class="math inline">\(y\)</span>, there are finitely many <span class="math inline">\(x\)</span> such that <span class="math inline">\(x \le y\)</span>.</li>
+<li>For each <span class="math inline">\(x\)</span>, there are infinitely many <span class="math inline">\(y\)</span> such that <span class="math inline">\(x \le y\)</span>. (Is this required?)</li>
+</ul></li>
+<li>A <em>reduction</em> <span class="math inline">\(r\)</span> from problem <span class="math inline">\(P\)</span> to problem <span class="math inline">\(Q\)</span> is an order-preserving (but not necessarily order-reflecting) function that maps <span class="math inline">\(P\)</span>-questions to <span class="math inline">\(Q\)</span>-questions. Formally, for all <span class="math inline">\(x, y \in P\)</span>, if <span class="math inline">\(x \le y\)</span> then <span class="math inline">\(r(x) \le r(y)\)</span>, but the converse does not need to hold. (Are we sure we don't need order-reflecting?)</li>
+<li><p>Rabin complexity axioms? Still with the same <span class="math inline">\(m\)</span> here. For help, let <span class="math inline">\(L(k) = \{ x ~|~ m(x) \le k \}\)</span> be the set of all questions that are not more complex than <span class="math inline">\(k\)</span>. Then the axioms are:</p>
+<ul>
+<li>Every <span class="math inline">\(L(k)\)</span> is finite.</li>
+<li>For every <span class="math inline">\(i\)</span>, there exists <span class="math inline">\(j &gt; i\)</span> such that <span class="math inline">\(L(i) \subset L(j)\)</span>. We say that <span class="math inline">\(L\)</span> is <em>eventually increasing</em>.</li>
+<li>The limit of <span class="math inline">\(L(k)\)</span> as <span class="math inline">\(k\)</span> grows unbounded is <span class="math inline">\(X\)</span>, the set of all questions.</li>
+<li>(That is not what Rabin says? He uses Post canonical system and Curry-Howard correspondence?)</li>
+</ul></li>
+<li><p>Corollary:</p>
+<ul>
+<li><span class="math inline">\(L\)</span> is nondecreasing: If <span class="math inline">\(i &lt; j\)</span> then <span class="math inline">\(L(i) \subseteq L(j)\)</span>.</li>
+</ul></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Order_theory">WP:Order theory</a></p></li>
+</ul></li>
+<li><p>Articles</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">WP:Boolean satisfiability problem</a></li>
+<li><p><a href="http://www.dcs.gla.ac.uk/~pat/cpM/papers/cheeseman91where.pdf">Where the really hard problems are</a>, Cheeseman, Kanefsky, and Taylor,</p>
+<ul>
+<li>&quot;Almost all k-colorable graphs are easy to color&quot;, J. S. Turner, 1988</li>
+</ul></li>
+<li><p>Blum</p>
+<ul>
+<li><a href="https://www.researchgate.net/profile/Juris_Hartmanis/publication/242506038_On_the_Computational_Complexity_of_Algorithms/links/53fcd0a40cf2364ccc04db1d.pdf">On the computational complexity of algorithms</a>, J. Hartmanis and R. E. Stearns, 1965</li>
+</ul></li>
+<li><p><a href="http://www.sciencedirect.com/science/article/pii/0022000078900089">The complexity of total order structures</a>, Dan Moore, 1978</p></li>
+</ul></li>
+<li><p>Books</p>
+<ul>
+<li><a href="http://theory.cs.princeton.edu/complexity/">Computational Complexity: A Modern Approach, by Sanjeev Arora and Boaz Barak</a>, more than 400 pages, no finite model theory</li>
+<li><a href="http://cglab.ca/~michiel/TheoryOfComputation/TheoryOfComputation.pdf">Introduction to Theory of Computation, by Anil Maheshwari and Michiel Smid</a>, more than 200 pages</li>
+</ul></li>
+<li><p><a href="http://port70.net/~nsz/articles/classic/blum_complexity_1976.pdf">Blum 1976 &quot;a machine independent theory of the complexity of recursive functions&quot;</a>, 15 pages</p>
+<ul>
+<li><p><a href="https://www.cs.toronto.edu/~sacook/homepage/rabin_thesis.pdf">Michael O. Rabin's 1960 technical report</a></p>
+<ul>
+<li><a href="https://cstheory.stackexchange.com/questions/34236/rabins-degree-of-difficulty-of-computing-a-function-and-a-partial-ordering-of">from cstheory stackexchange</a></li>
+</ul></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Proof_complexity">https://en.wikipedia.org/wiki/Proof_complexity</a></li>
+<li><p>A question related to P vs NP</p>
+<ul>
+<li>Proving lower bound is much harder than proving upper bound.</li>
+<li><p>Unsolved problem: How do we prove that an algorithm is the fastest solution of a problem? In order to prove that an algorithm is the fastest, it suffices us to prove that there is no faster algorithm for the same problem, but this is easier said than done.</p>
+<ul>
+<li><a href="https://cs.stackexchange.com/questions/38357/is-it-really-possible-to-prove-lower-bounds">https://cs.stackexchange.com/questions/38357/is-it-really-possible-to-prove-lower-bounds</a></li>
+</ul></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Time_hierarchy_theorem">https://en.wikipedia.org/wiki/Time_hierarchy_theorem</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Constructible_function">https://en.wikipedia.org/wiki/Constructible_function</a></li>
+<li><p>Entertainment</p>
+<ul>
+<li><a href="http://beza1e1.tuxen.de/articles/accidentally_turing_complete.html">http://beza1e1.tuxen.de/articles/accidentally_turing_complete.html</a></li>
+</ul></li>
+</ul>
+<h2 id="what-is-a-machine-what-is-the-essence-of-a-machine"><span class="section_number">11</span><span class="section_title">What is a machine? What is the essence of a machine?</span></h2>
+<h2 id="why-do-we-use-turing-machines-instead-of-lambda-calculus-when-discussing-computational-complexity"><span class="section_number">12</span><span class="section_title">Why do we use Turing machines instead of lambda calculus when discussing computational complexity?</span></h2>
+<ul>
+<li><a href="https://cstheory.stackexchange.com/questions/23798/p-and-np-classes-explanation-through-lambda-calculus">https://cstheory.stackexchange.com/questions/23798/p-and-np-classes-explanation-through-lambda-calculus</a></li>
+</ul>
+<h2 id="theory-of-deciders"><span class="section_number">13</span><span class="section_title">Theory of deciders?</span></h2>
+<p>We explore the theory of <em>deciders</em> (which are just unary algebras). We try to describe computation without being tied to a machine model. We hope we can lower bound and upper bound of computation complexity.</p>
+<p>There are two ways to define a <em>decider</em>: the algebraic way and the logic way. The logic way naturally gives rise to graph. However, the following is the algebraic definition.</p>
+<p>$\newcommand \newcommand \newcommand \newcommand \newcommand \newcommand \newcommand$A <em>decider</em> <span class="math inline">\(\calD\)</span> is an algebra <span class="math inline">\((S,f,0,1)\)</span> satisfying these:</p>
+<span class="math display">\[\begin{align*}
+f~0 = 0
+\\
+f~1 = 1
+\end{align*}
+\]</span>
+<p>where the set <span class="math inline">\(S\)</span> is the <em>underlying set</em>, the function <span class="math inline">\(f\)</span> is the <em>transition function</em>, the element <span class="math inline">\(0\)</span> is the <em>rejecting state</em>, and the element <span class="math inline">\(1\)</span> is the <em>accepting state</em>. A <em>state</em> is an element of the underlying set. The accepting and rejecting state are collectively known as <em>terminal</em> states.</p>
+<p>Deciders and predicates are closely related: a decider with transition function <span class="math inline">\(f\)</span> <em>computes</em> a predicate <span class="math inline">\(c~f\)</span> satisfying these:</p>
+<span class="math display">\[\begin{align*}
+c~f \circ f &amp;= c~f
+\\ f \circ c~f &amp;= c~f
+\end{align*}
+\]</span>
+<p>where <span class="math inline">\(c : (S \to S) \to (S \to \{0,1\})\)</span> is the <em>short-circuiting function</em>. The function <span class="math inline">\(c~f\)</span> is also called the short-circuited <span class="math inline">\(f\)</span>.</p>
+<p>We want to <em>compose</em>, build deciders from deciders. Why? Finite primitives?</p>
+<p><span class="math inline">\((A,f,0,1)\)</span> becomes <span class="math inline">\((A, \neg f,1,0)\)</span>.</p>
+<p><span class="math inline">\((A,f)\)</span> and <span class="math inline">\((B,g)\)</span> becomes <span class="math inline">\((2 \times A \times B, f \wedge g)\)</span>. Let <span class="math inline">\(h = f \wedge g\)</span>.</p>
+<span class="math display">\[\begin{align*}
+h~0 = 0
+\\ h~1 = 1
+\\ h~1 = 1
+\end{align*}
+\]</span>
+<p><span class="math inline">\(A\)</span>-deciders form a <em>Boolean algebra</em>, But why should we bother showing this? <span class="math inline">\((\neg f)~x = \neg~(f~x)\)</span>. <span class="math inline">\((f \wedge g)~x = f~x \wedge g~x\)</span>. <span class="math inline">\((f \vee g)~x = f~x \vee g~x\)</span>.</p>
+<p>A decider is too general, so we want to restrict it.</p>
+<p>The questions are:</p>
+<ul>
+<li>Does a restriction affect what the decider can compute?</li>
+<li>Does a restriction affect the running time of the decider for a given input?</li>
+</ul>
+<p>$\newcommand$We can <em>constrain the transition function</em> by <em>distance constraining</em>. We assume the existence of a <em>distance function</em> <span class="math inline">\(d : V \to V \to \Nat\)</span> such that <span class="math inline">\(f\)</span> has to satisfy <span class="math inline">\(d~x~(f~x) \le k\)</span> where <span class="math inline">\(k\)</span> is a constant, usually 1. The structure <span class="math inline">\((S,d)\)</span> then becomes a <em>metric space</em>. The distance function must satisfy:</p>
+<span class="math display">\[\begin{align*}
+d~x~x &amp;= 0
+\\ d~x~y &amp;= d~y~x
+\end{align*}
+\]</span>
+<p>We can <em>constrain the transition function</em> by <em>vertex label constraining</em>. Let there be a vertex labeling <span class="math inline">\(m : V \to \Nat\)</span>. (We are silently assuming that <span class="math inline">\(V\)</span> is countable.) The labeling <span class="math inline">\(m\)</span> is surjective but not necessarily injective. This labeling divides the graph into maximal subconnected subcomponents? The constraints are:</p>
+<ul>
+<li>Each label is used finitely many times. There are only finitely many vertices with the same label.</li>
+<li>The function <span class="math inline">\(f\)</span> must satisfy <span class="math inline">\(|m~(f~x) - m~x| \le d\)</span> where <span class="math inline">\(d\)</span> is a finite number, usually 1.</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">13.1</span><span class="section_title"><a href="#what-class-does-this-constrained-decider-correspond-to">What class does this constrained decider correspond to?</a></span><span class="word_count">(99w~1m)</span></li>
+<li><span class="section_number">13.2</span><span class="section_title"><a href="#finite">Finite</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">13.3</span><span class="section_title"><a href="#relationship-with-predicates">Relationship with predicates</a></span><span class="word_count">(94w~1m)</span></li>
+<li><span class="section_number">13.4</span><span class="section_title"><a href="#logic-calculus-decider">Logic calculus decider</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">13.5</span><span class="section_title"><a href="#decider">Decider</a></span><span class="word_count">(105w~1m)</span></li>
+<li><span class="section_number">13.6</span><span class="section_title"><a href="#descriptivealgorithmic-complexity">Descriptive/algorithmic complexity</a></span><span class="word_count">(54w~1m)</span></li>
+<li><span class="section_number">13.7</span><span class="section_title"><a href="#inefficientizing">Inefficientizing</a></span><span class="word_count">(39w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-class-does-this-constrained-decider-correspond-to"><span class="section_number">13.1</span><span class="section_title">What class does this constrained decider correspond to?</span></h3>
+<p>We can also <em>constrain the state size</em>.</p>
+<p>We posit the existence of a <em>state size function</em> <span class="math inline">\(s : A \to \Nat\)</span> where:</p>
+<ul>
+<li>There are exactly <span class="math inline">\(2^n\)</span> states of size <span class="math inline">\(n\)</span>.</li>
+<li>If <span class="math inline">\(s~x \neq s~y\)</span> then <span class="math inline">\(x \neq y\)</span>.</li>
+</ul>
+<p><span class="math display">\[
+\forall n \in \Nat: |\{ x ~|~ s~x = n\} = 2^n|
+\]</span></p>
+<p>We then further constrain the transition function <span class="math inline">\(f\)</span> such that <span class="math inline">\(|s~(f~x) - s~x| \le 1\)</span>.</p>
+<p>We can constrain the transition function <span class="math inline">\(f\)</span> such that <span class="math inline">\(s~x - s~(f~x) = -1\)</span>.</p>
+<p>An alternative to this is defining fringe functions <span class="math inline">\(A \to P~A\)</span>, and work with the generated <span class="math inline">\((P~A, F)\)</span>.</p>
+<h3 id="finite"><span class="section_number">13.2</span><span class="section_title">Finite</span></h3>
+<p>A decider is <em>finite</em> iff its underlying set is finite.</p>
+<p>If <span class="math inline">\(S\)</span> is finite then <span class="math inline">\(S \to S\)</span> is also finite.</p>
+<h3 id="relationship-with-predicates"><span class="section_number">13.3</span><span class="section_title">Relationship with predicates</span></h3>
+<p>The set of all <span class="math inline">\(A\)</span>-deciders is isomorphic to the set of all <em><span class="math inline">\(A\)</span>-predicates</em>. If <span class="math inline">\(|A| = n\)</span> then there are <span class="math inline">\(2^n\)</span> different <span class="math inline">\(A\)</span>-predicates (extensionally).</p>
+<p>A <em>total</em> decider has total <span class="math inline">\(c~f\)</span>. A <em>partial</em> decider has partial <span class="math inline">\(c~f\)</span>.</p>
+<p>A state <span class="math inline">\(s\)</span> is <em>eventually terminal</em> iff <span class="math inline">\(c~f~s\)</span> is defined, is <em>eventually rejecting</em> iff <span class="math inline">\(c~f~s = 0\)</span>, and is <em>eventually accepting</em> iff <span class="math inline">\(c~f~s = 1\)</span>.</p>
+<p>The <em>generating set</em> <span class="math inline">\(G\)</span> is the set of all <span class="math inline">\(x\)</span> that is not in the range of <span class="math inline">\(f\)</span>.</p>
+<span class="math display">\[\begin{align*}
+G = A - \{ f~x | x \in A \}
+\end{align*}
+\]</span>
+<p>The generating set is the set of <em>initial states</em>.</p>
+<p>A state is <em>initial</em> iff it is in <span class="math inline">\(G\)</span>.</p>
+<h3 id="logic-calculus-decider"><span class="section_number">13.4</span><span class="section_title">Logic calculus decider</span></h3>
+<p>Let each vertex represent a logic expression.</p>
+<p>Let an edge from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span> mean that there is an inference rule that step-reduces the expression <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span>.</p>
+<h3 id="decider"><span class="section_number">13.5</span><span class="section_title">Decider</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">13.5.1</span><span class="section_title"><a href="#logical-definition">Logical definition</a></span><span class="word_count">(105w~1m)</span></li>
+</ul>
+</div>
+<h4 id="logical-definition"><span class="section_number">13.5.1</span><span class="section_title">Logical definition</span></h4>
+<p>A <em>decider</em> is <span class="math inline">\((V,E,A)\)</span> with signature <span class="math inline">\((2,1,1)\)</span>. A decider is a directed graph with some special vertexes. A <em>state</em> is a vertex.</p>
+<p><span class="math inline">\(A~x\)</span> is true iff <span class="math inline">\(x\)</span> is an <em>accepting</em> vertex.</p>
+<p><span class="math inline">\(E~x~y\)</span> is true iff <span class="math inline">\(y\)</span> is a successor of <span class="math inline">\(x\)</span>. The relation <span class="math inline">\(E~x~y\)</span> is true iff there is an edge from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span>.</p>
+<p>The decider is <em>deterministic</em> iff <span class="math inline">\(E\)</span> is injective: <span class="math display">\[
+E~x~y \wedge E~x~z \implies y = z
+\]</span></p>
+<p><span class="math inline">\(E\)</span> is injective iff each vertex has out-degree one or less.</p>
+<ol>
+<li><p>Path-existence predicate</p>
+<p><span class="math inline">\(P~x~y\)</span> means there is path from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span>.</p>
+<span class="math display">\[\begin{align*}
+E~x~y &amp;\implies P~x~y
+\\ E~x~y \wedge P~y~z &amp;\implies P~x~z
+\\ \alpha~x &amp;= P~x~y \wedge A~y
+\end{align*}
+\]</span>
+<span class="math display">\[\begin{align*}
+E~x~y &amp;\implies \neg A~x
+\end{align*}
+\]</span>
+<span class="math display">\[\begin{align*}
+E~x~y &amp;\vdash P~x~y
+\\ E~x~y , P~y~z &amp;\vdash P~x~z
+\\ E~x~y , A~x &amp;\vdash
+\end{align*}
+\]</span>
+<p>Defining the predicate <span class="math inline">\(T\)</span>:</p>
+<p><span class="math inline">\(T~x~n\)</span> means there exists a path of length <span class="math inline">\(n\)</span> from <span class="math inline">\(x\)</span> to a terminal vertex.</p>
+<span class="math display">\[\begin{align*}
+A~x &amp;\implies T~x~0
+\\ R~x &amp;\implies T~x~0
+\\ E~x~y \wedge T~y~k &amp;\implies T~x~(1 + k)
+\end{align*}
+\]</span></li>
+</ol>
+<h3 id="descriptivealgorithmic-complexity"><span class="section_number">13.6</span><span class="section_title">Descriptive/algorithmic complexity</span></h3>
+<p>Suppose that there is a <em>complexity</em> function that maps a predicate to a complexity measure.</p>
+<p><span class="math inline">\(c : (A \to \Bool) \to C\)</span>.</p>
+<p>Assume that <span class="math inline">\(c_L~p\)</span> is the length of the shortest <span class="math inline">\(L\)</span>-program for the predicate <span class="math inline">\(p\)</span>. What does this even mean?</p>
+<p>Can a function be stated as a combination of other functions? What combination?</p>
+<p><a href="https://en.wikipedia.org/wiki/Logic_of_graphs">Logic of graphs</a></p>
+<h3 id="inefficientizing"><span class="section_number">13.7</span><span class="section_title">Inefficientizing</span></h3>
+<p>Given an <span class="math inline">\(A\)</span>-decider and infinite <span class="math inline">\(A\)</span>, we can always construct another <span class="math inline">\(A\)</span>-decider that computes the same predicate but with more states.</p>
+<p>Given a non-oracle <span class="math inline">\(A\)</span>-decider, we can always construct another <span class="math inline">\(A\)</span>-decider that computes the same predicate but with less states.</p>
+<h2 id="p-vs-np"><span class="section_number">14</span><span class="section_title">P vs NP?</span></h2>
+<p>Forward question: Given a predicate p, what is the minimum circuit-size complexity of p?</p>
+<p>Reverse question: Given a minimum circuit-size complexity, how complex can a predicate with that number of operators be?</p>
+<p>Baca wiki SAT &amp; papers first</p>
+<p>We say that a predicate k-to-1 iff its domain is 0,1<sup>k</sup> and it is true for exactly one input string and false for every other. Let Pk be the set of all k-to-1 predicates.</p>
+<p>Logical methods in computer science (open access journal)</p>
+<p>what is this book? should we read it? is it related to P vs NP? <a href="http://www-2.dc.uba.ar/materias/azar/bibliografia/Downey2010AlgorithmicRandomness.pdf">http://www-2.dc.uba.ar/materias/azar/bibliografia/Downey2010AlgorithmicRandomness.pdf</a></p>
+<p>Formal Systems and Machines: An Isomorphism <a href="http://legacy.earlham.edu/~peters/courses/logsys/machines.htm">http://legacy.earlham.edu/~peters/courses/logsys/machines.htm</a></p>
+<p>Forallx: <a href="https://www.fecundity.com/logic/download.html">https://www.fecundity.com/logic/download.html</a></p>
+<p>Franz Baader: <a href="https://lat.inf.tu-dresden.de/">https://lat.inf.tu-dresden.de/</a> baader/index-en.html</p>
+<p>High-Level Descriptions of Computation <a href="https://courses.engr.illinois.edu/cs373/sp2013/Lectures/lec21.pdf">https://courses.engr.illinois.edu/cs373/sp2013/Lectures/lec21.pdf</a></p>
+<p><a href="http://cstheory.stackexchange.com/questions/1955/books-on-automata-theory-for-self-study">http://cstheory.stackexchange.com/questions/1955/books-on-automata-theory-for-self-study</a></p>
+<p><a href="http://cstheory.stackexchange.com/questions/3253/what-books-should-everyone-read">http://cstheory.stackexchange.com/questions/3253/what-books-should-everyone-read</a></p>
+<p>A Turing Machine Distance Hierarchy <a href="http://www2.cs.cas.cz/~sima/lata13.pdf">http://www2.cs.cas.cz/~sima/lata13.pdf</a></p>
+<p>T(m,n) = set of all problems solvable by m in n steps</p>
+<p>T(m,O(f(n)))</p>
+<p>P(m) = sum k in Nat T(m,O(n<sup>k</sup>))</p>
+<p>P(m1) = P(m2)?</p>
+<p>P(DTM) = P(NTM)?</p>
+<p>Problem = set of q-a pairs</p>
+<p>Cclass = set of problems</p>
+<p>i &lt; j implies T(m,i) subset T(m,j) ?</p>
+<p><a href="https://en.wikipedia.org/wiki/Computational_complexity_theory#Computational_problems">https://en.wikipedia.org/wiki/Computational_complexity_theory#Computational_problems</a></p>
+<p>Cite: <a href="http://www.math.toronto.edu/weiss/model_theory.pdf">http://www.math.toronto.edu/weiss/model_theory.pdf</a></p>
+<p>Fundamentals of Model Theory <a href="http://www.math.toronto.edu/weiss/model_theory.pdf">http://www.math.toronto.edu/weiss/model_theory.pdf</a></p>
+<p>Wilfrid Hodges Model Theory draft <a href="http://wilfridhodges.co.uk/history07.pdf">http://wilfridhodges.co.uk/history07.pdf</a></p>
+<p><a href="http://w3.impa.br/~hossein/myarticles/hodgetheory.pdf">http://w3.impa.br/~hossein/myarticles/hodgetheory.pdf</a></p>
                 </div>
             </div>
         </main>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>The endofunction model of worlds and agents, and its philosophical implications</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus's wiki</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">The endofunction model of worlds and agents, and its philosophical implications</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#abstract">Abstract</a></span><span class="word_count">(79w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#worldagent-interaction-model">World–agent interaction model</a></span><span class="word_count">(291w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#philosophical-implications">Philosophical implications</a></span><span class="word_count">(421w~3m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#symbolism-and-connectionism">Symbolism and connectionism</a></span><span class="word_count">(59w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(1w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#meta">Meta</a></span><span class="word_count">(14w~1m)</span></li>
+</ul>
+</div>
+<h2 id="abstract"><span class="section_number">1</span><span class="section_title">Abstract</span></h2>
+<p>Here we model worlds and agents (the universe and us) with endofunctions. An <em>endofunction</em><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> is a function whose domain and codomain are equal. The philosophical consequences of this model: (1) only the present exists, and the past and the future do not exist; (2) we cannot know objective reality; (3) our subjective experience <em>represents</em> objective reality.</p>
+<p>The model we are going to make seems to be a very narrow case of dynamical systems<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. Aren't what we proposing here basically pancomputationalism<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>?</p>
+<h2 id="worldagent-interaction-model"><span class="section_number">2</span><span class="section_title">World–agent interaction model</span></h2>
+<p>Here we are going to model an agent in a world.</p>
+<p>The <em>world</em> is modeled by a <em>law</em> <span class="math inline">\(W : S \to S\)</span>, which is just an endofunction whose domain is the world's state type. This law describes how the world computes its next state from its current state.</p>
+<p>The <em>agent</em> is modeled by a law <span class="math inline">\(A : S&#39; \to S\)</span>, with various constraints we describe here. The agent's law is <em>embedded</em><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> in the world's law: The agent state type <span class="math inline">\(S&#39;\)</span> must be a <em>subset</em> of <span class="math inline">\(S\)</span>. The function <span class="math inline">\(sense : S \to S&#39;\)</span> is the embedding that defines how the agent senses the world. This constraint must be satisfied: <span class="math display">\[
+sense\circ W = A \circ sense.
+\]</span> That constraint relates the actual world state change and what the change looks like from the agent's point of view. The agent can never know the world state: it can only sense something homomorphic to that state.</p>
+<p>That equation has two epistemological implications. The first is the bad news that <em>we cannot know objective reality</em>: we can only know our subjective experience of the part of objective reality that the laws of nature allow us to sense through our senses. The second is the good news that our subjective experience <em>represents</em> objective reality (is consistent with objective reality).</p>
+<p>The <span class="math inline">\(sense\)</span> function is not invertible because <span class="math inline">\(S&#39; \subset S\)</span>. This non-invertibility means that <em>there exists part of the world that the agent cannot sense</em>: the agent is not omniscient: it can only perceive a small part of the world: it cannot know the whole world.</p>
+<p>The <em>environment</em> is the world minus the agent. Something is a part of the agent if and only if the agent can directly control that part. Otherwise it is a part of the environment.</p>
+<h2 id="philosophical-implications"><span class="section_number">3</span><span class="section_title">Philosophical implications</span></h2>
+<p>We are going to show the consequences of assuming that the universe is computable and assuming that space-time is continuous.</p>
+<p>If a world state (an element of <span class="math inline">\(S\)</span>) is a matrix (an array of real numbers), then we should feel time as discrete. If we don't feel time as discrete, then each element of <span class="math inline">\(S\)</span> has to be a continuous function and not a matrix.</p>
+<p>If a world state (an element of <span class="math inline">\(S\)</span>) is a matrix (an array of real numbers), then we should feel space as quantized/digitized/pixelated. If we don't have pixelated space, then each element of <span class="math inline">\(S\)</span> has to be a physical field.</p>
+<p>So far space-time seems to be continuous<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
+<p>If the universe is computable and space-time feels continuous, then each element of <span class="math inline">\(S\)</span> must be a finite <em>description</em> instead of an infinite matrix of numbers. That is, the current state of the universe is a finite program that describes what we think is the objective reality. Thus <em>the universe is a computer running a self-modifying code.</em> That is, the universe does not represent a particle in the way we write a physics game (by a position vector, a velocity vector, and a loop that updates the position vector using numerical integration). If we went &quot;the universe way&quot;, we would represent that particle as a <em>program</em> (a string in a formal language) that <em>describes</em> the motion of that particle. An example program is <span class="math inline">\(x(t) = v \cdot t\)</span>. Thus, what is real is not the moving particle that we see, but what is real is the <em>equation</em> that governs that particle's motion. That is, we thought that math were unreal (existing only in idea-space) and what we can touch was real (existing in meat-space). But the reality is that it is the math that is real and what we can touch is unreal. Our reality is a &quot;side-effect&quot; of the universe's executing its current state (which is a self-modifying program)? The universe is a machine that is able to solve the <span class="math inline">\(n\)</span>-body problem. But isn't this extreme pancomputationalistic idealism?</p>
+<p>How do we model self-modifying code in lambda calculus?<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<p>The universe is deterministic and random. The current state is a finite description of randomness, but that description evolves deterministically. It is possible to deterministically describe nondeterminism. Example: <span class="math inline">\(\frac{1}{2}H + \frac{1}{2}T\)</span> is a finite deterministic description of nondeterminism. It is the description that is deterministic, not our perception of reality that is deterministic.</p>
+<p>An &quot;infinite&quot; thing may have a finite description. For example, the sequence <span class="math inline">\(0,1,2,3,\ldots\)</span> is &quot;infinite&quot;, but it has the finite description <span class="math inline">\(x_k = k\)</span>.</p>
+<h2 id="symbolism-and-connectionism"><span class="section_number">4</span><span class="section_title">Symbolism and connectionism</span></h2>
+<p>Endofunctions unify all AI approaches. Every agent is an endofunction.</p>
+<p>The internal state of a symbolic AI is a big logic formula in conjunctive normal form. The internal state of a connectionist AI is a big multidimensional array of numbers. Both symbolic and connectionist AI prescribes a rule for updating their current internal state to the next state.</p>
+<h2 id="bibliography"><span class="section_number">5</span><span class="section_title">Bibliography</span></h2>
+<h2 id="meta"><span class="section_number">6</span><span class="section_title">Meta</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#things-to-do">Things to do?</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#history">History</a></span><span class="word_count">(4w~1m)</span></li>
+</ul>
+</div>
+<h3 id="things-to-do"><span class="section_number">6.1</span><span class="section_title">Things to do?</span></h3>
+<p>Publish to a journal about digital physics or pancomputationalism?</p>
+<h3 id="history"><span class="section_number">6.2</span><span class="section_title">History</span></h3>
+<p>&lt;2018-12-30&gt; Begin writing draft.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Endomorphism#Endofunctions">https://en.wikipedia.org/wiki/Endomorphism#Endofunctions</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Dynamical_system_(definition)">https://en.wikipedia.org/wiki/Dynamical_system_(definition)</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Digital_physics">https://en.wikipedia.org/wiki/Digital_physics</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Embedding">https://en.wikipedia.org/wiki/Embedding</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Holometer">https://en.wikipedia.org/wiki/Holometer</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>Purely-Functional Self-Modifying Code <a href="http://chriswarbo.net/unfinished/encoding.html">http://chriswarbo.net/unfinished/encoding.html</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/endo.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/endo.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2017-06-22 03:57:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

@@ -159,355 +159,355 @@ document.addEventListener("DOMContentLoaded", function () {
                     </header>
                 </article>
                 <div class="post-content">
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">1</span><span class="section_title"><a href="#abdullah">Subtyping in Haskell with canonical injections</a></span><span class="word_count">(1203w~7m)</span></li>
-                    <li><span class="section_number">2</span><span class="section_title"><a href="#a-mess-do-not-see">A mess; do not see</a></span><span class="word_count">(611w~4m)</span></li>
-                    </ul>
-                    </div>
-                    <h2 id="abdullah"><span class="section_number">1</span><span class="section_title">Subtyping in Haskell with canonical injections</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">1.1</span><span class="section_title"><a href="#background">Background</a></span><span class="word_count">(134w~1m)</span></li>
-                    <li><span class="section_number">1.2</span><span class="section_title"><a href="#what-is-here-and-how-it-answers-your-questions">What is here, and how it answers your questions</a></span><span class="word_count">(110w~1m)</span></li>
-                    <li><span class="section_number">1.3</span><span class="section_title"><a href="#notation">[NOTATION]</a></span><span class="word_count">(49w~1m)</span></li>
-                    <li><span class="section_number">1.4</span><span class="section_title"><a href="#define-examples-of-canonical-injections">[DEFINE] Examples of canonical injections</a></span><span class="word_count">(89w~1m)</span></li>
-                    <li><span class="section_number">1.5</span><span class="section_title"><a href="#data-inferring-canonical-injections-for-inductive-data-types">[DATA] Inferring canonical injections for inductive data types</a></span><span class="word_count">(114w~1m)</span></li>
-                    <li><span class="section_number">1.6</span><span class="section_title"><a href="#monad-relationship-between-canonical-injections-and-monad-instances">[MONAD] Relationship between canonical injections and Monad instances</a></span><span class="word_count">(182w~1m)</span></li>
-                    <li><span class="section_number">1.7</span><span class="section_title"><a href="#hickey-hickeys-two-wishes">[HICKEY] Hickey's two wishes</a></span><span class="word_count">(79w~1m)</span></li>
-                    <li><span class="section_number">1.8</span><span class="section_title"><a href="#lambda-inferring-canonical-injections-for-lambdas">[LAMBDA] Inferring canonical injections for lambdas</a></span><span class="word_count">(71w~1m)</span></li>
-                    <li><span class="section_number">1.9</span><span class="section_title"><a href="#impl-a-possible-implementation-in-principle">[IMPL] A possible implementation, in principle</a></span><span class="word_count">(104w~1m)</span></li>
-                    <li><span class="section_number">1.10</span><span class="section_title"><a href="#history">History</a></span><span class="word_count">(134w~1m)</span></li>
-                    <li><span class="section_number">1.11</span><span class="section_title"><a href="#half-baked-but-related-ideas-should-be-in-the-article">Half-baked but related ideas, should be in the article</a></span><span class="word_count">(142w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="background"><span class="section_number">1.1</span><span class="section_title">Background</span></h3>
-                    <p>In Haskell, Just is the <em>only</em> sound way to make a Maybe t from t. We call such unambiguous construction a <em>canonical injection</em>. The compiler should insert canonical injections to recover from trivial type errors. Such recovery has these interesting benefits:</p>
-                    <ul>
-                    <li>Now we can fake non-overlapping <em>untagged unions</em> (Haskell has tagged unions). This reduces the bureaucracy when composing data types following the free-monad/interpreter pattern; the compiler inserts the required Pure constructors.</li>
-                    <li>Now we can fake <em>equirecursive types</em> (Haskell has isorecursive types). We no longer have to type &quot;In&quot; and &quot;out&quot; when using &quot;Fix&quot;; the compiler inserts the required bureaucracy.</li>
-                    <li>Now we can fake <em>heterogeneous lists</em> and heterogeneous collections.</li>
-                    <li>Now we can have <em>covariant</em> return type and <em>contravariant</em> return type. This means now we can, without breaking callers, generalize an argument or specialize a return value, as in Java.</li>
-                    </ul>
-                    <h3 id="what-is-here-and-how-it-answers-your-questions"><span class="section_number">1.2</span><span class="section_title">What is here, and how it answers your questions</span></h3>
-                    <p>This is what I am going to do in this article, in no particular order:</p>
-                    <ul>
-                    <li>[NOTATION] defines some notations.</li>
-                    <li>[DEFINE] defines canonical injections.</li>
-                    <li>[DATA] shows the rules for inferring canonical injections for inductive data types.</li>
-                    <li>[LAMBDA] shows the rules for inferring canonical injections for lambdas.</li>
-                    <li>[HICKEY] shows that Hickey's two wishes are special cases of canonical injections.</li>
-                    <li>[MONAD] shows the relationship between canonical injections and Monad instances.</li>
-                    <li>[IMPL] sketches a possible implementation, in principle.</li>
-                    </ul>
-                    <p>This is how I answer your questions:</p>
-                    <ul>
-                    <li>Your first question is answered by [DEFINE], [DATA], and [LAMBDA].</li>
-                    <li>Your second question is answered by [HICKEY] and [LAMBDA].</li>
-                    <li>Extra things that may be of interest to you are [MONAD] and [IMPL].</li>
-                    </ul>
-                    <h3 id="notation"><span class="section_number">1.3</span><span class="section_title">[NOTATION]</span></h3>
-                    <p>Notation conventions.</p>
-                    <p>By &quot;injection&quot;, I mean an injective function.</p>
-                    <p>&quot;The canonical injection from A to B&quot; means &quot;the only sound injection from A to B&quot;. By &quot;sound&quot;, I mean &quot;not involving bottom (undefined)&quot;. I assume total functional programming, and I say &quot;the only possible injection&quot; to mean &quot;the only sound injection&quot;.</p>
-                    <h3 id="define-examples-of-canonical-injections"><span class="section_number">1.4</span><span class="section_title">[DEFINE] Examples of canonical injections</span></h3>
-                    <p>&quot;Canonical&quot; means &quot;there is exactly one&quot;. &quot;Injection&quot; means injective function. A canonical injection from A to B is the only injection from A to B.</p>
-                    <p>Examples of canonical injections:</p>
-                    <ul>
-                    <li>In the case of t -&gt; Maybe t, Just is the canonical injection.</li>
-                    <li>In the case of a -&gt; Either a b where a != b, Left is the canonical injection.</li>
-                    <li>In the case of a -&gt; Either a a, each of Left and Right is an injection, so there is no canonical injection here.</li>
-                    </ul>
-                    <p>Thus some constructors are canonical injections.</p>
-                    <h3 id="data-inferring-canonical-injections-for-inductive-data-types"><span class="section_number">1.5</span><span class="section_title">[DATA] Inferring canonical injections for inductive data types</span></h3>
-                    <p>In general, the compiler infers canonical injections from a data definition using this rule: If parameter p occurs exactly once in the right-hand side of the equal sign in &quot;data A p = …&quot;, then the only constructor with p is the <em>canonical injection</em> from p to A p.</p>
-                    <p>For example, observe that, in the following definition, in the right-hand side of the equal sign:</p>
-                    <ul>
-                    <li>Int occurs twice,</li>
-                    <li>String occurs once, and</li>
-                    <li>p occurs once.</li>
-                    </ul>
-                    <div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">data</span> <span class="dt">A</span> p <span class="fu">=</span> <span class="dt">A0</span> <span class="dt">Int</span> <span class="fu">|</span> <span class="dt">A1</span> <span class="dt">String</span> <span class="fu">|</span> <span class="dt">A2</span> <span class="dt">Int</span> <span class="fu">|</span> <span class="dt">A3</span> p</a></code></pre></div>
-                    <p>Therefore, from the above definition, the compiler infers that:</p>
-                    <ul>
-                    <li>A1 : String -&gt; A p is the canonical injection from String to A p.</li>
-                    <li>A3 : p -&gt; A p is the canonical injection from p to A p.</li>
-                    </ul>
-                    <h3 id="monad-relationship-between-canonical-injections-and-monad-instances"><span class="section_number">1.6</span><span class="section_title">[MONAD] Relationship between canonical injections and Monad instances</span></h3>
-                    <p>Let INJ be the canonical injection from p to F p. Let F be an instance of Monad. Then the compiler infers &quot;return&quot; and one case of &quot;bind&quot; as follows:</p>
-                    <div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1"><span class="fu">return</span> <span class="fu">=</span> <span class="dt">INJ</span></a>
-                    <a class="sourceLine" id="cb2-2" title="2">(<span class="fu">&gt;&gt;=</span>) (<span class="dt">INJ</span> x) k <span class="fu">=</span> k x</a></code></pre></div>
-                    <p>Indeed I think these have to be laws: If INJ is the canonical injection from t to F t, and F is an instance of Monad, then:</p>
-                    <ul>
-                    <li>return has to be equal to INJ,</li>
-                    <li>INJ x &gt;&gt;= k must be equal to k x.</li>
-                    </ul>
-                    <p>I think the above laws relate this concept of &quot;canonical injections&quot; with your concept of monads as &quot;conservative extensions of spaces&quot;.</p>
-                    <p>There is also a law for the other way around: the <code>return</code> function must be an injection, although the user is responsible for ensuring that. I think the compiler should assume that <code>return</code> <em>is</em> a canonical injection, and exploit such injection with this rule: If an <code>x : t</code> is found where an <code>f t</code> is expected, and <code>f</code> is an instance of <code>Monad</code>, then replace <code>x : t</code> with <code>return x : f t</code>.</p>
-                    <p>This rule also works in a nested situation. This should typecheck:</p>
-                    <pre class="example"><code>0 :: (Monad m, Monad n) =&gt; m (Maybe (n Int))
-                    </code></pre>
-                    <h3 id="hickey-hickeys-two-wishes"><span class="section_number">1.7</span><span class="section_title">[HICKEY] Hickey's two wishes</span></h3>
-                    <p>Yes, my rule should work in both of Hickey's cases, because there is a canonical injection in each of those cases. Note that Hickey's cases correspond to wanting the compiler to automatically apply these canonical injections:</p>
-                    <div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb4-1" title="1"><span class="co">-- inj : today -&gt; yesterday,</span></a>
-                    <a class="sourceLine" id="cb4-2" title="2"><span class="co">-- so that every caller doesn&#39;t have to be rewritten.</span></a>
-                    <a class="sourceLine" id="cb4-3" title="3"></a>
-                    <a class="sourceLine" id="cb4-4" title="4"><span class="co">-- Making an arg optional:</span></a>
-                    <a class="sourceLine" id="cb4-5" title="5"><span class="co">-- yesterday:       X -&gt; Y</span></a>
-                    <a class="sourceLine" id="cb4-6" title="6"><span class="co">-- today:     Maybe X -&gt; Y</span></a>
-                    <a class="sourceLine" id="cb4-7" title="7"><span class="co">-- The canonical injection:</span></a>
-                    <a class="sourceLine" id="cb4-8" title="8"><span class="co">-- Wherever you see that a Maybe X -&gt; Y is supplied</span></a>
-                    <a class="sourceLine" id="cb4-9" title="9"><span class="co">-- where an X -&gt; Y is required, use this:</span></a>
-                    <a class="sourceLine" id="cb4-10" title="10">inj <span class="fu">:</span> (<span class="dt">Maybe</span> <span class="dt">X</span> <span class="ot">-&gt;</span> <span class="dt">Y</span>) <span class="ot">-&gt;</span> (<span class="dt">X</span> <span class="ot">-&gt;</span> <span class="dt">Y</span>)</a>
-                    <a class="sourceLine" id="cb4-11" title="11">inj f <span class="fu">=</span> \ x <span class="ot">-&gt;</span> f (<span class="dt">Just</span> x)</a>
-                    <a class="sourceLine" id="cb4-12" title="12"></a>
-                    <a class="sourceLine" id="cb4-13" title="13"><span class="co">-- Providing a stronger return promise:</span></a>
-                    <a class="sourceLine" id="cb4-14" title="14"><span class="co">-- yesterday: X -&gt; Maybe Y</span></a>
-                    <a class="sourceLine" id="cb4-15" title="15"><span class="co">-- today:     X -&gt; Y</span></a>
-                    <a class="sourceLine" id="cb4-16" title="16"><span class="co">-- The canonical injection:</span></a>
-                    <a class="sourceLine" id="cb4-17" title="17"><span class="co">-- Wherever you see that an X -&gt; Y is supplied</span></a>
-                    <a class="sourceLine" id="cb4-18" title="18"><span class="co">-- where an X -&gt; Maybe Y is required, use this:</span></a>
-                    <a class="sourceLine" id="cb4-19" title="19">inj <span class="fu">:</span> (<span class="dt">X</span> <span class="ot">-&gt;</span> <span class="dt">Y</span>) <span class="ot">-&gt;</span> (<span class="dt">X</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Y</span>)</a>
-                    <a class="sourceLine" id="cb4-20" title="20">inj f <span class="fu">=</span> \ x <span class="ot">-&gt;</span> <span class="dt">Just</span> (f x)</a></code></pre></div>
-                    <p>Note that the type of inj is &quot;today -&gt; yesterday&quot;, not &quot;yesterday -&gt; today&quot;. (Do you see why?)</p>
-                    <p>Our rewriting the function changes its type from &quot;yesterday&quot; to &quot;today&quot;, but the unchanged callers still expect that the function has the type &quot;yesterday&quot;.</p>
-                    <h3 id="lambda-inferring-canonical-injections-for-lambdas"><span class="section_number">1.8</span><span class="section_title">[LAMBDA] Inferring canonical injections for lambdas</span></h3>
-                    <p>Here I generalize Hickey's cases to all lambdas.</p>
-                    <p>Notation convention: I write the dependently-typed expression &quot;inj A B&quot; to mean the canonical injection from A to B, if such canonical injection exists. The type of the expression &quot;inj A B&quot; is A -&gt; B.</p>
-                    <p>These two rules define canonical injections for all lambdas: For all types A, B, and C:</p>
-                    <div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb5-1" title="1">inj (<span class="dt">A</span> <span class="ot">-&gt;</span> <span class="dt">C</span>) (<span class="dt">B</span> <span class="ot">-&gt;</span> <span class="dt">C</span>) fac <span class="fu">=</span> fbc <span class="kw">where</span> fbc b <span class="fu">=</span> fac (inj <span class="dt">B</span> <span class="dt">A</span> b)</a>
-                    <a class="sourceLine" id="cb5-2" title="2">inj (<span class="dt">C</span> <span class="ot">-&gt;</span> <span class="dt">A</span>) (<span class="dt">C</span> <span class="ot">-&gt;</span> <span class="dt">B</span>) fca <span class="fu">=</span> fcb <span class="kw">where</span> fcb c <span class="fu">=</span> inj <span class="dt">A</span> <span class="dt">B</span> (fca c)</a></code></pre></div>
-                    <p>That should also work with currying and higher-order lambdas.</p>
-                    <h3 id="impl-a-possible-implementation-in-principle"><span class="section_number">1.9</span><span class="section_title">[IMPL] A possible implementation, in principle</span></h3>
-                    <p>Suppose that a compiler encounters a type error.</p>
-                    <p>Let s : S be the supplied (actual) expression and type (what the user actually types).</p>
-                    <p>Let R be the required (expected) type.</p>
-                    <p>Then, if there is the canonical injection inj : S -&gt; R from S to R, the compiler should behave as if the user had typed &quot;inj s&quot; from the beginning.</p>
-                    <p>In principle, it is possible to write a Haskell interpreter in Prolog, and add our own inference rules, such as inferring canonical injections and inserting canonical injections. I think [DATA] and [LAMBDA] sufficiently define canonical injections for all Haskell 98 types.</p>
-                    <h3 id="history"><span class="section_number">1.10</span><span class="section_title">History</span></h3>
-                    <p>This originated as a letter to Abdullah on &lt;2018-12-18&gt;.</p>
-                    <p>&lt;2018-12-18&gt;</p>
-                    <ul>
-                    <li>First publish date.</li>
-                    <li>First revision.</li>
-                    </ul>
-                    <p>Alternative titles:</p>
-                    <ul>
-                    <li>Faking untagged unions and equirecursive types in Haskell
-                    <ul>
-                    <li>This sounds promising.</li>
-                    <li>But this is misleading. This feature requires modifying the compiler, so the code is not &quot;in Haskell&quot;.</li>
-                    </ul></li>
-                    <li>Inferring and inserting canonical injections in Haskell
-                    <ul>
-                    <li>This was the original working title.</li>
-                    </ul></li>
-                    <li>Recovering from trivial type errors in Haskell
-                    <ul>
-                    <li>Unclear about what is being sold.</li>
-                    </ul></li>
-                    <li>A monad is a way of conservatively extending all spaces</li>
-                    </ul>
-                    <p>The concept I'm proposing already exists with the same name (&quot;canonical injection&quot;). <a href="https://en.wikipedia.org/wiki/Inclusion_map">https://en.wikipedia.org/wiki/Inclusion_map</a></p>
-                    <p>&lt;2018-12-14&gt;</p>
-                    <p>Questions leading to this article:</p>
-                    <ul>
-                    <li>Does &quot;algebraic subtyping&quot; mean adding the following rule to the compiler: &quot;for all x, t: everywhere an x : t is found where a Maybe t is expected, replace x : t with Just x : Maybe t&quot;?</li>
-                    <li>Does &quot;algebraic subtyping&quot; mean that the compiler &quot;recovers&quot; from certain (injective) type errors?</li>
-                    </ul>
-                    <h3 id="half-baked-but-related-ideas-should-be-in-the-article"><span class="section_number">1.11</span><span class="section_title">Half-baked but related ideas, should be in the article</span></h3>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">1.11.1</span><span class="section_title"><a href="#a-subtyping-relation-arises-from-canonical-injections">A subtyping relation arises from canonical injections</a></span><span class="word_count">(70w~1m)</span></li>
-                    <li><span class="section_number">1.11.2</span><span class="section_title"><a href="#subtyping-in-haskell">Subtyping in Haskell?</a></span><span class="word_count">(27w~1m)</span></li>
-                    <li><span class="section_number">1.11.3</span><span class="section_title"><a href="#a-weak-anthropocentric-argument-for-automating-canonical-injections">A weak anthropocentric argument for automating canonical injections?</a></span><span class="word_count">(34w~1m)</span></li>
-                    <li><span class="section_number">1.11.4</span><span class="section_title"><a href="#newtypes-should-be-replaced-with-proofs.">Newtypes should be replaced with <em>proofs</em>.</a></span><span class="word_count">(6w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="a-subtyping-relation-arises-from-canonical-injections"><span class="section_number">1.11.1</span><span class="section_title">A subtyping relation arises from canonical injections</span></h4>
-                    <p>Remember:</p>
-                    <ul>
-                    <li>&quot;A is a subtype of B&quot; means an A can be supplied wherever a B is expected.</li>
-                    <li>The existence of a canonical injection from A to B suggests that A is a &quot;subset of&quot; (&quot;is contained in&quot;) B.</li>
-                    </ul>
-                    <p>We can define this subtyping relation: A is a subtype B iff there is a canonical injection from A to B.</p>
-                    <p>Subtyping by canonical injection obeys Liskov substitution principle.</p>
-                    <h4 id="subtyping-in-haskell"><span class="section_number">1.11.2</span><span class="section_title">Subtyping in Haskell?</span></h4>
-                    <ul>
-                    <li><a href="http://referaat.cs.utwente.nl/conference/12/paper/7000/expressing-ontologies-using-a-functional-language.pdf">http://referaat.cs.utwente.nl/conference/12/paper/7000/expressing-ontologies-using-a-functional-language.pdf</a>
-                    <ul>
-                    <li>&quot;there are some proposals for implementing subtyping [in Haskell] [11, 12]&quot;
-                    <ul>
-                    <li>Open ADT precludes exhaustive pattern matching.</li>
-                    </ul></li>
-                    </ul></li>
-                    </ul>
-                    <p>TODO summarize:</p>
-                    <ul>
-                    <li><a href="https://mail.haskell.org/pipermail/haskell-cafe/2007-May/026334.html">https://mail.haskell.org/pipermail/haskell-cafe/2007-May/026334.html</a></li>
-                    <li>&quot;Polymorphic subtyping in O'Haskell&quot; <a href="https://www.sciencedirect.com/science/article/pii/S0167642302000266">https://www.sciencedirect.com/science/article/pii/S0167642302000266</a></li>
-                    <li>&quot;Subtype polymorphism in Haskell&quot; <a href="https://stackoverflow.com/questions/12002979/subtype-polymorphism-in-haskell">https://stackoverflow.com/questions/12002979/subtype-polymorphism-in-haskell</a></li>
-                    </ul>
-                    <h4 id="a-weak-anthropocentric-argument-for-automating-canonical-injections"><span class="section_number">1.11.3</span><span class="section_title">A weak anthropocentric argument for automating canonical injections?</span></h4>
-                    <p>We should conflate <code>x</code> and <code>Just x</code>. <code>Just</code> is there only to make the compiler happy. For us humans, <code>x</code> and <code>Just x</code> have the same semantics.</p>
-                    <h4 id="newtypes-should-be-replaced-with-proofs."><span class="section_number">1.11.4</span><span class="section_title">Newtypes should be replaced with <em>proofs</em>.</span></h4>
-                    <div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1"><span class="co">-- Replace this:</span></a>
-                    <a class="sourceLine" id="cb6-2" title="2"><span class="ot">foo ::</span> <span class="dt">Nonneg</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> a</a>
-                    <a class="sourceLine" id="cb6-3" title="3"><span class="co">-- with this, where _p is a proof that x is nonnegative:</span></a>
-                    <a class="sourceLine" id="cb6-4" title="4">foo {_p <span class="fu">:</span> x <span class="fu">&gt;=</span> <span class="dv">0</span>} x <span class="fu">=</span> <span class="fu">...</span></a></code></pre></div>
-                    <h2 id="a-mess-do-not-see"><span class="section_number">2</span><span class="section_title">A mess; do not see</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">2.1</span><span class="section_title"><a href="#open-adts-algebraic-data-types">Open ADTs (algebraic data types)</a></span><span class="word_count">(46w~1m)</span></li>
-                    <li><span class="section_number">2.2</span><span class="section_title"><a href="#can-we-extend-haskell-to-auto-fmap">Can we extend Haskell to &quot;auto-fmap&quot;?</a></span><span class="word_count">(269w~2m)</span></li>
-                    <li><span class="section_number">2.3</span><span class="section_title"><a href="#auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">Auto-lifting (and therefore sequencing) of function application involving Monad instances</a></span><span class="word_count">(176w~1m)</span></li>
-                    <li><span class="section_number">2.4</span><span class="section_title"><a href="#equirecursive-types">Equirecursive types?</a></span><span class="word_count">(35w~1m)</span></li>
-                    <li><span class="section_number">2.5</span><span class="section_title"><a href="#bootstrap-ghc">&lt;2018-12-15&gt; Bootstrap GHC?</a></span><span class="word_count">(85w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="open-adts-algebraic-data-types"><span class="section_number">2.1</span><span class="section_title">Open ADTs (algebraic data types)</span></h3>
-                    <ul>
-                    <li>&quot;Closed&quot; means &quot;defined in one place&quot;.</li>
-                    <li><p>Open ADTs don't mix with exhaustive case analysis (function totality).</p>
-                    <ul>
-                    <li><a href="https://stackoverflow.com/questions/870919/why-are-haskell-algebraic-data-types-closed">https://stackoverflow.com/questions/870919/why-are-haskell-algebraic-data-types-closed</a></li>
-                    <li><p>But what if functions are &quot;open&quot; too?</p>
-                    <ul>
-                    <li><a href="https://www.andres-loeh.de/OpenDatatypes.pdf">https://www.andres-loeh.de/OpenDatatypes.pdf</a></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p>If <code>f : a -&gt; b</code>, then the compiler should infer <code>lift f : (Monad m) =&gt; m a -&gt; m b</code>.</p></li>
-                    </ul>
-                    <h3 id="can-we-extend-haskell-to-auto-fmap"><span class="section_number">2.2</span><span class="section_title">Can we extend Haskell to &quot;auto-fmap&quot;?</span></h3>
-                    <ul>
-                    <li><p>Possibilities:</p>
-                    <ul>
-                    <li>Add rewrite rules so that the compiler &quot;recovers&quot; from some type &quot;errors&quot;.</li>
-                    <li>Extend the syntax and semantics of function application.</li>
-                    </ul></li>
-                    <li><p>Related</p>
-                    <ul>
-                    <li>1989, article, Wadler, &quot;Theorems for free!&quot;</li>
-                    <li>The Haskell Djinn can, given a type T, infer/construct a term having type T.</li>
-                    </ul></li>
-                    <li><p>Recovering from some type errors</p>
-                    <ul>
-                    <li><p>Idea</p>
-                    <ul>
-                    <li>Extend Haskell with &quot;implicit injections&quot;.</li>
-                    <li><p>The compiler should try in-scope injections automatically when there is a typing error, before quitting with a type error.</p>
-                    <ul>
-                    <li><p>Isn't this similar to Scala implicits and implicit conversion?</p>
-                    <ul>
-                    <li>I forgot who, but I think somebody on the Internet said that Scala implicits are a way for the compiler to recover from type errors.</li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p>Can we do this on GHC?</p>
-                    <ul>
-                    <li><p><a href="https://ghc.haskell.org/trac/ghc/wiki/Commentary/Compiler/TypeChecker">https://ghc.haskell.org/trac/ghc/wiki/Commentary/Compiler/TypeChecker</a></p>
-                    <ul>
-                    <li>GHC typechecker works on Haskell before it's transformed to Core.</li>
-                    </ul></li>
-                    <li><p>Write a plugin for GHC?</p>
-                    <ul>
-                    <li>Can a GHC modify the syntax tree on type error?</li>
-                    </ul></li>
-                    <li>Use GHC as library?</li>
-                    <li><p>We can't use GHC rewrite rules because they are only applied when optimization is enabled.</p></li>
-                    </ul></li>
-                    </ul></li>
-                    <li>Define the concept of &quot;expected type&quot;.</li>
-                    <li>Let <code>e</code> be an expression.</li>
-                    <li>Let <code>f : a -&gt; b</code>.</li>
-                    <li>Let <code>m</code> be an instance of Monad.</li>
-                    <li>If <code>e</code> has type <code>a</code>, but the compiler expects <code>e</code> to have type <code>m a</code>, then the compiler shall rewrite <code>e</code> to <code>return e</code>.</li>
-                    <li><p>If <code>e</code> has type <code>m a</code>, then the compiler rewrites <code>f e</code> to <code>map f e</code>.</p></li>
-                    </ul></li>
-                    <li>If <code>x</code> is a Monad, then these are two <em>different</em> things: <code>x : a</code> and <code>return x</code>, but they are related, in the sense that they are equivalent, in the sense that one is trivially computable/derivable from the other.</li>
-                    <li><p>Can Strathclyde Haskell Enhancement (SHE) do this?</p>
-                    <ul>
-                    <li><p>It has idiom brackets. It translates <code>(| f a1 ... an |)</code> to <code>pure f &lt;*&gt; a1 &lt;*&gt; ... &lt;*&gt; an</code>.</p>
-                    <ul>
-                    <li><a href="https://personal.cis.strath.ac.uk/conor.mcbride/pub/she/idiom.html">https://personal.cis.strath.ac.uk/conor.mcbride/pub/she/idiom.html</a></li>
-                    </ul></li>
-                    <li><p>Enhancement to SHE <a href="https://github.com/bezirg/she">https://github.com/bezirg/she</a></p>
-                    <ul>
-                    <li><a href="http://blog.bezirg.net/posts/2013-08-03-enhancement-to-the-strathclyde-haskell-enhancement.html">http://blog.bezirg.net/posts/2013-08-03-enhancement-to-the-strathclyde-haskell-enhancement.html</a></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p><a href="https://en.wikipedia.org/wiki/Bidirectional_transformation">https://en.wikipedia.org/wiki/Bidirectional_transformation</a></p>
-                    <ul>
-                    <li><a href="https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf">https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf</a></li>
-                    </ul></li>
-                    </ul>
-                    <h3 id="auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances"><span class="section_number">2.3</span><span class="section_title">Auto-lifting (and therefore sequencing) of function application involving Monad instances</span></h3>
-                    <ul>
-                    <li><p>The standard rule is:</p>
-                    <ul>
-                    <li>If <code>x : a</code> and <code>f : a -&gt; b</code>, then <code>f x : b</code>.</li>
-                    </ul></li>
-                    <li><p>Suppose that <code>m</code> has a Monad instance.</p>
-                    <ul>
-                    <li><p>If <code>x : m a</code> and <code>f : a -&gt; b</code>, then should the compiler silently translate <code>f x</code> to <code>x &gt;&gt;</code> return . f=?</p>
-                    <ul>
-                    <li><p>Isn't it the only desirable way of putting together <code>f</code> and <code>x</code>?</p>
-                    <ul>
-                    <li><p>Monad class requires that <code>x &gt;&gt;</code> return . f= be equivalent to <code>fmap f x</code>.</p>
-                    <ul>
-                    <li>So there is really only one way to do it, isn't it?</li>
-                    </ul></li>
-                    <li><p>Examples of non-desirable ways: <code>unsafeCoerce</code>, <code>undefined</code>.</p></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p>Should the compiler also appropriately translate <code>f x</code> for all these combinations?</p>
-                    <ul>
-                    <li><p>Possibilities for the type of <code>x</code>:</p>
-                    <ul>
-                    <li><code>a</code></li>
-                    <li><code>m a</code></li>
-                    </ul></li>
-                    <li><p>Possibilities for the type of <code>f</code>:</p>
-                    <ul>
-                    <li><code>a -&gt; b</code></li>
-                    <li><code>a -&gt; m b</code></li>
-                    <li><code>m (a -&gt; b)</code></li>
-                    <li><code>m a -&gt; m b</code></li>
-                    <li><code>m a -&gt; b</code></li>
-                    </ul></li>
-                    </ul></li>
-                    </ul></li>
-                    <li><p>At first glance it seems convenient, but what are the consequences?</p>
-                    <ul>
-                    <li><p>Some I can think of</p>
-                    <ul>
-                    <li><p>Confusing error message</p>
-                    <ul>
-                    <li><p>Suppose:</p>
-                    <ul>
-                    <li>The programmer makes a typing mistake.</li>
-                    <li>The compiler infers the wrong type.</li>
-                    <li>The compiler performs translation based on the wrongly inferred type.</li>
-                    <li>The compiler produces a confusing error message.</li>
-                    </ul></li>
-                    </ul></li>
-                    </ul></li>
-                    </ul></li>
-                    </ul>
-                    <h3 id="equirecursive-types"><span class="section_number">2.4</span><span class="section_title">Equirecursive types?</span></h3>
-                    <p>Haskell has isorecursive types. Can we make it use equirecursive types?</p>
-                    <ul>
-                    <li>Can we make it automatically insert roll-unroll/fold-unfold/In-out?</li>
-                    <li><p>How do we compose monads seamlessly?</p>
-                    <ul>
-                    <li>Isorecursive types?</li>
-                    <li>True sum types (untagged unions)?</li>
-                    </ul></li>
-                    <li>&quot;System F-omega with Equirecursive Types for Datatype-Generic Programming&quot;?</li>
-                    </ul>
-                    <h3 id="bootstrap-ghc"><span class="section_number">2.5</span><span class="section_title">&lt;2018-12-15&gt; Bootstrap GHC?</span></h3>
-                    <p><a href="https://twitter.com/ErikDominikus/status/1073726987338842112">https://twitter.com/ErikDominikus/status/1073726987338842112</a></p>
-                    <p>How about writing a Haskell interpreter with Prolog? I guess Haskell type checker takes ~100 lines of Prolog, and parser takes ~200 lines. It may be doable in a month. I have ~20 lines of Prolog type-checking Haskell AST but without type classes.</p>
-                    <p>Add ~500 more lines of Prolog metaprogram for translating lists to arrays, ~2000 more lines for translating Prolog to optimized x86_64 native code (if not reinventing LLVM), 1 more month, and … we may beat GHC at its own game? :)</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#abdullah">Subtyping in Haskell with canonical injections</a></span><span class="word_count">(1203w~7m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#a-mess-do-not-see">A mess; do not see</a></span><span class="word_count">(611w~4m)</span></li>
+</ul>
+</div>
+<h2 id="abdullah"><span class="section_number">1</span><span class="section_title">Subtyping in Haskell with canonical injections</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#background">Background</a></span><span class="word_count">(134w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#what-is-here-and-how-it-answers-your-questions">What is here, and how it answers your questions</a></span><span class="word_count">(110w~1m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#notation">[NOTATION]</a></span><span class="word_count">(49w~1m)</span></li>
+<li><span class="section_number">1.4</span><span class="section_title"><a href="#define-examples-of-canonical-injections">[DEFINE] Examples of canonical injections</a></span><span class="word_count">(89w~1m)</span></li>
+<li><span class="section_number">1.5</span><span class="section_title"><a href="#data-inferring-canonical-injections-for-inductive-data-types">[DATA] Inferring canonical injections for inductive data types</a></span><span class="word_count">(114w~1m)</span></li>
+<li><span class="section_number">1.6</span><span class="section_title"><a href="#monad-relationship-between-canonical-injections-and-monad-instances">[MONAD] Relationship between canonical injections and Monad instances</a></span><span class="word_count">(182w~1m)</span></li>
+<li><span class="section_number">1.7</span><span class="section_title"><a href="#hickey-hickeys-two-wishes">[HICKEY] Hickey's two wishes</a></span><span class="word_count">(79w~1m)</span></li>
+<li><span class="section_number">1.8</span><span class="section_title"><a href="#lambda-inferring-canonical-injections-for-lambdas">[LAMBDA] Inferring canonical injections for lambdas</a></span><span class="word_count">(71w~1m)</span></li>
+<li><span class="section_number">1.9</span><span class="section_title"><a href="#impl-a-possible-implementation-in-principle">[IMPL] A possible implementation, in principle</a></span><span class="word_count">(104w~1m)</span></li>
+<li><span class="section_number">1.10</span><span class="section_title"><a href="#history">History</a></span><span class="word_count">(134w~1m)</span></li>
+<li><span class="section_number">1.11</span><span class="section_title"><a href="#half-baked-but-related-ideas-should-be-in-the-article">Half-baked but related ideas, should be in the article</a></span><span class="word_count">(142w~1m)</span></li>
+</ul>
+</div>
+<h3 id="background"><span class="section_number">1.1</span><span class="section_title">Background</span></h3>
+<p>In Haskell, Just is the <em>only</em> sound way to make a Maybe t from t. We call such unambiguous construction a <em>canonical injection</em>. The compiler should insert canonical injections to recover from trivial type errors. Such recovery has these interesting benefits:</p>
+<ul>
+<li>Now we can fake non-overlapping <em>untagged unions</em> (Haskell has tagged unions). This reduces the bureaucracy when composing data types following the free-monad/interpreter pattern; the compiler inserts the required Pure constructors.</li>
+<li>Now we can fake <em>equirecursive types</em> (Haskell has isorecursive types). We no longer have to type &quot;In&quot; and &quot;out&quot; when using &quot;Fix&quot;; the compiler inserts the required bureaucracy.</li>
+<li>Now we can fake <em>heterogeneous lists</em> and heterogeneous collections.</li>
+<li>Now we can have <em>covariant</em> return type and <em>contravariant</em> return type. This means now we can, without breaking callers, generalize an argument or specialize a return value, as in Java.</li>
+</ul>
+<h3 id="what-is-here-and-how-it-answers-your-questions"><span class="section_number">1.2</span><span class="section_title">What is here, and how it answers your questions</span></h3>
+<p>This is what I am going to do in this article, in no particular order:</p>
+<ul>
+<li>[NOTATION] defines some notations.</li>
+<li>[DEFINE] defines canonical injections.</li>
+<li>[DATA] shows the rules for inferring canonical injections for inductive data types.</li>
+<li>[LAMBDA] shows the rules for inferring canonical injections for lambdas.</li>
+<li>[HICKEY] shows that Hickey's two wishes are special cases of canonical injections.</li>
+<li>[MONAD] shows the relationship between canonical injections and Monad instances.</li>
+<li>[IMPL] sketches a possible implementation, in principle.</li>
+</ul>
+<p>This is how I answer your questions:</p>
+<ul>
+<li>Your first question is answered by [DEFINE], [DATA], and [LAMBDA].</li>
+<li>Your second question is answered by [HICKEY] and [LAMBDA].</li>
+<li>Extra things that may be of interest to you are [MONAD] and [IMPL].</li>
+</ul>
+<h3 id="notation"><span class="section_number">1.3</span><span class="section_title">[NOTATION]</span></h3>
+<p>Notation conventions.</p>
+<p>By &quot;injection&quot;, I mean an injective function.</p>
+<p>&quot;The canonical injection from A to B&quot; means &quot;the only sound injection from A to B&quot;. By &quot;sound&quot;, I mean &quot;not involving bottom (undefined)&quot;. I assume total functional programming, and I say &quot;the only possible injection&quot; to mean &quot;the only sound injection&quot;.</p>
+<h3 id="define-examples-of-canonical-injections"><span class="section_number">1.4</span><span class="section_title">[DEFINE] Examples of canonical injections</span></h3>
+<p>&quot;Canonical&quot; means &quot;there is exactly one&quot;. &quot;Injection&quot; means injective function. A canonical injection from A to B is the only injection from A to B.</p>
+<p>Examples of canonical injections:</p>
+<ul>
+<li>In the case of t -&gt; Maybe t, Just is the canonical injection.</li>
+<li>In the case of a -&gt; Either a b where a != b, Left is the canonical injection.</li>
+<li>In the case of a -&gt; Either a a, each of Left and Right is an injection, so there is no canonical injection here.</li>
+</ul>
+<p>Thus some constructors are canonical injections.</p>
+<h3 id="data-inferring-canonical-injections-for-inductive-data-types"><span class="section_number">1.5</span><span class="section_title">[DATA] Inferring canonical injections for inductive data types</span></h3>
+<p>In general, the compiler infers canonical injections from a data definition using this rule: If parameter p occurs exactly once in the right-hand side of the equal sign in &quot;data A p = …&quot;, then the only constructor with p is the <em>canonical injection</em> from p to A p.</p>
+<p>For example, observe that, in the following definition, in the right-hand side of the equal sign:</p>
+<ul>
+<li>Int occurs twice,</li>
+<li>String occurs once, and</li>
+<li>p occurs once.</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">data</span> <span class="dt">A</span> p <span class="fu">=</span> <span class="dt">A0</span> <span class="dt">Int</span> <span class="fu">|</span> <span class="dt">A1</span> <span class="dt">String</span> <span class="fu">|</span> <span class="dt">A2</span> <span class="dt">Int</span> <span class="fu">|</span> <span class="dt">A3</span> p</a></code></pre></div>
+<p>Therefore, from the above definition, the compiler infers that:</p>
+<ul>
+<li>A1 : String -&gt; A p is the canonical injection from String to A p.</li>
+<li>A3 : p -&gt; A p is the canonical injection from p to A p.</li>
+</ul>
+<h3 id="monad-relationship-between-canonical-injections-and-monad-instances"><span class="section_number">1.6</span><span class="section_title">[MONAD] Relationship between canonical injections and Monad instances</span></h3>
+<p>Let INJ be the canonical injection from p to F p. Let F be an instance of Monad. Then the compiler infers &quot;return&quot; and one case of &quot;bind&quot; as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1"><span class="fu">return</span> <span class="fu">=</span> <span class="dt">INJ</span></a>
+<a class="sourceLine" id="cb2-2" title="2">(<span class="fu">&gt;&gt;=</span>) (<span class="dt">INJ</span> x) k <span class="fu">=</span> k x</a></code></pre></div>
+<p>Indeed I think these have to be laws: If INJ is the canonical injection from t to F t, and F is an instance of Monad, then:</p>
+<ul>
+<li>return has to be equal to INJ,</li>
+<li>INJ x &gt;&gt;= k must be equal to k x.</li>
+</ul>
+<p>I think the above laws relate this concept of &quot;canonical injections&quot; with your concept of monads as &quot;conservative extensions of spaces&quot;.</p>
+<p>There is also a law for the other way around: the <code>return</code> function must be an injection, although the user is responsible for ensuring that. I think the compiler should assume that <code>return</code> <em>is</em> a canonical injection, and exploit such injection with this rule: If an <code>x : t</code> is found where an <code>f t</code> is expected, and <code>f</code> is an instance of <code>Monad</code>, then replace <code>x : t</code> with <code>return x : f t</code>.</p>
+<p>This rule also works in a nested situation. This should typecheck:</p>
+<pre class="example"><code>0 :: (Monad m, Monad n) =&gt; m (Maybe (n Int))
+</code></pre>
+<h3 id="hickey-hickeys-two-wishes"><span class="section_number">1.7</span><span class="section_title">[HICKEY] Hickey's two wishes</span></h3>
+<p>Yes, my rule should work in both of Hickey's cases, because there is a canonical injection in each of those cases. Note that Hickey's cases correspond to wanting the compiler to automatically apply these canonical injections:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb4-1" title="1"><span class="co">-- inj : today -&gt; yesterday,</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">-- so that every caller doesn&#39;t have to be rewritten.</span></a>
+<a class="sourceLine" id="cb4-3" title="3"></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="co">-- Making an arg optional:</span></a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">-- yesterday:       X -&gt; Y</span></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="co">-- today:     Maybe X -&gt; Y</span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="co">-- The canonical injection:</span></a>
+<a class="sourceLine" id="cb4-8" title="8"><span class="co">-- Wherever you see that a Maybe X -&gt; Y is supplied</span></a>
+<a class="sourceLine" id="cb4-9" title="9"><span class="co">-- where an X -&gt; Y is required, use this:</span></a>
+<a class="sourceLine" id="cb4-10" title="10">inj <span class="fu">:</span> (<span class="dt">Maybe</span> <span class="dt">X</span> <span class="ot">-&gt;</span> <span class="dt">Y</span>) <span class="ot">-&gt;</span> (<span class="dt">X</span> <span class="ot">-&gt;</span> <span class="dt">Y</span>)</a>
+<a class="sourceLine" id="cb4-11" title="11">inj f <span class="fu">=</span> \ x <span class="ot">-&gt;</span> f (<span class="dt">Just</span> x)</a>
+<a class="sourceLine" id="cb4-12" title="12"></a>
+<a class="sourceLine" id="cb4-13" title="13"><span class="co">-- Providing a stronger return promise:</span></a>
+<a class="sourceLine" id="cb4-14" title="14"><span class="co">-- yesterday: X -&gt; Maybe Y</span></a>
+<a class="sourceLine" id="cb4-15" title="15"><span class="co">-- today:     X -&gt; Y</span></a>
+<a class="sourceLine" id="cb4-16" title="16"><span class="co">-- The canonical injection:</span></a>
+<a class="sourceLine" id="cb4-17" title="17"><span class="co">-- Wherever you see that an X -&gt; Y is supplied</span></a>
+<a class="sourceLine" id="cb4-18" title="18"><span class="co">-- where an X -&gt; Maybe Y is required, use this:</span></a>
+<a class="sourceLine" id="cb4-19" title="19">inj <span class="fu">:</span> (<span class="dt">X</span> <span class="ot">-&gt;</span> <span class="dt">Y</span>) <span class="ot">-&gt;</span> (<span class="dt">X</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Y</span>)</a>
+<a class="sourceLine" id="cb4-20" title="20">inj f <span class="fu">=</span> \ x <span class="ot">-&gt;</span> <span class="dt">Just</span> (f x)</a></code></pre></div>
+<p>Note that the type of inj is &quot;today -&gt; yesterday&quot;, not &quot;yesterday -&gt; today&quot;. (Do you see why?)</p>
+<p>Our rewriting the function changes its type from &quot;yesterday&quot; to &quot;today&quot;, but the unchanged callers still expect that the function has the type &quot;yesterday&quot;.</p>
+<h3 id="lambda-inferring-canonical-injections-for-lambdas"><span class="section_number">1.8</span><span class="section_title">[LAMBDA] Inferring canonical injections for lambdas</span></h3>
+<p>Here I generalize Hickey's cases to all lambdas.</p>
+<p>Notation convention: I write the dependently-typed expression &quot;inj A B&quot; to mean the canonical injection from A to B, if such canonical injection exists. The type of the expression &quot;inj A B&quot; is A -&gt; B.</p>
+<p>These two rules define canonical injections for all lambdas: For all types A, B, and C:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb5-1" title="1">inj (<span class="dt">A</span> <span class="ot">-&gt;</span> <span class="dt">C</span>) (<span class="dt">B</span> <span class="ot">-&gt;</span> <span class="dt">C</span>) fac <span class="fu">=</span> fbc <span class="kw">where</span> fbc b <span class="fu">=</span> fac (inj <span class="dt">B</span> <span class="dt">A</span> b)</a>
+<a class="sourceLine" id="cb5-2" title="2">inj (<span class="dt">C</span> <span class="ot">-&gt;</span> <span class="dt">A</span>) (<span class="dt">C</span> <span class="ot">-&gt;</span> <span class="dt">B</span>) fca <span class="fu">=</span> fcb <span class="kw">where</span> fcb c <span class="fu">=</span> inj <span class="dt">A</span> <span class="dt">B</span> (fca c)</a></code></pre></div>
+<p>That should also work with currying and higher-order lambdas.</p>
+<h3 id="impl-a-possible-implementation-in-principle"><span class="section_number">1.9</span><span class="section_title">[IMPL] A possible implementation, in principle</span></h3>
+<p>Suppose that a compiler encounters a type error.</p>
+<p>Let s : S be the supplied (actual) expression and type (what the user actually types).</p>
+<p>Let R be the required (expected) type.</p>
+<p>Then, if there is the canonical injection inj : S -&gt; R from S to R, the compiler should behave as if the user had typed &quot;inj s&quot; from the beginning.</p>
+<p>In principle, it is possible to write a Haskell interpreter in Prolog, and add our own inference rules, such as inferring canonical injections and inserting canonical injections. I think [DATA] and [LAMBDA] sufficiently define canonical injections for all Haskell 98 types.</p>
+<h3 id="history"><span class="section_number">1.10</span><span class="section_title">History</span></h3>
+<p>This originated as a letter to Abdullah on &lt;2018-12-18&gt;.</p>
+<p>&lt;2018-12-18&gt;</p>
+<ul>
+<li>First publish date.</li>
+<li>First revision.</li>
+</ul>
+<p>Alternative titles:</p>
+<ul>
+<li>Faking untagged unions and equirecursive types in Haskell
+<ul>
+<li>This sounds promising.</li>
+<li>But this is misleading. This feature requires modifying the compiler, so the code is not &quot;in Haskell&quot;.</li>
+</ul></li>
+<li>Inferring and inserting canonical injections in Haskell
+<ul>
+<li>This was the original working title.</li>
+</ul></li>
+<li>Recovering from trivial type errors in Haskell
+<ul>
+<li>Unclear about what is being sold.</li>
+</ul></li>
+<li>A monad is a way of conservatively extending all spaces</li>
+</ul>
+<p>The concept I'm proposing already exists with the same name (&quot;canonical injection&quot;). <a href="https://en.wikipedia.org/wiki/Inclusion_map">https://en.wikipedia.org/wiki/Inclusion_map</a></p>
+<p>&lt;2018-12-14&gt;</p>
+<p>Questions leading to this article:</p>
+<ul>
+<li>Does &quot;algebraic subtyping&quot; mean adding the following rule to the compiler: &quot;for all x, t: everywhere an x : t is found where a Maybe t is expected, replace x : t with Just x : Maybe t&quot;?</li>
+<li>Does &quot;algebraic subtyping&quot; mean that the compiler &quot;recovers&quot; from certain (injective) type errors?</li>
+</ul>
+<h3 id="half-baked-but-related-ideas-should-be-in-the-article"><span class="section_number">1.11</span><span class="section_title">Half-baked but related ideas, should be in the article</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.11.1</span><span class="section_title"><a href="#a-subtyping-relation-arises-from-canonical-injections">A subtyping relation arises from canonical injections</a></span><span class="word_count">(70w~1m)</span></li>
+<li><span class="section_number">1.11.2</span><span class="section_title"><a href="#subtyping-in-haskell">Subtyping in Haskell?</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">1.11.3</span><span class="section_title"><a href="#a-weak-anthropocentric-argument-for-automating-canonical-injections">A weak anthropocentric argument for automating canonical injections?</a></span><span class="word_count">(34w~1m)</span></li>
+<li><span class="section_number">1.11.4</span><span class="section_title"><a href="#newtypes-should-be-replaced-with-proofs.">Newtypes should be replaced with <em>proofs</em>.</a></span><span class="word_count">(6w~1m)</span></li>
+</ul>
+</div>
+<h4 id="a-subtyping-relation-arises-from-canonical-injections"><span class="section_number">1.11.1</span><span class="section_title">A subtyping relation arises from canonical injections</span></h4>
+<p>Remember:</p>
+<ul>
+<li>&quot;A is a subtype of B&quot; means an A can be supplied wherever a B is expected.</li>
+<li>The existence of a canonical injection from A to B suggests that A is a &quot;subset of&quot; (&quot;is contained in&quot;) B.</li>
+</ul>
+<p>We can define this subtyping relation: A is a subtype B iff there is a canonical injection from A to B.</p>
+<p>Subtyping by canonical injection obeys Liskov substitution principle.</p>
+<h4 id="subtyping-in-haskell"><span class="section_number">1.11.2</span><span class="section_title">Subtyping in Haskell?</span></h4>
+<ul>
+<li><a href="http://referaat.cs.utwente.nl/conference/12/paper/7000/expressing-ontologies-using-a-functional-language.pdf">http://referaat.cs.utwente.nl/conference/12/paper/7000/expressing-ontologies-using-a-functional-language.pdf</a>
+<ul>
+<li>&quot;there are some proposals for implementing subtyping [in Haskell] [11, 12]&quot;
+<ul>
+<li>Open ADT precludes exhaustive pattern matching.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>TODO summarize:</p>
+<ul>
+<li><a href="https://mail.haskell.org/pipermail/haskell-cafe/2007-May/026334.html">https://mail.haskell.org/pipermail/haskell-cafe/2007-May/026334.html</a></li>
+<li>&quot;Polymorphic subtyping in O'Haskell&quot; <a href="https://www.sciencedirect.com/science/article/pii/S0167642302000266">https://www.sciencedirect.com/science/article/pii/S0167642302000266</a></li>
+<li>&quot;Subtype polymorphism in Haskell&quot; <a href="https://stackoverflow.com/questions/12002979/subtype-polymorphism-in-haskell">https://stackoverflow.com/questions/12002979/subtype-polymorphism-in-haskell</a></li>
+</ul>
+<h4 id="a-weak-anthropocentric-argument-for-automating-canonical-injections"><span class="section_number">1.11.3</span><span class="section_title">A weak anthropocentric argument for automating canonical injections?</span></h4>
+<p>We should conflate <code>x</code> and <code>Just x</code>. <code>Just</code> is there only to make the compiler happy. For us humans, <code>x</code> and <code>Just x</code> have the same semantics.</p>
+<h4 id="newtypes-should-be-replaced-with-proofs."><span class="section_number">1.11.4</span><span class="section_title">Newtypes should be replaced with <em>proofs</em>.</span></h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1"><span class="co">-- Replace this:</span></a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="ot">foo ::</span> <span class="dt">Nonneg</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> a</a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">-- with this, where _p is a proof that x is nonnegative:</span></a>
+<a class="sourceLine" id="cb6-4" title="4">foo {_p <span class="fu">:</span> x <span class="fu">&gt;=</span> <span class="dv">0</span>} x <span class="fu">=</span> <span class="fu">...</span></a></code></pre></div>
+<h2 id="a-mess-do-not-see"><span class="section_number">2</span><span class="section_title">A mess; do not see</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#open-adts-algebraic-data-types">Open ADTs (algebraic data types)</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#can-we-extend-haskell-to-auto-fmap">Can we extend Haskell to &quot;auto-fmap&quot;?</a></span><span class="word_count">(269w~2m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">Auto-lifting (and therefore sequencing) of function application involving Monad instances</a></span><span class="word_count">(176w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#equirecursive-types">Equirecursive types?</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#bootstrap-ghc">&lt;2018-12-15&gt; Bootstrap GHC?</a></span><span class="word_count">(85w~1m)</span></li>
+</ul>
+</div>
+<h3 id="open-adts-algebraic-data-types"><span class="section_number">2.1</span><span class="section_title">Open ADTs (algebraic data types)</span></h3>
+<ul>
+<li>&quot;Closed&quot; means &quot;defined in one place&quot;.</li>
+<li><p>Open ADTs don't mix with exhaustive case analysis (function totality).</p>
+<ul>
+<li><a href="https://stackoverflow.com/questions/870919/why-are-haskell-algebraic-data-types-closed">https://stackoverflow.com/questions/870919/why-are-haskell-algebraic-data-types-closed</a></li>
+<li><p>But what if functions are &quot;open&quot; too?</p>
+<ul>
+<li><a href="https://www.andres-loeh.de/OpenDatatypes.pdf">https://www.andres-loeh.de/OpenDatatypes.pdf</a></li>
+</ul></li>
+</ul></li>
+<li><p>If <code>f : a -&gt; b</code>, then the compiler should infer <code>lift f : (Monad m) =&gt; m a -&gt; m b</code>.</p></li>
+</ul>
+<h3 id="can-we-extend-haskell-to-auto-fmap"><span class="section_number">2.2</span><span class="section_title">Can we extend Haskell to &quot;auto-fmap&quot;?</span></h3>
+<ul>
+<li><p>Possibilities:</p>
+<ul>
+<li>Add rewrite rules so that the compiler &quot;recovers&quot; from some type &quot;errors&quot;.</li>
+<li>Extend the syntax and semantics of function application.</li>
+</ul></li>
+<li><p>Related</p>
+<ul>
+<li>1989, article, Wadler, &quot;Theorems for free!&quot;</li>
+<li>The Haskell Djinn can, given a type T, infer/construct a term having type T.</li>
+</ul></li>
+<li><p>Recovering from some type errors</p>
+<ul>
+<li><p>Idea</p>
+<ul>
+<li>Extend Haskell with &quot;implicit injections&quot;.</li>
+<li><p>The compiler should try in-scope injections automatically when there is a typing error, before quitting with a type error.</p>
+<ul>
+<li><p>Isn't this similar to Scala implicits and implicit conversion?</p>
+<ul>
+<li>I forgot who, but I think somebody on the Internet said that Scala implicits are a way for the compiler to recover from type errors.</li>
+</ul></li>
+</ul></li>
+<li><p>Can we do this on GHC?</p>
+<ul>
+<li><p><a href="https://ghc.haskell.org/trac/ghc/wiki/Commentary/Compiler/TypeChecker">https://ghc.haskell.org/trac/ghc/wiki/Commentary/Compiler/TypeChecker</a></p>
+<ul>
+<li>GHC typechecker works on Haskell before it's transformed to Core.</li>
+</ul></li>
+<li><p>Write a plugin for GHC?</p>
+<ul>
+<li>Can a GHC modify the syntax tree on type error?</li>
+</ul></li>
+<li>Use GHC as library?</li>
+<li><p>We can't use GHC rewrite rules because they are only applied when optimization is enabled.</p></li>
+</ul></li>
+</ul></li>
+<li>Define the concept of &quot;expected type&quot;.</li>
+<li>Let <code>e</code> be an expression.</li>
+<li>Let <code>f : a -&gt; b</code>.</li>
+<li>Let <code>m</code> be an instance of Monad.</li>
+<li>If <code>e</code> has type <code>a</code>, but the compiler expects <code>e</code> to have type <code>m a</code>, then the compiler shall rewrite <code>e</code> to <code>return e</code>.</li>
+<li><p>If <code>e</code> has type <code>m a</code>, then the compiler rewrites <code>f e</code> to <code>map f e</code>.</p></li>
+</ul></li>
+<li>If <code>x</code> is a Monad, then these are two <em>different</em> things: <code>x : a</code> and <code>return x</code>, but they are related, in the sense that they are equivalent, in the sense that one is trivially computable/derivable from the other.</li>
+<li><p>Can Strathclyde Haskell Enhancement (SHE) do this?</p>
+<ul>
+<li><p>It has idiom brackets. It translates <code>(| f a1 ... an |)</code> to <code>pure f &lt;*&gt; a1 &lt;*&gt; ... &lt;*&gt; an</code>.</p>
+<ul>
+<li><a href="https://personal.cis.strath.ac.uk/conor.mcbride/pub/she/idiom.html">https://personal.cis.strath.ac.uk/conor.mcbride/pub/she/idiom.html</a></li>
+</ul></li>
+<li><p>Enhancement to SHE <a href="https://github.com/bezirg/she">https://github.com/bezirg/she</a></p>
+<ul>
+<li><a href="http://blog.bezirg.net/posts/2013-08-03-enhancement-to-the-strathclyde-haskell-enhancement.html">http://blog.bezirg.net/posts/2013-08-03-enhancement-to-the-strathclyde-haskell-enhancement.html</a></li>
+</ul></li>
+</ul></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Bidirectional_transformation">https://en.wikipedia.org/wiki/Bidirectional_transformation</a></p>
+<ul>
+<li><a href="https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf">https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf</a></li>
+</ul></li>
+</ul>
+<h3 id="auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances"><span class="section_number">2.3</span><span class="section_title">Auto-lifting (and therefore sequencing) of function application involving Monad instances</span></h3>
+<ul>
+<li><p>The standard rule is:</p>
+<ul>
+<li>If <code>x : a</code> and <code>f : a -&gt; b</code>, then <code>f x : b</code>.</li>
+</ul></li>
+<li><p>Suppose that <code>m</code> has a Monad instance.</p>
+<ul>
+<li><p>If <code>x : m a</code> and <code>f : a -&gt; b</code>, then should the compiler silently translate <code>f x</code> to <code>x &gt;&gt;</code> return . f=?</p>
+<ul>
+<li><p>Isn't it the only desirable way of putting together <code>f</code> and <code>x</code>?</p>
+<ul>
+<li><p>Monad class requires that <code>x &gt;&gt;</code> return . f= be equivalent to <code>fmap f x</code>.</p>
+<ul>
+<li>So there is really only one way to do it, isn't it?</li>
+</ul></li>
+<li><p>Examples of non-desirable ways: <code>unsafeCoerce</code>, <code>undefined</code>.</p></li>
+</ul></li>
+</ul></li>
+<li><p>Should the compiler also appropriately translate <code>f x</code> for all these combinations?</p>
+<ul>
+<li><p>Possibilities for the type of <code>x</code>:</p>
+<ul>
+<li><code>a</code></li>
+<li><code>m a</code></li>
+</ul></li>
+<li><p>Possibilities for the type of <code>f</code>:</p>
+<ul>
+<li><code>a -&gt; b</code></li>
+<li><code>a -&gt; m b</code></li>
+<li><code>m (a -&gt; b)</code></li>
+<li><code>m a -&gt; m b</code></li>
+<li><code>m a -&gt; b</code></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>At first glance it seems convenient, but what are the consequences?</p>
+<ul>
+<li><p>Some I can think of</p>
+<ul>
+<li><p>Confusing error message</p>
+<ul>
+<li><p>Suppose:</p>
+<ul>
+<li>The programmer makes a typing mistake.</li>
+<li>The compiler infers the wrong type.</li>
+<li>The compiler performs translation based on the wrongly inferred type.</li>
+<li>The compiler produces a confusing error message.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="equirecursive-types"><span class="section_number">2.4</span><span class="section_title">Equirecursive types?</span></h3>
+<p>Haskell has isorecursive types. Can we make it use equirecursive types?</p>
+<ul>
+<li>Can we make it automatically insert roll-unroll/fold-unfold/In-out?</li>
+<li><p>How do we compose monads seamlessly?</p>
+<ul>
+<li>Isorecursive types?</li>
+<li>True sum types (untagged unions)?</li>
+</ul></li>
+<li>&quot;System F-omega with Equirecursive Types for Datatype-Generic Programming&quot;?</li>
+</ul>
+<h3 id="bootstrap-ghc"><span class="section_number">2.5</span><span class="section_title">&lt;2018-12-15&gt; Bootstrap GHC?</span></h3>
+<p><a href="https://twitter.com/ErikDominikus/status/1073726987338842112">https://twitter.com/ErikDominikus/status/1073726987338842112</a></p>
+<p>How about writing a Haskell interpreter with Prolog? I guess Haskell type checker takes ~100 lines of Prolog, and parser takes ~200 lines. It may be doable in a month. I have ~20 lines of Prolog type-checking Haskell AST but without type classes.</p>
+<p>Add ~500 more lines of Prolog metaprogram for translating lists to arrays, ~2000 more lines for translating Prolog to optimized x86_64 native code (if not reinventing LLVM), 1 more month, and … we may beat GHC at its own game? :)</p>
                 </div>
             </div>
         </main>

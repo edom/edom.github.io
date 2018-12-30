@@ -159,1030 +159,1030 @@ document.addEventListener("DOMContentLoaded", function () {
                     </header>
                 </article>
                 <div class="post-content">
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">1</span><span class="section_title"><a href="#preliminaries">Preliminaries</a></span><span class="word_count">(635w~4m)</span></li>
-                    <li><span class="section_number">2</span><span class="section_title"><a href="#setting-up-emacs-and-org-mode">Setting up Emacs and Org Mode</a></span><span class="word_count">(444w~3m)</span></li>
-                    <li><span class="section_number">3</span><span class="section_title"><a href="#editing-text-in-emacs">Editing text in Emacs</a></span><span class="word_count">(593w~3m)</span></li>
-                    <li><span class="section_number">4</span><span class="section_title"><a href="#navigating-the-file-system-using-dired">Navigating the file system using dired</a></span><span class="word_count">(160w~1m)</span></li>
-                    <li><span class="section_number">5</span><span class="section_title"><a href="#editing-in-org-mode">Editing in Org Mode</a></span><span class="word_count">(399w~2m)</span></li>
-                    <li><span class="section_number">6</span><span class="section_title"><a href="#making-org-play-nice-with-jekyll">Making Org play nice with Jekyll</a></span><span class="word_count">(459w~3m)</span></li>
-                    <li><span class="section_number">7</span><span class="section_title"><a href="#getting-more-help">Getting more help</a></span><span class="word_count">(193w~1m)</span></li>
-                    <li><span class="section_number">8</span><span class="section_title"><a href="#programming-in-emacs-lisp">Programming in Emacs Lisp</a></span><span class="word_count">(388w~2m)</span></li>
-                    <li><span class="section_number">9</span><span class="section_title"><a href="#configuring-emacs-further">Configuring Emacs further</a></span><span class="word_count">(51w~1m)</span></li>
-                    <li><span class="section_number">10</span><span class="section_title"><a href="#using-git-from-emacs">Using Git from Emacs</a></span><span class="word_count">(157w~1m)</span></li>
-                    <li><span class="section_number">11</span><span class="section_title"><a href="#next-steps">Next steps</a></span><span class="word_count">(401w~3m)</span></li>
-                    <li><span class="section_number">12</span><span class="section_title"><a href="#obsolete-content">Obsolete content</a></span><span class="word_count">(62w~1m)</span></li>
-                    <li><span class="section_number">13</span><span class="section_title"><a href="#emacs-woes-sometimes-emacs-is-a-pile-of-hacks-and-workarounds.">Emacs woes: Sometimes Emacs is a pile of hacks and workarounds.</a></span><span class="word_count">(27w~1m)</span></li>
-                    <li><span class="section_number">14</span><span class="section_title"><a href="#finding-out-what-is-slowing-down-emacs">Finding out what is slowing down Emacs</a></span><span class="word_count">(11w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h2 id="preliminaries"><span class="section_number">1</span><span class="section_title">Preliminaries</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">1.1</span><span class="section_title"><a href="#how-long-will-it-take">How long will it take?</a></span><span class="word_count">(78w~1m)</span></li>
-                    <li><span class="section_number">1.2</span><span class="section_title"><a href="#why-emacs">Why emacs?</a></span><span class="word_count">(24w~1m)</span></li>
-                    <li><span class="section_number">1.3</span><span class="section_title"><a href="#key-notation">Key notation</a></span><span class="word_count">(70w~1m)</span></li>
-                    <li><span class="section_number">1.4</span><span class="section_title"><a href="#checks-before-you-jump-into-org-mode">Checks before you jump into Org Mode</a></span><span class="word_count">(466w~3m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="how-long-will-it-take"><span class="section_number">1.1</span><span class="section_title">How long will it take?</span></h3>
-                    <p>&lt;2018-09-16&gt; I spent at least 3 days to set up emacs, set up org mode, and make org mode play nice with Jekyll. You may finish much faster than that because you can avoid repeating some of my ordeals. You may finish slower because you encounter surprises that I didn't.</p>
-                    <p>If you're new to emacs, but don't want to spend a day configuring emacs, then don't use emacs; use Visual Studio Code or Spacemacs instead.</p>
-                    <h3 id="why-emacs"><span class="section_number">1.2</span><span class="section_title">Why emacs?</span></h3>
-                    <p>Because of org mode. If it weren't for org mode, I would never have touched emacs.</p>
-                    <p>The <a href="https://www.gnu.org/software/emacs/tour/">Emacs guided tour</a> may give some reasons.</p>
-                    <h3 id="key-notation"><span class="section_number">1.3</span><span class="section_title">Key notation</span></h3>
-                    <ul>
-                    <li><code>C-a</code> means hold Ctrl and press the A key.</li>
-                    <li><code>M-a</code> means hold Meta (Alt) and press the A key.</li>
-                    <li><code>S-a</code> means hold Shift and press the A key.</li>
-                    <li><code>RET</code> means press the Return/Enter key.</li>
-                    <li><code>LEFT</code> means press the Left Arrow key.</li>
-                    <li><code>BKSP</code> means the Backspace key. Emacs calls this key <code>DEL</code>.</li>
-                    <li><code>SPC</code> means the Space key.</li>
-                    <li><code>C-a C-b</code> means <code>C-a</code> and then <code>C-b</code>.</li>
-                    <li><code>M-x help</code> means press <code>M-x</code> and then type <code>help</code> (and press Enter if necessary).</li>
-                    </ul>
-                    <h3 id="checks-before-you-jump-into-org-mode"><span class="section_number">1.4</span><span class="section_title">Checks before you jump into Org Mode</span></h3>
-                    <p>Before you jump, check whether what you want to do is possible in Org Mode. I presume we don't want to spend too much time hacking Org Mode to make it work.</p>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">1.4.1</span><span class="section_title"><a href="#can-org-mode-do-what-you-want">Can Org Mode do what you want?</a></span><span class="word_count">(189w~1m)</span></li>
-                    <li><span class="section_number">1.4.2</span><span class="section_title"><a href="#can-you-live-with-some-org-mode-woes">Can you live with some Org Mode woes?</a></span><span class="word_count">(136w~1m)</span></li>
-                    <li><span class="section_number">1.4.3</span><span class="section_title"><a href="#are-you-willing-to-work-around-some-org-mode-annoyances">Are you willing to work around some Org Mode annoyances?</a></span><span class="word_count">(106w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="can-org-mode-do-what-you-want"><span class="section_number">1.4.1</span><span class="section_title">Can Org Mode do what you want?</span></h4>
-                    <p>If you really can't afford these limitations, don't use Org Mode.</p>
-                    <ol>
-                    <li><p>&lt;2018-11-07&gt; Can't bold/emphasize/underline/strikethrough part of word</p>
-                    <ul>
-                    <li>Org uses regular expression where it should use context-free grammar.</li>
-                    </ul></li>
-                    <li><p>&lt;2018-09-18&gt; Can't put brackets in link text</p>
-                    <p><a href="https://emacs.stackexchange.com/questions/7792/can-i-make-links-in-org-mode-that-contain-brackets-or">Can I make links in Org Mode that contain brackets? - Emacs Stack Exchange</a></p>
-                    <p>Org uses regex where it should use CFG.</p></li>
-                    <li><p>&lt;2018-09-15&gt; Can't put code block in table</p>
-                    <p><a href="https://stackoverflow.com/questions/24933135/code-blocks-inside-tables-for-org-mode">Code blocks inside tables for org-mode - Stack Overflow</a></p>
-                    <p>I left Markdown only to find out that Org Mode shares this weakness.</p>
-                    <p>Wanted: a markup that can put code blocks side-by-side in a table.</p>
-                    <p>Do we really need this? The table is going to be too wide for mobiles anyway.</p></li>
-                    <li><p>&lt;2018-09-16&gt; Can't change the title of a table of contents</p>
-                    <p>There is no documented way to do that.</p></li>
-                    <li><p>&lt;2018-09-28&gt; Can't decide between org-ref and pandoc-citeproc?</p>
-                    <p>This was in 2016. I don't know how it is in 2018.</p>
-                    <p><a href="https://github.com/jkitchin/org-ref/issues/228">https://github.com/jkitchin/org-ref/issues/228</a></p></li>
-                    <li><p>&lt;2018-10-15&gt; Org's HTML inlining is slightly more verbose than Markdown's.</p>
-                    <p>You can't just type HTML in Org Mode. For example, you can do the following in Markdown, but not Org Mode.</p>
-                    <pre class="example"><code>Hello, &lt;span class=&quot;what&quot;&gt;world&lt;/span&gt;.
-                    </code></pre>
-                    <p>You have to prefix it with <code>@@html:</code>. <a href="https://orgmode.org/manual/Quoting-HTML-tags.html">https://orgmode.org/manual/Quoting-HTML-tags.html</a></p></li>
-                    <li><p>&lt;2018-12-26&gt; Can't comma-separate footnote numbers</p>
-                    <p>Example:<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> prints something like &quot;12&quot; instead of &quot;1,2&quot;.</p></li>
-                    </ol>
-                    <h4 id="can-you-live-with-some-org-mode-woes"><span class="section_number">1.4.2</span><span class="section_title">Can you live with some Org Mode woes?</span></h4>
-                    <p>These woes are mostly non-fatal but annoying.</p>
-                    <ol>
-                    <li><p>&lt;2018-09-17&gt; Incremental search doesn't search link URLs</p></li>
-                    <li><p>&lt;2018-09-16&gt; Can't get too fancy with inline markup because Org uses regex where CFG should be used</p>
-                    <p>This has been worked around in newer org version. I can't reproduce this with org 9.1.14. They are still using regex, but they replaced the pattern with a more useful default.</p>
-                    <p>We can't insert verbatim &quot;a= b&quot;. This inserts verbatim &quot;a&quot; followed by text &quot;b=&quot;:</p>
-                    <pre><code>=a= b=
-                    </code></pre>
-                    <ul>
-                    <li><a href="https://emacs.stackexchange.com/questions/13820/inline-verbatim-and-code-with-quotes-in-org-mode">Inline verbatim and code with quotes in Org-mode - Emacs Stack Exchange</a></li>
-                    <li><a href="https://orgmode.org/worg/dev/org-syntax.html">Org Syntax (draft)</a></li>
-                    <li>There may be a workaround: <a href="https://orgmode.org/manual/Quoting-HTML-tags.html">The Org Manual: Quoting HTML tags</a>.</li>
-                    </ul></li>
-                    <li><p>&lt;2018-09-16&gt; Link text can't contain brackets</p>
-                    <p>Is this still true in org 9? <a href="https://stackoverflow.com/questions/27284913/how-to-escape-square-bracket-in-org-mode-links">emacs - How to escape square bracket in org mode links? - Stack Overflow</a></p></li>
-                    <li><p>&lt;2018-09-16&gt; org-ref: &quot;References&quot; heading should be h2, but is h1</p></li>
-                    </ol>
-                    <h4 id="are-you-willing-to-work-around-some-org-mode-annoyances"><span class="section_number">1.4.3</span><span class="section_title">Are you willing to work around some Org Mode annoyances?</span></h4>
-                    <ol>
-                    <li><p>&lt;2018-09-17&gt; Publishing moves the cursor to the beginning of buffer</p>
-                    <p>In short, <code>org-publish</code> clobbers excursion.</p>
-                    <p>To publish current file, press <code>C-c C-e P f</code>.</p>
-                    <p>The workaround is to wrap <code>org-publish</code> in <code>save-mark-and-excursion</code>.</p></li>
-                    <li><p>&lt;2018-09-16&gt; org-ref: There is an unwanted link to the bib file if there is no cite at all in the source org file</p>
-                    <p>The workaround is to remove the <code>bibliography:</code> if the document doesn't have any <code>cite:</code>.</p></li>
-                    <li><p>&lt;2018-10-09&gt; Can't change title of table of contents</p>
-                    <p>It's hardcoded in ox-html.el and ox.el.</p></li>
-                    <li><p>Magit fails with &quot;index.lock exists&quot; when we press g while it is rebasing.</p>
-                    <p>The workaround is: Don't press g while Magit is rebasing.</p></li>
-                    </ol>
-                    <h2 id="setting-up-emacs-and-org-mode"><span class="section_number">2</span><span class="section_title">Setting up Emacs and Org Mode</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">2.1</span><span class="section_title"><a href="#installing-emacs">Installing Emacs</a></span><span class="word_count">(90w~1m)</span></li>
-                    <li><span class="section_number">2.2</span><span class="section_title"><a href="#launching-emacs">Launching Emacs</a></span><span class="word_count">(24w~1m)</span></li>
-                    <li><span class="section_number">2.3</span><span class="section_title"><a href="#configuring-emacs-and-org-mode">Configuring Emacs and Org Mode</a></span><span class="word_count">(317w~2m)</span></li>
-                    <li><span class="section_number">2.4</span><span class="section_title"><a href="#entering-org-mode">Entering org mode</a></span><span class="word_count">(11w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="installing-emacs"><span class="section_number">2.1</span><span class="section_title">Installing Emacs</span></h3>
-                    <p>&lt;2018-09-16&gt; To install Emacs 26 on Ubuntu 14.04, I follow some of <a href="http://ergoemacs.org/emacs/building_emacs_on_linux.html">How to Build Emacs on Linux</a>, but I don't sudo.</p>
-                    <p>Download Emacs source code package Check its integrity. Extract it to <code>SOMEWHERE</code>.</p>
-                    <p>Install build dependencies</p>
-                    <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="fu">sudo</span> apt-get build-dep emacs24</a></code></pre></div>
-                    <p>Build Emacs from source. Close that terminal. Open a new one.</p>
-                    <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="bu">cd</span> SOMEWHERE</a>
-                    <a class="sourceLine" id="cb4-2" title="2"><span class="ex">./configure</span> --prefix=<span class="va">$HOME</span>/.local <span class="co"># assuming that $HOME doesn&#39;t contain spaces</span></a>
-                    <a class="sourceLine" id="cb4-3" title="3"><span class="fu">make</span> -j4 install <span class="co"># replace 4 with the number of cores you have</span></a></code></pre></div>
-                    <p>We assume you use bash. Ensure that <code>$HOME/.local/bin</code> is in your <code>PATH</code>. Ensure that this line is in your <code>~/.bashrc</code> file, preferably near the end.</p>
-                    <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="bu">export</span> <span class="va">PATH=</span><span class="st">&quot;</span><span class="va">$PATH</span><span class="st">:</span><span class="va">$HOME</span><span class="st">/.local/bin&quot;</span></a></code></pre></div>
-                    <p>Close the terminal. Open a new one. Entering <code>emacs --version</code> should print something like <code>GNU Emacs 26.1</code> followed by license notice.</p>
-                    <h3 id="launching-emacs"><span class="section_number">2.2</span><span class="section_title">Launching Emacs</span></h3>
-                    <p>Launch emacs from your terminal in your working directory. Use <code>emacs -fs</code> to start emacs fullscreen. Use <code>emacs -mm</code> to start emacs maximized.</p>
-                    <h3 id="configuring-emacs-and-org-mode"><span class="section_number">2.3</span><span class="section_title">Configuring Emacs and Org Mode</span></h3>
-                    <p>&lt;2018-09-17&gt; You can skip this by copying the <code>emacs.d</code> folder of my <a href="https://github.com/edom/work/">work</a> repository. But it may fail; I haven't tested it with a fresh installation. You can also copy other people's emacs config you find on the Internet.</p>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">2.3.1</span><span class="section_title"><a href="#ensuring-that-the-configuration-foldersfiles-exist">Ensuring that the configuration folders/files exist</a></span><span class="word_count">(60w~1m)</span></li>
-                    <li><span class="section_number">2.3.2</span><span class="section_title"><a href="#making-emacs-remember-where-you-left-off">Making Emacs remember where you left off</a></span><span class="word_count">(52w~1m)</span></li>
-                    <li><span class="section_number">2.3.3</span><span class="section_title"><a href="#adding-melpa">Adding MELPA</a></span><span class="word_count">(2w~1m)</span></li>
-                    <li><span class="section_number">2.3.4</span><span class="section_title"><a href="#installing-a-recent-org-mode-from-melpa">Installing a recent org mode from MELPA</a></span><span class="word_count">(19w~1m)</span></li>
-                    <li><span class="section_number">2.3.5</span><span class="section_title"><a href="#installing-org-ref-for-citing-research-papers">Installing org-ref for citing research papers</a></span><span class="word_count">(33w~1m)</span></li>
-                    <li><span class="section_number">2.3.6</span><span class="section_title"><a href="#check-your-emacs-version-and-org-mode-version">&lt;2018-09-16&gt; Check your Emacs version and Org Mode version</a></span><span class="word_count">(28w~1m)</span></li>
-                    <li><span class="section_number">2.3.7</span><span class="section_title"><a href="#restart-emacs-so-that-your-config-changes-take-effect">Restart Emacs so that your config changes take effect</a></span><span class="word_count">(9w~1m)</span></li>
-                    <li><span class="section_number">2.3.8</span><span class="section_title"><a href="#if-emacs-is-misbehaving">If Emacs is misbehaving</a></span><span class="word_count">(40w~1m)</span></li>
-                    <li><span class="section_number">2.3.9</span><span class="section_title"><a href="#configuring-org-mode">Configuring org mode</a></span><span class="word_count">(40w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="ensuring-that-the-configuration-foldersfiles-exist"><span class="section_number">2.3.1</span><span class="section_title">Ensuring that the configuration folders/files exist</span></h4>
-                    <p>Set up your emacs initialization file <code>~/.emacs.d/init.el</code>. It is an Emacs Lisp program.</p>
-                    <p>Make sure that the file <code>~/.emacs</code> does not exist; otherwise Emacs won't read <code>~/.emacs.d/init.el</code>.</p>
-                    <p>You may want to commit your modifications to your personal Git repository, and make <code>~/.emacs.d</code> a symbolic link.</p>
-                    <p>Make sure that you don't accidentally publish sensitive data (such as IRC passwords).</p>
-                    <h4 id="making-emacs-remember-where-you-left-off"><span class="section_number">2.3.2</span><span class="section_title">Making Emacs remember where you left off</span></h4>
-                    <p>Save a desktop/session so that emacs continues where you left off: <code>M-x desktop-save</code>. (Do we still need this if we already have <code>(setq desktop-save 1)</code> in the init file?)</p>
-                    <p>See also &quot;Saving Emacs Sessions&quot; in the Emacs manual. Unfortunately Emacs 24.3 doesn't save the frames and windows.</p>
-                    <h4 id="adding-melpa"><span class="section_number">2.3.3</span><span class="section_title">Adding MELPA</span></h4>
-                    <h4 id="installing-a-recent-org-mode-from-melpa"><span class="section_number">2.3.4</span><span class="section_title">Installing a recent org mode from MELPA</span></h4>
-                    <p><code>M-x package-install RET org RET</code></p>
-                    <ol>
-                    <li><p><span class="todo TODO">TODO</span> Use use-package in init file to automate installation</p></li>
-                    </ol>
-                    <h4 id="installing-org-ref-for-citing-research-papers"><span class="section_number">2.3.5</span><span class="section_title">Installing org-ref for citing research papers</span></h4>
-                    <ul>
-                    <li><a href="https://github.com/jkitchin/org-ref#installation">org-ref installation</a></li>
-                    <li><a href="https://github.com/jkitchin/org-ref">jkitchin/org-ref: org-mode modules for citations, cross-references, bibliographies in org-mode and useful bibtex tools to go with it.</a></li>
-                    <li><a href="http://viveks.info/org-mode-academic-writing-bibliographies-org-ref/">Org mode for academic writing: Bibliographies with org-ref - Vivek's Info</a></li>
-                    </ul>
-                    <h4 id="check-your-emacs-version-and-org-mode-version"><span class="section_number">2.3.6</span><span class="section_title">&lt;2018-09-16&gt; Check your Emacs version and Org Mode version</span></h4>
-                    <p>Check your Emacs version with <code>M-x emacs-version</code>. Check your Org Mode version with <code>M-x org-version</code>. This document assumes these versions:</p>
-                    <pre><code>GNU Emacs 26.1 (build 1, x86_64-pc-linux-gnu, GTK+ Version 2.24.23) of 2018-09-10
-                    Org mode version 9.1.14 (9.1.14-1-g4931fc-elpaplus @ /home/erik/.emacs.d/elpa/org-plus-contrib-20180910/)
-                    </code></pre>
-                    <h4 id="restart-emacs-so-that-your-config-changes-take-effect"><span class="section_number">2.3.7</span><span class="section_title">Restart Emacs so that your config changes take effect</span></h4>
-                    <h4 id="if-emacs-is-misbehaving"><span class="section_number">2.3.8</span><span class="section_title">If Emacs is misbehaving</span></h4>
-                    <p>If Emacs is misbehaving (and you have no idea why), try running <code>emacs -q</code>. If it runs fine, try nuking the file <code>~/.emacs</code> and the directory <code>~/.emacs.d</code>. But you will lose all your customizations and installed packages.</p>
-                    <h4 id="configuring-org-mode"><span class="section_number">2.3.9</span><span class="section_title">Configuring org mode</span></h4>
-                    <p>The default isn't always sane. Thus I have these customizations in my Emacs init file.</p>
-                    <ol>
-                    <li><p>&lt;2018-09-16&gt; Avoiding reindentation when moving trees around</p>
-                    <p>We do this to prevent unnecessary whitespace changes in version control. <a href="https://emacs.stackexchange.com/questions/41220/org-mode-disable-indentation-when-promoting-and-demoting-trees-subtrees">https://emacs.stackexchange.com/questions/41220/org-mode-disable-indentation-when-promoting-and-demoting-trees-subtrees</a></p>
-                    <pre class="elisp"><code>(setq-default org-adapt-indentation nil)
-                    </code></pre></li>
-                    <li><p>&lt;2018-09-16&gt; Removing day names from inserted dates</p>
-                    <pre class="elisp"><code>(setq org-time-stamp-formats &#39;(&quot;&lt;%Y-%m-%d&gt;&quot; . &quot;&lt;%Y-%m-%d %H:%M&gt;&quot;))
-                    </code></pre></li>
-                    </ol>
-                    <h3 id="entering-org-mode"><span class="section_number">2.4</span><span class="section_title">Entering org mode</span></h3>
-                    <p>Visit a file with <code>.org</code> extension. Alternatively, <code>M-x org-mode</code>.</p>
-                    <h2 id="editing-text-in-emacs"><span class="section_number">3</span><span class="section_title">Editing text in Emacs</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">3.1</span><span class="section_title"><a href="#inserting-text">Inserting text</a></span><span class="word_count">(11w~1m)</span></li>
-                    <li><span class="section_number">3.2</span><span class="section_title"><a href="#common-keys">Common keys</a></span><span class="word_count">(43w~1m)</span></li>
-                    <li><span class="section_number">3.3</span><span class="section_title"><a href="#discover-emacs-dont-memorize-it">Discover Emacs, don't memorize it</a></span><span class="word_count">(88w~1m)</span></li>
-                    <li><span class="section_number">3.4</span><span class="section_title"><a href="#using-buffers-and-windows">Using buffers and windows</a></span><span class="word_count">(100w~1m)</span></li>
-                    <li><span class="section_number">3.5</span><span class="section_title"><a href="#autocompletion">Autocompletion</a></span><span class="word_count">(70w~1m)</span></li>
-                    <li><span class="section_number">3.6</span><span class="section_title"><a href="#searching">Searching</a></span><span class="word_count">(65w~1m)</span></li>
-                    <li><span class="section_number">3.7</span><span class="section_title"><a href="#marking-jumping-copying-cutting-and-pasting">Marking, jumping, copying, cutting, and pasting</a></span><span class="word_count">(48w~1m)</span></li>
-                    <li><span class="section_number">3.8</span><span class="section_title"><a href="#basic-motions-moving-by-one-character-word-line">Basic motions: moving by one character, word, line</a></span><span class="word_count">(112w~1m)</span></li>
-                    <li><span class="section_number">3.9</span><span class="section_title"><a href="#indenting-and-reindenting">Indenting and reindenting</a></span><span class="word_count">(61w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="inserting-text"><span class="section_number">3.1</span><span class="section_title">Inserting text</span></h3>
-                    <p>Most of the time, you simply type the file contents.</p>
-                    <h3 id="common-keys"><span class="section_number">3.2</span><span class="section_title">Common keys</span></h3>
-                    <ul>
-                    <li>To exit Emacs, <code>C-x C-c</code>.</li>
-                    <li>To cancel a long-running action, or exit a prompt, press <code>C-g</code>.</li>
-                    <li>To find/start/open/visit a file, <code>C-x C-f</code>. The file doesn't have to exist.</li>
-                    <li>To autocomplete a file name or command name in minibuffer, press <code>TAB</code>.</li>
-                    <li>To start a shell, <code>M-x shell</code>.</li>
-                    </ul>
-                    <h3 id="discover-emacs-dont-memorize-it"><span class="section_number">3.3</span><span class="section_title">Discover Emacs, don't memorize it</span></h3>
-                    <ul>
-                    <li>To find out what a key does, press <code>C-h k</code> (describe key sequence), and then press the keys. Emacs will tell you what function the key is bound to.</li>
-                    <li>To find out what a function does, press <code>C-h f</code> and type the function name. Emacs will also tell you what keys are bound to that function.</li>
-                    <li><code>C-h ?</code> help for help</li>
-                    <li><code>C-h a</code> apropos (find command matching a given pattern)</li>
-                    <li><code>C-h i</code> info document reader; usually documents some emacs packages/plugins</li>
-                    <li><code>C-h t</code> tutorial for Emacs</li>
-                    <li><code>C-h r</code> read Emacs manual</li>
-                    </ul>
-                    <h3 id="using-buffers-and-windows"><span class="section_number">3.4</span><span class="section_title">Using buffers and windows</span></h3>
-                    <ul>
-                    <li>buffers
-                    <ul>
-                    <li><code>C-x C-f</code> opens a file or directory into a buffer</li>
-                    <li><code>C-x C-b</code> lists buffers in the other window</li>
-                    <li><code>C-x C-LEFT</code> goes to previous buffer</li>
-                    <li><code>C-x C-RIGHT</code> goes to next buffer</li>
-                    <li><code>C-x k</code> kills a buffer</li>
-                    <li><code>C-x s</code> saves some buffers</li>
-                    <li><code>C-x b</code> switches to another buffer, or opens a new buffer
-                    <ul>
-                    <li><code>C-x 4 b</code> the same, but in the other window</li>
-                    </ul></li>
-                    </ul></li>
-                    <li>windows
-                    <ul>
-                    <li><code>C-x 0</code> delete current window</li>
-                    <li><code>C-x 1</code> delete other windows (all windows except the focused one)</li>
-                    <li><code>C-x o</code> switches to another window / the other window</li>
-                    <li><code>C-x 2</code> split window below</li>
-                    <li><code>C-x 3</code> split window right</li>
-                    </ul></li>
-                    <li><code>C-x 4 0</code> kill-buffer-and-window</li>
-                    <li><code>C-x 4 C-f</code> open a file in the other window</li>
-                    </ul>
-                    <h3 id="autocompletion"><span class="section_number">3.5</span><span class="section_title">Autocompletion</span></h3>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">3.5.1</span><span class="section_title"><a href="#elisp-autocompletion">Elisp autocompletion</a></span><span class="word_count">(7w~1m)</span></li>
-                    <li><span class="section_number">3.5.2</span><span class="section_title"><a href="#org-mode-autocompletion-using-pcomplete">Org Mode autocompletion using pcomplete</a></span><span class="word_count">(32w~1m)</span></li>
-                    <li><span class="section_number">3.5.3</span><span class="section_title"><a href="#word-autocompletion-with-dabbrev-dynamic-abbreviation">Word autocompletion with dabbrev (dynamic abbreviation)</a></span><span class="word_count">(33w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="elisp-autocompletion"><span class="section_number">3.5.1</span><span class="section_title">Elisp autocompletion</span></h4>
-                    <ul>
-                    <li><code>C-M-i</code> autocomplete symbol for Emacs Lisp</li>
-                    </ul>
-                    <h4 id="org-mode-autocompletion-using-pcomplete"><span class="section_number">3.5.2</span><span class="section_title">Org Mode autocompletion using pcomplete</span></h4>
-                    <ul>
-                    <li><code>M-TAB</code> (that is likely reserved by your window manager) or <code>ESC TAB</code> or <code>C-M-i</code>. For example, type <code>#+</code> at the beginning of a line and then press <code>C-M-i</code>.</li>
-                    </ul>
-                    <h4 id="word-autocompletion-with-dabbrev-dynamic-abbreviation"><span class="section_number">3.5.3</span><span class="section_title">Word autocompletion with dabbrev (dynamic abbreviation)</span></h4>
-                    <p>This can save us from typing long words repeatedly. See <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html#Dynamic-Abbrevs">Dynamic Abbrevs - GNU Emacs Manual</a> for what these does. Try it.</p>
-                    <ul>
-                    <li><code>M-/</code> dabbrev-expand</li>
-                    <li><code>C-M-/</code> dabbrev-completion (I rarely use this)</li>
-                    </ul>
-                    <h3 id="searching"><span class="section_number">3.6</span><span class="section_title">Searching</span></h3>
-                    <ul>
-                    <li>entering incremental search
-                    <ul>
-                    <li><code>C-s</code> forward incremental search</li>
-                    <li><code>C-r</code> reverse incremental search</li>
-                    <li><code>C-M-s</code> forward incremental search regex
-                    <ul>
-                    <li>The regex syntax is somewhere in <a href="https://www.gnu.org/software/emacs/tour/">A guided tour of Emacs</a></li>
-                    </ul></li>
-                    </ul></li>
-                    <li>While in incremental search prompt:
-                    <ul>
-                    <li><code>C-s</code> go to next occurrence</li>
-                    <li><code>C-r</code> go to previous occurrence</li>
-                    <li><code>M-p</code> previous item in search history</li>
-                    <li><code>M-n</code> next item in search history</li>
-                    </ul></li>
-                    <li><code>C-h k C-s</code> describe your options while in incremental search prompt</li>
-                    <li><code>M-%</code> (that is Alt+Shift+5 on an English QWERTY keyboard) query replace</li>
-                    </ul>
-                    <h3 id="marking-jumping-copying-cutting-and-pasting"><span class="section_number">3.7</span><span class="section_title">Marking, jumping, copying, cutting, and pasting</span></h3>
-                    <ul>
-                    <li>rapidly moving between two locations
-                    <ul>
-                    <li><code>C-SPC</code> set mark to current point</li>
-                    <li><code>C-x C-x</code> swap mark and current point</li>
-                    </ul></li>
-                    <li>while marking
-                    <ul>
-                    <li>cutting
-                    <ul>
-                    <li><code>C-w</code> kill region (cut it into clipboard)</li>
-                    <li><code>M-w</code> copy region into clipboard</li>
-                    </ul></li>
-                    </ul></li>
-                    <li><code>C-k</code> kill the rest of current line</li>
-                    <li><code>C-y</code> paste from clipboard</li>
-                    <li><code>C-S-BKSP</code> kill entire line</li>
-                    </ul>
-                    <p>Some commands set the mark.</p>
-                    <h3 id="basic-motions-moving-by-one-character-word-line"><span class="section_number">3.8</span><span class="section_title">Basic motions: moving by one character, word, line</span></h3>
-                    <ul>
-                    <li>moving by a character or a line
-                    <ul>
-                    <li>horizontally/characterwise
-                    <ul>
-                    <li><code>C-b</code> moves the cursor back to the previous character</li>
-                    <li><code>C-f</code> moves the cursor forward to the next character</li>
-                    <li><code>C-a</code> moves the cursor to the beginning of line</li>
-                    <li><code>C-e</code> moves the cursor to the ending of line</li>
-                    </ul></li>
-                    <li>vertically/linewise
-                    <ul>
-                    <li><code>C-n</code> moves the cursor down to the next line</li>
-                    <li><code>C-p</code> moves the cursor up to the previous line</li>
-                    </ul></li>
-                    </ul></li>
-                    <li>moving by a screen
-                    <ul>
-                    <li><code>M-v</code> goes up a screen</li>
-                    <li><code>C-v</code> goes down a screen</li>
-                    <li><code>C-M-v</code> goes down a screen in the other window</li>
-                    <li><code>C-M-S-v</code> goes up a screen in the other window</li>
-                    </ul></li>
-                    </ul>
-                    <p>Emacs call scroll-<strong>up</strong>-command for what I think as going <strong>down</strong> a screen. Emacs thinks about moving the text. I think about moving the viewport.</p>
-                    <h3 id="indenting-and-reindenting"><span class="section_number">3.9</span><span class="section_title">Indenting and reindenting</span></h3>
-                    <ul>
-                    <li><code>TAB</code> indents in elisp mode, but not in org mode</li>
-                    <li><code>C-M-\</code> (indent-region) reindents region according to current mode</li>
-                    <li><code>M-\</code> remove space around cursor</li>
-                    <li><code>C-u 4 M-x indent-rigidly</code> deepens indentation of the selected (marked) region by 4 units regardless of mode</li>
-                    </ul>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">3.9.1</span><span class="section_title"><a href="#woe-inconsistent-newlines-c-j-and-c-m">&lt;2018-09-17&gt; Woe: inconsistent newlines: C-j and C-m</a></span><span class="word_count">(23w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="woe-inconsistent-newlines-c-j-and-c-m"><span class="section_number">3.9.1</span><span class="section_title">&lt;2018-09-17&gt; Woe: inconsistent newlines: C-j and C-m</span></h4>
-                    <p>In org mode: <code>C-j</code> inserts newline and indents; <code>C-m</code> inserts newline. In elisp mode, they are flipped.</p>
-                    <h2 id="navigating-the-file-system-using-dired"><span class="section_number">4</span><span class="section_title">Navigating the file system using dired</span></h2>
-                    <p>Input <code>C-x C-f</code>, input a directory path, and press Enter. Emacs opens Dired (directory edit) mode.</p>
-                    <ul>
-                    <li>Navigating:
-                    <ul>
-                    <li><code>BKSP</code> moves the cursor up one item.</li>
-                    <li><code>SPC</code> moves the cursor down one item.</li>
-                    <li><code>g</code> rereads the directory.</li>
-                    <li><code>l</code> (small L) refreshes the display. Don't use this; use <code>g</code> instead.</li>
-                    </ul></li>
-                    <li>Opening:
-                    <ul>
-                    <li><code>RET</code> opens the item in the current window. If it's a directory, emacs opens another dired. If it's a file, emacs opens the editor.
-                    <ul>
-                    <li><code>o</code> (small O) opens the item in the other window.</li>
-                    </ul></li>
-                    </ul></li>
-                    </ul>
-                    <p>Read the dired info documentation.</p>
-                    <p>Use <code>C-h m</code> or <code>M-x describe-mode</code> to get some help.</p>
-                    <ul>
-                    <li>Unanswered question:
-                    <ul>
-                    <li>What is the Emacs equivalent of VSCode Ctrl+P (open file fuzzy search / approximate string matching / subsequence matching)?
-                    <ul>
-                    <li>Completion styles.
-                    <ul>
-                    <li><a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Completion-Styles.html">Completion Styles - GNU Emacs Manual</a></li>
-                    </ul></li>
-                    <li>arcane stuffs
-                    <ul>
-                    <li><a href="https://emacs.stackexchange.com/questions/13500/fuzzy-completion-style">minibuffer - fuzzy completion-style - Emacs Stack Exchange</a></li>
-                    </ul></li>
-                    </ul></li>
-                    </ul></li>
-                    </ul>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">4.1</span><span class="section_title"><a href="#moving-files-into-another-directory-updating-buffers">Moving files into another directory, updating buffers</a></span><span class="word_count">(36w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="moving-files-into-another-directory-updating-buffers"><span class="section_number">4.1</span><span class="section_title">Moving files into another directory, updating buffers</span></h3>
-                    <ul>
-                    <li>In dired (note upper and lower case shortcuts):
-                    <ul>
-                    <li>Mark the files with <code>m</code> or unmark with <code>u</code>.</li>
-                    <li>Press <code>R</code>.</li>
-                    <li>Enter the destination directory.</li>
-                    <li>Press <code>RET</code>.</li>
-                    </ul></li>
-                    <li><a href="http://pragmaticemacs.com/emacs/dired-marking-copying-moving-and-deleting-files/">Dired: marking, copying, moving and deleting files | Pragmatic Emacs</a></li>
-                    </ul>
-                    <h2 id="editing-in-org-mode"><span class="section_number">5</span><span class="section_title">Editing in Org Mode</span></h2>
-                    <p>We'll mostly be inserting headers (lines that begin with asterisks) and bodies. Sometimes we make a header a TODO item. Sometimes we insert a date. Sometimes we move trees around.</p>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">5.1</span><span class="section_title"><a href="#inserting-editing-and-moving-headers-and-subtrees">Inserting, editing, and moving headers and subtrees</a></span><span class="word_count">(68w~1m)</span></li>
-                    <li><span class="section_number">5.2</span><span class="section_title"><a href="#inserting-code-blocks-quickly">Inserting code blocks quickly</a></span><span class="word_count">(25w~1m)</span></li>
-                    <li><span class="section_number">5.3</span><span class="section_title"><a href="#making-todos">Making TODOs</a></span><span class="word_count">(25w~1m)</span></li>
-                    <li><span class="section_number">5.4</span><span class="section_title"><a href="#navigating-an-org-file">Navigating an org file</a></span><span class="word_count">(42w~1m)</span></li>
-                    <li><span class="section_number">5.5</span><span class="section_title"><a href="#inserting-lists">Inserting lists</a></span><span class="word_count">(43w~1m)</span></li>
-                    <li><span class="section_number">5.6</span><span class="section_title"><a href="#inserting-dates">Inserting dates</a></span><span class="word_count">(84w~1m)</span></li>
-                    <li><span class="section_number">5.7</span><span class="section_title"><a href="#links">Links</a></span><span class="word_count">(74w~1m)</span></li>
-                    <li><span class="section_number">5.8</span><span class="section_title"><a href="#searching-hidden-text-such-as-link-url">Searching hidden text such as link URL</a></span><span class="word_count">(10w~1m)</span></li>
-                    <li><span class="section_number">5.9</span><span class="section_title"><a href="#inserting-table-of-contents">Inserting table of contents</a></span><span class="word_count">(4w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="inserting-editing-and-moving-headers-and-subtrees"><span class="section_number">5.1</span><span class="section_title">Inserting, editing, and moving headers and subtrees</span></h3>
-                    <ul>
-                    <li>Begin the line with one or more asterisks (<code>*</code>).</li>
-                    <li>moving subtrees
-                    <ul>
-                    <li><code>M-UP</code> move subtree up</li>
-                    <li><code>M-DOWN</code> move subtree down</li>
-                    </ul></li>
-                    <li>promoting and demoting
-                    <ul>
-                    <li><code>M-LEFT</code> promote header one level shallower</li>
-                    <li><code>M-RIGHT</code> demote header one level deeper</li>
-                    <li><code>M-S-LEFT</code> promote subtree one level shallower</li>
-                    <li><code>M-S-RIGHT</code> demote subtree one level deeper</li>
-                    </ul></li>
-                    <li><code>C-c C-w</code> refile (move) subtree into (as a child of) a level-1 heading in the same org file. See the help of the function <code>org-refile</code>.</li>
-                    </ul>
-                    <h3 id="inserting-code-blocks-quickly"><span class="section_number">5.2</span><span class="section_title">Inserting code blocks quickly</span></h3>
-                    <p>Type <code>&lt;s</code> and press <code>TAB</code>.</p>
-                    <ul>
-                    <li><a href="https://emacs.stackexchange.com/questions/12841/quickly-insert-source-blocks-in-org-mode">org babel - Quickly insert source blocks in org mode - Emacs Stack Exchange</a></li>
-                    <li><a href="https://orgmode.org/manual/Easy-templates.html">The Org Manual: Easy templates</a></li>
-                    </ul>
-                    <h3 id="making-todos"><span class="section_number">5.3</span><span class="section_title">Making TODOs</span></h3>
-                    <ul>
-                    <li><code>S-LEFT</code> / <code>S-RIGHT</code> cycle item TODO state</li>
-                    <li><code>S-M-RET</code> insert TODO below current item</li>
-                    <li><code>S-UP</code> / <code>S-DOWN</code> change item priority (see &quot;TODO Items &gt; Priorities&quot; in manual)</li>
-                    </ul>
-                    <h3 id="navigating-an-org-file"><span class="section_number">5.4</span><span class="section_title">Navigating an org file</span></h3>
-                    <ul>
-                    <li>cycling visibility
-                    <ul>
-                    <li><code>TAB</code> cycle subtree visibility</li>
-                    <li><code>S-TAB</code> cycle global visibility</li>
-                    <li>See also Org Mode manual &quot;Visibility cycling&quot;.</li>
-                    </ul></li>
-                    <li>moving around
-                    <ul>
-                    <li><code>C-c C-n</code> next heading</li>
-                    <li><code>C-c C-p</code> previous heading</li>
-                    <li><code>C-c C-f</code> next heading same level</li>
-                    <li><code>C-c C-b</code> previous heading same level</li>
-                    <li><code>C-c C-u</code> backward to higher level heading</li>
-                    <li><code>C-c C-j</code> jump/goto</li>
-                    </ul></li>
-                    </ul>
-                    <h3 id="inserting-lists"><span class="section_number">5.5</span><span class="section_title">Inserting lists</span></h3>
-                    <ul>
-                    <li>Begin the line with a hyphen (<code>-</code>).</li>
-                    <li><code>M-RET</code> to enter the next item.</li>
-                    <li><code>RET</code> to end the list.</li>
-                    <li><code>TAB</code> to indent the current item one level inward.</li>
-                    <li><code>S-TAB</code> to unindent the current item one level outward.</li>
-                    </ul>
-                    <p>Convert lines to lists using mark and <code>C-x r t</code>: <a href="https://stackoverflow.com/questions/2250930/emacs-orgmode-how-to-make-a-list-from-a-block-of-lines">https://stackoverflow.com/questions/2250930/emacs-orgmode-how-to-make-a-list-from-a-block-of-lines</a></p>
-                    <h3 id="inserting-dates"><span class="section_number">5.6</span><span class="section_title">Inserting dates</span></h3>
-                    <ul>
-                    <li><code>C-c .</code> open calendar to insert date; the date will show up in agenda.</li>
-                    <li><code>C-c ! RET</code> open calendar to insert date; the date won't show up in agenda.</li>
-                    <li>In the calendar
-                    <ul>
-                    <li>The default selected date is today date.</li>
-                    <li>S-LEFT / S-RIGHT move selection 1 day backward/forward</li>
-                    <li>M-S-LEFT / M-S-RIGHT move selection 1 month backward/forward</li>
-                    <li>&lt; / &gt; scroll calendar by 1 month</li>
-                    <li>C-v / M-v scroll calendar by 3 months</li>
-                    <li>M-S-UP / M-S-DOWN scroll calendar by 1 year</li>
-                    </ul></li>
-                    <li><a href="https://emacs.stackexchange.com/questions/37430/change-date-from-active-to-inactive">org mode - Change date from active to inactive - Emacs Stack Exchange</a></li>
-                    </ul>
-                    <h3 id="links"><span class="section_number">5.7</span><span class="section_title">Links</span></h3>
-                    <ul>
-                    <li>The syntax is <code>[[URL][text]]</code>.</li>
-                    <li><code>C-c C-l</code> edit link if cursor is on a link; otherwise insert link.</li>
-                    <li>To copy the URL of an Org link to clipboard, use the workaround <code>C-c C-l C-a C-k C-g</code>.</li>
-                    <li><code>C-c C-o</code> open link. If the target is a local org file, Emacs will open it in new window. Press <code>C-c 0</code> to close the currently focused window.</li>
-                    </ul>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">5.7.1</span><span class="section_title"><a href="#chrome-bookmarklet-make-org-mode-link-for-page">Chrome bookmarklet: Make org-mode link for page</a></span><span class="word_count">(15w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="chrome-bookmarklet-make-org-mode-link-for-page"><span class="section_number">5.7.1</span><span class="section_title">Chrome bookmarklet: Make org-mode link for page</span></h4>
-                    <p>This may produce invalid markup. Check before you copy.</p>
-                    <pre><code>javascript:window.prompt(&quot;Copy to clipboard: Ctrl+C, Enter&quot;, &quot;[[&quot; + document.URL + &quot;][&quot; + document.title + &quot;]]&quot;);
-                    </code></pre>
-                    <h3 id="searching-hidden-text-such-as-link-url"><span class="section_number">5.8</span><span class="section_title">Searching hidden text such as link URL</span></h3>
-                    <ul>
-                    <li><a href="https://emacs.stackexchange.com/questions/21208/search-and-replace-invisible-url-link-in-org-mode">https://emacs.stackexchange.com/questions/21208/search-and-replace-invisible-url-link-in-org-mode</a>
-                    <ul>
-                    <li><code>M-x org-toggle-link-display</code></li>
-                    <li>The <code>search-invisible</code> variable</li>
-                    </ul></li>
-                    </ul>
-                    <h3 id="inserting-table-of-contents"><span class="section_number">5.9</span><span class="section_title">Inserting table of contents</span></h3>
-                    <p><a href="https://orgmode.org/manual/Table-of-contents.html">https://orgmode.org/manual/Table-of-contents.html</a></p>
-                    <h2 id="making-org-play-nice-with-jekyll"><span class="section_number">6</span><span class="section_title">Making Org play nice with Jekyll</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">6.1</span><span class="section_title"><a href="#other-peoples-options">Other people's options</a></span><span class="word_count">(101w~1m)</span></li>
-                    <li><span class="section_number">6.2</span><span class="section_title"><a href="#my-choice-elisp-program-with-proper-metadata-mapping">My choice: Elisp program with proper metadata mapping</a></span><span class="word_count">(19w~1m)</span></li>
-                    <li><span class="section_number">6.3</span><span class="section_title"><a href="#exporting-org-to-html-for-use-with-jekyll">Exporting Org to HTML for use with Jekyll</a></span><span class="word_count">(35w~1m)</span></li>
-                    <li><span class="section_number">6.4</span><span class="section_title"><a href="#porting-some-old-markdown-content-to-org-mode">&lt;2018-09-16&gt; Porting some old Markdown content to Org Mode</a></span><span class="word_count">(302w~2m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="other-peoples-options"><span class="section_number">6.1</span><span class="section_title">Other people's options</span></h3>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">6.1.1</span><span class="section_title"><a href="#emacs-lisp-programs-with-improper-metadata-mapping">Emacs Lisp programs with improper metadata mapping</a></span><span class="word_count">(54w~1m)</span></li>
-                    <li><span class="section_number">6.1.2</span><span class="section_title"><a href="#emacs-lisp-programs-with-proper-metadata-mapping">Emacs Lisp programs with proper metadata mapping</a></span><span class="word_count">(22w~1m)</span></li>
-                    <li><span class="section_number">6.1.3</span><span class="section_title"><a href="#jekyll-plugins">Jekyll plugins</a></span><span class="word_count">(10w~1m)</span></li>
-                    <li><span class="section_number">6.1.4</span><span class="section_title"><a href="#too-idealistic">Too idealistic</a></span><span class="word_count">(16w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="emacs-lisp-programs-with-improper-metadata-mapping"><span class="section_number">6.1.1</span><span class="section_title">Emacs Lisp programs with improper metadata mapping</span></h4>
-                    <p>I want Emacs to transform in-buffer setting to front matter. I don't want <code>BEGIN_HTML</code> or <code>BEGIN_EXPORT</code>. I want proper metadata mapping <code>#+SOMETHING</code>. The proper solution is to define a custom backend that derives the preamble from the org file metadata.</p>
-                    <p>I reject these proposed solutions.</p>
-                    <ul>
-                    <li><a href="https://orgmode.org/worg/org-tutorials/org-jekyll.html">Official worg tutorial</a></li>
-                    <li><a href="http://cute-jumper.github.io/emacs/2013/10/06/orgmode-to-github-pages-with-jekyll">Junpeng Qiu's</a></li>
-                    <li><a href="https://levlaz.org/using-org-mode-with-jekyll/">Lev Lazinskiy's</a></li>
-                    </ul>
-                    <h4 id="emacs-lisp-programs-with-proper-metadata-mapping"><span class="section_number">6.1.2</span><span class="section_title">Emacs Lisp programs with proper metadata mapping</span></h4>
-                    <p>One problem: I write wiki not blog.</p>
-                    <ul>
-                    <li><a href="http://ardumont.github.io/blogging-with-org-and-jekyll-with-org2jekyll">Antoine R. Dumont</a>'s <a href="https://github.com/ardumont/org2jekyll">org2jekyll</a></li>
-                    <li><a href="http://endlessparentheses.com/how-i-blog-one-year-of-posts-in-a-single-org-file.html">Adrian Malabarba</a>'s <a href="https://github.com/Malabarba/ox-jekyll-subtree">ox-jekyll extension</a></li>
-                    <li><a href="https://github.com/yoshinari-nomura/org-octopress">yoshinari-nomura/org-octopress: org-mode in octopress</a></li>
-                    </ul>
-                    <h4 id="jekyll-plugins"><span class="section_number">6.1.3</span><span class="section_title">Jekyll plugins</span></h4>
-                    <p>Interesting: Jekyll plugin <a href="https://github.com/eggcaker/jekyll-org">eggcaker/jekyll-org</a>. But does it support org-ref?</p>
-                    <h4 id="too-idealistic"><span class="section_number">6.1.4</span><span class="section_title">Too idealistic</span></h4>
-                    <p><a href="https://stackoverflow.com/questions/19019468/how-to-render-org-mode-file-from-jekyll-github-without-converting-org-to-html">How to render org-mode file from jekyll/github without converting .org to .html? - Stack Overflow</a></p>
-                    <h3 id="my-choice-elisp-program-with-proper-metadata-mapping"><span class="section_number">6.2</span><span class="section_title">My choice: Elisp program with proper metadata mapping</span></h3>
-                    <p>I mostly follow the official tutorial, but I do proper metadata mapping.</p>
-                    <h3 id="exporting-org-to-html-for-use-with-jekyll"><span class="section_number">6.3</span><span class="section_title">Exporting Org to HTML for use with Jekyll</span></h3>
-                    <p>I have already had a wiki in Jekyll.</p>
-                    <ul>
-                    <li><code>C-c C-e h h</code> export thisfile.org to thisfile.html; silently overwrite the output</li>
-                    <li><code>C-c C-e h H</code> export to buffer; don't create file</li>
-                    </ul>
-                    <h3 id="porting-some-old-markdown-content-to-org-mode"><span class="section_number">6.4</span><span class="section_title">&lt;2018-09-16&gt; Porting some old Markdown content to Org Mode</span></h3>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">6.4.1</span><span class="section_title"><a href="#options">Options</a></span><span class="word_count">(47w~1m)</span></li>
-                    <li><span class="section_number">6.4.2</span><span class="section_title"><a href="#preliminary-clean-up-remove-yaml-front-matter-jekyll-tags-and-liquid-tags">Preliminary clean-up: Remove YAML front-matter, Jekyll tags, and Liquid tags</a></span><span class="word_count">(66w~1m)</span></li>
-                    <li><span class="section_number">6.4.3</span><span class="section_title"><a href="#use-pandoc">Use Pandoc</a></span><span class="word_count">(42w~1m)</span></li>
-                    <li><span class="section_number">6.4.4</span><span class="section_title"><a href="#check-for-wrong-code-blocks-inline-markups-maths-tables">Check for wrong code blocks, inline markups, maths, tables</a></span><span class="word_count">(9w~1m)</span></li>
-                    <li><span class="section_number">6.4.5</span><span class="section_title"><a href="#dont-follow-this-manual-way">&lt;2018-09-17&gt; Don't follow this manual way</a></span><span class="word_count">(134w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="options"><span class="section_number">6.4.1</span><span class="section_title">Options</span></h4>
-                    <ul>
-                    <li><a href="https://emacs.stackexchange.com/questions/5465/how-to-migrate-markdown-files-to-emacs-org-mode-format">How to migrate Markdown files to Emacs org mode format - Emacs Stack Exchange</a>
-                    <ul>
-                    <li>Pandoc can convert Markdown to Org. There is even <a href="https://pandoc.org/try/">Try pandoc online</a>, but don't post sensitive data online, such as password, company secret, etc.</li>
-                    </ul></li>
-                    </ul>
-                    <p>We want to convert from Jekyll GitHub-Flavored Markdown to Org Mode.</p>
-                    <h4 id="preliminary-clean-up-remove-yaml-front-matter-jekyll-tags-and-liquid-tags"><span class="section_number">6.4.2</span><span class="section_title">Preliminary clean-up: Remove YAML front-matter, Jekyll tags, and Liquid tags</span></h4>
-                    <p>Remove the YAML front-matter. Later, manually add the corresponding Org Mode metadata into the output. (Or white a Lua script? Pandoc mentions something about Lua scripting.)</p>
-                    <p>Manually resolve Jekyll link tags such as <code>{% raw %}{% link something.md %}{% endraw %}</code>. You can use regex if your html file name always coincides with the source md file name.</p>
-                    <h4 id="use-pandoc"><span class="section_number">6.4.3</span><span class="section_title">Use Pandoc</span></h4>
-                    <p>&lt;2018-09-18&gt; This assumes Pandoc 2.3. Don't use the one that comes with Ubuntu 14.04; it's too old.</p>
-                    <p><a href="https://github.com/jgm/pandoc/releases/tag/2.3">Download statically-linked Pandoc 2.3</a> for your operating system.</p>
-                    <pre><code>pandoc --from markdown --to org --wrap=preserve --output OUTPUT.md INPUT.md
-                    </code></pre>
-                    <p>The option <code>--wrap=preserve</code> is illustrated in <a href="https://stackoverflow.com/questions/26066621/preserve-line-breaks-in-pandoc-markdown-latex-conversion">Preserve Line Breaks in Pandoc Markdown -&gt; LaTeX Conversion - Stack Overflow</a>.</p>
-                    <h4 id="check-for-wrong-code-blocks-inline-markups-maths-tables"><span class="section_number">6.4.4</span><span class="section_title">Check for wrong code blocks, inline markups, maths, tables</span></h4>
-                    <h4 id="dont-follow-this-manual-way"><span class="section_number">6.4.5</span><span class="section_title">&lt;2018-09-17&gt; Don't follow this manual way</span></h4>
-                    <p>The proper solution is to write a program that transforms Markdown AST to Org AST, but the amount of Markdown I want to convert does not justify the effort of writing such program. Thus I use Visual Studio Code and regexes to transform some files manually.</p>
-                    <p>(&lt;2018-09-17&gt; Someone else already wrote that program. It's called Pandoc.)</p>
-                    <p>These regexes don't work if any wildcard matches a funny character. We need context-free grammar for that.</p>
-                    <ol>
-                    <li><p>Converting links</p>
-                    <p>VSCode regex replace pattern for converting Markdown links to Org Mode links:</p>
-                    <pre><code>\[(.*)\]\((.*)\)
-                    [[$2][$1]]
-                    </code></pre></li>
-                    <li><p>Converting headers</p>
-                    <p>This is VSCode regex replace pattern for converting Markdown headers to Org Mode headers. Repeat until there is no matches. Beware of inadvertently matching Bash comments if any.</p>
-                    <p>There should be a trailing space after every of these regexes.</p>
-                    <pre><code>^##
-                    
-                    *
-                    
-                    ^###
-                    **
-                    
-                    ^####
-                    ***
-                    
-                    etc.
-                    </code></pre></li>
-                    <li><p>Backslashes, code blocks, and inline code</p>
-                    <p>Replace <code>`</code> with <code>=</code>.</p></li>
-                    </ol>
-                    <h2 id="getting-more-help"><span class="section_number">7</span><span class="section_title">Getting more help</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">7.1</span><span class="section_title"><a href="#online-introductory-materials">Online introductory materials</a></span><span class="word_count">(27w~1m)</span></li>
-                    <li><span class="section_number">7.2</span><span class="section_title"><a href="#org-mode-introductory-materials">Org Mode introductory materials</a></span><span class="word_count">(30w~1m)</span></li>
-                    <li><span class="section_number">7.3</span><span class="section_title"><a href="#reading-the-org-mode-manual">Reading the Org Mode manual</a></span><span class="word_count">(68w~1m)</span></li>
-                    <li><span class="section_number">7.4</span><span class="section_title"><a href="#navigating-an-info-document">Navigating an info document</a></span><span class="word_count">(69w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="online-introductory-materials"><span class="section_number">7.1</span><span class="section_title">Online introductory materials</span></h3>
-                    <ul>
-                    <li>Read the emacs manual in emacs: press <code>C-h r</code>.</li>
-                    <li>Open the info browser: press <code>C-h i</code>.</li>
-                    <li><a href="http://blog.vivekhaldar.com/post/3996068979/the-levels-of-emacs-proficiency">Vivek Haldar — The levels of Emacs proficiency</a></li>
-                    <li><a href="http://ergoemacs.org/emacs/emacs.html">Xah Lee's Emacs tutorial</a></li>
-                    </ul>
-                    <h3 id="org-mode-introductory-materials"><span class="section_number">7.2</span><span class="section_title">Org Mode introductory materials</span></h3>
-                    <ul>
-                    <li><a href="https://orgmode.org/">Org mode for Emacs – Your Life in Plain Text</a></li>
-                    <li><a href="https://orgmode.org/worg/org-tutorials/org-taskjuggler.html">Creating Gantt charts by Exporting to TaskJuggler</a></li>
-                    <li>Learning org-mode from others
-                    <ul>
-                    <li><a href="http://doc.norang.ca/org-mode.html">Org Mode - Organize Your Life In Plain Text!</a></li>
-                    </ul></li>
-                    </ul>
-                    <h3 id="reading-the-org-mode-manual"><span class="section_number">7.3</span><span class="section_title">Reading the Org Mode manual</span></h3>
-                    <p>Read the manual with <code>M-x org-info</code>. However, on Ubuntu 14.04, there is a catch: <code>M-x org-version</code> says 8.2.4, but emacs comes with its own org-mode 7.9.3f documentation in <code>/usr/share/info/emacs-24</code> that precedes <code>/usr/share/info</code>. Use <code>C-u C-h i /usr/share/info/org.gz RET</code> to open the correct documentation.</p>
-                    <p>There is a shorter HTML version online: <a href="https://orgmode.org/guide/">the compact org-mode guide</a>, but it's more convenient to browse the info document in emacs.</p>
-                    <h3 id="navigating-an-info-document"><span class="section_number">7.4</span><span class="section_title">Navigating an info document</span></h3>
-                    <ul>
-                    <li><code>q</code> quits the info viewer</li>
-                    <li><code>RET</code> follows the link under cursor</li>
-                    <li><code>TAB</code> moves the cursor to the next link</li>
-                    <li><code>S-TAB</code> moves the cursor to the previous link</li>
-                    <li><code>l</code> (small L) goes back to the previous page in your browsing history</li>
-                    <li><code>u</code> goes up to the parent page (of the current page)</li>
-                    <li><code>n</code> goes to the next page</li>
-                    <li><code>p</code> goes to the previous page</li>
-                    <li><code>h</code> brings up help about how to use the info viewer</li>
-                    </ul>
-                    <h2 id="programming-in-emacs-lisp"><span class="section_number">8</span><span class="section_title">Programming in Emacs Lisp</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">8.1</span><span class="section_title"><a href="#basics">Basics</a></span><span class="word_count">(179w~1m)</span></li>
-                    <li><span class="section_number">8.2</span><span class="section_title"><a href="#suggested-workflow">Suggested workflow</a></span><span class="word_count">(51w~1m)</span></li>
-                    <li><span class="section_number">8.3</span><span class="section_title"><a href="#debugging-emacs-lisp-using-trace.el">Debugging Emacs Lisp using trace.el</a></span><span class="word_count">(143w~1m)</span></li>
-                    <li><span class="section_number">8.4</span><span class="section_title"><a href="#comment-indentation-surprises">Comment indentation surprises</a></span><span class="word_count">(15w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="basics"><span class="section_number">8.1</span><span class="section_title">Basics</span></h3>
-                    <ul>
-                    <li><code>M-\</code> delete all spaces and tabs around point</li>
-                    <li><code>C-M-k</code> kill s-expression</li>
-                    <li><code>C-x C-e</code> eval last s-expression before point</li>
-                    <li>indenting/formatting
-                    <ul>
-                    <li><code>C-M-\</code> indent region</li>
-                    <li><code>M-x indent-sexp</code></li>
-                    </ul></li>
-                    <li>partial reloading
-                    <ul>
-                    <li><code>C-M-x</code> or <code>M-x eval-defun</code></li>
-                    <li><code>M-x eval-region</code></li>
-                    </ul></li>
-                    <li>setq</li>
-                    <li>add-to-list</li>
-                    <li>load</li>
-                    <li>load-path</li>
-                    <li>funcall</li>
-                    </ul>
-                    <p>For someone used to Scheme, Emacs Lisp is unpleasant. 2018-09-12: When will Guile Emacs be mainstream?</p>
-                    <ul>
-                    <li>How do I define a local function?
-                    <ul>
-                    <li>You define it with let and lambda, as in Scheme. But you call it by prepending funcall. If in Scheme you write <code>(f a b)</code>, then in Emacs Lisp you write <code>(funcall f a b)</code>.
-                    <ul>
-                    <li>Why do I need this funcall noise? Because it's Lisp-2. If you don't like that, and you don't mind depending on the <code>cl</code> package, then you can use <code>flet</code> as described in <a href="https://www.emacswiki.org/emacs/LocalFunctions">EmacsWiki: Local Functions</a>. However, <code>cl</code> is a big package; it's a waste of dependencies if you only use <code>flet</code>.</li>
-                    </ul></li>
-                    </ul></li>
-                    <li>Warts for historical reasons
-                    <ul>
-                    <li>Lexical scoping is not the default, probably because it's easier to write a dynamic-binding interpreter than a .</li>
-                    <li>Emacs Lisp doesn't have proper tail calls.</li>
-                    </ul></li>
-                    <li>Contentious
-                    <ul>
-                    <li>Lisp macro is simpler than Scheme macro, but Lisp macro is unhygienic.</li>
-                    </ul></li>
-                    <li><a href="http://xahlee.info/comp/Common_Lisp_quotations.html">Famous Programers on How Common Lisp Sucks</a></li>
-                    <li><a href="https://www.emacswiki.org/emacs/WhyDoesElispSuck">EmacsWiki: Why Does Elisp Suck</a></li>
-                    <li><a href="https://www.emacswiki.org/emacs/EmacsLispLimitations">EmacsWiki: Emacs Lisp Limitations</a></li>
-                    </ul>
-                    <h3 id="suggested-workflow"><span class="section_number">8.2</span><span class="section_title">Suggested workflow</span></h3>
-                    <p>This example is for developing org mode:</p>
-                    <p>Run several emacs processes:</p>
-                    <ul>
-                    <li>In workspace 1, run <code>emacs -mm</code> for writing Emacs Lisp code.</li>
-                    <li>In workspace 2, run <code>emacs -fh --no-desktop --visit ORGFILE</code> for testing. We'll often restart this instance.</li>
-                    <li>In workspace 2, run <code>emacs -Q -fh --eval '(info &quot;org&quot;)'</code> for reading the org mode manual.</li>
-                    </ul>
-                    <h3 id="debugging-emacs-lisp-using-trace.el"><span class="section_number">8.3</span><span class="section_title">Debugging Emacs Lisp using trace.el</span></h3>
-                    <p>&lt;2018-09-15&gt; My use case: Debug my custom org-mode exporter for Jekyll. I want to dump the plist passed to <code>my-front-matter</code>.</p>
-                    <p>Emacs Lisp manual chapter &quot;Debugging Lisp programs&quot; mentions <code>trace.el</code>. The usage instructions are near the beginning of <a href="https://github.com/emacs-mirror/emacs/blob/emacs-26.1/lisp/emacs-lisp/trace.el">Emacs 26.1 trace.el source code</a>, which also documents some limitations.</p>
-                    <p>The <code>trace.el</code> method is the most limited, but it is the simplest to use, among the options.</p>
-                    <p>Here are the steps.</p>
-                    <ul>
-                    <li><p>Install advices. Put cursor after closing paren, and then <code>C-x C-e</code> to eval the sexp.</p>
-                    <pre class="elisp"><code>;; replace the function name symbol with yours
-                    (trace-function-background &#39;myhtml-inner-template)
-                    (trace-function-background &#39;my-front-matter)
-                    </code></pre></li>
-                    <li>Do something that will run the function. In my case, I run <code>M-x my-org-export-for-jekyll</code>.</li>
-                    <li>Open the <code>*trace-output*</code> buffer (using <code>C-x b</code>).</li>
-                    <li>Prettify the s-expression: Move the cursor to the opening paren, and then <code>C-u M-x indent-pp-sexp</code>.</li>
-                    <li>Remove noisy s-expression such as <code>:exported-data</code> by using <code>C-M-k</code> (<code>M-x kill-sexp</code>). This can also remove a long string.</li>
-                    <li><p>After you have finished debugging, remove advices (or just restart Emacs).</p>
-                    <pre class="elisp"><code>(untrace-all)
-                    </code></pre></li>
-                    </ul>
-                    <h3 id="comment-indentation-surprises"><span class="section_number">8.4</span><span class="section_title">Comment indentation surprises</span></h3>
-                    <p>Automatic indentation of comments <a href="https://stackoverflow.com/questions/26312317/wrong-indentation-of-comments-in-emacs">surprises</a> people who don't know <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html">Emacs Lisp comment conventions</a>.</p>
-                    <h2 id="configuring-emacs-further"><span class="section_number">9</span><span class="section_title">Configuring Emacs further</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">9.1</span><span class="section_title"><a href="#using-emacs-packages">Using emacs packages</a></span><span class="word_count">(10w~1m)</span></li>
-                    <li><span class="section_number">9.2</span><span class="section_title"><a href="#other-peoples-emacs-setups-and-init-files">Other people's Emacs setups and init files</a></span><span class="word_count">(40w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="using-emacs-packages"><span class="section_number">9.1</span><span class="section_title">Using emacs packages</span></h3>
-                    <ul>
-                    <li><a href="https://github.com/jwiegley/use-package">jwiegley/use-package: A use-package declaration for simplifying your .emacs</a></li>
-                    </ul>
-                    <h3 id="other-peoples-emacs-setups-and-init-files"><span class="section_number">9.2</span><span class="section_title">Other people's Emacs setups and init files</span></h3>
-                    <ul>
-                    <li><a href="https://github.com/jwiegley/dot-emacs">John Wiegley</a></li>
-                    <li><a href="https://sites.google.com/site/steveyegge2/my-dot-emacs-file">Steve Yegge</a></li>
-                    <li><a href="http://www.i3s.unice.fr/~malapert/org/tips/emacs_orgmode.html">Arnaud Malapert's org mode configuration</a></li>
-                    <li><a href="https://www.reddit.com/r/emacs/comments/3hevcv/how_does_your_emacs_setup_look_like/">How does your Emacs setup look like? : emacs</a></li>
-                    <li><a href="https://www.quora.com/What-does-your-Emacs-setup-look-like">What does your Emacs setup look like? - Quora</a></li>
-                    <li><a href="https://github.com/emacs-tw/awesome-emacs">emacs-tw/awesome-emacs: A community driven list of useful Emacs packages, libraries and others.</a></li>
-                    </ul>
-                    <h2 id="using-git-from-emacs"><span class="section_number">10</span><span class="section_title">Using Git from Emacs</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">10.1</span><span class="section_title"><a href="#compare-various-emacs-integrations"><span class="todo TODO">TODO</span> &lt;2018-09-18&gt; Compare various Emacs integrations</a></span><span class="word_count">(36w~1m)</span></li>
-                    <li><span class="section_number">10.2</span><span class="section_title"><a href="#install-magit"><span class="todo TODO">TODO</span> Install Magit</a></span><span class="word_count">(28w~1m)</span></li>
-                    <li><span class="section_number">10.3</span><span class="section_title"><a href="#using-magit">Using magit</a></span><span class="word_count">(92w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="compare-various-emacs-integrations"><span class="section_number">10.1</span><span class="section_title"><span class="todo TODO">TODO</span> &lt;2018-09-18&gt; Compare various Emacs integrations</span></h3>
-                    <p>What are the options and differences? Which one should I use?</p>
-                    <ul>
-                    <li><a href="https://www.emacswiki.org/emacs/Git">EmacsWiki: Git</a></li>
-                    <li>VC</li>
-                    <li>Magit</li>
-                    <li>git-el</li>
-                    </ul>
-                    <p>VC comes with Emacs.</p>
-                    <ul>
-                    <li><a href="https://www.reddit.com/r/emacs/comments/2h7s6z/vc_as_an_alternative_to_magit/">vc as an alternative to magit? : emacs</a></li>
-                    <li><a href="https://news.ycombinator.com/item?id=1817324">Ask HN: Best emacs / git integration? | Hacker News</a></li>
-                    </ul>
-                    <h3 id="install-magit"><span class="section_number">10.2</span><span class="section_title"><span class="todo TODO">TODO</span> Install Magit</span></h3>
-                    <ul>
-                    <li>magit: <a href="https://magit.vc/">It's Magit! A Git Porcelain inside Emacs</a></li>
-                    </ul>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">10.2.1</span><span class="section_title"><a href="#woe-magit-requires-git-1.9.4">&lt;2018-09-16&gt; Woe: Magit requires Git &gt;= 1.9.4</a></span><span class="word_count">(19w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="woe-magit-requires-git-1.9.4"><span class="section_number">10.2.1</span><span class="section_title">&lt;2018-09-16&gt; Woe: Magit requires Git &gt;= 1.9.4</span></h4>
-                    <p>Ubuntu 14.04 comes with Git 1.9.1. Build from source, or add a PPA.</p>
-                    <h3 id="using-magit"><span class="section_number">10.3</span><span class="section_title">Using magit</span></h3>
-                    <p>See also &quot;Getting started&quot; in Magit user manual.</p>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">10.3.1</span><span class="section_title"><a href="#open-the-magit-status-window">Open the Magit status window</a></span><span class="word_count">(24w~1m)</span></li>
-                    <li><span class="section_number">10.3.2</span><span class="section_title"><a href="#basic-commands">Basic commands</a></span><span class="word_count">(13w~1m)</span></li>
-                    <li><span class="section_number">10.3.3</span><span class="section_title"><a href="#stage-or-unstage-files-and-hunks">Stage or unstage files and hunks</a></span><span class="word_count">(30w~1m)</span></li>
-                    <li><span class="section_number">10.3.4</span><span class="section_title"><a href="#commit">Commit</a></span><span class="word_count">(12w~1m)</span></li>
-                    <li><span class="section_number">10.3.5</span><span class="section_title"><a href="#rebase">Rebase</a></span><span class="word_count">(9w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="open-the-magit-status-window"><span class="section_number">10.3.1</span><span class="section_title">Open the Magit status window</span></h4>
-                    <p>Open Magit status using <code>C-x g</code> or <code>M-x magit-status</code>.</p>
-                    <p>The following sections assume that you are in the Magit status window.</p>
-                    <h4 id="basic-commands"><span class="section_number">10.3.2</span><span class="section_title">Basic commands</span></h4>
-                    <ul>
-                    <li><code>q</code> close the Magit status window</li>
-                    <li><code>p</code> move up</li>
-                    <li><code>n</code> move down</li>
-                    <li><code>h</code> help</li>
-                    <li><code>g</code> refresh</li>
-                    </ul>
-                    <h4 id="stage-or-unstage-files-and-hunks"><span class="section_number">10.3.3</span><span class="section_title">Stage or unstage files and hunks</span></h4>
-                    <ul>
-                    <li><code>s</code> stage a file or hunk</li>
-                    <li><code>u</code> unstage a file or hunk</li>
-                    <li><code>TAB</code> toggle visibility of a section (files in a section, or hunks in a file)</li>
-                    </ul>
-                    <h4 id="commit"><span class="section_number">10.3.4</span><span class="section_title">Commit</span></h4>
-                    <ul>
-                    <li><code>c</code> open commit dialog
-                    <ul>
-                    <li><code>c</code> make normal commit
-                    <ul>
-                    <li><code>C-c C-c</code> commit</li>
-                    <li><code>C-c C-k</code> cancel commit</li>
-                    </ul></li>
-                    </ul></li>
-                    </ul>
-                    <h4 id="rebase"><span class="section_number">10.3.5</span><span class="section_title">Rebase</span></h4>
-                    <ul>
-                    <li><code>r i</code> start interactive rebase; follow instructions on screen</li>
-                    </ul>
-                    <h2 id="next-steps"><span class="section_number">11</span><span class="section_title">Next steps</span></h2>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">11.1</span><span class="section_title"><a href="#use-citeproc-instead-of-org-ref"><span class="todo TODO">TODO</span> &lt;2018-09-17&gt; Use citeproc instead of org-ref?</a></span><span class="word_count">(27w~1m)</span></li>
-                    <li><span class="section_number">11.2</span><span class="section_title"><a href="#install-evil-mode"><span class="todo TODO">TODO</span> Install evil-mode</a></span><span class="word_count">(3w~1m)</span></li>
-                    <li><span class="section_number">11.3</span><span class="section_title"><a href="#my-emacs-wishlist"><span class="todo TODO">TODO</span> My Emacs wishlist</a></span><span class="word_count">(88w~1m)</span></li>
-                    <li><span class="section_number">11.4</span><span class="section_title"><a href="#make-a-personal-wiki"><span class="todo TODO">TODO</span> Make a personal wiki</a></span><span class="word_count">(17w~1m)</span></li>
-                    <li><span class="section_number">11.5</span><span class="section_title"><a href="#unorganized-content">Unorganized content</a></span><span class="word_count">(269w~2m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="use-citeproc-instead-of-org-ref"><span class="section_number">11.1</span><span class="section_title"><span class="todo TODO">TODO</span> &lt;2018-09-17&gt; Use citeproc instead of org-ref?</span></h3>
-                    <p>&lt;2018-09-17&gt; Citeproc markup language seems to be more expressive than org-ref markup language.</p>
-                    <p>Example of citeproc syntax from <a href="https://pandoc.org/index.html">Pandoc - About pandoc</a>:</p>
-                    <pre><code>[see @doe99, pp. 33-35; also @smith04, ch. 1]
-                    </code></pre>
-                    <h3 id="install-evil-mode"><span class="section_number">11.2</span><span class="section_title"><span class="todo TODO">TODO</span> Install evil-mode</span></h3>
-                    <h3 id="my-emacs-wishlist"><span class="section_number">11.3</span><span class="section_title"><span class="todo TODO">TODO</span> My Emacs wishlist</span></h3>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">11.3.1</span><span class="section_title"><a href="#what-vim-can-do">What vim can do</a></span><span class="word_count">(54w~1m)</span></li>
-                    <li><span class="section_number">11.3.2</span><span class="section_title"><a href="#what-vscode-can-do">What VSCode can do</a></span><span class="word_count">(23w~1m)</span></li>
-                    <li><span class="section_number">11.3.3</span><span class="section_title"><a href="#convert-from-lisp-list-to-yaml-for-jekyll-front-matter">Convert from Lisp list to YAML for Jekyll front matter</a></span><span class="word_count">(10w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="what-vim-can-do"><span class="section_number">11.3.1</span><span class="section_title">What vim can do</span></h4>
-                    <p>Does evil-mode count?</p>
-                    <ol>
-                    <li><p><code>*</code> search next occurrence of word</p></li>
-                    <li><p><code>d%</code> delete to matching delimiter</p>
-                    <p><a href="https://stackoverflow.com/questions/20458990/emacs-how-to-delete-until-and-including-bracket">https://stackoverflow.com/questions/20458990/emacs-how-to-delete-until-and-including-bracket</a></p></li>
-                    <li><p><code>%</code> jump to matching delimiter</p></li>
-                    <li><p><span class="done DONE">DONE</span> &lt;2018-09-17&gt; keyword local completion <code>C-x C-p</code>, <code>C-x C-n</code></p>
-                    <p>This is <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html#Dynamic-Abbrevs">dynamic abbreviations</a> in Emacs.</p>
-                    <table>
-                    <thead>
-                    <tr class="header">
-                    <th>Vim insert mode</th>
-                    <th>Emacs</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr class="odd">
-                    <td>C-x C-p</td>
-                    <td>M-/</td>
-                    </tr>
-                    <tr class="even">
-                    <td>C-x C-n</td>
-                    <td>C-u - M-/</td>
-                    </tr>
-                    </tbody>
-                    </table>
-                    <p>In Vim, <code>C-p</code> or <code>C-n</code> for next match. In Emacs, <code>M-/</code> for next match.</p></li>
-                    <li><p>line autocompletion <code>C-x C-l</code></p></li>
-                    </ol>
-                    <h4 id="what-vscode-can-do"><span class="section_number">11.3.2</span><span class="section_title">What VSCode can do</span></h4>
-                    <ol>
-                    <li><p>Copy link URL</p></li>
-                    <li><p><span class="todo TODO">TODO</span> &lt;2018-09-16&gt; Ctrl+P fuzzy/subsequence file path matching</p>
-                    <p>I heard this is possible in Emacs using helm-projectile.</p></li>
-                    <li><p>Ctrl+Shift+F find in files</p></li>
-                    </ol>
-                    <h4 id="convert-from-lisp-list-to-yaml-for-jekyll-front-matter"><span class="section_number">11.3.3</span><span class="section_title">Convert from Lisp list to YAML for Jekyll front matter</span></h4>
-                    <h3 id="make-a-personal-wiki"><span class="section_number">11.4</span><span class="section_title"><span class="todo TODO">TODO</span> Make a personal wiki</span></h3>
-                    <p>I use Jekyll and Org Mode. I don't use these.</p>
-                    <ul>
-                    <li><a href="https://www.emacswiki.org/emacs/EmacsWikiMode">EmacsWiki: Emacs Wiki Mode</a></li>
-                    </ul>
-                    <h3 id="unorganized-content"><span class="section_number">11.5</span><span class="section_title">Unorganized content</span></h3>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">11.5.1</span><span class="section_title"><a href="#staying-healthy">Staying healthy</a></span><span class="word_count">(7w~1m)</span></li>
-                    <li><span class="section_number">11.5.2</span><span class="section_title"><a href="#should-we-do-everything-in-emacs">Should we do everything in Emacs?</a></span><span class="word_count">(47w~1m)</span></li>
-                    <li><span class="section_number">11.5.3</span><span class="section_title"><a href="#other-editors-i-havent-tried">Other editors I haven't tried</a></span><span class="word_count">(39w~1m)</span></li>
-                    <li><span class="section_number">11.5.4</span><span class="section_title"><a href="#emacs-stuffs-that-may-be-similar-to-org-mode-from-ubuntu-14.04-package-list-that-i-havent-tried">Emacs stuffs, that may be similar to org-mode, from Ubuntu 14.04 package list, that I haven't tried</a></span><span class="word_count">(68w~1m)</span></li>
-                    <li><span class="section_number">11.5.5</span><span class="section_title"><a href="#how-are-we-supposed-to-use-the-org-mode-agenda">How are we supposed to use the Org Mode Agenda?</a></span><span class="word_count">(48w~1m)</span></li>
-                    <li><span class="section_number">11.5.6</span><span class="section_title"><a href="#is-there-too-much-technical-debt-corner-cutting-in-emacs">Is there too much technical debt / corner-cutting in Emacs?</a></span><span class="word_count">(24w~1m)</span></li>
-                    <li><span class="section_number">11.5.7</span><span class="section_title"><a href="#trying-spacemacs-helm-ivy-projectile">Trying spacemacs, helm, ivy, projectile</a></span><span class="word_count">(41w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h4 id="staying-healthy"><span class="section_number">11.5.1</span><span class="section_title">Staying healthy</span></h4>
-                    <ul>
-                    <li><a href="http://ergoemacs.org/emacs/emacs_hand_pain_celebrity.html">Famous Programers with Repetitive Strain Injury</a></li>
-                    </ul>
-                    <h4 id="should-we-do-everything-in-emacs"><span class="section_number">11.5.2</span><span class="section_title">Should we do everything in Emacs?</span></h4>
-                    <p>&lt;2018-09-16&gt; No. Emacs isn't always fast.</p>
-                    <ul>
-                    <li>erc: IRC with emacs</li>
-                    <li>opening PDF with emacs</li>
-                    <li>browsing the Internet with emacs</li>
-                    <li>icicles: &quot;emacs library that enhances minibuffer/input completion&quot;</li>
-                    <li>programming: paredit, haskell-mode, golang-mode, etc.</li>
-                    <li>Compare Emacs Lisp and Vim Script</li>
-                    <li>remembrance-agent: Emacs mode to help find relevant texts</li>
-                    <li>twittering-mode: Twitter client for Emacs</li>
-                    </ul>
-                    <h4 id="other-editors-i-havent-tried"><span class="section_number">11.5.3</span><span class="section_title">Other editors I haven't tried</span></h4>
-                    <ul>
-                    <li><a href="http://diakonos.pist0s.ca/">Diakonos - a linux editor for the masses</a></li>
-                    <li>Spacemacs</li>
-                    <li>non-free
-                    <ul>
-                    <li><a href="https://www.sublimetext.com/">Sublime Text - A sophisticated text editor for code, markup and prose</a></li>
-                    </ul></li>
-                    <li>TeX/LaTeX
-                    <ul>
-                    <li>GNU TeXmacs</li>
-                    <li>WhizzyTeX</li>
-                    </ul></li>
-                    <li>XEmacs? emacs-lucid?
-                    <ul>
-                    <li><a href="https://en.wikipedia.org/wiki/XEmacs#History">WP:XEmacs history</a></li>
-                    <li><a href="http://ergoemacs.org/emacs/emacs_vs_xemacs.html">Xah Lee: My Experience of Emacs vs XEmacs</a>
-                    <ul>
-                    <li><a href="http://ergoemacs.org/emacs/gnu_emacs_xemacs_schism_Ben_Wing.html">Ben Wing: GNU Emacs and XEmacs Schism</a></li>
-                    </ul></li>
-                    </ul></li>
-                    </ul>
-                    <h4 id="emacs-stuffs-that-may-be-similar-to-org-mode-from-ubuntu-14.04-package-list-that-i-havent-tried"><span class="section_number">11.5.4</span><span class="section_title">Emacs stuffs, that may be similar to org-mode, from Ubuntu 14.04 package list, that I haven't tried</span></h4>
-                    <ul>
-                    <li>&quot;BHL is an Emacs mode that enables you to convert text files into HTML, LaTeX and SGML files.&quot;</li>
-                    <li>&quot;Howm(Hitori Otegaru Wiki Modoki) is a note-taking tool on Emacs.&quot;</li>
-                    <li>emacs-wiki</li>
-                    <li>mhc: schedule management tool for emacsen</li>
-                    <li>muse-el: Author and publish projects using Wiki-like markup</li>
-                    <li>smartdoc-elisp: emacs mode for smartdoc</li>
-                    <li>sisu: documents - structuring, publishing in multiple formats and search</li>
-                    </ul>
-                    <h4 id="how-are-we-supposed-to-use-the-org-mode-agenda"><span class="section_number">11.5.5</span><span class="section_title">How are we supposed to use the Org Mode Agenda?</span></h4>
-                    <p>I have already been using Google Calendar. I don't use org agenda.</p>
-                    <p>I don't give deadlines to my todos. Of what use is the agenda then?</p>
-                    <p>An agenda summarizes/aggregates org files. See &quot;Agenda Views &gt; Agenda Files&quot; in org mode manual.</p>
-                    <h4 id="is-there-too-much-technical-debt-corner-cutting-in-emacs"><span class="section_number">11.5.6</span><span class="section_title">Is there too much technical debt / corner-cutting in Emacs?</span></h4>
-                    <p>Examples:</p>
-                    <ul>
-                    <li>global variables in the C code preventing multithreading</li>
-                    <li><a href="https://orgmode.org/worg/org-hacks.html">Org ad hoc code, quick hacks and workarounds</a></li>
-                    </ul>
-                    <h4 id="trying-spacemacs-helm-ivy-projectile"><span class="section_number">11.5.7</span><span class="section_title">Trying spacemacs, helm, ivy, projectile</span></h4>
-                    <p>Spacemacs is quite polished compared to vanilla Emacs.</p>
-                    <p>Woe: Emacs can't install packages in parallel.</p>
-                    <p>What is helm? What is ivy? What is projectile? What is helm-projectile?</p>
-                    <ul>
-                    <li><a href="https://www.reddit.com/r/emacs/comments/7vcrwo/helm_vs_ivy_what_are_the_differences_what_are_the/">Helm vs Ivy: What are the differences, what are the advantages? : emacs</a></li>
-                    </ul>
-                    <h2 id="obsolete-content"><span class="section_number">12</span><span class="section_title">Obsolete content</span></h2>
-                    <p>Don't read these. These are no longer useful.</p>
-                    <div class="local_table_of_contents">
-                    <ul>
-                    <li><span class="section_number">12.1</span><span class="section_title"><a href="#installing-emacs-24.3-on-ubuntu-14.04">Installing Emacs 24.3 on Ubuntu 14.04</a></span><span class="word_count">(40w~1m)</span></li>
-                    <li><span class="section_number">12.2</span><span class="section_title"><a href="#how-to-uninstall-emacs-on-ubuntu-14.04">How to uninstall Emacs on Ubuntu 14.04</a></span><span class="word_count">(15w~1m)</span></li>
-                    </ul>
-                    </div>
-                    <h3 id="installing-emacs-24.3-on-ubuntu-14.04"><span class="section_number">12.1</span><span class="section_title">Installing Emacs 24.3 on Ubuntu 14.04</span></h3>
-                    <p>I tried using emacs 24.3 that comes with ubuntu 14.04 but it was too old. Skip this.</p>
-                    <p>On 2018-09-07, the command <code>sudo apt-get install emacs magit org-mode org-mode-doc</code> on Ubuntu 14.04 will install:</p>
-                    <ul>
-                    <li>emacs 24.3.1</li>
-                    <li>magit 1.2.0</li>
-                    <li>org-mode 8.2.4</li>
-                    </ul>
-                    <h3 id="how-to-uninstall-emacs-on-ubuntu-14.04"><span class="section_number">12.2</span><span class="section_title">How to uninstall Emacs on Ubuntu 14.04</span></h3>
-                    <p>From <a href="https://arp242.net/weblog/uninstalling_emacs_with_apt-get-_lessons_in_interface_design">Uninstalling Emacs with apt-get: lessons in interface design</a>:</p>
-                    <pre><code>sudo apt-get remove &#39;emacs*&#39;
-                    </code></pre>
-                    <h2 id="emacs-woes-sometimes-emacs-is-a-pile-of-hacks-and-workarounds."><span class="section_number">13</span><span class="section_title">Emacs woes: Sometimes Emacs is a pile of hacks and workarounds.</span></h2>
-                    <ul>
-                    <li><a href="http://ergoemacs.org/emacs/emacs_narrow-to-defun_eval-defun_bug.html">http://ergoemacs.org/emacs/emacs_narrow-to-defun_eval-defun_bug.html</a>
-                    <ul>
-                    <li>Xah found that on Emacs 24.4.1.</li>
-                    <li>&lt;2018-09-27&gt; I'm using Emacs 26.1 and it still has that programming error.</li>
-                    </ul></li>
-                    </ul>
-                    <h2 id="finding-out-what-is-slowing-down-emacs"><span class="section_number">14</span><span class="section_title">Finding out what is slowing down Emacs</span></h2>
-                    <ul>
-                    <li><a href="https://www.reddit.com/r/emacs/comments/6uhzc9/very_slow_org_mode/">https://www.reddit.com/r/emacs/comments/6uhzc9/very_slow_org_mode/</a>
-                    <ul>
-                    <li><code>M-x profiler-start</code></li>
-                    <li>Do something slow.</li>
-                    <li><code>M-x profiler-report</code>.</li>
-                    </ul></li>
-                    </ul>
-                    <section class="footnotes">
-                    <hr />
-                    <ol>
-                    <li id="fn1"><p>A footnote<a href="#fnref1" class="footnote-back">↩</a></p></li>
-                    <li id="fn2"><p>Another footnote<a href="#fnref2" class="footnote-back">↩</a></p></li>
-                    </ol>
-                    </section>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#preliminaries">Preliminaries</a></span><span class="word_count">(635w~4m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#setting-up-emacs-and-org-mode">Setting up Emacs and Org Mode</a></span><span class="word_count">(444w~3m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#editing-text-in-emacs">Editing text in Emacs</a></span><span class="word_count">(593w~3m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#navigating-the-file-system-using-dired">Navigating the file system using dired</a></span><span class="word_count">(160w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#editing-in-org-mode">Editing in Org Mode</a></span><span class="word_count">(399w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#making-org-play-nice-with-jekyll">Making Org play nice with Jekyll</a></span><span class="word_count">(459w~3m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#getting-more-help">Getting more help</a></span><span class="word_count">(193w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#programming-in-emacs-lisp">Programming in Emacs Lisp</a></span><span class="word_count">(388w~2m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#configuring-emacs-further">Configuring Emacs further</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#using-git-from-emacs">Using Git from Emacs</a></span><span class="word_count">(157w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#next-steps">Next steps</a></span><span class="word_count">(401w~3m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#obsolete-content">Obsolete content</a></span><span class="word_count">(62w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#emacs-woes-sometimes-emacs-is-a-pile-of-hacks-and-workarounds.">Emacs woes: Sometimes Emacs is a pile of hacks and workarounds.</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#finding-out-what-is-slowing-down-emacs">Finding out what is slowing down Emacs</a></span><span class="word_count">(11w~1m)</span></li>
+</ul>
+</div>
+<h2 id="preliminaries"><span class="section_number">1</span><span class="section_title">Preliminaries</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#how-long-will-it-take">How long will it take?</a></span><span class="word_count">(78w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#why-emacs">Why emacs?</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#key-notation">Key notation</a></span><span class="word_count">(70w~1m)</span></li>
+<li><span class="section_number">1.4</span><span class="section_title"><a href="#checks-before-you-jump-into-org-mode">Checks before you jump into Org Mode</a></span><span class="word_count">(466w~3m)</span></li>
+</ul>
+</div>
+<h3 id="how-long-will-it-take"><span class="section_number">1.1</span><span class="section_title">How long will it take?</span></h3>
+<p>&lt;2018-09-16&gt; I spent at least 3 days to set up emacs, set up org mode, and make org mode play nice with Jekyll. You may finish much faster than that because you can avoid repeating some of my ordeals. You may finish slower because you encounter surprises that I didn't.</p>
+<p>If you're new to emacs, but don't want to spend a day configuring emacs, then don't use emacs; use Visual Studio Code or Spacemacs instead.</p>
+<h3 id="why-emacs"><span class="section_number">1.2</span><span class="section_title">Why emacs?</span></h3>
+<p>Because of org mode. If it weren't for org mode, I would never have touched emacs.</p>
+<p>The <a href="https://www.gnu.org/software/emacs/tour/">Emacs guided tour</a> may give some reasons.</p>
+<h3 id="key-notation"><span class="section_number">1.3</span><span class="section_title">Key notation</span></h3>
+<ul>
+<li><code>C-a</code> means hold Ctrl and press the A key.</li>
+<li><code>M-a</code> means hold Meta (Alt) and press the A key.</li>
+<li><code>S-a</code> means hold Shift and press the A key.</li>
+<li><code>RET</code> means press the Return/Enter key.</li>
+<li><code>LEFT</code> means press the Left Arrow key.</li>
+<li><code>BKSP</code> means the Backspace key. Emacs calls this key <code>DEL</code>.</li>
+<li><code>SPC</code> means the Space key.</li>
+<li><code>C-a C-b</code> means <code>C-a</code> and then <code>C-b</code>.</li>
+<li><code>M-x help</code> means press <code>M-x</code> and then type <code>help</code> (and press Enter if necessary).</li>
+</ul>
+<h3 id="checks-before-you-jump-into-org-mode"><span class="section_number">1.4</span><span class="section_title">Checks before you jump into Org Mode</span></h3>
+<p>Before you jump, check whether what you want to do is possible in Org Mode. I presume we don't want to spend too much time hacking Org Mode to make it work.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.4.1</span><span class="section_title"><a href="#can-org-mode-do-what-you-want">Can Org Mode do what you want?</a></span><span class="word_count">(189w~1m)</span></li>
+<li><span class="section_number">1.4.2</span><span class="section_title"><a href="#can-you-live-with-some-org-mode-woes">Can you live with some Org Mode woes?</a></span><span class="word_count">(136w~1m)</span></li>
+<li><span class="section_number">1.4.3</span><span class="section_title"><a href="#are-you-willing-to-work-around-some-org-mode-annoyances">Are you willing to work around some Org Mode annoyances?</a></span><span class="word_count">(106w~1m)</span></li>
+</ul>
+</div>
+<h4 id="can-org-mode-do-what-you-want"><span class="section_number">1.4.1</span><span class="section_title">Can Org Mode do what you want?</span></h4>
+<p>If you really can't afford these limitations, don't use Org Mode.</p>
+<ol>
+<li><p>&lt;2018-11-07&gt; Can't bold/emphasize/underline/strikethrough part of word</p>
+<ul>
+<li>Org uses regular expression where it should use context-free grammar.</li>
+</ul></li>
+<li><p>&lt;2018-09-18&gt; Can't put brackets in link text</p>
+<p><a href="https://emacs.stackexchange.com/questions/7792/can-i-make-links-in-org-mode-that-contain-brackets-or">Can I make links in Org Mode that contain brackets? - Emacs Stack Exchange</a></p>
+<p>Org uses regex where it should use CFG.</p></li>
+<li><p>&lt;2018-09-15&gt; Can't put code block in table</p>
+<p><a href="https://stackoverflow.com/questions/24933135/code-blocks-inside-tables-for-org-mode">Code blocks inside tables for org-mode - Stack Overflow</a></p>
+<p>I left Markdown only to find out that Org Mode shares this weakness.</p>
+<p>Wanted: a markup that can put code blocks side-by-side in a table.</p>
+<p>Do we really need this? The table is going to be too wide for mobiles anyway.</p></li>
+<li><p>&lt;2018-09-16&gt; Can't change the title of a table of contents</p>
+<p>There is no documented way to do that.</p></li>
+<li><p>&lt;2018-09-28&gt; Can't decide between org-ref and pandoc-citeproc?</p>
+<p>This was in 2016. I don't know how it is in 2018.</p>
+<p><a href="https://github.com/jkitchin/org-ref/issues/228">https://github.com/jkitchin/org-ref/issues/228</a></p></li>
+<li><p>&lt;2018-10-15&gt; Org's HTML inlining is slightly more verbose than Markdown's.</p>
+<p>You can't just type HTML in Org Mode. For example, you can do the following in Markdown, but not Org Mode.</p>
+<pre class="example"><code>Hello, &lt;span class=&quot;what&quot;&gt;world&lt;/span&gt;.
+</code></pre>
+<p>You have to prefix it with <code>@@html:</code>. <a href="https://orgmode.org/manual/Quoting-HTML-tags.html">https://orgmode.org/manual/Quoting-HTML-tags.html</a></p></li>
+<li><p>&lt;2018-12-26&gt; Can't comma-separate footnote numbers</p>
+<p>Example:<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> prints something like &quot;12&quot; instead of &quot;1,2&quot;.</p></li>
+</ol>
+<h4 id="can-you-live-with-some-org-mode-woes"><span class="section_number">1.4.2</span><span class="section_title">Can you live with some Org Mode woes?</span></h4>
+<p>These woes are mostly non-fatal but annoying.</p>
+<ol>
+<li><p>&lt;2018-09-17&gt; Incremental search doesn't search link URLs</p></li>
+<li><p>&lt;2018-09-16&gt; Can't get too fancy with inline markup because Org uses regex where CFG should be used</p>
+<p>This has been worked around in newer org version. I can't reproduce this with org 9.1.14. They are still using regex, but they replaced the pattern with a more useful default.</p>
+<p>We can't insert verbatim &quot;a= b&quot;. This inserts verbatim &quot;a&quot; followed by text &quot;b=&quot;:</p>
+<pre><code>=a= b=
+</code></pre>
+<ul>
+<li><a href="https://emacs.stackexchange.com/questions/13820/inline-verbatim-and-code-with-quotes-in-org-mode">Inline verbatim and code with quotes in Org-mode - Emacs Stack Exchange</a></li>
+<li><a href="https://orgmode.org/worg/dev/org-syntax.html">Org Syntax (draft)</a></li>
+<li>There may be a workaround: <a href="https://orgmode.org/manual/Quoting-HTML-tags.html">The Org Manual: Quoting HTML tags</a>.</li>
+</ul></li>
+<li><p>&lt;2018-09-16&gt; Link text can't contain brackets</p>
+<p>Is this still true in org 9? <a href="https://stackoverflow.com/questions/27284913/how-to-escape-square-bracket-in-org-mode-links">emacs - How to escape square bracket in org mode links? - Stack Overflow</a></p></li>
+<li><p>&lt;2018-09-16&gt; org-ref: &quot;References&quot; heading should be h2, but is h1</p></li>
+</ol>
+<h4 id="are-you-willing-to-work-around-some-org-mode-annoyances"><span class="section_number">1.4.3</span><span class="section_title">Are you willing to work around some Org Mode annoyances?</span></h4>
+<ol>
+<li><p>&lt;2018-09-17&gt; Publishing moves the cursor to the beginning of buffer</p>
+<p>In short, <code>org-publish</code> clobbers excursion.</p>
+<p>To publish current file, press <code>C-c C-e P f</code>.</p>
+<p>The workaround is to wrap <code>org-publish</code> in <code>save-mark-and-excursion</code>.</p></li>
+<li><p>&lt;2018-09-16&gt; org-ref: There is an unwanted link to the bib file if there is no cite at all in the source org file</p>
+<p>The workaround is to remove the <code>bibliography:</code> if the document doesn't have any <code>cite:</code>.</p></li>
+<li><p>&lt;2018-10-09&gt; Can't change title of table of contents</p>
+<p>It's hardcoded in ox-html.el and ox.el.</p></li>
+<li><p>Magit fails with &quot;index.lock exists&quot; when we press g while it is rebasing.</p>
+<p>The workaround is: Don't press g while Magit is rebasing.</p></li>
+</ol>
+<h2 id="setting-up-emacs-and-org-mode"><span class="section_number">2</span><span class="section_title">Setting up Emacs and Org Mode</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#installing-emacs">Installing Emacs</a></span><span class="word_count">(90w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#launching-emacs">Launching Emacs</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#configuring-emacs-and-org-mode">Configuring Emacs and Org Mode</a></span><span class="word_count">(317w~2m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#entering-org-mode">Entering org mode</a></span><span class="word_count">(11w~1m)</span></li>
+</ul>
+</div>
+<h3 id="installing-emacs"><span class="section_number">2.1</span><span class="section_title">Installing Emacs</span></h3>
+<p>&lt;2018-09-16&gt; To install Emacs 26 on Ubuntu 14.04, I follow some of <a href="http://ergoemacs.org/emacs/building_emacs_on_linux.html">How to Build Emacs on Linux</a>, but I don't sudo.</p>
+<p>Download Emacs source code package Check its integrity. Extract it to <code>SOMEWHERE</code>.</p>
+<p>Install build dependencies</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="fu">sudo</span> apt-get build-dep emacs24</a></code></pre></div>
+<p>Build Emacs from source. Close that terminal. Open a new one.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="bu">cd</span> SOMEWHERE</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="ex">./configure</span> --prefix=<span class="va">$HOME</span>/.local <span class="co"># assuming that $HOME doesn&#39;t contain spaces</span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="fu">make</span> -j4 install <span class="co"># replace 4 with the number of cores you have</span></a></code></pre></div>
+<p>We assume you use bash. Ensure that <code>$HOME/.local/bin</code> is in your <code>PATH</code>. Ensure that this line is in your <code>~/.bashrc</code> file, preferably near the end.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="bu">export</span> <span class="va">PATH=</span><span class="st">&quot;</span><span class="va">$PATH</span><span class="st">:</span><span class="va">$HOME</span><span class="st">/.local/bin&quot;</span></a></code></pre></div>
+<p>Close the terminal. Open a new one. Entering <code>emacs --version</code> should print something like <code>GNU Emacs 26.1</code> followed by license notice.</p>
+<h3 id="launching-emacs"><span class="section_number">2.2</span><span class="section_title">Launching Emacs</span></h3>
+<p>Launch emacs from your terminal in your working directory. Use <code>emacs -fs</code> to start emacs fullscreen. Use <code>emacs -mm</code> to start emacs maximized.</p>
+<h3 id="configuring-emacs-and-org-mode"><span class="section_number">2.3</span><span class="section_title">Configuring Emacs and Org Mode</span></h3>
+<p>&lt;2018-09-17&gt; You can skip this by copying the <code>emacs.d</code> folder of my <a href="https://github.com/edom/work/">work</a> repository. But it may fail; I haven't tested it with a fresh installation. You can also copy other people's emacs config you find on the Internet.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.3.1</span><span class="section_title"><a href="#ensuring-that-the-configuration-foldersfiles-exist">Ensuring that the configuration folders/files exist</a></span><span class="word_count">(60w~1m)</span></li>
+<li><span class="section_number">2.3.2</span><span class="section_title"><a href="#making-emacs-remember-where-you-left-off">Making Emacs remember where you left off</a></span><span class="word_count">(52w~1m)</span></li>
+<li><span class="section_number">2.3.3</span><span class="section_title"><a href="#adding-melpa">Adding MELPA</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">2.3.4</span><span class="section_title"><a href="#installing-a-recent-org-mode-from-melpa">Installing a recent org mode from MELPA</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">2.3.5</span><span class="section_title"><a href="#installing-org-ref-for-citing-research-papers">Installing org-ref for citing research papers</a></span><span class="word_count">(33w~1m)</span></li>
+<li><span class="section_number">2.3.6</span><span class="section_title"><a href="#check-your-emacs-version-and-org-mode-version">&lt;2018-09-16&gt; Check your Emacs version and Org Mode version</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">2.3.7</span><span class="section_title"><a href="#restart-emacs-so-that-your-config-changes-take-effect">Restart Emacs so that your config changes take effect</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">2.3.8</span><span class="section_title"><a href="#if-emacs-is-misbehaving">If Emacs is misbehaving</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">2.3.9</span><span class="section_title"><a href="#configuring-org-mode">Configuring org mode</a></span><span class="word_count">(40w~1m)</span></li>
+</ul>
+</div>
+<h4 id="ensuring-that-the-configuration-foldersfiles-exist"><span class="section_number">2.3.1</span><span class="section_title">Ensuring that the configuration folders/files exist</span></h4>
+<p>Set up your emacs initialization file <code>~/.emacs.d/init.el</code>. It is an Emacs Lisp program.</p>
+<p>Make sure that the file <code>~/.emacs</code> does not exist; otherwise Emacs won't read <code>~/.emacs.d/init.el</code>.</p>
+<p>You may want to commit your modifications to your personal Git repository, and make <code>~/.emacs.d</code> a symbolic link.</p>
+<p>Make sure that you don't accidentally publish sensitive data (such as IRC passwords).</p>
+<h4 id="making-emacs-remember-where-you-left-off"><span class="section_number">2.3.2</span><span class="section_title">Making Emacs remember where you left off</span></h4>
+<p>Save a desktop/session so that emacs continues where you left off: <code>M-x desktop-save</code>. (Do we still need this if we already have <code>(setq desktop-save 1)</code> in the init file?)</p>
+<p>See also &quot;Saving Emacs Sessions&quot; in the Emacs manual. Unfortunately Emacs 24.3 doesn't save the frames and windows.</p>
+<h4 id="adding-melpa"><span class="section_number">2.3.3</span><span class="section_title">Adding MELPA</span></h4>
+<h4 id="installing-a-recent-org-mode-from-melpa"><span class="section_number">2.3.4</span><span class="section_title">Installing a recent org mode from MELPA</span></h4>
+<p><code>M-x package-install RET org RET</code></p>
+<ol>
+<li><p><span class="todo TODO">TODO</span> Use use-package in init file to automate installation</p></li>
+</ol>
+<h4 id="installing-org-ref-for-citing-research-papers"><span class="section_number">2.3.5</span><span class="section_title">Installing org-ref for citing research papers</span></h4>
+<ul>
+<li><a href="https://github.com/jkitchin/org-ref#installation">org-ref installation</a></li>
+<li><a href="https://github.com/jkitchin/org-ref">jkitchin/org-ref: org-mode modules for citations, cross-references, bibliographies in org-mode and useful bibtex tools to go with it.</a></li>
+<li><a href="http://viveks.info/org-mode-academic-writing-bibliographies-org-ref/">Org mode for academic writing: Bibliographies with org-ref - Vivek's Info</a></li>
+</ul>
+<h4 id="check-your-emacs-version-and-org-mode-version"><span class="section_number">2.3.6</span><span class="section_title">&lt;2018-09-16&gt; Check your Emacs version and Org Mode version</span></h4>
+<p>Check your Emacs version with <code>M-x emacs-version</code>. Check your Org Mode version with <code>M-x org-version</code>. This document assumes these versions:</p>
+<pre><code>GNU Emacs 26.1 (build 1, x86_64-pc-linux-gnu, GTK+ Version 2.24.23) of 2018-09-10
+Org mode version 9.1.14 (9.1.14-1-g4931fc-elpaplus @ /home/erik/.emacs.d/elpa/org-plus-contrib-20180910/)
+</code></pre>
+<h4 id="restart-emacs-so-that-your-config-changes-take-effect"><span class="section_number">2.3.7</span><span class="section_title">Restart Emacs so that your config changes take effect</span></h4>
+<h4 id="if-emacs-is-misbehaving"><span class="section_number">2.3.8</span><span class="section_title">If Emacs is misbehaving</span></h4>
+<p>If Emacs is misbehaving (and you have no idea why), try running <code>emacs -q</code>. If it runs fine, try nuking the file <code>~/.emacs</code> and the directory <code>~/.emacs.d</code>. But you will lose all your customizations and installed packages.</p>
+<h4 id="configuring-org-mode"><span class="section_number">2.3.9</span><span class="section_title">Configuring org mode</span></h4>
+<p>The default isn't always sane. Thus I have these customizations in my Emacs init file.</p>
+<ol>
+<li><p>&lt;2018-09-16&gt; Avoiding reindentation when moving trees around</p>
+<p>We do this to prevent unnecessary whitespace changes in version control. <a href="https://emacs.stackexchange.com/questions/41220/org-mode-disable-indentation-when-promoting-and-demoting-trees-subtrees">https://emacs.stackexchange.com/questions/41220/org-mode-disable-indentation-when-promoting-and-demoting-trees-subtrees</a></p>
+<pre class="elisp"><code>(setq-default org-adapt-indentation nil)
+</code></pre></li>
+<li><p>&lt;2018-09-16&gt; Removing day names from inserted dates</p>
+<pre class="elisp"><code>(setq org-time-stamp-formats &#39;(&quot;&lt;%Y-%m-%d&gt;&quot; . &quot;&lt;%Y-%m-%d %H:%M&gt;&quot;))
+</code></pre></li>
+</ol>
+<h3 id="entering-org-mode"><span class="section_number">2.4</span><span class="section_title">Entering org mode</span></h3>
+<p>Visit a file with <code>.org</code> extension. Alternatively, <code>M-x org-mode</code>.</p>
+<h2 id="editing-text-in-emacs"><span class="section_number">3</span><span class="section_title">Editing text in Emacs</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#inserting-text">Inserting text</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#common-keys">Common keys</a></span><span class="word_count">(43w~1m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#discover-emacs-dont-memorize-it">Discover Emacs, don't memorize it</a></span><span class="word_count">(88w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#using-buffers-and-windows">Using buffers and windows</a></span><span class="word_count">(100w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#autocompletion">Autocompletion</a></span><span class="word_count">(70w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#searching">Searching</a></span><span class="word_count">(65w~1m)</span></li>
+<li><span class="section_number">3.7</span><span class="section_title"><a href="#marking-jumping-copying-cutting-and-pasting">Marking, jumping, copying, cutting, and pasting</a></span><span class="word_count">(48w~1m)</span></li>
+<li><span class="section_number">3.8</span><span class="section_title"><a href="#basic-motions-moving-by-one-character-word-line">Basic motions: moving by one character, word, line</a></span><span class="word_count">(112w~1m)</span></li>
+<li><span class="section_number">3.9</span><span class="section_title"><a href="#indenting-and-reindenting">Indenting and reindenting</a></span><span class="word_count">(61w~1m)</span></li>
+</ul>
+</div>
+<h3 id="inserting-text"><span class="section_number">3.1</span><span class="section_title">Inserting text</span></h3>
+<p>Most of the time, you simply type the file contents.</p>
+<h3 id="common-keys"><span class="section_number">3.2</span><span class="section_title">Common keys</span></h3>
+<ul>
+<li>To exit Emacs, <code>C-x C-c</code>.</li>
+<li>To cancel a long-running action, or exit a prompt, press <code>C-g</code>.</li>
+<li>To find/start/open/visit a file, <code>C-x C-f</code>. The file doesn't have to exist.</li>
+<li>To autocomplete a file name or command name in minibuffer, press <code>TAB</code>.</li>
+<li>To start a shell, <code>M-x shell</code>.</li>
+</ul>
+<h3 id="discover-emacs-dont-memorize-it"><span class="section_number">3.3</span><span class="section_title">Discover Emacs, don't memorize it</span></h3>
+<ul>
+<li>To find out what a key does, press <code>C-h k</code> (describe key sequence), and then press the keys. Emacs will tell you what function the key is bound to.</li>
+<li>To find out what a function does, press <code>C-h f</code> and type the function name. Emacs will also tell you what keys are bound to that function.</li>
+<li><code>C-h ?</code> help for help</li>
+<li><code>C-h a</code> apropos (find command matching a given pattern)</li>
+<li><code>C-h i</code> info document reader; usually documents some emacs packages/plugins</li>
+<li><code>C-h t</code> tutorial for Emacs</li>
+<li><code>C-h r</code> read Emacs manual</li>
+</ul>
+<h3 id="using-buffers-and-windows"><span class="section_number">3.4</span><span class="section_title">Using buffers and windows</span></h3>
+<ul>
+<li>buffers
+<ul>
+<li><code>C-x C-f</code> opens a file or directory into a buffer</li>
+<li><code>C-x C-b</code> lists buffers in the other window</li>
+<li><code>C-x C-LEFT</code> goes to previous buffer</li>
+<li><code>C-x C-RIGHT</code> goes to next buffer</li>
+<li><code>C-x k</code> kills a buffer</li>
+<li><code>C-x s</code> saves some buffers</li>
+<li><code>C-x b</code> switches to another buffer, or opens a new buffer
+<ul>
+<li><code>C-x 4 b</code> the same, but in the other window</li>
+</ul></li>
+</ul></li>
+<li>windows
+<ul>
+<li><code>C-x 0</code> delete current window</li>
+<li><code>C-x 1</code> delete other windows (all windows except the focused one)</li>
+<li><code>C-x o</code> switches to another window / the other window</li>
+<li><code>C-x 2</code> split window below</li>
+<li><code>C-x 3</code> split window right</li>
+</ul></li>
+<li><code>C-x 4 0</code> kill-buffer-and-window</li>
+<li><code>C-x 4 C-f</code> open a file in the other window</li>
+</ul>
+<h3 id="autocompletion"><span class="section_number">3.5</span><span class="section_title">Autocompletion</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.5.1</span><span class="section_title"><a href="#elisp-autocompletion">Elisp autocompletion</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">3.5.2</span><span class="section_title"><a href="#org-mode-autocompletion-using-pcomplete">Org Mode autocompletion using pcomplete</a></span><span class="word_count">(32w~1m)</span></li>
+<li><span class="section_number">3.5.3</span><span class="section_title"><a href="#word-autocompletion-with-dabbrev-dynamic-abbreviation">Word autocompletion with dabbrev (dynamic abbreviation)</a></span><span class="word_count">(33w~1m)</span></li>
+</ul>
+</div>
+<h4 id="elisp-autocompletion"><span class="section_number">3.5.1</span><span class="section_title">Elisp autocompletion</span></h4>
+<ul>
+<li><code>C-M-i</code> autocomplete symbol for Emacs Lisp</li>
+</ul>
+<h4 id="org-mode-autocompletion-using-pcomplete"><span class="section_number">3.5.2</span><span class="section_title">Org Mode autocompletion using pcomplete</span></h4>
+<ul>
+<li><code>M-TAB</code> (that is likely reserved by your window manager) or <code>ESC TAB</code> or <code>C-M-i</code>. For example, type <code>#+</code> at the beginning of a line and then press <code>C-M-i</code>.</li>
+</ul>
+<h4 id="word-autocompletion-with-dabbrev-dynamic-abbreviation"><span class="section_number">3.5.3</span><span class="section_title">Word autocompletion with dabbrev (dynamic abbreviation)</span></h4>
+<p>This can save us from typing long words repeatedly. See <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html#Dynamic-Abbrevs">Dynamic Abbrevs - GNU Emacs Manual</a> for what these does. Try it.</p>
+<ul>
+<li><code>M-/</code> dabbrev-expand</li>
+<li><code>C-M-/</code> dabbrev-completion (I rarely use this)</li>
+</ul>
+<h3 id="searching"><span class="section_number">3.6</span><span class="section_title">Searching</span></h3>
+<ul>
+<li>entering incremental search
+<ul>
+<li><code>C-s</code> forward incremental search</li>
+<li><code>C-r</code> reverse incremental search</li>
+<li><code>C-M-s</code> forward incremental search regex
+<ul>
+<li>The regex syntax is somewhere in <a href="https://www.gnu.org/software/emacs/tour/">A guided tour of Emacs</a></li>
+</ul></li>
+</ul></li>
+<li>While in incremental search prompt:
+<ul>
+<li><code>C-s</code> go to next occurrence</li>
+<li><code>C-r</code> go to previous occurrence</li>
+<li><code>M-p</code> previous item in search history</li>
+<li><code>M-n</code> next item in search history</li>
+</ul></li>
+<li><code>C-h k C-s</code> describe your options while in incremental search prompt</li>
+<li><code>M-%</code> (that is Alt+Shift+5 on an English QWERTY keyboard) query replace</li>
+</ul>
+<h3 id="marking-jumping-copying-cutting-and-pasting"><span class="section_number">3.7</span><span class="section_title">Marking, jumping, copying, cutting, and pasting</span></h3>
+<ul>
+<li>rapidly moving between two locations
+<ul>
+<li><code>C-SPC</code> set mark to current point</li>
+<li><code>C-x C-x</code> swap mark and current point</li>
+</ul></li>
+<li>while marking
+<ul>
+<li>cutting
+<ul>
+<li><code>C-w</code> kill region (cut it into clipboard)</li>
+<li><code>M-w</code> copy region into clipboard</li>
+</ul></li>
+</ul></li>
+<li><code>C-k</code> kill the rest of current line</li>
+<li><code>C-y</code> paste from clipboard</li>
+<li><code>C-S-BKSP</code> kill entire line</li>
+</ul>
+<p>Some commands set the mark.</p>
+<h3 id="basic-motions-moving-by-one-character-word-line"><span class="section_number">3.8</span><span class="section_title">Basic motions: moving by one character, word, line</span></h3>
+<ul>
+<li>moving by a character or a line
+<ul>
+<li>horizontally/characterwise
+<ul>
+<li><code>C-b</code> moves the cursor back to the previous character</li>
+<li><code>C-f</code> moves the cursor forward to the next character</li>
+<li><code>C-a</code> moves the cursor to the beginning of line</li>
+<li><code>C-e</code> moves the cursor to the ending of line</li>
+</ul></li>
+<li>vertically/linewise
+<ul>
+<li><code>C-n</code> moves the cursor down to the next line</li>
+<li><code>C-p</code> moves the cursor up to the previous line</li>
+</ul></li>
+</ul></li>
+<li>moving by a screen
+<ul>
+<li><code>M-v</code> goes up a screen</li>
+<li><code>C-v</code> goes down a screen</li>
+<li><code>C-M-v</code> goes down a screen in the other window</li>
+<li><code>C-M-S-v</code> goes up a screen in the other window</li>
+</ul></li>
+</ul>
+<p>Emacs call scroll-<strong>up</strong>-command for what I think as going <strong>down</strong> a screen. Emacs thinks about moving the text. I think about moving the viewport.</p>
+<h3 id="indenting-and-reindenting"><span class="section_number">3.9</span><span class="section_title">Indenting and reindenting</span></h3>
+<ul>
+<li><code>TAB</code> indents in elisp mode, but not in org mode</li>
+<li><code>C-M-\</code> (indent-region) reindents region according to current mode</li>
+<li><code>M-\</code> remove space around cursor</li>
+<li><code>C-u 4 M-x indent-rigidly</code> deepens indentation of the selected (marked) region by 4 units regardless of mode</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.9.1</span><span class="section_title"><a href="#woe-inconsistent-newlines-c-j-and-c-m">&lt;2018-09-17&gt; Woe: inconsistent newlines: C-j and C-m</a></span><span class="word_count">(23w~1m)</span></li>
+</ul>
+</div>
+<h4 id="woe-inconsistent-newlines-c-j-and-c-m"><span class="section_number">3.9.1</span><span class="section_title">&lt;2018-09-17&gt; Woe: inconsistent newlines: C-j and C-m</span></h4>
+<p>In org mode: <code>C-j</code> inserts newline and indents; <code>C-m</code> inserts newline. In elisp mode, they are flipped.</p>
+<h2 id="navigating-the-file-system-using-dired"><span class="section_number">4</span><span class="section_title">Navigating the file system using dired</span></h2>
+<p>Input <code>C-x C-f</code>, input a directory path, and press Enter. Emacs opens Dired (directory edit) mode.</p>
+<ul>
+<li>Navigating:
+<ul>
+<li><code>BKSP</code> moves the cursor up one item.</li>
+<li><code>SPC</code> moves the cursor down one item.</li>
+<li><code>g</code> rereads the directory.</li>
+<li><code>l</code> (small L) refreshes the display. Don't use this; use <code>g</code> instead.</li>
+</ul></li>
+<li>Opening:
+<ul>
+<li><code>RET</code> opens the item in the current window. If it's a directory, emacs opens another dired. If it's a file, emacs opens the editor.
+<ul>
+<li><code>o</code> (small O) opens the item in the other window.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>Read the dired info documentation.</p>
+<p>Use <code>C-h m</code> or <code>M-x describe-mode</code> to get some help.</p>
+<ul>
+<li>Unanswered question:
+<ul>
+<li>What is the Emacs equivalent of VSCode Ctrl+P (open file fuzzy search / approximate string matching / subsequence matching)?
+<ul>
+<li>Completion styles.
+<ul>
+<li><a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Completion-Styles.html">Completion Styles - GNU Emacs Manual</a></li>
+</ul></li>
+<li>arcane stuffs
+<ul>
+<li><a href="https://emacs.stackexchange.com/questions/13500/fuzzy-completion-style">minibuffer - fuzzy completion-style - Emacs Stack Exchange</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#moving-files-into-another-directory-updating-buffers">Moving files into another directory, updating buffers</a></span><span class="word_count">(36w~1m)</span></li>
+</ul>
+</div>
+<h3 id="moving-files-into-another-directory-updating-buffers"><span class="section_number">4.1</span><span class="section_title">Moving files into another directory, updating buffers</span></h3>
+<ul>
+<li>In dired (note upper and lower case shortcuts):
+<ul>
+<li>Mark the files with <code>m</code> or unmark with <code>u</code>.</li>
+<li>Press <code>R</code>.</li>
+<li>Enter the destination directory.</li>
+<li>Press <code>RET</code>.</li>
+</ul></li>
+<li><a href="http://pragmaticemacs.com/emacs/dired-marking-copying-moving-and-deleting-files/">Dired: marking, copying, moving and deleting files | Pragmatic Emacs</a></li>
+</ul>
+<h2 id="editing-in-org-mode"><span class="section_number">5</span><span class="section_title">Editing in Org Mode</span></h2>
+<p>We'll mostly be inserting headers (lines that begin with asterisks) and bodies. Sometimes we make a header a TODO item. Sometimes we insert a date. Sometimes we move trees around.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#inserting-editing-and-moving-headers-and-subtrees">Inserting, editing, and moving headers and subtrees</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#inserting-code-blocks-quickly">Inserting code blocks quickly</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">5.3</span><span class="section_title"><a href="#making-todos">Making TODOs</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">5.4</span><span class="section_title"><a href="#navigating-an-org-file">Navigating an org file</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">5.5</span><span class="section_title"><a href="#inserting-lists">Inserting lists</a></span><span class="word_count">(43w~1m)</span></li>
+<li><span class="section_number">5.6</span><span class="section_title"><a href="#inserting-dates">Inserting dates</a></span><span class="word_count">(84w~1m)</span></li>
+<li><span class="section_number">5.7</span><span class="section_title"><a href="#links">Links</a></span><span class="word_count">(74w~1m)</span></li>
+<li><span class="section_number">5.8</span><span class="section_title"><a href="#searching-hidden-text-such-as-link-url">Searching hidden text such as link URL</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">5.9</span><span class="section_title"><a href="#inserting-table-of-contents">Inserting table of contents</a></span><span class="word_count">(4w~1m)</span></li>
+</ul>
+</div>
+<h3 id="inserting-editing-and-moving-headers-and-subtrees"><span class="section_number">5.1</span><span class="section_title">Inserting, editing, and moving headers and subtrees</span></h3>
+<ul>
+<li>Begin the line with one or more asterisks (<code>*</code>).</li>
+<li>moving subtrees
+<ul>
+<li><code>M-UP</code> move subtree up</li>
+<li><code>M-DOWN</code> move subtree down</li>
+</ul></li>
+<li>promoting and demoting
+<ul>
+<li><code>M-LEFT</code> promote header one level shallower</li>
+<li><code>M-RIGHT</code> demote header one level deeper</li>
+<li><code>M-S-LEFT</code> promote subtree one level shallower</li>
+<li><code>M-S-RIGHT</code> demote subtree one level deeper</li>
+</ul></li>
+<li><code>C-c C-w</code> refile (move) subtree into (as a child of) a level-1 heading in the same org file. See the help of the function <code>org-refile</code>.</li>
+</ul>
+<h3 id="inserting-code-blocks-quickly"><span class="section_number">5.2</span><span class="section_title">Inserting code blocks quickly</span></h3>
+<p>Type <code>&lt;s</code> and press <code>TAB</code>.</p>
+<ul>
+<li><a href="https://emacs.stackexchange.com/questions/12841/quickly-insert-source-blocks-in-org-mode">org babel - Quickly insert source blocks in org mode - Emacs Stack Exchange</a></li>
+<li><a href="https://orgmode.org/manual/Easy-templates.html">The Org Manual: Easy templates</a></li>
+</ul>
+<h3 id="making-todos"><span class="section_number">5.3</span><span class="section_title">Making TODOs</span></h3>
+<ul>
+<li><code>S-LEFT</code> / <code>S-RIGHT</code> cycle item TODO state</li>
+<li><code>S-M-RET</code> insert TODO below current item</li>
+<li><code>S-UP</code> / <code>S-DOWN</code> change item priority (see &quot;TODO Items &gt; Priorities&quot; in manual)</li>
+</ul>
+<h3 id="navigating-an-org-file"><span class="section_number">5.4</span><span class="section_title">Navigating an org file</span></h3>
+<ul>
+<li>cycling visibility
+<ul>
+<li><code>TAB</code> cycle subtree visibility</li>
+<li><code>S-TAB</code> cycle global visibility</li>
+<li>See also Org Mode manual &quot;Visibility cycling&quot;.</li>
+</ul></li>
+<li>moving around
+<ul>
+<li><code>C-c C-n</code> next heading</li>
+<li><code>C-c C-p</code> previous heading</li>
+<li><code>C-c C-f</code> next heading same level</li>
+<li><code>C-c C-b</code> previous heading same level</li>
+<li><code>C-c C-u</code> backward to higher level heading</li>
+<li><code>C-c C-j</code> jump/goto</li>
+</ul></li>
+</ul>
+<h3 id="inserting-lists"><span class="section_number">5.5</span><span class="section_title">Inserting lists</span></h3>
+<ul>
+<li>Begin the line with a hyphen (<code>-</code>).</li>
+<li><code>M-RET</code> to enter the next item.</li>
+<li><code>RET</code> to end the list.</li>
+<li><code>TAB</code> to indent the current item one level inward.</li>
+<li><code>S-TAB</code> to unindent the current item one level outward.</li>
+</ul>
+<p>Convert lines to lists using mark and <code>C-x r t</code>: <a href="https://stackoverflow.com/questions/2250930/emacs-orgmode-how-to-make-a-list-from-a-block-of-lines">https://stackoverflow.com/questions/2250930/emacs-orgmode-how-to-make-a-list-from-a-block-of-lines</a></p>
+<h3 id="inserting-dates"><span class="section_number">5.6</span><span class="section_title">Inserting dates</span></h3>
+<ul>
+<li><code>C-c .</code> open calendar to insert date; the date will show up in agenda.</li>
+<li><code>C-c ! RET</code> open calendar to insert date; the date won't show up in agenda.</li>
+<li>In the calendar
+<ul>
+<li>The default selected date is today date.</li>
+<li>S-LEFT / S-RIGHT move selection 1 day backward/forward</li>
+<li>M-S-LEFT / M-S-RIGHT move selection 1 month backward/forward</li>
+<li>&lt; / &gt; scroll calendar by 1 month</li>
+<li>C-v / M-v scroll calendar by 3 months</li>
+<li>M-S-UP / M-S-DOWN scroll calendar by 1 year</li>
+</ul></li>
+<li><a href="https://emacs.stackexchange.com/questions/37430/change-date-from-active-to-inactive">org mode - Change date from active to inactive - Emacs Stack Exchange</a></li>
+</ul>
+<h3 id="links"><span class="section_number">5.7</span><span class="section_title">Links</span></h3>
+<ul>
+<li>The syntax is <code>[[URL][text]]</code>.</li>
+<li><code>C-c C-l</code> edit link if cursor is on a link; otherwise insert link.</li>
+<li>To copy the URL of an Org link to clipboard, use the workaround <code>C-c C-l C-a C-k C-g</code>.</li>
+<li><code>C-c C-o</code> open link. If the target is a local org file, Emacs will open it in new window. Press <code>C-c 0</code> to close the currently focused window.</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.7.1</span><span class="section_title"><a href="#chrome-bookmarklet-make-org-mode-link-for-page">Chrome bookmarklet: Make org-mode link for page</a></span><span class="word_count">(15w~1m)</span></li>
+</ul>
+</div>
+<h4 id="chrome-bookmarklet-make-org-mode-link-for-page"><span class="section_number">5.7.1</span><span class="section_title">Chrome bookmarklet: Make org-mode link for page</span></h4>
+<p>This may produce invalid markup. Check before you copy.</p>
+<pre><code>javascript:window.prompt(&quot;Copy to clipboard: Ctrl+C, Enter&quot;, &quot;[[&quot; + document.URL + &quot;][&quot; + document.title + &quot;]]&quot;);
+</code></pre>
+<h3 id="searching-hidden-text-such-as-link-url"><span class="section_number">5.8</span><span class="section_title">Searching hidden text such as link URL</span></h3>
+<ul>
+<li><a href="https://emacs.stackexchange.com/questions/21208/search-and-replace-invisible-url-link-in-org-mode">https://emacs.stackexchange.com/questions/21208/search-and-replace-invisible-url-link-in-org-mode</a>
+<ul>
+<li><code>M-x org-toggle-link-display</code></li>
+<li>The <code>search-invisible</code> variable</li>
+</ul></li>
+</ul>
+<h3 id="inserting-table-of-contents"><span class="section_number">5.9</span><span class="section_title">Inserting table of contents</span></h3>
+<p><a href="https://orgmode.org/manual/Table-of-contents.html">https://orgmode.org/manual/Table-of-contents.html</a></p>
+<h2 id="making-org-play-nice-with-jekyll"><span class="section_number">6</span><span class="section_title">Making Org play nice with Jekyll</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#other-peoples-options">Other people's options</a></span><span class="word_count">(101w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#my-choice-elisp-program-with-proper-metadata-mapping">My choice: Elisp program with proper metadata mapping</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#exporting-org-to-html-for-use-with-jekyll">Exporting Org to HTML for use with Jekyll</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#porting-some-old-markdown-content-to-org-mode">&lt;2018-09-16&gt; Porting some old Markdown content to Org Mode</a></span><span class="word_count">(302w~2m)</span></li>
+</ul>
+</div>
+<h3 id="other-peoples-options"><span class="section_number">6.1</span><span class="section_title">Other people's options</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1.1</span><span class="section_title"><a href="#emacs-lisp-programs-with-improper-metadata-mapping">Emacs Lisp programs with improper metadata mapping</a></span><span class="word_count">(54w~1m)</span></li>
+<li><span class="section_number">6.1.2</span><span class="section_title"><a href="#emacs-lisp-programs-with-proper-metadata-mapping">Emacs Lisp programs with proper metadata mapping</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">6.1.3</span><span class="section_title"><a href="#jekyll-plugins">Jekyll plugins</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">6.1.4</span><span class="section_title"><a href="#too-idealistic">Too idealistic</a></span><span class="word_count">(16w~1m)</span></li>
+</ul>
+</div>
+<h4 id="emacs-lisp-programs-with-improper-metadata-mapping"><span class="section_number">6.1.1</span><span class="section_title">Emacs Lisp programs with improper metadata mapping</span></h4>
+<p>I want Emacs to transform in-buffer setting to front matter. I don't want <code>BEGIN_HTML</code> or <code>BEGIN_EXPORT</code>. I want proper metadata mapping <code>#+SOMETHING</code>. The proper solution is to define a custom backend that derives the preamble from the org file metadata.</p>
+<p>I reject these proposed solutions.</p>
+<ul>
+<li><a href="https://orgmode.org/worg/org-tutorials/org-jekyll.html">Official worg tutorial</a></li>
+<li><a href="http://cute-jumper.github.io/emacs/2013/10/06/orgmode-to-github-pages-with-jekyll">Junpeng Qiu's</a></li>
+<li><a href="https://levlaz.org/using-org-mode-with-jekyll/">Lev Lazinskiy's</a></li>
+</ul>
+<h4 id="emacs-lisp-programs-with-proper-metadata-mapping"><span class="section_number">6.1.2</span><span class="section_title">Emacs Lisp programs with proper metadata mapping</span></h4>
+<p>One problem: I write wiki not blog.</p>
+<ul>
+<li><a href="http://ardumont.github.io/blogging-with-org-and-jekyll-with-org2jekyll">Antoine R. Dumont</a>'s <a href="https://github.com/ardumont/org2jekyll">org2jekyll</a></li>
+<li><a href="http://endlessparentheses.com/how-i-blog-one-year-of-posts-in-a-single-org-file.html">Adrian Malabarba</a>'s <a href="https://github.com/Malabarba/ox-jekyll-subtree">ox-jekyll extension</a></li>
+<li><a href="https://github.com/yoshinari-nomura/org-octopress">yoshinari-nomura/org-octopress: org-mode in octopress</a></li>
+</ul>
+<h4 id="jekyll-plugins"><span class="section_number">6.1.3</span><span class="section_title">Jekyll plugins</span></h4>
+<p>Interesting: Jekyll plugin <a href="https://github.com/eggcaker/jekyll-org">eggcaker/jekyll-org</a>. But does it support org-ref?</p>
+<h4 id="too-idealistic"><span class="section_number">6.1.4</span><span class="section_title">Too idealistic</span></h4>
+<p><a href="https://stackoverflow.com/questions/19019468/how-to-render-org-mode-file-from-jekyll-github-without-converting-org-to-html">How to render org-mode file from jekyll/github without converting .org to .html? - Stack Overflow</a></p>
+<h3 id="my-choice-elisp-program-with-proper-metadata-mapping"><span class="section_number">6.2</span><span class="section_title">My choice: Elisp program with proper metadata mapping</span></h3>
+<p>I mostly follow the official tutorial, but I do proper metadata mapping.</p>
+<h3 id="exporting-org-to-html-for-use-with-jekyll"><span class="section_number">6.3</span><span class="section_title">Exporting Org to HTML for use with Jekyll</span></h3>
+<p>I have already had a wiki in Jekyll.</p>
+<ul>
+<li><code>C-c C-e h h</code> export thisfile.org to thisfile.html; silently overwrite the output</li>
+<li><code>C-c C-e h H</code> export to buffer; don't create file</li>
+</ul>
+<h3 id="porting-some-old-markdown-content-to-org-mode"><span class="section_number">6.4</span><span class="section_title">&lt;2018-09-16&gt; Porting some old Markdown content to Org Mode</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.4.1</span><span class="section_title"><a href="#options">Options</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">6.4.2</span><span class="section_title"><a href="#preliminary-clean-up-remove-yaml-front-matter-jekyll-tags-and-liquid-tags">Preliminary clean-up: Remove YAML front-matter, Jekyll tags, and Liquid tags</a></span><span class="word_count">(66w~1m)</span></li>
+<li><span class="section_number">6.4.3</span><span class="section_title"><a href="#use-pandoc">Use Pandoc</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">6.4.4</span><span class="section_title"><a href="#check-for-wrong-code-blocks-inline-markups-maths-tables">Check for wrong code blocks, inline markups, maths, tables</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">6.4.5</span><span class="section_title"><a href="#dont-follow-this-manual-way">&lt;2018-09-17&gt; Don't follow this manual way</a></span><span class="word_count">(134w~1m)</span></li>
+</ul>
+</div>
+<h4 id="options"><span class="section_number">6.4.1</span><span class="section_title">Options</span></h4>
+<ul>
+<li><a href="https://emacs.stackexchange.com/questions/5465/how-to-migrate-markdown-files-to-emacs-org-mode-format">How to migrate Markdown files to Emacs org mode format - Emacs Stack Exchange</a>
+<ul>
+<li>Pandoc can convert Markdown to Org. There is even <a href="https://pandoc.org/try/">Try pandoc online</a>, but don't post sensitive data online, such as password, company secret, etc.</li>
+</ul></li>
+</ul>
+<p>We want to convert from Jekyll GitHub-Flavored Markdown to Org Mode.</p>
+<h4 id="preliminary-clean-up-remove-yaml-front-matter-jekyll-tags-and-liquid-tags"><span class="section_number">6.4.2</span><span class="section_title">Preliminary clean-up: Remove YAML front-matter, Jekyll tags, and Liquid tags</span></h4>
+<p>Remove the YAML front-matter. Later, manually add the corresponding Org Mode metadata into the output. (Or white a Lua script? Pandoc mentions something about Lua scripting.)</p>
+<p>Manually resolve Jekyll link tags such as <code>{% raw %}{% link something.md %}{% endraw %}</code>. You can use regex if your html file name always coincides with the source md file name.</p>
+<h4 id="use-pandoc"><span class="section_number">6.4.3</span><span class="section_title">Use Pandoc</span></h4>
+<p>&lt;2018-09-18&gt; This assumes Pandoc 2.3. Don't use the one that comes with Ubuntu 14.04; it's too old.</p>
+<p><a href="https://github.com/jgm/pandoc/releases/tag/2.3">Download statically-linked Pandoc 2.3</a> for your operating system.</p>
+<pre><code>pandoc --from markdown --to org --wrap=preserve --output OUTPUT.md INPUT.md
+</code></pre>
+<p>The option <code>--wrap=preserve</code> is illustrated in <a href="https://stackoverflow.com/questions/26066621/preserve-line-breaks-in-pandoc-markdown-latex-conversion">Preserve Line Breaks in Pandoc Markdown -&gt; LaTeX Conversion - Stack Overflow</a>.</p>
+<h4 id="check-for-wrong-code-blocks-inline-markups-maths-tables"><span class="section_number">6.4.4</span><span class="section_title">Check for wrong code blocks, inline markups, maths, tables</span></h4>
+<h4 id="dont-follow-this-manual-way"><span class="section_number">6.4.5</span><span class="section_title">&lt;2018-09-17&gt; Don't follow this manual way</span></h4>
+<p>The proper solution is to write a program that transforms Markdown AST to Org AST, but the amount of Markdown I want to convert does not justify the effort of writing such program. Thus I use Visual Studio Code and regexes to transform some files manually.</p>
+<p>(&lt;2018-09-17&gt; Someone else already wrote that program. It's called Pandoc.)</p>
+<p>These regexes don't work if any wildcard matches a funny character. We need context-free grammar for that.</p>
+<ol>
+<li><p>Converting links</p>
+<p>VSCode regex replace pattern for converting Markdown links to Org Mode links:</p>
+<pre><code>\[(.*)\]\((.*)\)
+[[$2][$1]]
+</code></pre></li>
+<li><p>Converting headers</p>
+<p>This is VSCode regex replace pattern for converting Markdown headers to Org Mode headers. Repeat until there is no matches. Beware of inadvertently matching Bash comments if any.</p>
+<p>There should be a trailing space after every of these regexes.</p>
+<pre><code>^##
+
+*
+
+^###
+**
+
+^####
+***
+
+etc.
+</code></pre></li>
+<li><p>Backslashes, code blocks, and inline code</p>
+<p>Replace <code>`</code> with <code>=</code>.</p></li>
+</ol>
+<h2 id="getting-more-help"><span class="section_number">7</span><span class="section_title">Getting more help</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#online-introductory-materials">Online introductory materials</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#org-mode-introductory-materials">Org Mode introductory materials</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">7.3</span><span class="section_title"><a href="#reading-the-org-mode-manual">Reading the Org Mode manual</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">7.4</span><span class="section_title"><a href="#navigating-an-info-document">Navigating an info document</a></span><span class="word_count">(69w~1m)</span></li>
+</ul>
+</div>
+<h3 id="online-introductory-materials"><span class="section_number">7.1</span><span class="section_title">Online introductory materials</span></h3>
+<ul>
+<li>Read the emacs manual in emacs: press <code>C-h r</code>.</li>
+<li>Open the info browser: press <code>C-h i</code>.</li>
+<li><a href="http://blog.vivekhaldar.com/post/3996068979/the-levels-of-emacs-proficiency">Vivek Haldar — The levels of Emacs proficiency</a></li>
+<li><a href="http://ergoemacs.org/emacs/emacs.html">Xah Lee's Emacs tutorial</a></li>
+</ul>
+<h3 id="org-mode-introductory-materials"><span class="section_number">7.2</span><span class="section_title">Org Mode introductory materials</span></h3>
+<ul>
+<li><a href="https://orgmode.org/">Org mode for Emacs – Your Life in Plain Text</a></li>
+<li><a href="https://orgmode.org/worg/org-tutorials/org-taskjuggler.html">Creating Gantt charts by Exporting to TaskJuggler</a></li>
+<li>Learning org-mode from others
+<ul>
+<li><a href="http://doc.norang.ca/org-mode.html">Org Mode - Organize Your Life In Plain Text!</a></li>
+</ul></li>
+</ul>
+<h3 id="reading-the-org-mode-manual"><span class="section_number">7.3</span><span class="section_title">Reading the Org Mode manual</span></h3>
+<p>Read the manual with <code>M-x org-info</code>. However, on Ubuntu 14.04, there is a catch: <code>M-x org-version</code> says 8.2.4, but emacs comes with its own org-mode 7.9.3f documentation in <code>/usr/share/info/emacs-24</code> that precedes <code>/usr/share/info</code>. Use <code>C-u C-h i /usr/share/info/org.gz RET</code> to open the correct documentation.</p>
+<p>There is a shorter HTML version online: <a href="https://orgmode.org/guide/">the compact org-mode guide</a>, but it's more convenient to browse the info document in emacs.</p>
+<h3 id="navigating-an-info-document"><span class="section_number">7.4</span><span class="section_title">Navigating an info document</span></h3>
+<ul>
+<li><code>q</code> quits the info viewer</li>
+<li><code>RET</code> follows the link under cursor</li>
+<li><code>TAB</code> moves the cursor to the next link</li>
+<li><code>S-TAB</code> moves the cursor to the previous link</li>
+<li><code>l</code> (small L) goes back to the previous page in your browsing history</li>
+<li><code>u</code> goes up to the parent page (of the current page)</li>
+<li><code>n</code> goes to the next page</li>
+<li><code>p</code> goes to the previous page</li>
+<li><code>h</code> brings up help about how to use the info viewer</li>
+</ul>
+<h2 id="programming-in-emacs-lisp"><span class="section_number">8</span><span class="section_title">Programming in Emacs Lisp</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">8.1</span><span class="section_title"><a href="#basics">Basics</a></span><span class="word_count">(179w~1m)</span></li>
+<li><span class="section_number">8.2</span><span class="section_title"><a href="#suggested-workflow">Suggested workflow</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">8.3</span><span class="section_title"><a href="#debugging-emacs-lisp-using-trace.el">Debugging Emacs Lisp using trace.el</a></span><span class="word_count">(143w~1m)</span></li>
+<li><span class="section_number">8.4</span><span class="section_title"><a href="#comment-indentation-surprises">Comment indentation surprises</a></span><span class="word_count">(15w~1m)</span></li>
+</ul>
+</div>
+<h3 id="basics"><span class="section_number">8.1</span><span class="section_title">Basics</span></h3>
+<ul>
+<li><code>M-\</code> delete all spaces and tabs around point</li>
+<li><code>C-M-k</code> kill s-expression</li>
+<li><code>C-x C-e</code> eval last s-expression before point</li>
+<li>indenting/formatting
+<ul>
+<li><code>C-M-\</code> indent region</li>
+<li><code>M-x indent-sexp</code></li>
+</ul></li>
+<li>partial reloading
+<ul>
+<li><code>C-M-x</code> or <code>M-x eval-defun</code></li>
+<li><code>M-x eval-region</code></li>
+</ul></li>
+<li>setq</li>
+<li>add-to-list</li>
+<li>load</li>
+<li>load-path</li>
+<li>funcall</li>
+</ul>
+<p>For someone used to Scheme, Emacs Lisp is unpleasant. 2018-09-12: When will Guile Emacs be mainstream?</p>
+<ul>
+<li>How do I define a local function?
+<ul>
+<li>You define it with let and lambda, as in Scheme. But you call it by prepending funcall. If in Scheme you write <code>(f a b)</code>, then in Emacs Lisp you write <code>(funcall f a b)</code>.
+<ul>
+<li>Why do I need this funcall noise? Because it's Lisp-2. If you don't like that, and you don't mind depending on the <code>cl</code> package, then you can use <code>flet</code> as described in <a href="https://www.emacswiki.org/emacs/LocalFunctions">EmacsWiki: Local Functions</a>. However, <code>cl</code> is a big package; it's a waste of dependencies if you only use <code>flet</code>.</li>
+</ul></li>
+</ul></li>
+<li>Warts for historical reasons
+<ul>
+<li>Lexical scoping is not the default, probably because it's easier to write a dynamic-binding interpreter than a .</li>
+<li>Emacs Lisp doesn't have proper tail calls.</li>
+</ul></li>
+<li>Contentious
+<ul>
+<li>Lisp macro is simpler than Scheme macro, but Lisp macro is unhygienic.</li>
+</ul></li>
+<li><a href="http://xahlee.info/comp/Common_Lisp_quotations.html">Famous Programers on How Common Lisp Sucks</a></li>
+<li><a href="https://www.emacswiki.org/emacs/WhyDoesElispSuck">EmacsWiki: Why Does Elisp Suck</a></li>
+<li><a href="https://www.emacswiki.org/emacs/EmacsLispLimitations">EmacsWiki: Emacs Lisp Limitations</a></li>
+</ul>
+<h3 id="suggested-workflow"><span class="section_number">8.2</span><span class="section_title">Suggested workflow</span></h3>
+<p>This example is for developing org mode:</p>
+<p>Run several emacs processes:</p>
+<ul>
+<li>In workspace 1, run <code>emacs -mm</code> for writing Emacs Lisp code.</li>
+<li>In workspace 2, run <code>emacs -fh --no-desktop --visit ORGFILE</code> for testing. We'll often restart this instance.</li>
+<li>In workspace 2, run <code>emacs -Q -fh --eval '(info &quot;org&quot;)'</code> for reading the org mode manual.</li>
+</ul>
+<h3 id="debugging-emacs-lisp-using-trace.el"><span class="section_number">8.3</span><span class="section_title">Debugging Emacs Lisp using trace.el</span></h3>
+<p>&lt;2018-09-15&gt; My use case: Debug my custom org-mode exporter for Jekyll. I want to dump the plist passed to <code>my-front-matter</code>.</p>
+<p>Emacs Lisp manual chapter &quot;Debugging Lisp programs&quot; mentions <code>trace.el</code>. The usage instructions are near the beginning of <a href="https://github.com/emacs-mirror/emacs/blob/emacs-26.1/lisp/emacs-lisp/trace.el">Emacs 26.1 trace.el source code</a>, which also documents some limitations.</p>
+<p>The <code>trace.el</code> method is the most limited, but it is the simplest to use, among the options.</p>
+<p>Here are the steps.</p>
+<ul>
+<li><p>Install advices. Put cursor after closing paren, and then <code>C-x C-e</code> to eval the sexp.</p>
+<pre class="elisp"><code>;; replace the function name symbol with yours
+(trace-function-background &#39;myhtml-inner-template)
+(trace-function-background &#39;my-front-matter)
+</code></pre></li>
+<li>Do something that will run the function. In my case, I run <code>M-x my-org-export-for-jekyll</code>.</li>
+<li>Open the <code>*trace-output*</code> buffer (using <code>C-x b</code>).</li>
+<li>Prettify the s-expression: Move the cursor to the opening paren, and then <code>C-u M-x indent-pp-sexp</code>.</li>
+<li>Remove noisy s-expression such as <code>:exported-data</code> by using <code>C-M-k</code> (<code>M-x kill-sexp</code>). This can also remove a long string.</li>
+<li><p>After you have finished debugging, remove advices (or just restart Emacs).</p>
+<pre class="elisp"><code>(untrace-all)
+</code></pre></li>
+</ul>
+<h3 id="comment-indentation-surprises"><span class="section_number">8.4</span><span class="section_title">Comment indentation surprises</span></h3>
+<p>Automatic indentation of comments <a href="https://stackoverflow.com/questions/26312317/wrong-indentation-of-comments-in-emacs">surprises</a> people who don't know <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html">Emacs Lisp comment conventions</a>.</p>
+<h2 id="configuring-emacs-further"><span class="section_number">9</span><span class="section_title">Configuring Emacs further</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#using-emacs-packages">Using emacs packages</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">9.2</span><span class="section_title"><a href="#other-peoples-emacs-setups-and-init-files">Other people's Emacs setups and init files</a></span><span class="word_count">(40w~1m)</span></li>
+</ul>
+</div>
+<h3 id="using-emacs-packages"><span class="section_number">9.1</span><span class="section_title">Using emacs packages</span></h3>
+<ul>
+<li><a href="https://github.com/jwiegley/use-package">jwiegley/use-package: A use-package declaration for simplifying your .emacs</a></li>
+</ul>
+<h3 id="other-peoples-emacs-setups-and-init-files"><span class="section_number">9.2</span><span class="section_title">Other people's Emacs setups and init files</span></h3>
+<ul>
+<li><a href="https://github.com/jwiegley/dot-emacs">John Wiegley</a></li>
+<li><a href="https://sites.google.com/site/steveyegge2/my-dot-emacs-file">Steve Yegge</a></li>
+<li><a href="http://www.i3s.unice.fr/~malapert/org/tips/emacs_orgmode.html">Arnaud Malapert's org mode configuration</a></li>
+<li><a href="https://www.reddit.com/r/emacs/comments/3hevcv/how_does_your_emacs_setup_look_like/">How does your Emacs setup look like? : emacs</a></li>
+<li><a href="https://www.quora.com/What-does-your-Emacs-setup-look-like">What does your Emacs setup look like? - Quora</a></li>
+<li><a href="https://github.com/emacs-tw/awesome-emacs">emacs-tw/awesome-emacs: A community driven list of useful Emacs packages, libraries and others.</a></li>
+</ul>
+<h2 id="using-git-from-emacs"><span class="section_number">10</span><span class="section_title">Using Git from Emacs</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.1</span><span class="section_title"><a href="#compare-various-emacs-integrations"><span class="todo TODO">TODO</span> &lt;2018-09-18&gt; Compare various Emacs integrations</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">10.2</span><span class="section_title"><a href="#install-magit"><span class="todo TODO">TODO</span> Install Magit</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">10.3</span><span class="section_title"><a href="#using-magit">Using magit</a></span><span class="word_count">(92w~1m)</span></li>
+</ul>
+</div>
+<h3 id="compare-various-emacs-integrations"><span class="section_number">10.1</span><span class="section_title"><span class="todo TODO">TODO</span> &lt;2018-09-18&gt; Compare various Emacs integrations</span></h3>
+<p>What are the options and differences? Which one should I use?</p>
+<ul>
+<li><a href="https://www.emacswiki.org/emacs/Git">EmacsWiki: Git</a></li>
+<li>VC</li>
+<li>Magit</li>
+<li>git-el</li>
+</ul>
+<p>VC comes with Emacs.</p>
+<ul>
+<li><a href="https://www.reddit.com/r/emacs/comments/2h7s6z/vc_as_an_alternative_to_magit/">vc as an alternative to magit? : emacs</a></li>
+<li><a href="https://news.ycombinator.com/item?id=1817324">Ask HN: Best emacs / git integration? | Hacker News</a></li>
+</ul>
+<h3 id="install-magit"><span class="section_number">10.2</span><span class="section_title"><span class="todo TODO">TODO</span> Install Magit</span></h3>
+<ul>
+<li>magit: <a href="https://magit.vc/">It's Magit! A Git Porcelain inside Emacs</a></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.2.1</span><span class="section_title"><a href="#woe-magit-requires-git-1.9.4">&lt;2018-09-16&gt; Woe: Magit requires Git &gt;= 1.9.4</a></span><span class="word_count">(19w~1m)</span></li>
+</ul>
+</div>
+<h4 id="woe-magit-requires-git-1.9.4"><span class="section_number">10.2.1</span><span class="section_title">&lt;2018-09-16&gt; Woe: Magit requires Git &gt;= 1.9.4</span></h4>
+<p>Ubuntu 14.04 comes with Git 1.9.1. Build from source, or add a PPA.</p>
+<h3 id="using-magit"><span class="section_number">10.3</span><span class="section_title">Using magit</span></h3>
+<p>See also &quot;Getting started&quot; in Magit user manual.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.3.1</span><span class="section_title"><a href="#open-the-magit-status-window">Open the Magit status window</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">10.3.2</span><span class="section_title"><a href="#basic-commands">Basic commands</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">10.3.3</span><span class="section_title"><a href="#stage-or-unstage-files-and-hunks">Stage or unstage files and hunks</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">10.3.4</span><span class="section_title"><a href="#commit">Commit</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">10.3.5</span><span class="section_title"><a href="#rebase">Rebase</a></span><span class="word_count">(9w~1m)</span></li>
+</ul>
+</div>
+<h4 id="open-the-magit-status-window"><span class="section_number">10.3.1</span><span class="section_title">Open the Magit status window</span></h4>
+<p>Open Magit status using <code>C-x g</code> or <code>M-x magit-status</code>.</p>
+<p>The following sections assume that you are in the Magit status window.</p>
+<h4 id="basic-commands"><span class="section_number">10.3.2</span><span class="section_title">Basic commands</span></h4>
+<ul>
+<li><code>q</code> close the Magit status window</li>
+<li><code>p</code> move up</li>
+<li><code>n</code> move down</li>
+<li><code>h</code> help</li>
+<li><code>g</code> refresh</li>
+</ul>
+<h4 id="stage-or-unstage-files-and-hunks"><span class="section_number">10.3.3</span><span class="section_title">Stage or unstage files and hunks</span></h4>
+<ul>
+<li><code>s</code> stage a file or hunk</li>
+<li><code>u</code> unstage a file or hunk</li>
+<li><code>TAB</code> toggle visibility of a section (files in a section, or hunks in a file)</li>
+</ul>
+<h4 id="commit"><span class="section_number">10.3.4</span><span class="section_title">Commit</span></h4>
+<ul>
+<li><code>c</code> open commit dialog
+<ul>
+<li><code>c</code> make normal commit
+<ul>
+<li><code>C-c C-c</code> commit</li>
+<li><code>C-c C-k</code> cancel commit</li>
+</ul></li>
+</ul></li>
+</ul>
+<h4 id="rebase"><span class="section_number">10.3.5</span><span class="section_title">Rebase</span></h4>
+<ul>
+<li><code>r i</code> start interactive rebase; follow instructions on screen</li>
+</ul>
+<h2 id="next-steps"><span class="section_number">11</span><span class="section_title">Next steps</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">11.1</span><span class="section_title"><a href="#use-citeproc-instead-of-org-ref"><span class="todo TODO">TODO</span> &lt;2018-09-17&gt; Use citeproc instead of org-ref?</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">11.2</span><span class="section_title"><a href="#install-evil-mode"><span class="todo TODO">TODO</span> Install evil-mode</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">11.3</span><span class="section_title"><a href="#my-emacs-wishlist"><span class="todo TODO">TODO</span> My Emacs wishlist</a></span><span class="word_count">(88w~1m)</span></li>
+<li><span class="section_number">11.4</span><span class="section_title"><a href="#make-a-personal-wiki"><span class="todo TODO">TODO</span> Make a personal wiki</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">11.5</span><span class="section_title"><a href="#unorganized-content">Unorganized content</a></span><span class="word_count">(269w~2m)</span></li>
+</ul>
+</div>
+<h3 id="use-citeproc-instead-of-org-ref"><span class="section_number">11.1</span><span class="section_title"><span class="todo TODO">TODO</span> &lt;2018-09-17&gt; Use citeproc instead of org-ref?</span></h3>
+<p>&lt;2018-09-17&gt; Citeproc markup language seems to be more expressive than org-ref markup language.</p>
+<p>Example of citeproc syntax from <a href="https://pandoc.org/index.html">Pandoc - About pandoc</a>:</p>
+<pre><code>[see @doe99, pp. 33-35; also @smith04, ch. 1]
+</code></pre>
+<h3 id="install-evil-mode"><span class="section_number">11.2</span><span class="section_title"><span class="todo TODO">TODO</span> Install evil-mode</span></h3>
+<h3 id="my-emacs-wishlist"><span class="section_number">11.3</span><span class="section_title"><span class="todo TODO">TODO</span> My Emacs wishlist</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">11.3.1</span><span class="section_title"><a href="#what-vim-can-do">What vim can do</a></span><span class="word_count">(54w~1m)</span></li>
+<li><span class="section_number">11.3.2</span><span class="section_title"><a href="#what-vscode-can-do">What VSCode can do</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">11.3.3</span><span class="section_title"><a href="#convert-from-lisp-list-to-yaml-for-jekyll-front-matter">Convert from Lisp list to YAML for Jekyll front matter</a></span><span class="word_count">(10w~1m)</span></li>
+</ul>
+</div>
+<h4 id="what-vim-can-do"><span class="section_number">11.3.1</span><span class="section_title">What vim can do</span></h4>
+<p>Does evil-mode count?</p>
+<ol>
+<li><p><code>*</code> search next occurrence of word</p></li>
+<li><p><code>d%</code> delete to matching delimiter</p>
+<p><a href="https://stackoverflow.com/questions/20458990/emacs-how-to-delete-until-and-including-bracket">https://stackoverflow.com/questions/20458990/emacs-how-to-delete-until-and-including-bracket</a></p></li>
+<li><p><code>%</code> jump to matching delimiter</p></li>
+<li><p><span class="done DONE">DONE</span> &lt;2018-09-17&gt; keyword local completion <code>C-x C-p</code>, <code>C-x C-n</code></p>
+<p>This is <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html#Dynamic-Abbrevs">dynamic abbreviations</a> in Emacs.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Vim insert mode</th>
+<th>Emacs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>C-x C-p</td>
+<td>M-/</td>
+</tr>
+<tr class="even">
+<td>C-x C-n</td>
+<td>C-u - M-/</td>
+</tr>
+</tbody>
+</table>
+<p>In Vim, <code>C-p</code> or <code>C-n</code> for next match. In Emacs, <code>M-/</code> for next match.</p></li>
+<li><p>line autocompletion <code>C-x C-l</code></p></li>
+</ol>
+<h4 id="what-vscode-can-do"><span class="section_number">11.3.2</span><span class="section_title">What VSCode can do</span></h4>
+<ol>
+<li><p>Copy link URL</p></li>
+<li><p><span class="todo TODO">TODO</span> &lt;2018-09-16&gt; Ctrl+P fuzzy/subsequence file path matching</p>
+<p>I heard this is possible in Emacs using helm-projectile.</p></li>
+<li><p>Ctrl+Shift+F find in files</p></li>
+</ol>
+<h4 id="convert-from-lisp-list-to-yaml-for-jekyll-front-matter"><span class="section_number">11.3.3</span><span class="section_title">Convert from Lisp list to YAML for Jekyll front matter</span></h4>
+<h3 id="make-a-personal-wiki"><span class="section_number">11.4</span><span class="section_title"><span class="todo TODO">TODO</span> Make a personal wiki</span></h3>
+<p>I use Jekyll and Org Mode. I don't use these.</p>
+<ul>
+<li><a href="https://www.emacswiki.org/emacs/EmacsWikiMode">EmacsWiki: Emacs Wiki Mode</a></li>
+</ul>
+<h3 id="unorganized-content"><span class="section_number">11.5</span><span class="section_title">Unorganized content</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">11.5.1</span><span class="section_title"><a href="#staying-healthy">Staying healthy</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">11.5.2</span><span class="section_title"><a href="#should-we-do-everything-in-emacs">Should we do everything in Emacs?</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">11.5.3</span><span class="section_title"><a href="#other-editors-i-havent-tried">Other editors I haven't tried</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">11.5.4</span><span class="section_title"><a href="#emacs-stuffs-that-may-be-similar-to-org-mode-from-ubuntu-14.04-package-list-that-i-havent-tried">Emacs stuffs, that may be similar to org-mode, from Ubuntu 14.04 package list, that I haven't tried</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">11.5.5</span><span class="section_title"><a href="#how-are-we-supposed-to-use-the-org-mode-agenda">How are we supposed to use the Org Mode Agenda?</a></span><span class="word_count">(48w~1m)</span></li>
+<li><span class="section_number">11.5.6</span><span class="section_title"><a href="#is-there-too-much-technical-debt-corner-cutting-in-emacs">Is there too much technical debt / corner-cutting in Emacs?</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">11.5.7</span><span class="section_title"><a href="#trying-spacemacs-helm-ivy-projectile">Trying spacemacs, helm, ivy, projectile</a></span><span class="word_count">(41w~1m)</span></li>
+</ul>
+</div>
+<h4 id="staying-healthy"><span class="section_number">11.5.1</span><span class="section_title">Staying healthy</span></h4>
+<ul>
+<li><a href="http://ergoemacs.org/emacs/emacs_hand_pain_celebrity.html">Famous Programers with Repetitive Strain Injury</a></li>
+</ul>
+<h4 id="should-we-do-everything-in-emacs"><span class="section_number">11.5.2</span><span class="section_title">Should we do everything in Emacs?</span></h4>
+<p>&lt;2018-09-16&gt; No. Emacs isn't always fast.</p>
+<ul>
+<li>erc: IRC with emacs</li>
+<li>opening PDF with emacs</li>
+<li>browsing the Internet with emacs</li>
+<li>icicles: &quot;emacs library that enhances minibuffer/input completion&quot;</li>
+<li>programming: paredit, haskell-mode, golang-mode, etc.</li>
+<li>Compare Emacs Lisp and Vim Script</li>
+<li>remembrance-agent: Emacs mode to help find relevant texts</li>
+<li>twittering-mode: Twitter client for Emacs</li>
+</ul>
+<h4 id="other-editors-i-havent-tried"><span class="section_number">11.5.3</span><span class="section_title">Other editors I haven't tried</span></h4>
+<ul>
+<li><a href="http://diakonos.pist0s.ca/">Diakonos - a linux editor for the masses</a></li>
+<li>Spacemacs</li>
+<li>non-free
+<ul>
+<li><a href="https://www.sublimetext.com/">Sublime Text - A sophisticated text editor for code, markup and prose</a></li>
+</ul></li>
+<li>TeX/LaTeX
+<ul>
+<li>GNU TeXmacs</li>
+<li>WhizzyTeX</li>
+</ul></li>
+<li>XEmacs? emacs-lucid?
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/XEmacs#History">WP:XEmacs history</a></li>
+<li><a href="http://ergoemacs.org/emacs/emacs_vs_xemacs.html">Xah Lee: My Experience of Emacs vs XEmacs</a>
+<ul>
+<li><a href="http://ergoemacs.org/emacs/gnu_emacs_xemacs_schism_Ben_Wing.html">Ben Wing: GNU Emacs and XEmacs Schism</a></li>
+</ul></li>
+</ul></li>
+</ul>
+<h4 id="emacs-stuffs-that-may-be-similar-to-org-mode-from-ubuntu-14.04-package-list-that-i-havent-tried"><span class="section_number">11.5.4</span><span class="section_title">Emacs stuffs, that may be similar to org-mode, from Ubuntu 14.04 package list, that I haven't tried</span></h4>
+<ul>
+<li>&quot;BHL is an Emacs mode that enables you to convert text files into HTML, LaTeX and SGML files.&quot;</li>
+<li>&quot;Howm(Hitori Otegaru Wiki Modoki) is a note-taking tool on Emacs.&quot;</li>
+<li>emacs-wiki</li>
+<li>mhc: schedule management tool for emacsen</li>
+<li>muse-el: Author and publish projects using Wiki-like markup</li>
+<li>smartdoc-elisp: emacs mode for smartdoc</li>
+<li>sisu: documents - structuring, publishing in multiple formats and search</li>
+</ul>
+<h4 id="how-are-we-supposed-to-use-the-org-mode-agenda"><span class="section_number">11.5.5</span><span class="section_title">How are we supposed to use the Org Mode Agenda?</span></h4>
+<p>I have already been using Google Calendar. I don't use org agenda.</p>
+<p>I don't give deadlines to my todos. Of what use is the agenda then?</p>
+<p>An agenda summarizes/aggregates org files. See &quot;Agenda Views &gt; Agenda Files&quot; in org mode manual.</p>
+<h4 id="is-there-too-much-technical-debt-corner-cutting-in-emacs"><span class="section_number">11.5.6</span><span class="section_title">Is there too much technical debt / corner-cutting in Emacs?</span></h4>
+<p>Examples:</p>
+<ul>
+<li>global variables in the C code preventing multithreading</li>
+<li><a href="https://orgmode.org/worg/org-hacks.html">Org ad hoc code, quick hacks and workarounds</a></li>
+</ul>
+<h4 id="trying-spacemacs-helm-ivy-projectile"><span class="section_number">11.5.7</span><span class="section_title">Trying spacemacs, helm, ivy, projectile</span></h4>
+<p>Spacemacs is quite polished compared to vanilla Emacs.</p>
+<p>Woe: Emacs can't install packages in parallel.</p>
+<p>What is helm? What is ivy? What is projectile? What is helm-projectile?</p>
+<ul>
+<li><a href="https://www.reddit.com/r/emacs/comments/7vcrwo/helm_vs_ivy_what_are_the_differences_what_are_the/">Helm vs Ivy: What are the differences, what are the advantages? : emacs</a></li>
+</ul>
+<h2 id="obsolete-content"><span class="section_number">12</span><span class="section_title">Obsolete content</span></h2>
+<p>Don't read these. These are no longer useful.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">12.1</span><span class="section_title"><a href="#installing-emacs-24.3-on-ubuntu-14.04">Installing Emacs 24.3 on Ubuntu 14.04</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">12.2</span><span class="section_title"><a href="#how-to-uninstall-emacs-on-ubuntu-14.04">How to uninstall Emacs on Ubuntu 14.04</a></span><span class="word_count">(15w~1m)</span></li>
+</ul>
+</div>
+<h3 id="installing-emacs-24.3-on-ubuntu-14.04"><span class="section_number">12.1</span><span class="section_title">Installing Emacs 24.3 on Ubuntu 14.04</span></h3>
+<p>I tried using emacs 24.3 that comes with ubuntu 14.04 but it was too old. Skip this.</p>
+<p>On 2018-09-07, the command <code>sudo apt-get install emacs magit org-mode org-mode-doc</code> on Ubuntu 14.04 will install:</p>
+<ul>
+<li>emacs 24.3.1</li>
+<li>magit 1.2.0</li>
+<li>org-mode 8.2.4</li>
+</ul>
+<h3 id="how-to-uninstall-emacs-on-ubuntu-14.04"><span class="section_number">12.2</span><span class="section_title">How to uninstall Emacs on Ubuntu 14.04</span></h3>
+<p>From <a href="https://arp242.net/weblog/uninstalling_emacs_with_apt-get-_lessons_in_interface_design">Uninstalling Emacs with apt-get: lessons in interface design</a>:</p>
+<pre><code>sudo apt-get remove &#39;emacs*&#39;
+</code></pre>
+<h2 id="emacs-woes-sometimes-emacs-is-a-pile-of-hacks-and-workarounds."><span class="section_number">13</span><span class="section_title">Emacs woes: Sometimes Emacs is a pile of hacks and workarounds.</span></h2>
+<ul>
+<li><a href="http://ergoemacs.org/emacs/emacs_narrow-to-defun_eval-defun_bug.html">http://ergoemacs.org/emacs/emacs_narrow-to-defun_eval-defun_bug.html</a>
+<ul>
+<li>Xah found that on Emacs 24.4.1.</li>
+<li>&lt;2018-09-27&gt; I'm using Emacs 26.1 and it still has that programming error.</li>
+</ul></li>
+</ul>
+<h2 id="finding-out-what-is-slowing-down-emacs"><span class="section_number">14</span><span class="section_title">Finding out what is slowing down Emacs</span></h2>
+<ul>
+<li><a href="https://www.reddit.com/r/emacs/comments/6uhzc9/very_slow_org_mode/">https://www.reddit.com/r/emacs/comments/6uhzc9/very_slow_org_mode/</a>
+<ul>
+<li><code>M-x profiler-start</code></li>
+<li>Do something slow.</li>
+<li><code>M-x profiler-report</code>.</li>
+</ul></li>
+</ul>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>A footnote<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Another footnote<a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
                 </div>
             </div>
         </main>
