@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Looking for a publishing system</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus's home page</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Looking for a publishing system</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#current-system">Current system</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#what-i-have-tried">What I have tried</a></span><span class="word_count">(157w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#write-a-prolog-static-site-generator-to-translate-org-mode-and-markdown-to-html">Write a Prolog static site generator to translate Org-Mode and Markdown to HTML</a></span><span class="word_count">(317w~2m)</span></li>
+</ul>
+</div>
+<h2 id="current-system"><span class="section_number">1</span><span class="section_title">Current system</span></h2>
+<p>The page you are looking at is written in Org Mode, and then converted to HTML with Pandoc and a Pandoc Lua filter. My only reason for using Org Mode is its Outline Mode.</p>
+<h2 id="what-i-have-tried"><span class="section_number">2</span><span class="section_title">What I have tried</span></h2>
+<p>I tried Org Exporter; it was too slow. On &lt;2019-01-01&gt;, I tried <a href="https://github.com/pandoc-scholar/pandoc-scholar">pandoc-scholar</a>, but it was too slow for my needs; I need to routinely convert my website. Thus I wrote a Pandoc Lua filter to translate org mode to jekyll html. It is still somewhat slow, but its output is acceptable. The alternative is to switch from Org to Markdown, but find a Markdown editor that can fold sections<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Set up vim markdown folding, or get a markdown editor that can fold sections, maybe vscode. I prefer vim to emacs because I can move around much faster in vim. Vim is designed for motion. Emacs is designed for extensibility. I could also use regex to replace org <code>***</code> with markdown <code>###</code> as a preprocessing step before calling Pandoc, but I would rather have a non-hacky long-term solution. I think I will need to reimplement some of Jekyll + Pandoc + Org in Prolog.</p>
+<h2 id="write-a-prolog-static-site-generator-to-translate-org-mode-and-markdown-to-html"><span class="section_number">3</span><span class="section_title">Write a Prolog static site generator to translate Org-Mode and Markdown to HTML</span></h2>
+<p>I need a publishing system, preferably written in Prolog.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#features-goals-and-constraints">Features, goals, and constraints</a></span><span class="word_count">(178w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#d-implement-lmx-latex-markdown-xml-markup-language">?7d: Implement LMX (LaTeX-Markdown-XML) markup language</a></span><span class="word_count">(120w~1m)</span></li>
+</ul>
+</div>
+<h3 id="features-goals-and-constraints"><span class="section_number">3.1</span><span class="section_title">Features, goals, and constraints</span></h3>
+<p>This basically reimplements some of Pandoc in Prolog.</p>
+<p>I need this big yak shaving because:</p>
+<ul>
+<li>I need citations in my <a href="file:proglang.org">file:proglang.org</a>.</li>
+<li>I don't trust Emacs.</li>
+<li>I don't trust org-ref.</li>
+<li>I don't trust the interaction between org, pandoc, and pandoc-citeproc.</li>
+<li>I feel Emacs is too slow.</li>
+<li>I hate editing and compiling Pandoc; GHC is slow.</li>
+<li>Markdown is not enough.</li>
+</ul>
+<p>Problem:</p>
+<ul>
+<li>pandoc can't read org metadata/directives?</li>
+</ul>
+<p>The constraints:</p>
+<ul>
+<li>The user edits the file using unmodified Emacs Org-Mode.</li>
+</ul>
+<p>Work breakdown:</p>
+<ul>
+<li>citeproc? bibtex? biblatex? bibliography management?</li>
+<li>Citing from website.</li>
+<li>The program exports the Org files to HTML for web publishing without using the slow Emacs Org Exporter.</li>
+<li>Parse LaTeX begin end environment.</li>
+<li>YAML metadata preamble.</li>
+<li>Generate local table of contents for each section that has more one or more child.</li>
+<li>word count, to replace page numbers as navigation aid</li>
+<li>Why bibtex? Because Google Scholar exports bibtex. We can then just copy the bibtex fragment from Google Scholar.</li>
+<li>Parse Org Mode.
+<ul>
+<li>Inline: bold, italic, underline, code, at-at-html.</li>
+<li>Heading.</li>
+<li>Block: EXAMPLE, SRC, HTML</li>
+<li>Syntax highlighting in code blocks? We skip this because this is not essential.</li>
+</ul></li>
+</ul>
+<p>VERY IMPORTANT: the ability to handle citations without slowing down everything</p>
+<p>We can use <a href="http://www.swi-prolog.org/pack/list?p=bibtex">http://www.swi-prolog.org/pack/list?p=bibtex</a></p>
+<p>We are going to use LMX instead of <a href="https://github.com/SWI-Prolog/packages-ltx2htm">https://github.com/SWI-Prolog/packages-ltx2htm</a></p>
+<h3 id="d-implement-lmx-latex-markdown-xml-markup-language"><span class="section_number">3.2</span><span class="section_title">?7d: Implement LMX (LaTeX-Markdown-XML) markup language</span></h3>
+<p>LMX is a LaTeX-like surface syntax for XML; this enables you to replace the closing tag with a closing brace.</p>
+<p>LMX is a combination of Org-Mode.</p>
+<pre class="example"><code>This is a paragraph.
+Separate a paragraph with a blank line.
+
+This is another paragraph.
+
+- This is a list.
+
+\passthru{
+WHAT.
+}
+
+\cite{foo}
+
+\bibliography
+
+LMX \Tag[Attr1=Val1,Attr2=Val2]{Content} translates to XML &lt;Tag Attr1=Val1 Attr2=Val2&gt;Content&lt;/Tag&gt;
+\ul{
+  \li{This is the first item.}
+  \li{This is the second item.}
+}
+
+\div[class=foo]{
+  \div[class=bar]{
+  }
+}
+
+Curly braces quote/escape attribute values.
+\Tag[Attr={,}]
+\Tag[Attr={[}]
+\div[data-foo=4123]{}
+\h1{bar}
+\img[src=foo.png]
+
+
+Escape a curly brace by prepending a backslash.
+\Tag[Beg=\{,End=\}]{}
+
+\table{
+  \tr{\td{Foo}\td{Bar}}
+}
+
+inline math \( 1 + 2 \)
+
+environments
+\begin{align}
+1 + 2 &amp;= 3
+\\
+4 + 5 &amp;\neq 6
+\end{align}
+
+\strong{\em{strong emphasized text}}
+
+\p{This is an example paragraph. It may contain \em{emphasis}.}
+\p{ Leading and trailing whitespaces are stripped away. }
+\p{\ Backslash-space escapes a space that would otherwise be ignored.}
+
+HTML entities:
+
+\nbsp expands to &amp;nbsp;
+</code></pre>
+<p>Difference from TeX/LaTeX:</p>
+<ul>
+<li>In TeX, &quot; b&quot; inserts no space. We insert a space. If you don't want a space, write &quot;b&quot; or &quot;{}b&quot;.</li>
+<li>In LaTeX, you use &quot;\bibliography{FILE}&quot;. In LMX, you use &quot;\bibliography&quot;, and specify the FILE from the command line or from Prolog code.</li>
+</ul>
+<p>Similar but not the same 1999 &quot;TEXML: Typesetting XML with TEX&quot; <a href="https://www.tug.org/TUG99-web/pdf/lovell.pdf">https://www.tug.org/TUG99-web/pdf/lovell.pdf</a></p>
+<p>&quot;SXML: an XML document as an S-expression&quot; <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.729.3639&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.729.3639&amp;rep=rep1&amp;type=pdf</a></p>
+<p>R markdown <a href="https://bookdown.org/">https://bookdown.org/</a></p>
+<p>LaTeX syntax for XML.</p>
+<pre class="example"><code>\tag[attr1=val1,attr2=val2]{content} = &lt;tag attr1=&quot;val1&quot; attr2=&quot;val2&quot;&gt;content&lt;/tag&gt;
+\amp = &amp;amp;
+\e{amp} = &amp;amp;
+</code></pre>
+<p>Make a semantic-LaTeX parser/interpreter in Prolog. Treat LaTeX as declarative markup language and not imperative command language.</p>
+<ul>
+<li>escaping comma <a href="https://tex.stackexchange.com/questions/70986/comma-in-macro-parameters">https://tex.stackexchange.com/questions/70986/comma-in-macro-parameters</a></li>
+<li>escaping square brackets <a href="https://tex.stackexchange.com/questions/6683/escaping-square-braces">https://tex.stackexchange.com/questions/6683/escaping-square-braces</a></li>
+<li>escaping curly braces <a href="https://tex.stackexchange.com/questions/181118/how-to-escape-curly-braces-within-texttt">https://tex.stackexchange.com/questions/181118/how-to-escape-curly-braces-within-texttt</a></li>
+</ul>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://vi.stackexchange.com/questions/9543/how-to-fold-markdown-using-the-built-in-markdown-mode">https://vi.stackexchange.com/questions/9543/how-to-fold-markdown-using-the-built-in-markdown-mode</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/publish.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/publish.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2018-01-01 03:08:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <body>
         <header class="site-header" role="banner">
             <div class="wrapper">
-                <a class="site-title" rel="author" href="/">Erik Dominikus's wiki</a>
+                <a class="site-title" rel="author" href="/">Erik Dominikus's home page</a>
             </div>
         </header>
     <div style="display:none;">\(
@@ -191,9 +191,10 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">22</span><span class="section_title"><a href="#summary-of-what-i-think-the-best-programming-language-would-is-like-as-of-2018-12-30">Summary of what I think the best programming language would is like, as of &lt;2018-12-30&gt;</a></span><span class="word_count">(83w~1m)</span></li>
 <li><span class="section_number">23</span><span class="section_title"><a href="#unifying-functional-and-logic-programming-as-a-rewriting-system">Unifying functional and logic programming as a rewriting system</a></span><span class="word_count">(353w~2m)</span></li>
 <li><span class="section_number">24</span><span class="section_title"><a href="#logic-programming-with-explicit-side-effects-with-force-predicate">Logic programming with explicit side-effects with force-predicate</a></span><span class="word_count">(42w~1m)</span></li>
-<li><span class="section_number">25</span><span class="section_title"><a href="#prolog-as-a-term-rewriting-meta-interpreter">Prolog as a term-rewriting meta-interpreter</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">25</span><span class="section_title"><a href="#prolog-as-a-term-rewriting-meta-interpreter">Prolog as a term-rewriting meta-interpreter</a></span><span class="word_count">(38w~1m)</span></li>
 <li><span class="section_number">26</span><span class="section_title"><a href="#write-abstract-interpreters-not-compilers">Write abstract interpreters, not compilers?</a></span><span class="word_count">(67w~1m)</span></li>
-<li><span class="section_number">27</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(112w~1m)</span></li>
+<li><span class="section_number">27</span><span class="section_title"><a href="#side-effect">Side-effect?</a></span><span class="word_count">(319w~2m)</span></li>
+<li><span class="section_number">28</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(112w~1m)</span></li>
 </ul>
 </div>
 <h2 id="executive-summary"><span class="section_number">1</span><span class="section_title">Executive summary</span></h2>
@@ -3671,25 +3672,23 @@ fail | x &amp;\to x
 ?- force(file_content(&#39;foo&#39;, [1,2,3])). -- replace the content of file &#39;foo&#39; with [1,2,3]
 </code></pre>
 <h2 id="prolog-as-a-term-rewriting-meta-interpreter"><span class="section_number">25</span><span class="section_title">Prolog as a term-rewriting meta-interpreter</span></h2>
-<pre class="example"><code>% Interpret A :- B as &quot;rewrite A to B&quot;.
-
-parent(dad,kid).
-
-fib(0) :- 1.
-fib(N) :- fib(N-1) + fib(N-2).
-len([]) :- 0.
-len([_|X]) :- 1 + len(X).
-
-reduction
-
-print_eval(Exp) :- eval(Exp,Val), print(Val).
-</code></pre>
+<p>The Prolog rule &quot;A :- B&quot; can be interpreted in two ways. The first is the well-known proof-theoretic interpretation &quot;to prove A, prove B&quot;. The second is the <em>rewriting-system interpretation</em> &quot;rewrite A to B&quot;.</p>
 <h2 id="write-abstract-interpreters-not-compilers"><span class="section_number">26</span><span class="section_title">Write abstract interpreters, not compilers?</span></h2>
 <p>&lt;2018-12-30&gt;</p>
 <p>The same code fragment can be interpreted in several ways.</p>
 <p>The most common interpreter executes the program with the intended semantics. Example: a Python interpreter interprets the Python program &quot;print 'foo'&quot; as printing the string.</p>
 <p>Write an abstract interpreter that emits code when interpreting. An interpreter that interprets the Python program &quot;print 'foo'&quot; as &quot;emit a Ruby statement that prints 'foo' to screen when executed&quot;.</p>
-<h2 id="bibliography" class="unnumbered"><span class="section_number">27</span><span class="section_title">Bibliography</span></h2>
+<h2 id="side-effect"><span class="section_number">27</span><span class="section_title">Side-effect?</span></h2>
+<p>What is a &quot;side-effect&quot;? Wikipedia<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> is inconclusive.</p>
+<p>The &quot;side&quot; in &quot;side-effect&quot; implies that there are <em>effects</em> and <em>main-effects</em>, and that side-effects are unintended, unrelated, or unwanted. The <em>effect</em> of running a program is the change of the state of the universe that results from executing that program. In medicine, a side effect is an <em>unintended</em> effect, not necessarily bad<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. Thus, there is a parallel between chemists-and-drugs and programmers-and-programs: the designer of a drug (the programmer of a program) <em>intends</em> that taking the drug (running the program) accomplishes the <em>main-effect</em>, but reality is a bitch.</p>
+<p>What is our intention when we write a program such as a Haskell program <code>inc x = (x :: Integer) + 1</code>? Our intention is that it increments an integer, for <em>every</em> integer, which is mathematically trivial but physically impossible. The side-effects are: heating up the CPU, taking up some memory, taking up some time. We certainly did not intend to heat up the CPU; therefore such heating is a side-effect. Thus the main-effect is the <em>denotation</em> (the mathematical meaning) of the program, and every implementation detail is a side-effect.</p>
+<p>Thus &quot;side-effect&quot; means an effect that we failed to foresee, because the complexity was too much for us.</p>
+<p>Side-effects may be fatal.</p>
+<p>Spectre/Meltdown are side-effects in that sense. The chip designers sacrificed understandability for speed.</p>
+<p>There is also the phrase &quot;algebraic effect&quot;.</p>
+<p>We have to distinguish between a <em>program</em> and a <em>machine</em> running the program. A program does not run by itself. A <em>machine</em> runs a program. A program <em>describes</em> a computation. The machine <em>performs</em> the computation. A program is passive. A machine is active. A program exists in idea-world. A machine exists in material-world. A machine affects reality according to the program that the machine is running. The question: which is the <em>cause</em> of the change in reality: the machine or the program?</p>
+<p>If we assume free will, then our thought causes our behavior, and our behavior causes something in the material-world.</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">28</span><span class="section_title">Bibliography</span></h2>
 <div id="refs" class="references">
 <div id="ref-beeson2004lambda">
 <p>[1] Beeson, M. 2004. Lambda logic. <em>International joint conference on automated reasoning</em> (2004), 460–474. url: &lt;<a href="https://pdfs.semanticscholar.org/9721/c012782ef25023ac300e33d6ce34ffed7e18.pdf">https://pdfs.semanticscholar.org/9721/c012782ef25023ac300e33d6ce34ffed7e18.pdf</a>&gt;.</p>
@@ -3715,6 +3714,9 @@ print_eval(Exp) :- eval(Exp,Val), print(Val).
 <ol>
 <li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Pure_(programming_language)">https://en.wikipedia.org/wiki/Pure_(programming_language)</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
 <li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Nondeterministic_programming">https://en.wikipedia.org/wiki/Nondeterministic_programming</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/w/index.php?title=Side_effect_(computer_science)&amp;oldid=855461052">https://en.wikipedia.org/w/index.php?title=Side_effect_(computer_science)&amp;oldid=855461052</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://softwareengineering.stackexchange.com/questions/40297/what-is-a-side-effect">https://softwareengineering.stackexchange.com/questions/40297/what-is-a-side-effect</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/w/index.php?title=Side_effect&amp;oldid=875244456">https://en.wikipedia.org/w/index.php?title=Side_effect&amp;oldid=875244456</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
