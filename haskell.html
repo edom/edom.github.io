@@ -162,7 +162,8 @@ document.addEventListener("DOMContentLoaded", function () {
 <div class="local_table_of_contents">
 <ul>
 <li><span class="section_number">1</span><span class="section_title"><a href="#abdullah">Subtyping in Haskell with canonical injections</a></span><span class="word_count">(1203w~7m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#a-mess-do-not-see">A mess; do not see</a></span><span class="word_count">(611w~4m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#interpreting-haskell-without-types-a-strong-temptation">Interpreting Haskell without types: a strong temptation</a></span><span class="word_count">(282w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#a-mess-do-not-see">A mess; do not see</a></span><span class="word_count">(611w~4m)</span></li>
 </ul>
 </div>
 <h2 id="abdullah"><span class="section_number">1</span><span class="section_title">Subtyping in Haskell with canonical injections</span></h2>
@@ -355,17 +356,93 @@ document.addEventListener("DOMContentLoaded", function () {
 <a class="sourceLine" id="cb6-2" title="2"><span class="ot">foo ::</span> <span class="dt">Nonneg</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> a</a>
 <a class="sourceLine" id="cb6-3" title="3"><span class="co">-- with this, where _p is a proof that x is nonnegative:</span></a>
 <a class="sourceLine" id="cb6-4" title="4">foo {_p <span class="fu">:</span> x <span class="fu">&gt;=</span> <span class="dv">0</span>} x <span class="fu">=</span> <span class="fu">...</span></a></code></pre></div>
-<h2 id="a-mess-do-not-see"><span class="section_number">2</span><span class="section_title">A mess; do not see</span></h2>
+<h2 id="interpreting-haskell-without-types-a-strong-temptation"><span class="section_number">2</span><span class="section_title">Interpreting Haskell without types: a strong temptation</span></h2>
+<p>Suppose that we are writing a Haskell interpreter in Prolog, but we are too lazy to check the types, so we simply ignore all type annotations. Let's call the language HWOT (Haskell WithOut Types), pronounced like &quot;what&quot;. What do we have then? A normal-order beta-reducer/term-rewriter? Something like the Pure language<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>?</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">2.1</span><span class="section_title"><a href="#open-adts-algebraic-data-types">Open ADTs (algebraic data types)</a></span><span class="word_count">(46w~1m)</span></li>
-<li><span class="section_number">2.2</span><span class="section_title"><a href="#can-we-extend-haskell-to-auto-fmap">Can we extend Haskell to &quot;auto-fmap&quot;?</a></span><span class="word_count">(269w~2m)</span></li>
-<li><span class="section_number">2.3</span><span class="section_title"><a href="#auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">Auto-lifting (and therefore sequencing) of function application involving Monad instances</a></span><span class="word_count">(176w~1m)</span></li>
-<li><span class="section_number">2.4</span><span class="section_title"><a href="#equirecursive-types">Equirecursive types?</a></span><span class="word_count">(35w~1m)</span></li>
-<li><span class="section_number">2.5</span><span class="section_title"><a href="#bootstrap-ghc">&lt;2018-12-15&gt; Bootstrap GHC?</a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#the-temptation-is-strong">The temptation is strong</a></span><span class="word_count">(217w~2m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#compiling-hwot-to-haskell">Compiling HWOT to Haskell?</a></span><span class="word_count">(11w~1m)</span></li>
 </ul>
 </div>
-<h3 id="open-adts-algebraic-data-types"><span class="section_number">2.1</span><span class="section_title">Open ADTs (algebraic data types)</span></h3>
+<h3 id="the-temptation-is-strong"><span class="section_number">2.1</span><span class="section_title">The temptation is strong</span></h3>
+<p>The temptation to ditch types is <em>strong</em>.</p>
+<p>Untagged unions are trivial in HWOT. We can write this in HWOT but not Haskell:</p>
+<pre class="example"><code>-- is_list :: a -&gt; Bool
+is_list [] = True
+is_list (_:_) = True
+is_list _ = False
+
+-- size :: List a + Tree b -&gt; Integer
+size [] = 0
+size (_:x) = 1 + size x
+size Leaf = 0
+size (Node _ lef rig) = size lef + size rig
+
+-- my_list :: [Integer + String]
+my_list = [1, 2, &quot;three&quot;]
+</code></pre>
+<p>Open functions (functions defined in several modules) are also trivial in HWOT.</p>
+<p>Overloading and multimethods are trivial if constructors are namespaced.</p>
+<pre class="example"><code>fun ModA.Con = 0
+fun ModB.Con = 1
+</code></pre>
+<p>We can make a function argument optional backward-compatibly. We can monkey-patch our programs, although this may lead to maintenance hell.</p>
+<pre class="example"><code>-- We have a function f : [a] -&gt; Int.W
+
+f [] = 0
+f _ = 1
+
+-- Now we want to make the argument optional.
+
+-- We simply write this somewhere else.
+-- This doesn&#39;t even have to be in the same file that defines the original f.
+
+f Nothing = 0
+f (Just x) = f x
+</code></pre>
+<p>We can even write rewrite rules like GHC rewrite rules for stream fusion. The head of a pattern does not have to be a &quot;constructor&quot;.</p>
+<pre class="example"><code>map f (map g x) = map (f . g) x
+</code></pre>
+<p>Data-type-a-la-carte become much shorter. No need for pattern synonyms. Parsing, location, trees-that-grow, everything becomes much shorter.</p>
+<pre class="example"><code>eval (Add x y) = eval x + eval y
+
+-- define in other file
+
+eval (Neg x) = - x
+
+-- data Loc a = MkLoc FilePath Int Int a
+-- parse :: String -&gt; Loc Exp
+
+-- Simply add this anywhere.
+eval (MkLoc _ _ _ e) = eval e
+</code></pre>
+<p>Unsolved problems: type classes.</p>
+<p>Type classes are replaced with implicit first arguments?</p>
+<p>Higher-order patterns may be too much to handle. They may break confluence<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<pre class="example"><code>\forall f x . f (Just x) = f x
+</code></pre>
+<p><code>1 + &quot;a&quot;</code> is not an error; it is a <em>value</em> that reduces to itself.</p>
+<p><code>1 / 0</code> is not an error; it is a <em>value</em> that reduces to itself.</p>
+<p>If <code>f</code> is a &quot;partial&quot; function and <code>f x</code> is &quot;undefined&quot;, then <code>f x</code> is not an error; it is a <em>value</em> that reduces to itself.</p>
+<p>I think that type systems should be <em>separate</em> from languages (that is, type systems should be Curry-style, not Church-style; that is, Erlang-Dialyzer-style, not Haskell-style). Users should be able to write their own type systems. But even an interpreter has an implicit type system.</p>
+<h3 id="compiling-hwot-to-haskell"><span class="section_number">2.2</span><span class="section_title">Compiling HWOT to Haskell?</span></h3>
+<ol>
+<li>Write &quot;crazy&quot; programs in HWOT.</li>
+<li>Translate it to Haskell.</li>
+<li>???</li>
+<li>PROFIT</li>
+</ol>
+<h2 id="a-mess-do-not-see"><span class="section_number">3</span><span class="section_title">A mess; do not see</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#open-adts-algebraic-data-types">Open ADTs (algebraic data types)</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#can-we-extend-haskell-to-auto-fmap">Can we extend Haskell to &quot;auto-fmap&quot;?</a></span><span class="word_count">(269w~2m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">Auto-lifting (and therefore sequencing) of function application involving Monad instances</a></span><span class="word_count">(176w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#equirecursive-types">Equirecursive types?</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#bootstrap-ghc">&lt;2018-12-15&gt; Bootstrap GHC?</a></span><span class="word_count">(85w~1m)</span></li>
+</ul>
+</div>
+<h3 id="open-adts-algebraic-data-types"><span class="section_number">3.1</span><span class="section_title">Open ADTs (algebraic data types)</span></h3>
 <ul>
 <li>&quot;Closed&quot; means &quot;defined in one place&quot;.</li>
 <li><p>Open ADTs don't mix with exhaustive case analysis (function totality).</p>
@@ -378,7 +455,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul></li>
 <li><p>If <code>f : a -&gt; b</code>, then the compiler should infer <code>lift f : (Monad m) =&gt; m a -&gt; m b</code>.</p></li>
 </ul>
-<h3 id="can-we-extend-haskell-to-auto-fmap"><span class="section_number">2.2</span><span class="section_title">Can we extend Haskell to &quot;auto-fmap&quot;?</span></h3>
+<h3 id="can-we-extend-haskell-to-auto-fmap"><span class="section_number">3.2</span><span class="section_title">Can we extend Haskell to &quot;auto-fmap&quot;?</span></h3>
 <ul>
 <li><p>Possibilities:</p>
 <ul>
@@ -440,7 +517,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><a href="https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf">https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf</a></li>
 </ul></li>
 </ul>
-<h3 id="auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances"><span class="section_number">2.3</span><span class="section_title">Auto-lifting (and therefore sequencing) of function application involving Monad instances</span></h3>
+<h3 id="auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances"><span class="section_number">3.3</span><span class="section_title">Auto-lifting (and therefore sequencing) of function application involving Monad instances</span></h3>
 <ul>
 <li><p>The standard rule is:</p>
 <ul>
@@ -493,7 +570,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul></li>
 </ul></li>
 </ul>
-<h3 id="equirecursive-types"><span class="section_number">2.4</span><span class="section_title">Equirecursive types?</span></h3>
+<h3 id="equirecursive-types"><span class="section_number">3.4</span><span class="section_title">Equirecursive types?</span></h3>
 <p>Haskell has isorecursive types. Can we make it use equirecursive types?</p>
 <ul>
 <li>Can we make it automatically insert roll-unroll/fold-unfold/In-out?</li>
@@ -504,10 +581,17 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul></li>
 <li>&quot;System F-omega with Equirecursive Types for Datatype-Generic Programming&quot;?</li>
 </ul>
-<h3 id="bootstrap-ghc"><span class="section_number">2.5</span><span class="section_title">&lt;2018-12-15&gt; Bootstrap GHC?</span></h3>
+<h3 id="bootstrap-ghc"><span class="section_number">3.5</span><span class="section_title">&lt;2018-12-15&gt; Bootstrap GHC?</span></h3>
 <p><a href="https://twitter.com/ErikDominikus/status/1073726987338842112">https://twitter.com/ErikDominikus/status/1073726987338842112</a></p>
 <p>How about writing a Haskell interpreter with Prolog? I guess Haskell type checker takes ~100 lines of Prolog, and parser takes ~200 lines. It may be doable in a month. I have ~20 lines of Prolog type-checking Haskell AST but without type classes.</p>
 <p>Add ~500 more lines of Prolog metaprogram for translating lists to arrays, ~2000 more lines for translating Prolog to optimized x86_64 native code (if not reinventing LLVM), 1 more month, and … we may beat GHC at its own game? :)</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Pure_(programming_language)">https://en.wikipedia.org/wiki/Pure_(programming_language)</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Confluence_(abstract_rewriting)">https://en.wikipedia.org/wiki/Confluence_(abstract_rewriting)</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
                 </div>
             </div>
         </main>
