@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Model</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus's home page</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Model</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#summary">Summary</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#the-meaning-of-model">The meaning of &quot;model&quot;</a></span><span class="word_count">(658w~4m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#modeling-is-simplification.">Modeling is simplification.</a></span><span class="word_count">(331w~2m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#modeling-by-ignoring-irrelevant-information">Modeling by ignoring irrelevant information</a></span><span class="word_count">(79w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#how-we-model-things">How we model things</a></span><span class="word_count">(465w~3m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#fundamental-learning-by-falsifying-simplifying-assumptions">Fundamental learning by falsifying simplifying assumptions</a></span><span class="word_count">(98w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#generalizing-the-model-in-model-theory">Generalizing the &quot;model&quot; in model theory?</a></span><span class="word_count">(80w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#we-model-things-because-our-thought-is-limited">We model things because our thought is limited</a></span><span class="word_count">(159w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#a-model-is">A model is …</a></span><span class="word_count">(83w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#model-and-reality">Model and reality</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#modeling-how-does-x-model-y">Modeling: How does X model Y?</a></span><span class="word_count">(57w~1m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#model-theory-should-be-named-structure-theory-instead">&quot;Model theory&quot; should be named &quot;structure theory&quot; instead?</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#our-model-vs-metamathematics-model-theory-model">Our &quot;model&quot; vs metamathematics model theory &quot;model&quot;</a></span><span class="word_count">(282w~2m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#questions-we-want-to-answer"><span class="todo TODO">TODO</span> Questions we want to answer</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">15</span><span class="section_title"><a href="#measuring-model-quality-how-well-does-x-model-y">Measuring model quality: How well does X model Y?</a></span><span class="word_count">(78w~1m)</span></li>
+<li><span class="section_number">16</span><span class="section_title"><a href="#model-of-model-multiple-level-machine-model">Model of model: multiple-level machine model</a></span><span class="word_count">(236w~2m)</span></li>
+<li><span class="section_number">17</span><span class="section_title"><a href="#complexity">Complexity?</a></span><span class="word_count">(296w~2m)</span></li>
+</ul>
+</div>
+<h2 id="summary"><span class="section_number">1</span><span class="section_title">Summary</span></h2>
+<p>A <em>model</em> of a thing is a <em>simplification</em> of that thing.</p>
+<p>A model always comes with <em>simplifying assumptions</em>.</p>
+<p>Violating the simplifying assumptions leads to nonsense.</p>
+<p>Related concepts: simplification, ignoration, truncation, approximation.</p>
+<h2 id="the-meaning-of-model"><span class="section_number">2</span><span class="section_title">The meaning of &quot;model&quot;</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#history-of-the-english-word-model">History of the English word &quot;model&quot;</a></span><span class="word_count">(357w~2m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#the-meanings-of-model-in-2018">The meanings of &quot;model&quot; in 2018</a></span><span class="word_count">(299w~2m)</span></li>
+</ul>
+</div>
+<h3 id="history-of-the-english-word-model"><span class="section_number">2.1</span><span class="section_title">History of the English word &quot;model&quot;</span></h3>
+<p>In the 15th century, a model is a small woodwork crafted with the same proportions of a building that is going to be built. Thus a model has the same shape of the building but is much smaller. For example, if the building has a stone wall, then the model has a wooden card.</p>
+<p>The English word &quot;model&quot; comes from Latin &quot;modellus&quot; that is diminutive of &quot;modulus&quot; that is diminutive of &quot;modus&quot;. The Latin &quot;modus&quot; means &quot;measure&quot;, and &quot;modulus&quot; is small &quot;modus&quot;, and &quot;modellus&quot; is small &quot;modulus&quot;; thus &quot;modellus&quot; should mean &quot;a small small measure&quot;.</p>
+<p>The &quot;model&quot; in &quot;bone remodeling&quot; and &quot;kitchen remodeling&quot; means reshaping, reformation, renewal, renovation, replacement.</p>
+<p>Sources:</p>
+<ul>
+<li>Dictionaries and thesauruses
+<ul>
+<li>Oxford English Dictionary: &quot;model&quot; comes from &quot;Late 16th century (denoting a set of plans of a building) […]&quot;. <a href="https://en.oxforddictionaries.com/definition/model">https://en.oxforddictionaries.com/definition/model</a></li>
+<li>Historical Thesaurus of English (ht.ac.uk): The noun &quot;model&quot; was used in 1575 to mean &quot;plans of construction&quot;. and the verb &quot;model&quot; was used in 1604 to mean &quot;represent&quot;. <a href="https://ht.ac.uk/category-selection/?word=model&amp;page=1&amp;categoryMinis=on&amp;categorySort=tier">https://ht.ac.uk/category-selection/?word=model&amp;page=1&amp;categoryMinis=on&amp;categorySort=tier</a></li>
+<li>The Online Etymology Dictionary traces the noun &quot;model&quot; back to the 1570s &quot;likeness made to scale; architect's set of designs&quot;. It traces the verb &quot;model&quot; back to a word in 1660s meaning &quot;fashion in clay or wax&quot;. <a href="https://www.etymonline.com/word/model">https://www.etymonline.com/word/model</a></li>
+<li>Princeton WordNet 3.1 <a href="http://wordnetweb.princeton.edu/perl/webwn?s=model&amp;sub=Search+WordNet&amp;o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;h=">http://wordnetweb.princeton.edu/perl/webwn?s=model&amp;sub=Search+WordNet&amp;o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;h=</a></li>
+<li>The Free Dictionary <a href="https://www.thefreedictionary.com/model">https://www.thefreedictionary.com/model</a></li>
+<li>Wiktionary <a href="https://en.wiktionary.org/wiki/model">https://en.wiktionary.org/wiki/model</a></li>
+<li>Also, the definition of &quot;model oneself after&quot; in Merriam-Webster dictionary <a href="https://www.merriam-webster.com/dictionary/model%20oneself%20after">https://www.merriam-webster.com/dictionary/model%20oneself%20after</a></li>
+</ul></li>
+<li>Images
+<ul>
+<li>15th century wooden architectural model of Florence Cathedral Dome by Filippo Brunelleschi <a href="https://www.architectural-review.com/essays/architects-do-it-with-models-the-history-of-architecture-in-16-models/8658964.article">https://www.architectural-review.com/essays/architects-do-it-with-models-the-history-of-architecture-in-16-models/8658964.article</a></li>
+</ul></li>
+<li>Essays
+<ul>
+<li>Wilfrid Hodges's history of the word &quot;model&quot; in &quot;model theory&quot;, in the Stanford Encyclopedia of Philosophy <a href="https://plato.stanford.edu/entries/model-theory/#Modelling">https://plato.stanford.edu/entries/model-theory/#Modelling</a></li>
+<li>Gene Bellinger's definition: &quot;a simplification of reality intended to promote understanding&quot; <a href="http://www.systems-thinking.org/simulation/model.htm">http://www.systems-thinking.org/simulation/model.htm</a></li>
+<li>2009 Emily Griffiths article &quot;What is a model?&quot;
+<ul>
+<li>various types of models: conceptual models, in vivo (in life) models, in vitro (in glass) models, in silico (in silicon, that is, computer) models</li>
+<li>&quot;Certainly all models are simplifications&quot;</li>
+<li>&quot;[models] bear some likeness to the real world and are constructed to reflect certain parts that are essential for the job in hand&quot;</li>
+<li><a href="https://sites.google.com/a/ncsu.edu/emily-griffiths/publications/general-articles">https://sites.google.com/a/ncsu.edu/emily-griffiths/publications/general-articles</a></li>
+<li><a href="https://sites.google.com/a/ncsu.edu/emily-griffiths/whatisamodel.pdf?attredirects=0">https://sites.google.com/a/ncsu.edu/emily-griffiths/whatisamodel.pdf?attredirects=0</a></li>
+<li><a href="https://web.archive.org/web/20120312220527/http://www.emily-griffiths.postgrad.shef.ac.uk/models.pdf">https://web.archive.org/web/20120312220527/http://www.emily-griffiths.postgrad.shef.ac.uk/models.pdf</a></li>
+</ul></li>
+</ul></li>
+<li>Forums
+<ul>
+<li>I asked this on History of Science and Mathematics StackOverflow. <a href="https://hsm.stackexchange.com/questions/7948/what-motivated-the-choice-of-the-word-model-in-model-theory/7953#7953">https://hsm.stackexchange.com/questions/7948/what-motivated-the-choice-of-the-word-model-in-model-theory/7953#7953</a></li>
+</ul></li>
+<li>Automated question-answering systems
+<ul>
+<li><a href="https://books.google.com/talktobooks/query?q=What%20is%20a%20model?">What is a model? - Google Talk to Books</a></li>
+</ul></li>
+<li>Encyclopedias
+<ul>
+<li>Wikipedia article <a href="https://en.wikipedia.org/wiki/Model">Model</a>, and pages linked from there, such as <a href="https://en.wikipedia.org/wiki/Architectural_model">Architectural model</a>, <a href="https://en.wikipedia.org/wiki/Physical_model">Physical model</a>, Also, by text search: <a href="https://en.wikipedia.org/wiki/Role_model">Role model</a>.</li>
+<li><a href="https://www.britannica.com/search?query=model">Encyclopaedia Britannica search result for &quot;model&quot;</a></li>
+<li><a href="https://www.encyclopedia.com/search?keys=model">encyclopedia.com search result for &quot;model&quot;</a></li>
+</ul></li>
+</ul>
+<h3 id="the-meanings-of-model-in-2018"><span class="section_number">2.2</span><span class="section_title">The meanings of &quot;model&quot; in 2018</span></h3>
+<p>How do we show that all these senses of &quot;model&quot; are essentially simplifications?</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.2.1</span><span class="section_title"><a href="#concretization-for-transfer-learning">Concretization for transfer learning</a></span><span class="word_count">(53w~1m)</span></li>
+<li><span class="section_number">2.2.2</span><span class="section_title"><a href="#abstraction-picking-aspects-ignoring-irrelevant-details">Abstraction, picking aspects, ignoring irrelevant details</a></span><span class="word_count">(55w~1m)</span></li>
+<li><span class="section_number">2.2.3</span><span class="section_title"><a href="#a-resemblance-that-takes-less-effort-to-make-than-the-real-thing-does">A resemblance that takes less effort to make than the real thing does</a></span><span class="word_count">(41w~1m)</span></li>
+<li><span class="section_number">2.2.4</span><span class="section_title"><a href="#intentional-resemblance">Intentional resemblance</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">2.2.5</span><span class="section_title"><a href="#fashion-model-photo-model-actor">Fashion model, photo model, actor</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">2.2.6</span><span class="section_title"><a href="#what-one-strives-to-imitate">What one strives to imitate</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">2.2.7</span><span class="section_title"><a href="#type-class-kind-variant-product-line">Type, class, kind, variant, product line</a></span><span class="word_count">(48w~1m)</span></li>
+</ul>
+</div>
+<h4 id="concretization-for-transfer-learning"><span class="section_number">2.2.1</span><span class="section_title">Concretization for transfer learning</span></h4>
+<p>For example, we study a <em>model organism</em> to understand other organisms. This suggests that a model is about <em>transfer learning</em>: knowledge about the model maps to knowledge about the modeled, as long as the knowledge is about aspects captured by the model. See also the <a href="https://en.wikipedia.org/wiki/Model_organism">Wikipedia article about model organism</a>.</p>
+<h4 id="abstraction-picking-aspects-ignoring-irrelevant-details"><span class="section_number">2.2.2</span><span class="section_title">Abstraction, picking aspects, ignoring irrelevant details</span></h4>
+<ul>
+<li>A Newton equation system <em>models</em> a real physical system.</li>
+<li>A Newton equation system <em>is a model of</em> a real physical system.</li>
+<li>Quadratic equations <em>model</em> parabolic motions.</li>
+<li>The Lotka-Volterra equations can <em>model</em> the populations of lions and deers in a savanna.</li>
+</ul>
+<p>It is confusing that &quot;model&quot; can mean both concretion and abstraction, which are opposites.</p>
+<h4 id="a-resemblance-that-takes-less-effort-to-make-than-the-real-thing-does"><span class="section_number">2.2.3</span><span class="section_title">A resemblance that takes less effort to make than the real thing does</span></h4>
+<ul>
+<li>This <em>model</em> railroad is mostly made of plastic.</li>
+<li>This miniature <em>models</em> the 20-story building.</li>
+<li>This miniature <em>is a model of</em> the 20-story building.</li>
+<li>A stick figure is a <em>model</em> of a person/animal/being.</li>
+</ul>
+<h4 id="intentional-resemblance"><span class="section_number">2.2.4</span><span class="section_title">Intentional resemblance</span></h4>
+<ul>
+<li>Some cartoon characters <em>are modeled after</em> real people.</li>
+<li>The Abraham Lincoln statue <em>was modeled after</em> Abraham Lincoln. (It means that the statue was intended to look like him.)</li>
+</ul>
+<h4 id="fashion-model-photo-model-actor"><span class="section_number">2.2.5</span><span class="section_title">Fashion model, photo model, actor</span></h4>
+<ul>
+<li>The <em>model</em> sits on the chair so that the painters can begin painting.</li>
+<li>The <em>model</em> wearing a fancy dress walks on the catwalk.</li>
+<li>The <em>model</em> is posing for the camera.</li>
+<li>His dog is <em>modeling</em> for a dog food advertisement.</li>
+</ul>
+<h4 id="what-one-strives-to-imitate"><span class="section_number">2.2.6</span><span class="section_title">What one strives to imitate</span></h4>
+<ul>
+<li>He is a <em>role model</em>.</li>
+<li>He is a <em>model</em> husband. He and his wife are much happier after their marriage.</li>
+</ul>
+<h4 id="type-class-kind-variant-product-line"><span class="section_number">2.2.7</span><span class="section_title">Type, class, kind, variant, product line</span></h4>
+<ul>
+<li>Ford <em>Model</em> T and Tesla <em>Model</em> S are cars.</li>
+<li>This Honda car comes in two <em>models</em>: an automatic transmission <em>model</em> and a manual transmission <em>model</em>.</li>
+<li>Which <em>model</em> of this Toyota car do you want to buy: the gasoline engine <em>model</em> or the diesel engine <em>model</em>?</li>
+</ul>
+<h2 id="modeling-is-simplification."><span class="section_number">3</span><span class="section_title">Modeling is simplification.</span></h2>
+<p>Here we think of some examples where X is a model of Y. We discuss about (1) how X simplifies Y (the &quot;manner of simplification&quot;), (2) what the simplifying assumptions are, and (3) what nonsense happens when the assumptions are violated.</p>
+<p>The following paragraphs follow this pattern: &quot;X models Y, by <em>(manner of simplification)</em>, assuming <em>(simplifying assumptions)</em>&quot;.</p>
+<p>The formula <span class="math inline">\(q \to r\)</span> models the formula <span class="math inline">\((p\wedge q) \to r\)</span>, by grounding some variables, assuming that <span class="math inline">\(p\)</span> is true.</p>
+<p>The formula <span class="math inline">\(e^x \approx 1 + x + x^2/2\)</span> models the formula <span class="math inline">\(e^x = \sum_{k=0}^\infty x^k/k!\)</span>, by truncating the series, assuming that <span class="math inline">\(x\)</span> is near zero.</p>
+<p>The statement &quot;if I strike the match then it will burn&quot; is a causal <em>model</em> of how striking matches work in reality, by picking a small part of the modeled, assuming that all matches are dry (and many other implicit simplifying assumptions we take for granted).</p>
+<p>A fashion model models the average person, by hasty generalization, assuming that the average person has similar body measurements. (Fallacies such as hasty generalization can be useful. Indeed a model is something <em>wrong but useful</em>.) Violating this assumption makes the clothes misfit.</p>
+<p>The tuple (john, 30 years old) models the tuple (john, 30 years old, black hair, brown eyes), by projection (as in the geometric projection of a solid to its shadow), assuming that the discarded aspects are irrelevant. Modeling is dimension reduction. Modeling is projection.</p>
+<p>If we violate a simplifying assumption, the model breaks down and gives nonsensical results. The name-age tuple (john, 10000 years old) models something nonexistent. We can insert such nonsensical data into the database, but what does such nonsensical data mean? We can substitute the mass variables in Newton's gravity equation with negative quantities, but what does it mean?</p>
+<p>Our perception models reality, assuming that we stay in the environment that evolution and natural selection led us to. We violate this assumption when we fly an aircraft. This violation may kill us.</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Sensory_illusions_in_aviation">https://en.wikipedia.org/wiki/Sensory_illusions_in_aviation</a></li>
+<li><a href="https://www.scientificamerican.com/article/did-humans-evolve-to-see-things-as-they-really-are/">https://www.scientificamerican.com/article/did-humans-evolve-to-see-things-as-they-really-are/</a>
+<ul>
+<li>&quot;Mimicry works only if there is an objective reality to mimic.&quot;</li>
+</ul></li>
+</ul>
+<h2 id="modeling-by-ignoring-irrelevant-information"><span class="section_number">4</span><span class="section_title">Modeling by ignoring irrelevant information</span></h2>
+<p>&quot;To model X&quot; is to ignore the irrelevant aspects of X.</p>
+<p>&quot;X models Y&quot; means &quot;Y is X with some simplifying assumptions&quot;.</p>
+<p>&quot;X models Y&quot; means &quot;Y is X with some details lost&quot;.</p>
+<p>Example of how model ignores irrelevant aspects. Statics. Real physical systems in rest. Pick a coordinate system. Center of mass of car. Change car color. The model is the same. The reality is different. The model ignores the irrelevant aspect that is the car's color.</p>
+<h2 id="how-we-model-things"><span class="section_number">5</span><span class="section_title">How we model things</span></h2>
+<p>We model a thing by making simplifying assumptions on that thing. We choose which aspects to care about. We ignore all other aspects. Thus a model of something is a <em>simplification</em> of that thing.</p>
+<p>We judge models by their usefulness, not by their correctness.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#modeling-by-partial-evaluation-grounding-of-variables">Modeling by partial evaluation (grounding of variables)</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#capturing-function"><span class="todo TODO">TODO</span> Capturing function?</a></span><span class="word_count">(297w~2m)</span></li>
+<li><span class="section_number">5.3</span><span class="section_title"><a href="#modeling-approximation-by-truncation"><span class="todo TODO">TODO</span> Modeling (approximation) by truncation</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">5.4</span><span class="section_title"><a href="#modeling-by-formula-truncation"><span class="todo TODO">TODO</span> Modeling by formula truncation</a></span><span class="word_count">(67w~1m)</span></li>
+<li><span class="section_number">5.5</span><span class="section_title"><a href="#modeling-by-series-truncation"><span class="todo TODO">TODO</span> Modeling by series truncation</a></span><span class="word_count">(10w~1m)</span></li>
+</ul>
+</div>
+<h3 id="modeling-by-partial-evaluation-grounding-of-variables"><span class="section_number">5.1</span><span class="section_title">Modeling by partial evaluation (grounding of variables)</span></h3>
+<p>An example of how to model is partial evaluation (grounding of variables). In this case, the model X is obtained from the modeled Y by partially evaluating Y, that is, by assuming the constancy of some variables in Y.</p>
+<h3 id="capturing-function"><span class="section_number">5.2</span><span class="section_title"><span class="todo TODO">TODO</span> Capturing function?</span></h3>
+<p>We say any of these to mean the same thing:</p>
+<ul>
+<li>&quot;The set X models the set Y with capturing function f.&quot;</li>
+<li>&quot;The function f models Y with X.&quot;</li>
+</ul>
+<p>The meaning is &quot;There are subsets <span class="math inline">\(X&#39; \subseteq X\)</span> and <span class="math inline">\(Y&#39; \subseteq Y\)</span> such that <span class="math inline">\(f : Y&#39; \to X&#39;\)</span> is surjective.&quot;</p>
+<p>The &quot;capturing function&quot; defines the aspects of reality that we capture in our model. The function describes how X model Y.</p>
+<p>Corollary: Every set models itself. This is the theoretically correct but practically useless 1:1 map.</p>
+<p>Here are some examples of &quot;X models Y&quot; to show the generality of that definition:</p>
+<p>In software engineering, we can map Y (an employee) to X (a row in the database), but then we lose some irrelevant information about Y, such as hair color, weight.</p>
+<p>In physics, we can map Y (a real physical system) to X (a Newton equation system) by assuming certain things (coordinate systems, point masses, absolute time), but we can't map X to Y because in reality there are no point masses and time is relative. By &quot;Newton equation system&quot;, we mean a system of equations whose every equation looks like <span class="math inline">\(F_k = m_k \cdot a_k\)</span>.</p>
+<p>In geometry, we can map Y (a 3D vector) to X (a 2D vector). Thus geometric projection is modeling.</p>
+<p>In analysis, we can map Y (the exponential function) to X (a truncated Taylor series of the exponential function). Thus approximation is modeling.</p>
+<p>In real life, a writing is a model of its author. What you think about X is your model of X. Everyone models everyone they have ever encountered. Our thoughts model reality. Brain activity models reality. Our thoughts of ourselves model ourselves.</p>
+<p>Consider X = the set of all white cars and Y = the set of all cars. Obviously X is a subset of Y. X models Y.</p>
+<h3 id="modeling-approximation-by-truncation"><span class="section_number">5.3</span><span class="section_title"><span class="todo TODO">TODO</span> Modeling (approximation) by truncation</span></h3>
+<h3 id="modeling-by-formula-truncation"><span class="section_number">5.4</span><span class="section_title"><span class="todo TODO">TODO</span> Modeling by formula truncation</span></h3>
+<p>We truncate <span class="math inline">\( (p \wedge q) \to r \)</span> to <span class="math inline">\( p \to r \)</span>, but not to <span class="math inline">\( p \)</span>, and not to <span class="math inline">\( r \)</span>. We truncate <span class="math inline">\( p \wedge q \)</span> to <span class="math inline">\( p \)</span>. We truncate <span class="math inline">\( p \vee q \)</span> to <span class="math inline">\( q \)</span>.</p>
+<ul>
+<li><span class="math inline">\( M \)</span> models <span class="math inline">\( M \wedge F \)</span>.</li>
+<li><span class="math inline">\( M \)</span> models <span class="math inline">\( M \vee F \)</span>.</li>
+<li>If <span class="math inline">\( M \)</span> models <span class="math inline">\( R \)</span>, then <span class="math inline">\( M \to C \)</span> models <span class="math inline">\( R \to C \)</span>.</li>
+</ul>
+<h3 id="modeling-by-series-truncation"><span class="section_number">5.5</span><span class="section_title"><span class="todo TODO">TODO</span> Modeling by series truncation</span></h3>
+<p>This requires that the series converge.</p>
+<h2 id="fundamental-learning-by-falsifying-simplifying-assumptions"><span class="section_number">6</span><span class="section_title">Fundamental learning by falsifying simplifying assumptions</span></h2>
+<p>We learn something fundamental by testing (&quot;torturing&quot;) our models at their limits to break them. We can find out a model's simplifying assumptions by pushing it to failure. Fundamental learning happens at the boundary of a simplifying assumption, that is, a situation where a simplifying assumption changes from true to false. This is what experimental physicists do.</p>
+<p>We learn about people when we anger them. Other people's anger signals us that at least one of our simplifying assumptions about them doesn't hold.</p>
+<p>An aircraft crash signals that a simplifying assumption, of someone, somewhere, is wrong.</p>
+<h2 id="generalizing-the-model-in-model-theory"><span class="section_number">7</span><span class="section_title">Generalizing the &quot;model&quot; in model theory?</span></h2>
+<p>Sentence S models sentence T iff S can be derived from T by grounding some variables. The simplifying assumption is that assignment of variables to ground terms. The simplifying assumption is an interpretation.</p>
+<p>Examples. &quot;John ate a hamburger&quot; is a model of &quot;X ate Y&quot;. &quot;John ate a hamburger&quot; is a model of &quot;Someone ate something&quot;.</p>
+<p>To <em>interpret</em> a sentence is to <em>ground</em> all its variables (to substitute all its variables with <em>ground terms</em>).</p>
+<p>This generalizes model theory?</p>
+<h2 id="we-model-things-because-our-thought-is-limited"><span class="section_number">8</span><span class="section_title">We model things because our thought is limited</span></h2>
+<p>We <em>model</em> a machine in order to <em>understand</em> what it does: to <em>interpret</em> what it does, to give <em>meaning</em> to what it does. Of course what we <em>think</em> it does is not what it <em>actually</em> does. We think the machine is adding two numbers. What the machine actually does is shuffling electrons around in a way that we interpret as adding two numbers. We model something so that we can reason about it. We can only think about very few things at once.</p>
+<p>We ignore hardware problems, such as unreliable power supplies, cosmic rays flipping bits, cats pissing on the machine, fires burning down the building, and other infinitely many hardware problems we conveniently ignore. The simplifying assumption is that the hardware works in the environment it's designed for. As long as our simplifying assumptions hold, our model is valid.</p>
+<p>We need that model. Without model, irrelevant details would preclude us from understanding anything.</p>
+<h2 id="a-model-is"><span class="section_number">9</span><span class="section_title">A model is …</span></h2>
+<p>A model is … resemblance, replica, downscaling, simplification? We say &quot;X models Y&quot; iff X resembles Y, iff X behaves like Y, iff X is a simplification of Y, iff X and Y have something in common but X is simpler than Y? A model of X is a simplified representation of X. A model is a simplified description of reality? A description of reality is not reality. If reality and theory disagree, then reality wins and theory must change.</p>
+<h2 id="model-and-reality"><span class="section_number">10</span><span class="section_title">Model and reality</span></h2>
+<ul>
+<li>Some models model reality well.</li>
+<li>Some reality is modeled well.</li>
+<li>Some models are unrealistic.</li>
+<li>Some reality are unmodelable.</li>
+</ul>
+<h2 id="modeling-how-does-x-model-y"><span class="section_number">11</span><span class="section_title">Modeling: How does X model Y?</span></h2>
+<p>Consider several ways we can model a person:</p>
+<ul>
+<li>as a stick figure</li>
+<li>as a photograph</li>
+<li>as a police sketch</li>
+<li>as a tuple (row in a relational database)</li>
+<li>as a &quot;chemical&quot; that may react with another person (&quot;chemical&quot;)</li>
+</ul>
+<p>Reading list:</p>
+<ul>
+<li>1980 Hilary Putnam article &quot;Models and Reality&quot; <a href="https://www.jstor.org/stable/2273415?seq=1#page_scan_tab_contents">paywall</a></li>
+<li>2004 Ronald N. Giere article &quot;How Models Are Used to Represent Reality&quot; <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.433.860&amp;rep=rep1&amp;type=pdf">pdf</a></li>
+</ul>
+<h2 id="model-theory-should-be-named-structure-theory-instead"><span class="section_number">12</span><span class="section_title">&quot;Model theory&quot; should be named &quot;structure theory&quot; instead?</span></h2>
+<p>Group theory studies groups. Number theory studies numbers. Model theory studies structures! What a surprise!</p>
+<h2 id="our-model-vs-metamathematics-model-theory-model"><span class="section_number">13</span><span class="section_title">Our &quot;model&quot; vs metamathematics model theory &quot;model&quot;</span></h2>
+<p>SEP's &quot;Basic notions of model theory&quot; is surprisingly readable. <a href="https://plato.stanford.edu/archives/fall2018/entries/model-theory/">https://plato.stanford.edu/archives/fall2018/entries/model-theory/</a></p>
+<p>Our definition of &quot;model&quot; includes the notion of &quot;model&quot; in model theory?</p>
+<p>What is a &quot;model&quot; in model theory? Here I try to paraphrase the 2000 David Marker book &quot;Introduction to Model Theory&quot; <a href="http://library.msri.org/books/Book39/files/marker.pdf">pdf</a> and the 2000 Weiss–D'Mello book &quot;Fundamentals of Model Theory&quot; <a href="http://www.math.toronto.edu/weiss/model_theory.pdf">pdf</a>. I may err. My paraphrase:</p>
+<ul>
+<li><p>A <em>structure</em> of a formal language <span class="math inline">\(L\)</span> is a pair <span class="math inline">\((A,I)\)</span>, where <span class="math inline">\(A\)</span> is a set called the <em>universe</em>, and <span class="math inline">\(I\)</span> is the structure's <em>interpretation function</em>. Such structure must also satisfy these:</p>
+<ul>
+<li>Every constant symbol <span class="math inline">\(c \in L\)</span> maps to a universe element <span class="math inline">\(I(c) \in A\)</span>.</li>
+<li>Every relation symbol <span class="math inline">\(R \in L\)</span> maps to a relation <span class="math inline">\(I(R) \subseteq A^n\)</span>, with the same arity <span class="math inline">\(n\)</span>.</li>
+<li>Every function symbol in <span class="math inline">\(F \in L\)</span> maps to a function <span class="math inline">\(I(F) : A^n \to A\)</span>, with the same arity <span class="math inline">\(n\)</span>. Note that a function of arity <span class="math inline">\(n\)</span> is a kind of relation with arity <span class="math inline">\(n + 1\)</span>. See <a href="https://en.wikipedia.org/wiki/Arity">WP:Arity</a>.</li>
+</ul></li>
+<li>Structure <span class="math inline">\(A\)</span> <em>models</em> sentence <span class="math inline">\(\varphi\)</span>, written <span class="math inline">\(A \models \varphi\)</span>, iff … ?</li>
+<li><p>I think I forget something. Read Chapter 0 of the book. It has examples.</p></li>
+</ul>
+<p>The codomain of the interpretation function <span class="math inline">\(I : L \to J(A)\)</span> is defined as follows.</p>
+<ul>
+<li>Every element of <span class="math inline">\(A\)</span> is also in <span class="math inline">\(J(A)\)</span>.</li>
+<li>Every function <span class="math inline">\(F : A^n \to A\)</span> is also in <span class="math inline">\(J(A)\)</span>, for every <span class="math inline">\(n\)</span> that makes sense.</li>
+<li>Every relation <span class="math inline">\(R \subseteq A^n\)</span> is also in <span class="math inline">\(J(A)\)</span>, for every <span class="math inline">\(n\)</span> that makes sense. (This makes the previous bullet point redundant.)</li>
+<li>That's all.</li>
+</ul>
+<p>In other words: <span class="math display">\[
+J(A) = A + 2^{A^0} + 2^{A^1} + \ldots + 2^{A^n} + \ldots
+\]</span></p>
+<p>I think <span class="math inline">\(J(A)\)</span> is related to a Herbrand universe, but how?</p>
+<p>The structure <span class="math inline">\(S = (A,I)\)</span> maps the language <span class="math inline">\(L\)</span> to <span class="math inline">\(J(A)\)</span>.</p>
+<h2 id="questions-we-want-to-answer"><span class="section_number">14</span><span class="section_title"><span class="todo TODO">TODO</span> Questions we want to answer</span></h2>
+<ul>
+<li>How does X model Y?</li>
+<li>How do we measure how good a model is?</li>
+<li>How do we formalize all that?</li>
+<li>How does it relate to model theory?</li>
+</ul>
+<h2 id="measuring-model-quality-how-well-does-x-model-y"><span class="section_number">15</span><span class="section_title">Measuring model quality: How well does X model Y?</span></h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/All_models_are_wrong">&quot;All models are wrong, but some are useful.&quot;</a>, George Edward Pelham Box (1919–2013)</li>
+<li><p>In <a href="http://chem.tufts.edu/answersinscience/relativityofwrong.htm">The Relativity of Wrong</a>, Isaac Asimov writes</p>
+<ul>
+<li><p>Asimov's relativity of wrong:</p>
+<ul>
+<li>Both round earth theory and flat earth theory are wrong,</li>
+<li>but believing that they are equally wrong is wronger than both of them combined.</li>
+</ul></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/The_Relativity_of_Wrong">https://en.wikipedia.org/wiki/The_Relativity_of_Wrong</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Wronger_than_wrong">https://en.wikipedia.org/wiki/Wronger_than_wrong</a></li>
+<li>2003 article &quot;Measuring the Quality of Data Models: An Empirical Evaluation of the Use of Quality Metrics in Practice&quot; <a href="https://pdfs.semanticscholar.org/0536/3b8ddecd695444dc9b341796a0dc73e606be.pdf">pdf</a></li>
+<li><a href="http://tdan.com/measuring-the-quality-of-models/4877">Measuring the Quality of Models | TDAN.com</a></li>
+</ul>
+<h2 id="model-of-model-multiple-level-machine-model"><span class="section_number">16</span><span class="section_title">Model of model: multiple-level machine model</span></h2>
+<p>A model can model another model. We can stack simplifying assumptions on top of other simplifying assumptions.</p>
+<p>A mechanical machine is modeled by a system of equations derived from Newton's motion laws.</p>
+<p>We can model an abacus …</p>
+<p>Suppose that we have a mechanical calculator that adds two 3-digit numbers. Suppose that we have an electronic calculator that also adds two 3-digit numbers. Then <em>the same model</em> models both the mechanical calculator and the electronic calculator.</p>
+<p>An electrical machine is called a &quot;circuit&quot;.</p>
+<p>First, we can model a circuit as its <em>lumped element model</em>. This model is a system of equations derived from Kirchhoff's circuit laws. This model is only valid under the conditions described in <a href="https://en.wikipedia.org/wiki/Lumped_element_model#Lumped_matter_discipline">WP:Lumped matter discipline</a>.</p>
+<p>A <em>switch</em> S is modeled as a <em>lumped component</em> S1 with one binary state (open/closed) and two terminals (S1A and S1B).</p>
+<p>Second, we can model the lumped element model S1 further as Boolean algebra equation. The switch model S1 is then modeled again as a <em>Boolean-algebra equation</em> S2: S1A = S1B.</p>
+<p>An electrical logic <em>circuit</em> is modeled as a <em>system</em> of Boolean-algebra equations.</p>
+<p>An electrical logic circuit <em>component</em> is modeled as an <em>equation</em> in Boolean-algebra.</p>
+<p>An electrical logic circuit <em>node</em> is modeled as a <em>variable</em> that holds either 0 or 1.</p>
+<p>A computing machine is called a &quot;computer&quot;.</p>
+<p>A computer is modeled by… not a system of equations?</p>
+<p>Claude Shannon's 1937 master thesis. Who retyped this neat version? <a href="https://www.cs.virginia.edu/~evans/greatworks/shannon38.pdf">https://www.cs.virginia.edu/~evans/greatworks/shannon38.pdf</a></p>
+<ul>
+<li>About Claude Shannon's 1937 master thesis <a href="https://en.wikipedia.org/wiki/Claude_Shannon#Logic_circuits">https://en.wikipedia.org/wiki/Claude_Shannon#Logic_circuits</a></li>
+</ul>
+<h2 id="complexity"><span class="section_number">17</span><span class="section_title">Complexity?</span></h2>
+<p>Here we try to understand complexity from its etymology. The following etymology is according to the Wiktionary entries on <a href="https://en.wiktionary.org/wiki/simple#Etymology">simple</a>, <a href="https://en.wiktionary.org/wiki/complex#Etymology">complex</a>, <a href="https://en.wiktionary.org/wiki/plico#Etymology_2">plico</a>, <a href="https://en.wiktionary.org/wiki/plecto#Etymology_1">plecto</a>, <a href="https://en.wiktionary.org/wiki/complicate#Etymology">complicate</a>, <a href="https://en.wiktionary.org/wiki/complect#Etymology">complect</a>.</p>
+<p>&quot;Simple&quot; comes from Latin &quot;simplex&quot; (one-fold), from &quot;sim-&quot; (same) and &quot;plicare&quot; (to fold, to bend), comparable with &quot;multiple&quot; (many-fold), &quot;uniplex&quot; (one-fold), &quot;duplex&quot; (two-fold), &quot;triplex&quot; (three-fold), and so on. &quot;Complex&quot; comes from Latin &quot;com-&quot; (together) and &quot;plectere&quot; (to weave, to braid, to twist), comparable with &quot;complect&quot;, &quot;complicate&quot;. &quot;Plicare&quot; and &quot;plectere&quot; both come from a Proto-Indo-European word meaning &quot;to fold, to weave&quot;. (I omit this PIE word because I don't know how to type it in XeLaTeX; copying doesn't work.)</p>
+<p>Thus &quot;simple&quot; means &quot;one-fold&quot; and &quot;complex&quot; means &quot;woven together&quot;.</p>
+<p>Here we try to understand complexity by an example of paper folding.</p>
+<p>Imagine a sheet of paper. Fold it several times.</p>
+<p>The <em>complexity</em> of the resulting shape is the number of folds, that is how many times the original sheet is folded. The shape with zero complexity is the original sheet of paper before any folding.</p>
+<p>A shape's complexity is unique and irreducible. An <span class="math inline">\(n\)</span>-fold shape can only be made by folding exactly <span class="math inline">\(n\)</span> times, no less and no more, if we assume that papers don't crease when folded.</p>
+<p>A fold affects all folds after it. The folding order matters. The folds usually don't commute.</p>
+<p>A fold always adds complexity. There is no way to unfold a folded paper by folding it. A combination of folds will never be equal to an unfold.</p>
+<p>See also the <a href="https://en.wikipedia.org/wiki/Origami">Wikipedia entry on origami</a> (paper folding).</p>
+<p>Folding <em>complicates</em> the shape. Unfolding <em>simplifies</em> the shape.</p>
+<p>We can <em>simplify</em> a shape by removing its last folds. Suppose that a shape is a folding sequence (a sequence of folds). Then shape X is a <em>simplification</em> of shape Y iff the folding sequence X begins (is a prefix of) the folding sequence Y.</p>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/model.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/model.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2018-04-11 04:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
