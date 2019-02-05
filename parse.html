@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Parsing</title>
+        <title>Parsing Research Group</title>
         <link rel="stylesheet" href="/assets/main.css"/>
         <script>
 // Help the reader estimate how much time the reading is going to take.
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="wrapper">
                 <article class="post">
                     <header class="post-header">
-                        <h1 class="post-title">Parsing</h1>
+                        <h1 class="post-title">Parsing Research Group</h1>
                     </header>
                 </article>
                 <div class="post-content">
@@ -168,9 +168,9 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">4</span><span class="section_title"><a href="#direct-left-recursive-parsers-in-prolog">&lt;2018-11-02&gt; Direct left-recursive parsers in Prolog</a></span><span class="word_count">(13w~1m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#relational-parsing-parsing-with-prolog-my-train-of-thought">Relational parsing; parsing with Prolog; my train of thought</a></span><span class="word_count">(840w~5m)</span></li>
 <li><span class="section_number">6</span><span class="section_title"><a href="#metainterpreter-for-left-recursive-parsing">Metainterpreter for left-recursive parsing?</a></span><span class="word_count">(8w~1m)</span></li>
-<li><span class="section_number">7</span><span class="section_title"><a href="#left-recursive-parsing">Left-recursive parsing</a></span><span class="word_count">(53w~1m)</span></li>
-<li><span class="section_number">8</span><span class="section_title"><a href="#what-1">What</a></span><span class="word_count">(8w~1m)</span></li>
-<li><span class="section_number">9</span><span class="section_title"><a href="#parsing-1">Parsing</a></span><span class="word_count">(829w~5m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#what-is-left-recursion-and-how-should-we-handle-it">What is left-recursion, and how should we handle it?</a></span><span class="word_count">(166w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#what-1">What</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#parsing-1">Parsing</a></span><span class="word_count">(858w~5m)</span></li>
 </ul>
 </div>
 <h2 id="what-is-parsing"><span class="section_number">1</span><span class="section_title">What is parsing?</span></h2>
@@ -187,13 +187,13 @@ P(xy) = combine(P(x), P(y))
 <p>Atoms<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
 <p>Differentiating Parsers<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
 <p>The idea is to output to all possible continuations? <span class="math inline">\(incrementalize : (C^* \to T) \to (C^* \to T^*)\)</span>?</p>
-<p>Zaytsev &amp; Bagge 2014 <span class="citation" data-cites="zaytsev2014parsing">[<a href="#ref-zaytsev2014parsing">8</a>]</span> survey</p>
-<p><span class="citation" data-cites="Mu2004AnIL">[<a href="#ref-Mu2004AnIL">5</a>]</span></p>
+<p>Zaytsev &amp; Bagge 2014 <span class="citation" data-cites="zaytsev2014parsing">[<a href="#ref-zaytsev2014parsing">9</a>]</span> survey</p>
+<p><span class="citation" data-cites="Mu2004AnIL">[<a href="#ref-Mu2004AnIL">6</a>]</span></p>
 <p><span class="citation" data-cites="alimarine2005there">[<a href="#ref-alimarine2005there">1</a>]</span></p>
 <p><span class="citation" data-cites="Kourzanov2014BidirectionalPA">[<a href="#ref-Kourzanov2014BidirectionalPA">3</a>]</span></p>
 <p><span class="citation" data-cites="caballero1999functional">[<a href="#ref-caballero1999functional">2</a>]</span></p>
-<p>somewhat unrelated <span class="citation" data-cites="Tan2016BidirectionalGF">[<a href="#ref-Tan2016BidirectionalGF">7</a>]</span></p>
-<p><span class="citation" data-cites="Matsuda2013FliPprAP">[<a href="#ref-Matsuda2013FliPprAP">4</a>]</span></p>
+<p>somewhat unrelated <span class="citation" data-cites="Tan2016BidirectionalGF">[<a href="#ref-Tan2016BidirectionalGF">8</a>]</span></p>
+<p><span class="citation" data-cites="Matsuda2013FliPprAP">[<a href="#ref-Matsuda2013FliPprAP">5</a>]</span></p>
 <h2 id="what-parsing-techniquesformalisms-are-there"><span class="section_number">2</span><span class="section_title">What parsing techniques/formalisms are there?</span></h2>
 <p>There are many techniques/formalisms:</p>
 <ul>
@@ -218,7 +218,7 @@ P(xy) = combine(P(x), P(y))
 <p>Example: If <span class="math inline">\(T\)</span> is a terminal, then the nonterminal <span class="math inline">\(N \to T\)</span> is invertible. To parse, remove the prefix matching T from the input list. To unparse, prepend T to the input list.</p>
 <p>If the rules <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are invertible, then the concatenation nonterminal <span class="math inline">\(N \to AB\)</span> is invertible.</p>
 <p>Thus we say the relation <code>cons/3</code> is invertible: <code>cons(H,T,[H|T])</code>.</p>
-<p>We want something similar to Rendell &amp; Ostermann 2010 <span class="citation" data-cites="rendel2010invertible">[<a href="#ref-rendel2010invertible">6</a>]</span>, but in Prolog instead of Haskell.</p>
+<p>We want something similar to Rendell &amp; Ostermann 2010 <span class="citation" data-cites="rendel2010invertible">[<a href="#ref-rendel2010invertible">7</a>]</span>, but in Prolog instead of Haskell.</p>
 <p>Given view : D -&gt; V and modv : V -&gt; V, the interpreter should be able to infer modd : D -&gt; D.</p>
 <p>modd = through view modv</p>
 <p>Boomerang language?</p>
@@ -533,7 +533,20 @@ number ::= digit | digit number
 </ul>
 <h2 id="metainterpreter-for-left-recursive-parsing"><span class="section_number">6</span><span class="section_title">Metainterpreter for left-recursive parsing?</span></h2>
 <p>&quot;Parsing with left-recursive grammars&quot; <a href="https://www.metalevel.at/acomip/">https://www.metalevel.at/acomip/</a></p>
-<h2 id="left-recursive-parsing"><span class="section_number">7</span><span class="section_title">Left-recursive parsing</span></h2>
+<h2 id="what-is-left-recursion-and-how-should-we-handle-it"><span class="section_number">7</span><span class="section_title">What is left-recursion, and how should we handle it?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#should-we-blame-left-recursion-on-naive-operational-semantics">Should we blame left-recursion on naive operational semantics?</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#handling-left-recursion">Handling left-recursion</a></span><span class="word_count">(87w~1m)</span></li>
+<li><span class="section_number">7.3</span><span class="section_title"><a href="#left-recursive-parsing">Left-recursive parsing</a></span><span class="word_count">(53w~1m)</span></li>
+</ul>
+</div>
+<h3 id="should-we-blame-left-recursion-on-naive-operational-semantics"><span class="section_number">7.1</span><span class="section_title">Should we blame left-recursion on naive operational semantics?</span></h3>
+<p>Mathematics has no problem with left-recursion. Why should computers have problem with left-recursion?</p>
+<h3 id="handling-left-recursion"><span class="section_number">7.2</span><span class="section_title">Handling left-recursion</span></h3>
+<p>Laurent and Mens 2016 <span class="citation" data-cites="laurent2016taming">[<a href="#ref-laurent2016taming">4</a>]</span> (some emphasis ours): &quot;When a parser invokes itself (either directly or indirectly through intermediate parsers) without intervening state changes, the result is an infinite loop of parser invocations. This is a well-known problem of top-down recursive parsers, called <em>left-recursion</em>. Fortunately, it can be <em>mitigated</em> as follows: start by running the left-recursive parser <em>while failing all left-recursive invocations</em>, then re-run it, using the result of the initial parse as the result of all left-recursive invocations.&quot;</p>
+<p>Avoiding left-recursion means always consuming something before recursing.</p>
+<h3 id="left-recursive-parsing"><span class="section_number">7.3</span><span class="section_title">Left-recursive parsing</span></h3>
 <p>2009 Direct Left-Recursive Parsing Expressing Grammars <a href="https://www.semanticscholar.org/paper/Direct-Left-Recursive-Parsing-Expressing-Grammars-Tratt/b1e8309db5537fb15f51071fcdc39e139659ed15">https://www.semanticscholar.org/paper/Direct-Left-Recursive-Parsing-Expressing-Grammars-Tratt/b1e8309db5537fb15f51071fcdc39e139659ed15</a></p>
 <p>2008 Packrat Parsers Can Support Left Recursion</p>
 <p>Naive recognizer + memoization</p>
@@ -543,7 +556,17 @@ number ::= digit | digit number
 <p>We can't piggyback Prolog's unification for lambda calculus substitution, because Prolog unifies same-named variables while lambda-calculus shadows same-named variables.</p>
 <p>If the recursive call has smaller arguments than the parent call does, then the predicate should terminate.</p>
 <h2 id="what-1"><span class="section_number">8</span><span class="section_title">What</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">8.1</span><span class="section_title"><a href="#inconclusive">Inconclusive</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">8.2</span><span class="section_title"><a href="#parsing">Parsing</a></span><span class="word_count">(38w~1m)</span></li>
+</ul>
+</div>
+<h3 id="inconclusive"><span class="section_number">8.1</span><span class="section_title">Inconclusive</span></h3>
 <p>1997 inconclusive discussion &quot;Prolog Parser in Prolog&quot; <a href="https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/grammars/parser.html">https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/grammars/parser.html</a></p>
+<h3 id="parsing"><span class="section_number">8.2</span><span class="section_title">Parsing</span></h3>
+<p>&quot;Parsing in Prolog&quot; <a href="http://www.cs.sfu.ca/~cameron/Teaching/383/DCG.html">http://www.cs.sfu.ca/~cameron/Teaching/383/DCG.html</a></p>
+<p>&quot;Jacc's LR-Parsing with Dynamic Operators&quot; &quot;This part of the Jacc documentation explains the modifications we can make to a basic table-driven LR parser generator à la yacc to accommodate support for Prolog's dynamic operators.&quot; <a href="http://www.hassan-ait-kaci.net/hlt/doc/hlt/jaccdoc/dynamicLR.html">http://www.hassan-ait-kaci.net/hlt/doc/hlt/jaccdoc/dynamicLR.html</a></p>
 <h2 id="parsing-1"><span class="section_number">9</span><span class="section_title">Parsing</span></h2>
 <div class="local_table_of_contents">
 <ul>
@@ -555,7 +578,7 @@ number ::= digit | digit number
 <li><span class="section_number">9.6</span><span class="section_title"><a href="#parsing-with-brzozowski-quotients">Parsing with Brzozowski quotients</a></span><span class="word_count">(207w~2m)</span></li>
 <li><span class="section_number">9.7</span><span class="section_title"><a href="#history-of-parsing">History of parsing</a></span><span class="word_count">(32w~1m)</span></li>
 <li><span class="section_number">9.8</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(15w~1m)</span></li>
-<li><span class="section_number">9.9</span><span class="section_title"><a href="#conferences">Conferences</a></span><span class="word_count">(163w~1m)</span></li>
+<li><span class="section_number">9.9</span><span class="section_title"><a href="#conferences">Conferences</a></span><span class="word_count">(192w~1m)</span></li>
 </ul>
 </div>
 <h3 id="my-expectations-about-parsing"><span class="section_number">9.1</span><span class="section_title">My expectations about parsing</span></h3>
@@ -723,20 +746,23 @@ exp ::= exp white &quot;+&quot; white exp
 <div id="ref-Kourzanov2014BidirectionalPA">
 <p>[3] Kourzanov, P. 2014. Bidirectional parsing a functional / logic perspective. (2014). url: &lt;<a href="https://ifl2014.github.io/submissions/ifl2014_submission_18.pdf">https://ifl2014.github.io/submissions/ifl2014_submission_18.pdf</a>&gt;.</p>
 </div>
+<div id="ref-laurent2016taming">
+<p>[4] Laurent, N. and Mens, K. 2016. Taming context-sensitive languages with principled stateful parsing. <em>Proceedings of the 2016 acm sigplan international conference on software language engineering</em> (2016), 15–27. url: &lt;<a href="http://arxiv.org/abs/1609.05365">http://arxiv.org/abs/1609.05365</a>&gt;.</p>
+</div>
 <div id="ref-Matsuda2013FliPprAP">
-<p>[4] Matsuda, K. and Wang, M. 2013. FliPpr: A prettier invertible printing system. <em>ESOP</em> (2013). url: &lt;<a href="http://www2.sf.ecei.tohoku.ac.jp/~kztk/papers/kztk_esop2013.pdf">http://www2.sf.ecei.tohoku.ac.jp/~kztk/papers/kztk_esop2013.pdf</a>&gt;.</p>
+<p>[5] Matsuda, K. and Wang, M. 2013. FliPpr: A prettier invertible printing system. <em>ESOP</em> (2013). url: &lt;<a href="http://www2.sf.ecei.tohoku.ac.jp/~kztk/papers/kztk_esop2013.pdf">http://www2.sf.ecei.tohoku.ac.jp/~kztk/papers/kztk_esop2013.pdf</a>&gt;.</p>
 </div>
 <div id="ref-Mu2004AnIL">
-<p>[5] Mu, S.-C. et al. 2004. An injective language for reversible computation. <em>MPC</em> (2004). url: &lt;<a href="http://takeichi.ipl-lab.org/~scm/pub/reversible.pdf">http://takeichi.ipl-lab.org/~scm/pub/reversible.pdf</a>&gt;.</p>
+<p>[6] Mu, S.-C. et al. 2004. An injective language for reversible computation. <em>MPC</em> (2004). url: &lt;<a href="http://takeichi.ipl-lab.org/~scm/pub/reversible.pdf">http://takeichi.ipl-lab.org/~scm/pub/reversible.pdf</a>&gt;.</p>
 </div>
 <div id="ref-rendel2010invertible">
-<p>[6] Rendel, T. and Ostermann, K. 2010. Invertible syntax descriptions: Unifying parsing and pretty printing. <em>ACM sigplan notices</em> (2010), 1–12. url: &lt;<a href="http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf">http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf</a>&gt;.</p>
+<p>[7] Rendel, T. and Ostermann, K. 2010. Invertible syntax descriptions: Unifying parsing and pretty printing. <em>ACM sigplan notices</em> (2010), 1–12. url: &lt;<a href="http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf">http://www.informatik.uni-marburg.de/~rendel/unparse/rendel10invertible.pdf</a>&gt;.</p>
 </div>
 <div id="ref-Tan2016BidirectionalGF">
-<p>[7] Tan, G. and Morrisett, J.G. 2016. Bidirectional grammars for machine-code decoding and encoding. <em>Journal of Automated Reasoning</em>. 60, (2016), 257–277. url: &lt;<a href="http://www.cse.psu.edu/~gxt29/papers/bigrammar_jar.pdf">http://www.cse.psu.edu/~gxt29/papers/bigrammar_jar.pdf</a>&gt;.</p>
+<p>[8] Tan, G. and Morrisett, J.G. 2016. Bidirectional grammars for machine-code decoding and encoding. <em>Journal of Automated Reasoning</em>. 60, (2016), 257–277. url: &lt;<a href="http://www.cse.psu.edu/~gxt29/papers/bigrammar_jar.pdf">http://www.cse.psu.edu/~gxt29/papers/bigrammar_jar.pdf</a>&gt;.</p>
 </div>
 <div id="ref-zaytsev2014parsing">
-<p>[8] Zaytsev, V. and Bagge, A.H. 2014. Parsing in a broad sense. <em>International conference on model driven engineering languages and systems</em> (2014), 50–67. url: &lt;<a href="https://bora.uib.no/bitstream/handle/1956/8938/zaytsev-bagge-models14-parsing.pdf">https://bora.uib.no/bitstream/handle/1956/8938/zaytsev-bagge-models14-parsing.pdf</a>&gt;.</p>
+<p>[9] Zaytsev, V. and Bagge, A.H. 2014. Parsing in a broad sense. <em>International conference on model driven engineering languages and systems</em> (2014), 50–67. url: &lt;<a href="https://bora.uib.no/bitstream/handle/1956/8938/zaytsev-bagge-models14-parsing.pdf">https://bora.uib.no/bitstream/handle/1956/8938/zaytsev-bagge-models14-parsing.pdf</a>&gt;.</p>
 </div>
 </div>
 <section class="footnotes">

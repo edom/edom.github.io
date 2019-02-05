@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Techno-Anarchy Research Group</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Techno-Anarchy Research Group</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#how-do-we-liberate-people-with-technology">How do we liberate people with technology?</a></span><span class="word_count">(115w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#why-dont-users-use-distributed-systems">Why don't users use distributed systems?</a></span><span class="word_count">(93w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#what-are-whatsapp-alternative">What are WhatsApp alternative?</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#how-do-we-increase-homemadeability">How do we increase homemadeability?</a></span><span class="word_count">(90w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#how-should-we-farm-in-cities">How should we farm in cities?</a></span><span class="word_count">(87w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#biohacking">Biohacking?</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#theoretical-physics-philosophy-of-physics">Theoretical physics, philosophy of physics</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#why-does-bitcoin-not-work">Why does Bitcoin not work?</a></span><span class="word_count">(34w~1m)</span></li>
+</ul>
+</div>
+<h2 id="how-do-we-liberate-people-with-technology"><span class="section_number">1</span><span class="section_title">How do we liberate people with technology?</span></h2>
+<p>I am looking for a technology that empowers people and liberates people, a technology that makes power centralization impractical. I thought I could change the world with politics, but now I think politics only wastes time, and now I think technology is the only hope for making something in the physical-law layer to bypass the convoluted human-made-law layer. I think law should be principle-based, and justice should be restorative. I think the world needs only one law: Try not to harm others. Nobody bothers to fix the broken political systems. Nobody even bothers to think. Political systems are too expensive to fix; it is much cheaper to scrap them.</p>
+<h2 id="what"><span class="section_number">2</span><span class="section_title">What?</span></h2>
+<p>I <a href="usecom.html">use computers</a>. I <a href="phone.html">buy a smartphone</a> when my old smartphone becomes unusable. I usually watch YouTube at 2x-3x speed; we can speed it up to 16x<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<h2 id="why-dont-users-use-distributed-systems"><span class="section_number">3</span><span class="section_title">Why don't users use distributed systems?</span></h2>
+<p>Users don't care; they want software to just work.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>I find YaCy<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> unusable: its search result relevance is too far behind Google. YaCy-related things<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> seem to also suffer from usability issues.</p>
+<p>We should make a &quot;freedom pack&quot;: an installer of essential free/libre open-source distributed-web applications. The pack might contain things like matrix.org, riot.im. But why stop there? Why not make free/libre distributed operating system<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> with all those goodies preinstalled?</p>
+<p>Example of federated/decentralized social networks: Kari Nordmann's comment<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>: &quot;Explore federated (decentralized) social networks (Mastodon, diaspora*, Friendica, Hubzilla, GNU Social, Socialhome, Pleroma, GangGo)&quot;</p>
+<h2 id="what-are-whatsapp-alternative"><span class="section_number">4</span><span class="section_title">What are WhatsApp alternative?</span></h2>
+<p>&lt;2019-01-31&gt; Facebook is merging WhatsApp? We need an alternative with better privacy?</p>
+<h2 id="how-do-we-increase-homemadeability"><span class="section_number">5</span><span class="section_title">How do we increase homemadeability?</span></h2>
+<p>Why do we want homemadeability? Because homemadeability promotes equality, liberty, and anarchism. <em>Everything</em> should be homemadeable, including nuclear bombs. Only when everyone can produce everything will we have equality and liberty.</p>
+<p>Why is not everything homemadeable?</p>
+<p>Does it make sense to use solar power (1000 W/m2) for nuclear transmutation?</p>
+<pre class="example"><code>E = mc2
+9e16 J = 1 kg
+1 J = 1.11e-17 kg
+</code></pre>
+<p>No.</p>
+<p>How do we make nuclear transmutation homemadeable? What prevents energy from turning into matter? What prevents matter from turning into energy? What prevents matter from breaking down? Why is matter stable? What is matter? What is energy? A mathematical quantity?</p>
+<h2 id="how-should-we-farm-in-cities"><span class="section_number">6</span><span class="section_title">How should we farm in cities?</span></h2>
+<p>I thought about <a href="subsist.html">starting a farm in the middle of Jakarta</a>, but I put it on hold because I felt that the opportunity cost was too high.</p>
+<p>The key to farming is to understand ecology, some botany (plant physiology and pathology), and nutrient cycle.</p>
+<p>We should care more about phosphate run-off. Phosphates are vital and non-renewable, like fossil fuel. The bad news is that there is no cycle bringing back the phosphates from the sea to the land, unlike water with its hydrologic cycle.</p>
+<h2 id="biohacking"><span class="section_number">7</span><span class="section_title">Biohacking?</span></h2>
+<p>Biohacking?<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<p>Genetics is the biggest factor in how far we can build our body.<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
+<h2 id="theoretical-physics-philosophy-of-physics"><span class="section_number">8</span><span class="section_title">Theoretical physics, philosophy of physics</span></h2>
+<p>I am <a href="nature.html">trying to understand physics</a>.</p>
+<p>Why is it hard to convert between matter and energy? What does QFT say? (Related: Why isn't everything homemadeable?)</p>
+<h2 id="why-does-bitcoin-not-work"><span class="section_number">9</span><span class="section_title">Why does Bitcoin not work?</span></h2>
+<p>It's too slow.</p>
+<p>It uses too much energy.</p>
+<p>Satoshi assumes that the users are ideal anarchists. Alas, the actual users are mostly mindless greedy humans who want to get money without working.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.quora.com/Is-there-a-way-of-watching-YouTube-videos-at-higher-than-2x-speed">https://www.quora.com/Is-there-a-way-of-watching-YouTube-videos-at-higher-than-2x-speed</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&quot;Decentralized systems will continue to lose to centralized systems until there's a driver requiring decentralization to deliver a clearly superior consumer experience.&quot; <a href="http://highscalability.com/blog/2018/8/13/what-do-you-believe-now-that-you-didnt-five-years-ago.html">http://highscalability.com/blog/2018/8/13/what-do-you-believe-now-that-you-didnt-five-years-ago.html</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://www.pcworld.com/article/245414/yacy_its_about_freedom_not_beating_google.html">https://www.pcworld.com/article/245414/yacy_its_about_freedom_not_beating_google.html</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://loklak.org/">https://loklak.org/</a> Loklak Search - Distributed Open Source Search for Twitter and Social Media with Peer to Peer Technology<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://chat.susi.ai/">https://chat.susi.ai/</a> SUSI.AI Chat - Open Source Artificial Intelligence<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Distributed_operating_system">https://en.wikipedia.org/wiki/Distributed_operating_system</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://medium.com/@rxpvh2000/where-are-the-programmers-who-give-a-shit-d27ad2ef24fc">https://medium.com/@rxpvh2000/where-are-the-programmers-who-give-a-shit-d27ad2ef24fc</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://www.theguardian.com/science/2018/sep/21/extreme-biohacking-tech-guru-who-spent-250000-trying-to-live-for-ever-serge-faguet">https://www.theguardian.com/science/2018/sep/21/extreme-biohacking-tech-guru-who-spent-250000-trying-to-live-for-ever-serge-faguet</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://www.quora.com/Is-it-possible-for-a-skinny-guy-who-eats-trains-and-does-everything-right-to-get-Chris-Evans%E2%80%99-large-pecs-and-overall-muscular-look-If-so-how-long-Im-just-starting">https://www.quora.com/Is-it-possible-for-a-skinny-guy-who-eats-trains-and-does-everything-right-to-get-Chris-Evans%E2%80%99-large-pecs-and-overall-muscular-look-If-so-how-long-Im-just-starting</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/tech.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/tech.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-02-06 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

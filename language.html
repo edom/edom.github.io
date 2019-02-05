@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Language Research Group</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Language Research Group</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what-is-a-language">What is a language?</a></span><span class="word_count">(319w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#what-is-a-meaning">What is a meaning?</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#what-is-an-understanding">What is an understanding?</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#what-can-language-pedagogy-teach-us-about-programming-language-design-and-pedagogy">What can language pedagogy teach us about programming language design and pedagogy?</a></span><span class="word_count">(106w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#how-do-vs-how-should-questions-what-are-the-meanings">How-do vs how-should questions, what are the meanings?</a></span><span class="word_count">(76w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#meta-languages">Meta-languages?</a></span><span class="word_count">(78w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#what-is-a-good-language">What is a good language?</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(171w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#references">References</a></span><span class="word_count">(21w~1m)</span></li>
+</ul>
+</div>
+<h2 id="what-is-a-language"><span class="section_number">1</span><span class="section_title">What is a language?</span></h2>
+<p>A <em>language</em> is a convention of signs, meanings, and how to interpret those symbols into those meanings. Thus a language has <em>syntax</em> (how it looks) and <em>semantics</em> (what it means). A <em>sign</em> may be visual, aural, tactile, or anything that a human can perceive. Visual signs are seen, such as writings, sign languages, semaphores. Aural signs are heard, such as speech. Tactile signs are touched, such as Braille.</p>
+<p>Language cannot be used to spread knowledge that has to be directly experienced by the senses. It is impossible to describe with language what &quot;red&quot; or &quot;hot&quot; are; they have to be directly experienced. No amount of talking will make someone who has never tasted wine knows what it tastes like. Wine is basically rotten grape juice.</p>
+<p>Sign or symbol?</p>
+<p>A language may be rich enough for humans to use to describe the language itself.</p>
+<p>Must a language have meaning?</p>
+<p>In the 13th century, &quot;language&quot; means &quot;words, what is said, conversation, talk&quot;.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> The Latin word &quot;lingua&quot; means &quot;tongue&quot;.</p>
+<p>We associate symbols with meanings.</p>
+<p>A language is a means of communication.</p>
+<p>A language is a set of mutually agreed symbols.</p>
+<p>A language may contain logic.</p>
+<p>Is being a language objective or subjective (teleological)? A symbol does not have meaning on its own; someone has to interpret it.</p>
+<p>Some animals may have languages.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<p>A language constructs symbols by computable/finite means.</p>
+<p>A language is a convention for encoding/decoding/representing meaning.</p>
+<p>What is English? It depends on when. Middle English was English. What people in 1400 call &quot;English&quot; and what people in 2000 call &quot;Middle English&quot; is the same thing. <a href="https://en.wikipedia.org/wiki/Middle_English">https://en.wikipedia.org/wiki/Middle_English</a></p>
+<p>In order to understand an old text, we have to interpret it as its writer did.</p>
+<p>If we are to help future generations, we must resist changing our languages. We must resist adding or changing the definitions of words.</p>
+<p>&quot;Meaning of a word&quot; is meaningless? A word alone does not have meaning. We interpret a word into a meaning depending on context/situation.</p>
+<p>What do we mean by &quot;X means Y&quot;?</p>
+<h2 id="what-is-a-meaning"><span class="section_number">2</span><span class="section_title">What is a meaning?</span></h2>
+<h2 id="what-is-an-understanding"><span class="section_number">3</span><span class="section_title">What is an understanding?</span></h2>
+<h2 id="what-can-language-pedagogy-teach-us-about-programming-language-design-and-pedagogy"><span class="section_number">4</span><span class="section_title">What can language pedagogy teach us about programming language design and pedagogy?</span></h2>
+<p>How do we learn languages?</p>
+<p>How do we learn second languages?</p>
+<p>Spaced repetition, constant usage, total immersion.</p>
+<p>Gegg 1995 <span class="citation" data-cites="gegg1995representing">[<a href="#ref-gegg1995representing">1</a>]</span> (emphasis ours): &quot;The key difference between experts and novices is not the size of their memory span, but rather their ability to <em>chunk</em> information together into meaningful units. Schemata provide a method of organizing meaningful information about complex domains. Experts have more and better problem schemata than novices. Novice programmers tend to categorize problems based on surface syntax-based features of the problem statement, while experts categorized problems with respect to a more abstract hierarchical organization of algorithms […].&quot;</p>
+<h2 id="how-do-vs-how-should-questions-what-are-the-meanings"><span class="section_number">5</span><span class="section_title">How-do vs how-should questions, what are the meanings?</span></h2>
+<p>A how-do question is answered with a fact.</p>
+<p>A how-should is answered with a justified belief.</p>
+<p>How do we cook an egg? Heat it by whatever means: fire, boiling, microwave, etc.</p>
+<p>How should we cook an egg? It depends: do we want to preserve nutrition, minimize carcinogens, or make delicacy?</p>
+<p>&quot;How should we do X&quot; is &quot;What is the best way for us to do X and why is that the best way&quot;.</p>
+<h2 id="meta-languages"><span class="section_number">6</span><span class="section_title">Meta-languages?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#should-a-language-be-rich-enough-for-us-to-describe-itself">Should a language be rich enough for us to describe itself?</a></span><span class="word_count">(78w~1m)</span></li>
+</ul>
+</div>
+<h3 id="should-a-language-be-rich-enough-for-us-to-describe-itself"><span class="section_number">6.1</span><span class="section_title">Should a language be rich enough for us to describe itself?</span></h3>
+<p>We can describe English in English.</p>
+<p>What about programming languages? Reflection?</p>
+<p>An erratum (a document about correcting another document) uses English as meta-language. Such erratum contains meta-statements such as &quot;in pages 123-234, replace each occurrence of 'Foo' with 'Bar'&quot;.</p>
+<p>Second language acquisition is the usage of a language as a meta-language for describing the target language. For example, an English speaker learning German uses English as a meta-language for describes German.</p>
+<h2 id="what-is-a-good-language"><span class="section_number">7</span><span class="section_title">What is a good language?</span></h2>
+<p>A good language is simple, consistent, predictable.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#why-are-more-often-used-words-shorter">Why are more often-used words shorter?</a></span><span class="word_count">(27w~1m)</span></li>
+</ul>
+</div>
+<h3 id="why-are-more-often-used-words-shorter"><span class="section_number">7.1</span><span class="section_title">Why are more often-used words shorter?</span></h3>
+<p>To minimize the expected energy required to communicate.</p>
+<p>Often-used words are short. Seldom-used words are long.</p>
+<p>Likely words are short. Unlikely words are long.</p>
+<h2 id="what"><span class="section_number">8</span><span class="section_title">What?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">8.1</span><span class="section_title"><a href="#hypothesis-an-organ-that-understands-causality-will-understand-language">Hypothesis: an organ that understands causality will understand language</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">8.2</span><span class="section_title"><a href="#semantics-semiotics-linguistics-confusion">Semantics, semiotics, linguistics, confusion</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">8.3</span><span class="section_title"><a href="#how-did-the-first-translator-translate">How did the first translator translate?</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">8.4</span><span class="section_title"><a href="#logic-truth">Logic, truth</a></span><span class="word_count">(129w~1m)</span></li>
+</ul>
+</div>
+<h3 id="hypothesis-an-organ-that-understands-causality-will-understand-language"><span class="section_number">8.1</span><span class="section_title">Hypothesis: an organ that understands causality will understand language</span></h3>
+<h3 id="semantics-semiotics-linguistics-confusion"><span class="section_number">8.2</span><span class="section_title">Semantics, semiotics, linguistics, confusion</span></h3>
+<p>Jake Mitchell pointed out<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> that there are a lot of confusing pair of terms in philosophy: sense and reference, signifier and signified, use-mention distinction, concept and object.</p>
+<h3 id="how-did-the-first-translator-translate"><span class="section_number">8.3</span><span class="section_title">How did the first translator translate?</span></h3>
+<h3 id="logic-truth"><span class="section_number">8.4</span><span class="section_title">Logic, truth</span></h3>
+<p>What is truth? Truth is what is true.</p>
+<p>What is true? &quot;True&quot; is real, factual, in line with reality.</p>
+<p>An <em>open formula</em> is a formula that has one or more free variables.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>The truth of an open formula <em>may</em> depend on the substitution of the free variables.</p>
+<p>Some formulas are true or false due to their form, even though they contain free variables. For example: in classical logic, <span class="math inline">\( p \wedge (p \to q) \to q \)</span> is true regardless of what <span class="math inline">\(p\)</span> and <span class="math inline">\(q\)</span> are. Another example: in classical logic, then <span class="math inline">\( p \wedge \neg p \)</span> is false regardless of what <span class="math inline">\(p\)</span> is.</p>
+<p>If a formula's truth can be proven by virtue of its form alone, then it is true in all interpretations?</p>
+<p>Classical logic assumes two things: material implication and the law of excluded middle.</p>
+<h2 id="references" class="unnumbered"><span class="section_number">9</span><span class="section_title">References</span></h2>
+<div id="refs" class="references">
+<div id="ref-gegg1995representing">
+<p>[1] Gegg-Harrison, T.S. 1995. Representing logic program schemata in lambda-prolog. <em>Procs. Twelfth international conference on logic programming</em> (1995), 467–481. url: &lt;<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.106.2271&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.106.2271&amp;rep=rep1&amp;type=pdf</a>&gt;.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.etymonline.com/word/language">https://www.etymonline.com/word/language</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Animal_language">https://en.wikipedia.org/wiki/Animal_language</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://twitter.com/mekajfire/status/1090689517701349376">https://twitter.com/mekajfire/status/1090689517701349376</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Open_formula">https://en.wikipedia.org/wiki/Open_formula</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/language.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/language.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-02-05 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
