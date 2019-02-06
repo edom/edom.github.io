@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Programming System Research Group</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Programming System Research Group</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(413w~3m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#must-a-programming-system-be-textual-or-arboreal">Must a programming system be textual or arboreal?</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#user-experience-programming-research-group">User Experience Programming Research Group</a></span><span class="word_count">(79w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#how-should-we-make-computers-do-what-we-want">How should we make computers do what we want?</a></span><span class="word_count">(15w~1m)</span></li>
+</ul>
+</div>
+<h2 id="what"><span class="section_number">1</span><span class="section_title">What?</span></h2>
+<p>Ideas/findings:</p>
+<ul>
+<li>Language design should start from semantics.</li>
+<li>Names and referents should be separated (orthogonal).</li>
+</ul>
+<p>A language is only as good as how it promotes communication.</p>
+<p>What is communicated through a programming language? Two things: what things exist, and how those things should be manipulated.</p>
+<p>A programming language must be ultimately translatable to the machine's primitives.</p>
+<p>Wirth's &quot;Algorithms + Data Structures = Programs&quot;?<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>We want something like this, to free the Java programmers: &quot;Java program representation and manipulation in Prolog&quot;<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>What?</p>
+<p>&quot;A Denotational Approach to Measuring Complexity in Functional Programs&quot; <a href="http://www.cs.cmu.edu/afs/cs/user/brookes/www/papers/CMU-CS-03-150.pdf">http://www.cs.cmu.edu/afs/cs/user/brookes/www/papers/CMU-CS-03-150.pdf</a></p>
+<p>&lt;2019-02-04&gt; Phil Freeman asked &quot;Can someone explain why people object to thinking of types as sets? I mean, I normally don’t, but it doesn’t seem incorrect necessarily.&quot; <a href="https://twitter.com/paf31/status/1092111216950992897">https://twitter.com/paf31/status/1092111216950992897</a></p>
+<p>Barbara Liskov: &quot;Our compilers today are not powerful enough to support or enforce semantic constraints.&quot;, answering question &quot;Do you think that in those examples it’s worth having a refined subtype to explicitly encode the difference between the LIFO and FIFO semantics as part of a typing system or that would be something that would be annotated externally to the type system, like semantic constraints?&quot;<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>Rascal MPL<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> vs Jetbrains MPS?</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#dsl-in-java">DSL in Java?</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#what-language-is-like-prolog-but-has-anonymous-predicates-and-anonymous-modules">What language is like Prolog but has anonymous predicates and anonymous modules?</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#what-should-programming-language-be">What should programming language be?</a></span><span class="word_count">(86w~1m)</span></li>
+<li><span class="section_number">1.4</span><span class="section_title"><a href="#where-should-we-publish-our-programming-language-research-findings">Where should we publish our programming language research findings?</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">1.5</span><span class="section_title"><a href="#what-1"><span class="todo TODO">TODO</span> What</a></span><span class="word_count">(86w~1m)</span></li>
+</ul>
+</div>
+<h3 id="dsl-in-java"><span class="section_number">1.1</span><span class="section_title">DSL in Java?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1.1</span><span class="section_title"><a href="#some-options-for-modeling-the-ast">Some options for modeling the AST</a></span><span class="word_count">(20w~1m)</span></li>
+</ul>
+</div>
+<h4 id="some-options-for-modeling-the-ast"><span class="section_number">1.1.1</span><span class="section_title">Some options for modeling the AST</span></h4>
+<ol>
+<li><p>Each class is an AST node type</p>
+<pre class="example"><code>final class Const { ... }
+final class Add { ... }
+
+Object eval (Exp x) {
+  if (x instanceof Const) {
+    return ((Const)x).value;
+  }
+  if (x instanceof Add) {
+    final Add y = (Add) x;
+    return (int)eval(y.left) + (int)eval(y.right);
+  }
+  throw new IllegalArgumentException(&quot;&quot; + x);
+}
+</code></pre></li>
+<li><p>One class Ast_node</p>
+<pre class="example"><code>final class Ast_node {
+  static final int CONST = 0;
+  static final int ADD = 1;
+  // ...
+  final int type;
+  final Object[] arg;
+  // ...
+}
+</code></pre>
+<p>Then we need a way to pattern-match.</p></li>
+</ol>
+<h3 id="what-language-is-like-prolog-but-has-anonymous-predicates-and-anonymous-modules"><span class="section_number">1.2</span><span class="section_title">What language is like Prolog but has anonymous predicates and anonymous modules?</span></h3>
+<p>We are <a href="prolog.html">using Prolog</a>, but we are unsatisfied.</p>
+<h3 id="what-should-programming-language-be"><span class="section_number">1.3</span><span class="section_title">What should programming language be?</span></h3>
+<p>How should <a href="haskell.html">Haskell</a> be improved?</p>
+<ul>
+<li>How do we use Haskell without fmap, ap, and other annoying syntactic baggages? How do we have Maybe(A) = A union {Nothing}? (The original question that started it all.)</li>
+<li>What does a set-theoretic type system look like? (The consequence of wanting Maybe(A) = A union {Nothing}.)</li>
+<li>What if the denotational semantics directly involve functors and monads?</li>
+<li>Why should we use that language / write programs that way?</li>
+<li>Is there an efficient implementation?</li>
+</ul>
+<p>How should lambda calculus be implemented? What is an optimal implementation?</p>
+<h3 id="where-should-we-publish-our-programming-language-research-findings"><span class="section_number">1.4</span><span class="section_title">Where should we publish our programming language research findings?</span></h3>
+<p>Should we publish at ICFP, PLDI, POPL, SPLASH/OOPSLA, or Salon des Refusés?</p>
+<p>POPL has the &quot;Off the beaten track&quot;.</p>
+<p>I want maximum open access.</p>
+<h3 id="what-1"><span class="section_number">1.5</span><span class="section_title"><span class="todo TODO">TODO</span> What</span></h3>
+<p>Programming is computable mathematics?</p>
+<p><a href="https://en.wikipedia.org/wiki/Semantic_domain">https://en.wikipedia.org/wiki/Semantic_domain</a></p>
+<p>&quot;A programmable analog neural computer and simulator&quot; <a href="https://pdfs.semanticscholar.org/5f6b/579b1f4166ea536f5ed188e9976390729303.pdf">https://pdfs.semanticscholar.org/5f6b/579b1f4166ea536f5ed188e9976390729303.pdf</a></p>
+<p>To rewrite a part of a program without introducing errors, we need to preserve the <em>meaning</em> of the program, and thus we need a theory of semantics.</p>
+<p>See also Rapaport 2015 section 7.2 (&quot;What is computation?&quot;) from page 233.</p>
+<p>See Rapaport 2015 page 267 about other computation models.</p>
+<p>What can we get from this? <a href="https://plato.stanford.edu/entries/computer-science/">https://plato.stanford.edu/entries/computer-science/</a></p>
+<p>&lt;2014-05-07&gt; Reddit user TezlaKoil shows how to derive Russell's paradox in untyped lambda-calculus, and shows the relationship between Russell's paradox and Curry's Y combinator.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<h2 id="must-a-programming-system-be-textual-or-arboreal"><span class="section_number">2</span><span class="section_title">Must a programming system be textual or arboreal?</span></h2>
+<p>Why confine ourselves to texts and trees? Why not graphs?</p>
+<p>There are visual programming languages.</p>
+<p>Problem: Visual programming system encumbers blind people.</p>
+<h2 id="user-experience-programming-research-group"><span class="section_number">3</span><span class="section_title">User Experience Programming Research Group</span></h2>
+<p>We dream of demystifying and simplifying GUI programming. What is the essence of GUI programming? Can we do better than FRP (functional reactive programming)? Can we do declarative GUI programming better than HTML+CSS? If UX is the next UI, then is there UX programming instead of UI programming? GUX instead of GUI?</p>
+<p>How do we formalize user experience? How do we program user experience? Can a programming language facilitate good programmer experience and good end-user experience?</p>
+<h2 id="how-should-we-make-computers-do-what-we-want"><span class="section_number">4</span><span class="section_title">How should we make computers do what we want?</span></h2>
+<p>Does programming a computer require a language?</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Algorithms_%2B_Data_Structures_%3D_Programs">https://en.wikipedia.org/wiki/Algorithms_%2B_Data_Structures_%3D_Programs</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.158.4524&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.158.4524&amp;rep=rep1&amp;type=pdf</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://www.infoq.com/interviews/barbara-liskov">https://www.infoq.com/interviews/barbara-liskov</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.rascal-mpl.org/">https://www.rascal-mpl.org/</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://www.reddit.com/r/math/comments/24wk6f/are_there_other_alternatives_to_set_theory/chboelc">https://www.reddit.com/r/math/comments/24wk6f/are_there_other_alternatives_to_set_theory/chboelc</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/program.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/program.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-02-07 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
