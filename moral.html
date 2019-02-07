@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Morality Research Group</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Morality Research Group</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#explicating-our-innate-moral-system">Explicating our innate moral system</a></span><span class="word_count">(385w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#key-idea-morality-intention-and-causality-are-inseparable">Key idea: Morality, intention, and causality are inseparable</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#inaction-can-be-a-contributing-factor-but-not-a-cause">Inaction can be a contributing factor, but not a cause</a></span><span class="word_count">(639w~4m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#counterproductive-fragments">Counterproductive fragments?</a></span><span class="word_count">(81w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#is-universal-morality-possible-or-desirable">Is universal morality possible or desirable?</a></span><span class="word_count">(714w~4m)</span></li>
+</ul>
+</div>
+<h2 id="explicating-our-innate-moral-system"><span class="section_number">1</span><span class="section_title">Explicating our innate moral system</span></h2>
+<p>Here we are going to do these:</p>
+<ul>
+<li>Assume that we evolved an innate moral system.</li>
+<li>Formally define &quot;moral system&quot; and &quot;quandary&quot;.</li>
+<li>Use quandaries arising from universal moral principles, to pinpoint our innate moral system. We want to come up with a statement such as &quot;don't harm people&quot;.</li>
+<li>Construct a moral system without quandaries.</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#innate-morality-natural-morality">Innate morality, natural morality</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#formalizing-quandary-free-moral-systems">Formalizing quandary-free moral systems</a></span><span class="word_count">(219w~2m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#explicating-our-innate-moral-system-1">Explicating our innate moral system</a></span><span class="word_count">(92w~1m)</span></li>
+</ul>
+</div>
+<h3 id="innate-morality-natural-morality"><span class="section_number">1.1</span><span class="section_title">Innate morality, natural morality</span></h3>
+<p>See these:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Natural_morality">https://en.wikipedia.org/wiki/Natural_morality</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Evolution_of_morality">https://en.wikipedia.org/wiki/Evolution_of_morality</a></li>
+<li><a href="https://www.nytimes.com/2006/10/31/health/psychology/31book.html">https://www.nytimes.com/2006/10/31/health/psychology/31book.html</a></li>
+</ul>
+<p>We have morality, but we can't say what it is.</p>
+<p>Why do most people agree that the utilitarian surgeon is wrong?</p>
+<h3 id="formalizing-quandary-free-moral-systems"><span class="section_number">1.2</span><span class="section_title">Formalizing quandary-free moral systems</span></h3>
+<p>Key ideas:</p>
+<ul>
+<li>A moral system is a formal system that contains modal logic.</li>
+<li>A quandary is a formula with the shape &quot;(must S) and (must not S)&quot;.</li>
+<li>Conjecture: If a moral system only requires or only forbids but never both requires and forbids, then it won't have quandaries.</li>
+</ul>
+<p>A moral system is a <em>formal system</em> that contains modal logic. A formal system has a formal language, a set of axioms, and a set of inference rules. A formal language has an alphabet and a grammar (a set of formation rules).</p>
+<p>&quot;Moral system&quot; is sometimes also called &quot;morality&quot;.</p>
+<p>Two kinds of moral statements are <em>requirement</em> and <em>forbiddance</em>. Synonyms for &quot;requirement&quot; are necessity, obligation, duty. Synonyms for &quot;forbiddance&quot; are prohibition, restriction.</p>
+<p>A <em>quandary</em> is a formula with the shape &quot;(must S) and (must not S)&quot;.</p>
+<p>A quandary is almost a contradiction. A contradiction is both true and false; likewise, a quandary both requires and forbids. Compare the difference in where the &quot;not&quot; is:</p>
+<ul>
+<li>A quandary has the shape &quot;(must S) and (must <em>not</em> S)&quot;.</li>
+<li>A contradiction has the shape &quot;(must S) and <em>not</em> (must S)&quot;.</li>
+</ul>
+<p>A note about language: in this discussion, we never write &quot;you must <em>avoid harming</em> others&quot;; we always write &quot;you must <em>not harm</em> others&quot;. We don't use negative verbs such as &quot;avoid&quot; in a formal moral system; we use only positive verbs in this discussion.</p>
+<h3 id="explicating-our-innate-moral-system-1"><span class="section_number">1.3</span><span class="section_title">Explicating our innate moral system</span></h3>
+<p>Here we are going to repeat these until we arrive at a quandary-free moral system:</p>
+<ul>
+<li>Propose a universal moral principle that at first seems good.</li>
+<li>Find that it raises a quandary.</li>
+<li>Revise the moral principle to immunize it against the quandary.</li>
+</ul>
+<p>Here we try to state our innate moral system in English.</p>
+<p>Given an action, most people agree on whether that action is good or bad, but most people cannot satisfactorily define what good is and what bad is.</p>
+<p>What I think we believe is moral:</p>
+<ul>
+<li>Retaliating.</li>
+<li>Forcing children to do things for their own good.</li>
+</ul>
+<h2 id="key-idea-morality-intention-and-causality-are-inseparable"><span class="section_number">2</span><span class="section_title">Key idea: Morality, intention, and causality are inseparable</span></h2>
+<p>Morality cannot be determined by merely looking at the outcomes. Determining morality requires knowing intention and understanding the chain of causes.</p>
+<p>Why does intention matter? How do we know others' intentions?</p>
+<h2 id="inaction-can-be-a-contributing-factor-but-not-a-cause"><span class="section_number">3</span><span class="section_title">Inaction can be a contributing factor, but not a cause</span></h2>
+<p>Key idea: Inaction cannot be a cause, but inaction can be a contributing factor. A contributing factor shares some blame.</p>
+<p>About the <a href="https://en.wikipedia.org/wiki/Trolley_problem">trolley problem</a>, utilitarianism suggests killing the lowest number of people, but our innate morality suggests <em>unconditional inaction</em>. We refuse to interfere with the natural course of events.</p>
+<p>Guilt, harm, blame, and causality:</p>
+<p>This suggests that our moral principle may be &quot;do not <em>cause</em> harm&quot;. This suggests that we feel <em>guilt</em> when we cause harm. Blaming requires understanding causality.</p>
+<p>If I don't do anything, then I have <em>less</em> responsibility if the runaway tram crashes into people. If I switch, I have <em>more</em> responsibility.</p>
+<p>The solution to the trolley problem: Inaction cannot be a cause, but can be a contributing factor. If you do not act, then your existence does not affect the natural course of events.</p>
+<p>The runaway tram problem differs from the crashing airliner problem. The airliner pilot has a third option: killing everyone on the plane. The tram driver doesn't have that option.</p>
+<p>What do we evolve morality for?</p>
+<p>Morality improves species survival, but does not maximize species survival. Here's a proof by contradiction. Suppose that it is moral to do everything that promotes survival of the species. Quandary: the utilitarian surgeon kills 1 patient to save 5 patients. But we feel that this is immoral. Why don't doctors kill people to save more people? Why do we prefer letting people die to making people die? <a href="https://plato.stanford.edu/entries/doing-allowing/">https://plato.stanford.edu/entries/doing-allowing/</a></p>
+<p>Suppose that two men are starving. It is moral for a man to sacrifice himself to be eaten by the other man, but it is immoral for a man to sacrifice-and-eat the other man. Why is this asymmetry? There are four possible actions:</p>
+<ul>
+<li>X kills X. Y eats X's carcass.</li>
+<li>X kills Y. X eats Y's carcass.</li>
+<li>…</li>
+</ul>
+<p>The outcome is the same: one of them will die anyway. Why is self-sacrifice moral? Why is Jesus the most moral person?</p>
+<p>We are willing to sacrifice ourselves in an impending doom, in a hopeless situation; but we refuse to sacrifice ourselves so that the utilitarian doctor may save 5 other people. If we are going to die 5 hours from now, then dying an hour earlier doesn't make a difference. We are willing to sacrifice one day of life expectancy, but not 60 years of life expectancy. Why does our willingness to sacrifice depend on how long we expect to live? Why does our willingness to sacrifice depend on how far we look into the future? A young suicidal man readily sacrifices himself while knowing that he would expect himself to live for 60 more years if he didn't kill himself? Does a suicidal person know that a human, on average, lives for 80 years? What does a suicidal person think about life expectancy? How long do you expect to live? I want to live forever.</p>
+<p>The opposite of a suicidal person is a person who wants to live forever?</p>
+<p>One thing is clear in our evolved morality: It is moral to harm oneself, but it is immoral to harm others. Did we evolve altruism?</p>
+<p>Suppose two groups. Actively harms others. Avoids harming others.</p>
+<p>Which is true? We evolve morality so that we may form groups. Or. We form groups so that we may evolve morality.</p>
+<p>Morality is what is required to form a group. A group can only exist if most of its members are moral. Morality is whatever prevents the collapse of the group. ???</p>
+<p>How do we balance the individual's will to live and the group's survival?</p>
+<p>Morality evolved to minimize feeling guilty?</p>
+<p>Morality evolves to minimize the harm that a group inflicts to its members?</p>
+<p>Why do we feel guilty?</p>
+<p>Feeling guilty requires knowing causality. We feel guilty because we think we cause harm.</p>
+<p>Imagining evil vs doing evil</p>
+<p>Relationship between morality, agency, cause, guilt?</p>
+<p>What is the relationship between intention and morality? Is it moral: an action with good intention but bad outcome?</p>
+<h2 id="counterproductive-fragments"><span class="section_number">4</span><span class="section_title">Counterproductive fragments?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#ethics-is-the-study-of-moral-quandaries">Ethics is the study of moral quandaries?</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#nature-is-amoral.-why-should-we-be-moral">Nature is amoral. Why should we be moral?</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#default-allow-of-default-forbid">Default-allow of default-forbid?</a></span><span class="word_count">(37w~1m)</span></li>
+</ul>
+</div>
+<h3 id="ethics-is-the-study-of-moral-quandaries"><span class="section_number">4.1</span><span class="section_title">Ethics is the study of moral quandaries?</span></h3>
+<p>The goal of ethics is to create a moral system free of moral quandaries?</p>
+<h3 id="nature-is-amoral.-why-should-we-be-moral"><span class="section_number">4.2</span><span class="section_title">Nature is amoral. Why should we be moral?</span></h3>
+<p>What difference is between dying today and dying tomorrow? Aren't we all dead in the long run anyway?</p>
+<h3 id="default-allow-of-default-forbid"><span class="section_number">4.3</span><span class="section_title">Default-allow of default-forbid?</span></h3>
+<p>There are two rules of conduct:</p>
+<ul>
+<li>Everything is allowed unless forbidden. Fast, loose, and entrepreneurial. Liberal.</li>
+<li>Everything is forbidden unless allowed. Safe, slow, bureaucratic. This makes sense for computer security, but does it make sense for human?</li>
+</ul>
+<h2 id="is-universal-morality-possible-or-desirable"><span class="section_number">5</span><span class="section_title">Is universal morality possible or desirable?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(131w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#the-problem-with-prioritizing-individual-survival-over-species-survival">The problem with prioritizing individual survival over species survival</a></span><span class="word_count">(77w~1m)</span></li>
+<li><span class="section_number">5.3</span><span class="section_title"><a href="#is-there-an-ultimate-moral-quandary">Is there an ultimate moral quandary?</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">5.4</span><span class="section_title"><a href="#moral-particularism">Moral particularism</a></span><span class="word_count">(65w~1m)</span></li>
+<li><span class="section_number">5.5</span><span class="section_title"><a href="#improbability-of-equality-of-outcome-in-doomsday-spaceship-scenario">Improbability of equality of outcome in doomsday spaceship scenario</a></span><span class="word_count">(202w~2m)</span></li>
+<li><span class="section_number">5.6</span><span class="section_title"><a href="#contextualcircumstantial-moralityethics">Contextual/circumstantial morality/ethics</a></span><span class="word_count">(60w~1m)</span></li>
+<li><span class="section_number">5.7</span><span class="section_title"><a href="#natural-morality-survival">Natural morality? Survival?</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">5.8</span><span class="section_title"><a href="#survivalism-moral-quandary-two-people-on-a-sinking-ship-in-which-only-one-person-can-be-saved">Survivalism moral quandary: two people on a sinking ship, in which only one person can be saved</a></span><span class="word_count">(133w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what"><span class="section_number">5.1</span><span class="section_title">What?</span></h3>
+<p>There are always problems with moral systems? Ethical dilemmas: no universal morality? <a href="https://philosophynow.org/issues/60/Why_You_Shouldnt_Be_A_Person_Of_Principle">https://philosophynow.org/issues/60/Why_You_Shouldnt_Be_A_Person_Of_Principle</a></p>
+<p>If every moral system is problematic, why should we have any moral system?</p>
+<p>Egocentric survivalism's answer to trolley problem is &quot;It doesn't matter what you do, because it doesn't have anything to do with your survival.&quot;</p>
+<p>Chance-survivalism's answer to trolley problem is &quot;You should act in the way that maximizes the human race's chance of survival.&quot; But you don't know who to save for the best survival of the human race.</p>
+<p>Problem: If the 5 people are all homosexual, and the 1 person is heterosexual, then chance-survivalism implies that you should direct the train to the 5 homosexual people? What if those 5 homosexuals found a cure to cancer, and that heterosexual became a war criminal? What if the other way around?</p>
+<h3 id="the-problem-with-prioritizing-individual-survival-over-species-survival"><span class="section_number">5.2</span><span class="section_title">The problem with prioritizing individual survival over species survival</span></h3>
+<p>Survivalism suffers this problem. Consider this dilemma: A superpowered alien abducts you, starves you, and offers you two options:</p>
+<ul>
+<li>If you eat the food, then he destroys the Earth, killing all humans on Earth.</li>
+<li>If you don't eat the food, then he leaves the Earth alone.</li>
+</ul>
+<p>The problem: survivalism prescribes that you eat the food, and let everyone else go to hell.</p>
+<p>But it makes sense. Even Utilitarianism suggests that you get into</p>
+<h3 id="is-there-an-ultimate-moral-quandary"><span class="section_number">5.3</span><span class="section_title">Is there an ultimate moral quandary?</span></h3>
+<p>Is there a situation in which no morality has any solutions?</p>
+<p>How do we generate moral quandaries?</p>
+<p>Given a moral system, can we always generate a moral quandary?</p>
+<h3 id="moral-particularism"><span class="section_number">5.4</span><span class="section_title">Moral particularism</span></h3>
+<p><a href="https://philosophynow.org/issues/60/Why_You_Shouldnt_Be_A_Person_Of_Principle">https://philosophynow.org/issues/60/Why_You_Shouldnt_Be_A_Person_Of_Principle</a></p>
+<p>Is there a universal moral principle that coincides with the majority intuition about these issues?</p>
+<ul>
+<li>It is moral to kill fewer people to save more people?</li>
+<li>Is it moral to kill a serial killer to prevent 100 murders?</li>
+<li>Is it moral to kill a healthy innocent person and distribute his organs to save 5 people in need?</li>
+<li>Is it moral to annex a mismanaged country and improve it?</li>
+</ul>
+<h3 id="improbability-of-equality-of-outcome-in-doomsday-spaceship-scenario"><span class="section_number">5.5</span><span class="section_title">Improbability of equality of outcome in doomsday spaceship scenario</span></h3>
+<p>Consider this &quot;doomsday spaceship&quot; scenario:</p>
+<ul>
+<li>A huge asteroid will hit the Earth 1 week from now. That will kill all 7 billion people.</li>
+<li>But we have one spaceship that can save 1000 people. That is the only way out of Earth.</li>
+</ul>
+<p>Which people should we save? Why? There is no satisfactory answer to this; we should just use a truly random lottery. But if we pick people randomly, the ship will be full of poor people, because the majority of the Earth is poor. Should pregnant women be prioritized before non-pregnant women? Should older women be prioritized before younger women? Should women be prioritized before men? Should children be prioritized before women? Nobody should be prioritized. If we don't pick people randomly, then we don't practice what we preach about equality.</p>
+<p>With a lottery, all 7 billion people have a chance to board the spaceship, but it is physically impossible for all 7 billion people to actually board the spaceship. No amount of political correctness will change the laws of nature.</p>
+<p>Of course, when the spaceship is big enough for 7 billion people, we can have equality of outcome. The question is how we make a spaceship that big.</p>
+<h3 id="contextualcircumstantial-moralityethics"><span class="section_number">5.6</span><span class="section_title">Contextual/circumstantial morality/ethics</span></h3>
+<p>Does context change the goodness? Is context relevant to morality? Do circumstances affect judgment? Example: Stealing is wrong. Is stealing in distress to survive less wrong? Self-defense can justify killing. Why can't self-defense justify stealing? Should intentional killing be more wrong than unintentional killing? Rioting is wrong. But is rooting to overthrow a tyrant wrong?</p>
+<p><a href="https://english.stackexchange.com/questions/360411/whats-the-difference-between-dictator-tyrant-and-despot-in-terms-of-a-r">https://english.stackexchange.com/questions/360411/whats-the-difference-between-dictator-tyrant-and-despot-in-terms-of-a-r</a></p>
+<p>Is killing a terrorist good?</p>
+<h3 id="natural-morality-survival"><span class="section_number">5.7</span><span class="section_title">Natural morality? Survival?</span></h3>
+<p><a href="http://atheistnexus.org/m/discussion?id=2182797%3ATopic%3A131131">http://atheistnexus.org/m/discussion?id=2182797%3ATopic%3A131131</a> &quot;Morality is a consideration among the living about that which affects survival.&quot; Clarence Dember</p>
+<p><a href="https://en.wikipedia.org/wiki/Natural_morality">https://en.wikipedia.org/wiki/Natural_morality</a></p>
+<h3 id="survivalism-moral-quandary-two-people-on-a-sinking-ship-in-which-only-one-person-can-be-saved"><span class="section_number">5.8</span><span class="section_title">Survivalism moral quandary: two people on a sinking ship, in which only one person can be saved</span></h3>
+<p>Consider this scenario:</p>
+<ul>
+<li>Two people X and Y are on a sinking ship in the middle of the ocean.</li>
+<li>There is only one way to safety: by a lifeboat.</li>
+<li>But the lifeboat can only carry one person.</li>
+</ul>
+<p>Remember that survivalism is about the <em>species</em>, not the <em>individual</em>.</p>
+<p>Survivalism implies that we should prefer the one most fit to continue the survival of the species. Survivalism implies survival of the fittest.</p>
+<ul>
+<li>It is moral to sacrifice oneself to let the other live.</li>
+<li>It is moral for one to kill the other.</li>
+<li>It is not moral to die together.</li>
+</ul>
+<p>Survivalism seems to suggest that they should fight until one dies, but without hurting the other too much that both can't survive.</p>
+<p>Here survivalism is ambivalent about egoism and altruism.</p>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/moral.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/moral.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-02-08 00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
