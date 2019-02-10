@@ -164,8 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <ul>
 <li><span class="section_number">1</span><span class="section_title"><a href="#abdullah">Subtyping in Haskell with canonical injections</a></span><span class="word_count">(1203w~7m)</span></li>
 <li><span class="section_number">2</span><span class="section_title"><a href="#interpreting-haskell-without-types-a-strong-temptation">Interpreting Haskell without types: a strong temptation</a></span><span class="word_count">(282w~2m)</span></li>
-<li><span class="section_number">3</span><span class="section_title"><a href="#a-set-theoretic-programming-language">A set-theoretic programming language?</a></span><span class="word_count">(923w~5m)</span></li>
-<li><span class="section_number">4</span><span class="section_title"><a href="#a-mess-do-not-see">A mess; do not see</a></span><span class="word_count">(611w~4m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#a-mess-do-not-see">A mess; do not see</a></span><span class="word_count">(611w~4m)</span></li>
 </ul>
 </div>
 <h2 id="abdullah"><span class="section_number">1</span><span class="section_title">Subtyping in Haskell with canonical injections</span></h2>
@@ -434,240 +433,17 @@ eval (MkLoc _ _ _ e) = eval e
 <li>???</li>
 <li>PROFIT</li>
 </ol>
-<h2 id="a-set-theoretic-programming-language"><span class="section_number">3</span><span class="section_title">A set-theoretic programming language?</span></h2>
-<p>(A mess. Do not see.)</p>
-<p>Titles?</p>
-<ul>
-<li>Lambda-calculus with functors and monads</li>
-<li>Lambda-calculus with built-in functors and monads</li>
-<li>Restricted set theory instead of type theory?</li>
-</ul>
-<p>To-do:</p>
-<ul>
-<li>How is this language better than Haskell?</li>
-<li>How is this language worse than Haskell?</li>
-<li>Proof-of-concept implementation (interpreter from the semantic equations)</li>
-</ul>
-<p>The key idea is to involve functors and monads in the denotational semantics of the language.</p>
-<p>The type theory is a restricted set theory whose membership-check is practical.</p>
-<p>We define a programming language. The idea seems very similar to SETL<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
-<p>We begin with lambda calculus, and we add strings, sets, sequences, and builtins.</p>
-<p>TODO switch to logical structure formalism <span class="math inline">\((D,I,f_1^{m_1},\ldots,R_1^{n_1},\ldots)\)</span>?</p>
+<h2 id="a-mess-do-not-see"><span class="section_number">3</span><span class="section_title">A mess; do not see</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">3.1</span><span class="section_title"><a href="#the-universe-of-values-the-domain-of-discourse">The universe of values, the domain of discourse</a></span><span class="word_count">(63w~1m)</span></li>
-<li><span class="section_number">3.2</span><span class="section_title"><a href="#the-abstract-syntax-and-semantics">The abstract syntax and semantics</a></span><span class="word_count">(559w~3m)</span></li>
-<li><span class="section_number">3.3</span><span class="section_title"><a href="#the-concrete-syntax">The concrete syntax</a></span><span class="word_count">(19w~1m)</span></li>
-<li><span class="section_number">3.4</span><span class="section_title"><a href="#motivation-monads-in-set-theoretic-lambda-calculus">Motivation: Monads in set-theoretic lambda-calculus?</a></span><span class="word_count">(189w~1m)</span></li>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#open-adts-algebraic-data-types">Open ADTs (algebraic data types)</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#can-we-extend-haskell-to-auto-fmap">Can we extend Haskell to &quot;auto-fmap&quot;?</a></span><span class="word_count">(269w~2m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">Auto-lifting (and therefore sequencing) of function application involving Monad instances</a></span><span class="word_count">(176w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#equirecursive-types">Equirecursive types?</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#bootstrap-ghc">&lt;2018-12-15&gt; Bootstrap GHC?</a></span><span class="word_count">(85w~1m)</span></li>
 </ul>
 </div>
-<h3 id="the-universe-of-values-the-domain-of-discourse"><span class="section_number">3.1</span><span class="section_title">The universe of values, the domain of discourse</span></h3>
-<p>The universe (the domain of discourse) is <span class="math inline">\(D\)</span>.</p>
-<ul>
-<li>If <span class="math inline">\(x\)</span> is a string, then <span class="math inline">\(x \in D\)</span>.</li>
-<li>If <span class="math inline">\(x\)</span> is a set, then <span class="math inline">\(x \in D\)</span>.</li>
-<li>If <span class="math inline">\(x\)</span> is a sequence, then <span class="math inline">\(x \in D\)</span>.</li>
-</ul>
-<p>A relation is a sequence (domain,codomain,subset) of length three. A lambda abstraction expression is an expression, not a function.</p>
-<p>Some axioms:</p>
-<span class="math display">\[\begin{align*}
-\forall A \quad D \cup A = D
-\end{align*}
-\]</span>
-<p><span class="math inline">\(
-\newcommand\semantics[1]{\langle #1 \rangle}
-\newcommand\bigsemantics[1]{S\left(#1\right)}
-\newcommand\universe{\Omega}
-\)</span></p>
-<h3 id="the-abstract-syntax-and-semantics"><span class="section_number">3.2</span><span class="section_title">The abstract syntax and semantics</span></h3>
-<div class="local_table_of_contents">
-<ul>
-<li><span class="section_number">3.2.1</span><span class="section_title"><a href="#summary-of-the-semantics-of-the-programming-languages-abstract-syntax">Summary of the semantics of the programming language's abstract syntax</a></span><span class="word_count">(343w~2m)</span></li>
-<li><span class="section_number">3.2.2</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(31w~1m)</span></li>
-<li><span class="section_number">3.2.3</span><span class="section_title"><a href="#literal-expressions">Literal expressions</a></span><span class="word_count">(16w~1m)</span></li>
-<li><span class="section_number">3.2.4</span><span class="section_title"><a href="#lambda-expressions">Lambda expressions</a></span><span class="word_count">(79w~1m)</span></li>
-<li><span class="section_number">3.2.5</span><span class="section_title"><a href="#set-expressions">Set expressions</a></span><span class="word_count">(39w~1m)</span></li>
-<li><span class="section_number">3.2.6</span><span class="section_title"><a href="#sequence-expressions">Sequence expressions</a></span><span class="word_count">(45w~1m)</span></li>
-<li><span class="section_number">3.2.7</span><span class="section_title"><a href="#logical-expressions">Logical expressions</a></span><span class="word_count">(2w~1m)</span></li>
-<li><span class="section_number">3.2.8</span><span class="section_title"><a href="#builtins">Builtins</a></span><span class="word_count">(7w~1m)</span></li>
-</ul>
-</div>
-<h4 id="summary-of-the-semantics-of-the-programming-languages-abstract-syntax"><span class="section_number">3.2.1</span><span class="section_title">Summary of the semantics of the programming language's abstract syntax</span></h4>
-<p>Notations:</p>
-<span class="math display">\[\begin{align*}
-F(X,Y) &amp;= (F(X))(Y) &amp; \text{currying}
-\\ A \to B \to C &amp;= A \to (B \to C)
-\\ [D,C,F]x &amp;= y \text{ such that } (x,y) \in F &amp; \text{function application}
-\\ B[P := X] &amp;= \text{\(B\) with each free \(P\) replaced with \(X\)} &amp; \text{substitution}
-\end{align*}
-\]</span>
-<p>Laws:</p>
-<span class="math display">\[\begin{align*}
-\\ (A \cup B) \cup C &amp;= A \cup (B \cup C) &amp; \text{associativity of set union}
-\\ (A \times B) \times C &amp;= A \times (B \times C) &amp; \text{associativity of Cartesian product}
-\\ \universe \to \universe &amp;\subset \universe
-\end{align*}
-\]</span>
-<p>The trivial stuffs:</p>
-<span class="math display">\[\begin{align*}
-\semantics{\{\}} &amp;= \{\} &amp; \text{empty set}
-\\ \semantics{\universe} &amp;= \universe &amp; \text{universe}
-\\ \semantics{\{A\}} &amp;= \{ \semantics{A} \} &amp; \text{singleton set}
-\\ \semantics{A \cup B} &amp;= \semantics{A} \cup \semantics{B} &amp; \text{set union}
-\\ \semantics{A \times B} &amp;= \semantics{A} \times \semantics{B} &amp; \text{Cartesian product}
-\\ \semantics{[]} &amp;= [] &amp; \text{empty sequence}
-\\ \semantics{[A]} &amp;= [\semantics{A}] &amp; \text{singleton sequence}
-\\ \semantics{cons(A,B)} &amp;= cons(\semantics{A},\semantics{B}) &amp; \text{sequence construction}
-\\ \semantics{uncons(F,G,L)} &amp;= uncons(\semantics{F},\semantics{G},\semantics{L}) &amp; \text{sequence deconstruction}
-\\ \semantics{concat(A,B)} &amp;= concat(\semantics{A},\semantics{B}) &amp; \text{sequence concatenation}
-\\ \semantics{N} &amp;= parsenumeral(N) &amp; \text{numeral (numeric literal)}
-\end{align*}
-\]</span>
-<p>Lambda-calculus semantics:</p>
-<span class="math display">\[\begin{align*}
-\semantics{P \mapsto B} &amp;= [\universe,\universe,\{(x,\semantics{B[P:=x]}) ~|~ x \in \universe \}] &amp; \text{lambda abstraction}
-\\ \semantics{F(X)} &amp;= (\semantics{F})(\semantics{X}) &amp; \text{function application}
-\end{align*}
-\]</span>
-<p>Function spaces:</p>
-<span class="math display">\[\begin{align*}
-\semantics{A \to B} &amp;= \{ [\semantics{A},\semantics{B},F] ~|~ F \subseteq \semantics{A} \times \semantics{B}, ~ F \text{ is functional} \}
-\\ F \text{ is functional} &amp;\equiv \forall x \forall y \forall z (F(x,y) \wedge F(x,z) \to y=z)
-\end{align*}
-\]</span>
-<p>We extend the notion of &quot;application&quot; from functions to also include functors, in the type level. If <span class="math inline">\(f : A \to B\)</span>, <span class="math inline">\(x : F(A)\)</span>, and <span class="math inline">\(F = functor(M,m)\)</span>, then <span class="math inline">\(x : M(A)\)</span> and <span class="math inline">\( \semantics{f(x)} = \semantics{m(f,x)} \)</span>.</p>
-<p>The expression <span class="math inline">\(x:T\)</span> is the same as <span class="math inline">\(x\)</span> but also asserts <span class="math inline">\(x \in T\)</span> to the domain-checker.</p>
-<p>A <em>triple</em> is <span class="math inline">\((D,C,S)\)</span>. Such triple can be thought as a relaxed/generalized/improper <em>relation</em>. If <span class="math inline">\(S\)</span> is functional, then the triple is a function. Such function is <em>partial</em> iff <span class="math inline">\(\exists x \exists y : D(x) \wedge \neg S(x,y)\)</span>. Such function is <em>deceptive</em> iff <span class="math inline">\(\exists x \exists y : \neg C(y) \wedge S(x,y)\)</span>.</p>
-<span class="math display">\[\begin{align*}
-\exists x \in D (\neg \exists y S(x,y)) &amp;&amp; \text{partial}
-\\ \exists y \not \in C (\exists x S(x,y)) &amp;&amp; \text{deceptive}
-\\ \exists x \not \in D (\exists y S(x,y)) &amp;&amp; \text{superfluous}
-\end{align*}
-\]</span>
-<p>A superfluous function has unnecessary mapping.</p>
-<p>If each of <span class="math inline">\(D,C,S\)</span> is finite, it is straightforward to check a function application.</p>
-<pre class="example"><code>extend [D, Maybe C, F] = [
-    Maybe D,
-    Maybe C,
-    F \union { [Nothing, Nothing] }
-]
-
-extend [D, Risky E C, F] = [
-    Risky E D,
-    Risky E C,
-    F \union { [Left, e] | e \in E }
-]
-</code></pre>
-<p>We replace subtyping with subsetting.</p>
-<p>Because <span class="math inline">\(A \subseteq Maybe(A)\)</span>, each element of <span class="math inline">\(A\)</span> can be passed to a function whose domain is <span class="math inline">\(Maybe(A)\)</span>.</p>
-<p>Superfluous functions are harmless if we do domain check at each function application.</p>
-<p>In this programming language, every functor is an endofunctor of Set. Such functor is <span class="math inline">\((F,m)\)</span> where <span class="math inline">\(F : Set \to Set\)</span> and <span class="math inline">\(m : \forall A \forall B . (A \to B) \to (FA \to FB)\)</span> such that <span class="math inline">\(m(id) = id\)</span> and <span class="math inline">\(m(f \circ g) = m(f) \circ m(g)\)</span>.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
-<p>In this programming language, two endofunctors <span class="math inline">\(F\)</span> and <span class="math inline">\(G\)</span> are <em>adjoint</em> iff there is an isomorphism (bijection) between <span class="math inline">\(FY \to X\)</span> and <span class="math inline">\(Y \to GX\)</span>, for all two sets <span class="math inline">\(X,Y\)</span>. It seems that adjunctions don't work with endofunctors: we would have to find mutually inverse functions <span class="math inline">\(p : \forall X \forall Y . FY \to X\)</span> and <span class="math inline">\(q : \forall X \forall Y . Y \to GX\)</span>.</p>
-<p>A <em>natural transformation from endofunctor <span class="math inline">\(F\)</span> to endofunctor <span class="math inline">\(G\)</span></em> is a function <span class="math inline">\(\eta : \Pi \alpha . F(\alpha) \to G(\alpha)\)</span> such that <span class="math inline">\(\eta(Y) \circ \mu_F(f) = \mu_G(f) \circ \eta(X)\)</span> for every <span class="math inline">\(f : A \to B\)</span>. An example is <span class="math inline">\( \eta(a) : risky(e,a) \to maybe(a) \)</span>. What?<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
-<pre class="example"><code>class (Functor f, Functor g) =&gt; NaturalTransformation f g where
-    eta :: f a -&gt; g a -- where eta . fmap f = fmap f . eta
-
-class NatTrans f g where
-    eta :: f -&gt; g
-
-instance NaturalTransformation Identity Maybe where
-    eta (Identity x) = Just x
-
-instance NaturalTransformation (Either e) Maybe where
-    eta (Left _) = Nothing
-    eta (Right x) = Just x
-
-instance (Monoid e) =&gt; NaturalTransformation Maybe (Either e) where
-    eta (Just x) = Right x
-    eta Nothing = mempty
-</code></pre>
-<p>A monad is <span class="math inline">\((F,m)\)</span> where <span class="math inline">\(FFX = FX\)</span>. An example monad is <span class="math inline">\(F(X) = 2^X\)</span> (power set-ing).</p>
-<h4 id="what"><span class="section_number">3.2.2</span><span class="section_title">What?</span></h4>
-<p>We write <span class="math inline">\(M(A)\)</span> or <span class="math inline">\(MA\)</span> to mean &quot;the meaning of <span class="math inline">\(A\)</span>&quot;. <span class="math inline">\(M\)</span> is not a function; it is just a notation. The meaning depends on context. The context contains name bindings.</p>
-<h4 id="literal-expressions"><span class="section_number">3.2.3</span><span class="section_title">Literal expressions</span></h4>
-<p>The <em>universe literal expression</em> <code>\universe</code> means <span class="math inline">\(D\)</span>.</p>
-<p>A <em>string literal expression</em> <code>\string what</code> means <code>what</code> itself.</p>
-<h4 id="lambda-expressions"><span class="section_number">3.2.4</span><span class="section_title">Lambda expressions</span></h4>
-<p>A <em>lambda abstraction expression</em> <code>\lambda a b</code> means a subset of <span class="math inline">\(D \times D\)</span> according to beta-reduction. Thus, if <span class="math inline">\(L\)</span> is such expression, then <span class="math inline">\(M(L)\)</span> is not a function, but <span class="math inline">\((A,B,M(L))\)</span> is a function if it domain-checks.</p>
-<p>An <em>application expression</em> <code>\app f x</code> means <span class="math inline">\((Mf)(Mx)\)</span>. Every application expression is <em>domain-checked</em>. <span class="math inline">\(Mf\)</span> has to be a function (a triple).</p>
-<p>A <em>substituting expression</em> <code>\subst name</code> means the meaning of that name as bound by the nearest lambda abstraction that bounds that name.</p>
-<h4 id="set-expressions"><span class="section_number">3.2.5</span><span class="section_title">Set expressions</span></h4>
-<p>A <em>set expression</em> <code>\set a b c ...</code> means the set <span class="math inline">\(\{M(a),M(b),M(c),\ldots\}\)</span>.</p>
-<p>A <em>set union expression</em> <code>\union A B ...</code> means <span class="math inline">\(M(A) \cup M(B) \cup \ldots\)</span>.</p>
-<p>A <em>Cartesian product expression</em> <code>\times A B ...</code> means <span class="math inline">\(M(A) \times M(B) \times \ldots\)</span>.</p>
-<h4 id="sequence-expressions"><span class="section_number">3.2.6</span><span class="section_title">Sequence expressions</span></h4>
-<p>A <em>sequence expression</em> <code>\seq a b c ...</code> means <span class="math inline">\([M(a),M(b),M(c),\ldots]\)</span>.</p>
-<p>A <em>sequence concatenation expression</em> <code>\concat a b c ...</code> means <span class="math inline">\(M(a)+M(b)+M(c)+\ldots\)</span> where <span class="math inline">\(+\)</span> is sequence concatenation.</p>
-<p>A <em>sequence projection expression</em> <code>\project n s</code> means <span class="math inline">\(\pi_n M(s)\)</span> (the <span class="math inline">\(n\)</span>th component of <span class="math inline">\(M(s)\)</span>) where <span class="math inline">\(n\)</span> starts from one.</p>
-<h4 id="logical-expressions"><span class="section_number">3.2.7</span><span class="section_title">Logical expressions</span></h4>
-<p><code>\member</code></p>
-<p><code>\and</code></p>
-<p><code>\or</code></p>
-<h4 id="builtins"><span class="section_number">3.2.8</span><span class="section_title">Builtins</span></h4>
-<p><code>\println</code> for testing purposes only.</p>
-<p><code>\procedural</code> executes sequentially.</p>
-<pre class="example"><code>(\procedural
-  (\println 1)
-  (\println [2 3 4])
-  (\println {5 6 7})
-)
-</code></pre>
-<h3 id="the-concrete-syntax"><span class="section_number">3.3</span><span class="section_title">The concrete syntax</span></h3>
-<p>Convenience concrete syntax:</p>
-<ul>
-<li><code>\let name = what in exp</code> means <code>(\ name -&gt; exp) what</code></li>
-<li><code>\with</code> means chained <code>\let</code></li>
-</ul>
-<h3 id="motivation-monads-in-set-theoretic-lambda-calculus"><span class="section_number">3.4</span><span class="section_title">Motivation: Monads in set-theoretic lambda-calculus?</span></h3>
-<p>We want <span class="math inline">\(Maybe(A) = A \cup \{Nothing\}\)</span> for each set <span class="math inline">\(A\)</span>. It follows from that definition that:</p>
-<span class="math display">\[\begin{align*}
-A &amp;\subseteq Maybe(A)
-\\ Maybe(Maybe(A)) &amp;= Maybe(A)
-\end{align*}
-\]</span>
-<p>We want <span class="math inline">\(Risky(A,B) = \{ (Fail,a) ~|~ a \in A \} \cup B\)</span> for each set <span class="math inline">\(A\)</span> and each set <span class="math inline">\(B\)</span>. It follows from that definition that:</p>
-<span class="math display">\[\begin{align*}
-B &amp;\subseteq Risky(A,B)
-\\ Risky(A,Risky(A,B)) &amp;= Risky(A,B)
-\end{align*}
-\]</span>
-<p>Thus <span class="math inline">\(Maybe : D \to D\)</span> and <span class="math inline">\(Risky : D \to D \to D\)</span>.</p>
-<p>Risky is similar to Haskell Either, but the name &quot;Risky&quot; makes it clear that the parameters are not interchangeable.</p>
-<pre class="example"><code>(\with
-  ( A {0 1}
-    B {0 1}
-    Maybe [\universe \universe (\ a (\union $a {Nothing}))]
-    F [$A $B {[0 1] [1 0]}]
-    G [($Maybe $A)
-      (\union $B {none})
-      (\union (\mapping $F) {[Nothing none]})]
-  )
-  (\and ($F 0 1) ($F 1 0))
-)
-</code></pre>
-<p>A <em>relation</em> is a triple <span class="math inline">\((A,B,R)\)</span> where <span class="math inline">\(R \subseteq A \times B\)</span>. We write <span class="math inline">\(R(x,y)\)</span> to mean <span class="math inline">\((x,y) \in R\)</span>.</p>
-<p><span class="math inline">\((A,B,R)\)</span> is a <em>subrelation</em> of <span class="math inline">\((A&#39;,B&#39;,R&#39;)\)</span> iff <span class="math inline">\(A \subseteq A&#39;\)</span>, <span class="math inline">\(B \subseteq B&#39;\)</span>, <span class="math inline">\(R \subseteq R&#39;\)</span>, and <span class="math inline">\(R&#39; \subseteq A&#39; \times B&#39;\)</span>.</p>
-<p>A <em>monad</em> (in the category of sets) is <span class="math inline">\((M,r,j)\)</span> where <span class="math inline">\(M : \Omega \to \Omega\)</span>, <span class="math inline">\(r : \forall A . A \to M(A)\)</span>, <span class="math inline">\(\forall X : M(M(X)) = M(X)\)</span>.</p>
-<p>A monad maps each relation <span class="math inline">\((A,B,R)\)</span> to <span class="math inline">\((MA,MB,LR)\)</span> where <span class="math inline">\(A \subseteq MA\)</span>, <span class="math inline">\(R \subseteq LR\)</span>, <span class="math inline">\(p : A \to MA\)</span>, <span class="math inline">\(j : MMA \to MA\)</span>.</p>
-<p>If a hole expects an element of <span class="math inline">\(A\)</span>, then it accepts an element of <span class="math inline">\(A&#39; \subseteq A\)</span>.</p>
-<p>Abdullah's law of continuity:</p>
-<pre class="example"><code>extend return = id
-
-extend : (a -&gt; m b) -&gt; (m a -&gt; m b)
-return :          a -&gt; m a
-id     :        m a -&gt; m a
-</code></pre>
-<h2 id="a-mess-do-not-see"><span class="section_number">4</span><span class="section_title">A mess; do not see</span></h2>
-<div class="local_table_of_contents">
-<ul>
-<li><span class="section_number">4.1</span><span class="section_title"><a href="#open-adts-algebraic-data-types">Open ADTs (algebraic data types)</a></span><span class="word_count">(46w~1m)</span></li>
-<li><span class="section_number">4.2</span><span class="section_title"><a href="#can-we-extend-haskell-to-auto-fmap">Can we extend Haskell to &quot;auto-fmap&quot;?</a></span><span class="word_count">(269w~2m)</span></li>
-<li><span class="section_number">4.3</span><span class="section_title"><a href="#auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">Auto-lifting (and therefore sequencing) of function application involving Monad instances</a></span><span class="word_count">(176w~1m)</span></li>
-<li><span class="section_number">4.4</span><span class="section_title"><a href="#equirecursive-types">Equirecursive types?</a></span><span class="word_count">(35w~1m)</span></li>
-<li><span class="section_number">4.5</span><span class="section_title"><a href="#bootstrap-ghc">&lt;2018-12-15&gt; Bootstrap GHC?</a></span><span class="word_count">(85w~1m)</span></li>
-</ul>
-</div>
-<h3 id="open-adts-algebraic-data-types"><span class="section_number">4.1</span><span class="section_title">Open ADTs (algebraic data types)</span></h3>
+<h3 id="open-adts-algebraic-data-types"><span class="section_number">3.1</span><span class="section_title">Open ADTs (algebraic data types)</span></h3>
 <ul>
 <li>&quot;Closed&quot; means &quot;defined in one place&quot;.</li>
 <li><p>Open ADTs don't mix with exhaustive case analysis (function totality).</p>
@@ -680,7 +456,7 @@ id     :        m a -&gt; m a
 </ul></li>
 <li><p>If <code>f : a -&gt; b</code>, then the compiler should infer <code>lift f : (Monad m) =&gt; m a -&gt; m b</code>.</p></li>
 </ul>
-<h3 id="can-we-extend-haskell-to-auto-fmap"><span class="section_number">4.2</span><span class="section_title">Can we extend Haskell to &quot;auto-fmap&quot;?</span></h3>
+<h3 id="can-we-extend-haskell-to-auto-fmap"><span class="section_number">3.2</span><span class="section_title">Can we extend Haskell to &quot;auto-fmap&quot;?</span></h3>
 <ul>
 <li><p>Possibilities:</p>
 <ul>
@@ -742,7 +518,7 @@ id     :        m a -&gt; m a
 <li><a href="https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf">https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf</a></li>
 </ul></li>
 </ul>
-<h3 id="auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances"><span class="section_number">4.3</span><span class="section_title">Auto-lifting (and therefore sequencing) of function application involving Monad instances</span></h3>
+<h3 id="auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances"><span class="section_number">3.3</span><span class="section_title">Auto-lifting (and therefore sequencing) of function application involving Monad instances</span></h3>
 <ul>
 <li><p>The standard rule is:</p>
 <ul>
@@ -795,7 +571,7 @@ id     :        m a -&gt; m a
 </ul></li>
 </ul></li>
 </ul>
-<h3 id="equirecursive-types"><span class="section_number">4.4</span><span class="section_title">Equirecursive types?</span></h3>
+<h3 id="equirecursive-types"><span class="section_number">3.4</span><span class="section_title">Equirecursive types?</span></h3>
 <p>Haskell has isorecursive types. Can we make it use equirecursive types?</p>
 <ul>
 <li>Can we make it automatically insert roll-unroll/fold-unfold/In-out?</li>
@@ -806,7 +582,7 @@ id     :        m a -&gt; m a
 </ul></li>
 <li>&quot;System F-omega with Equirecursive Types for Datatype-Generic Programming&quot;?</li>
 </ul>
-<h3 id="bootstrap-ghc"><span class="section_number">4.5</span><span class="section_title">&lt;2018-12-15&gt; Bootstrap GHC?</span></h3>
+<h3 id="bootstrap-ghc"><span class="section_number">3.5</span><span class="section_title">&lt;2018-12-15&gt; Bootstrap GHC?</span></h3>
 <p><a href="https://twitter.com/ErikDominikus/status/1073726987338842112">https://twitter.com/ErikDominikus/status/1073726987338842112</a></p>
 <p>How about writing a Haskell interpreter with Prolog? I guess Haskell type checker takes ~100 lines of Prolog, and parser takes ~200 lines. It may be doable in a month. I have ~20 lines of Prolog type-checking Haskell AST but without type classes.</p>
 <p>Add ~500 more lines of Prolog metaprogram for translating lists to arrays, ~2000 more lines for translating Prolog to optimized x86_64 native code (if not reinventing LLVM), 1 more month, and … we may beat GHC at its own game? :)</p>
@@ -815,10 +591,6 @@ id     :        m a -&gt; m a
 <ol>
 <li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Pure_(programming_language)">https://en.wikipedia.org/wiki/Pure_(programming_language)</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
 <li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Confluence_(abstract_rewriting)">https://en.wikipedia.org/wiki/Confluence_(abstract_rewriting)</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/SETL">https://en.wikipedia.org/wiki/SETL</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Set_theoretic_programming">https://en.wikipedia.org/wiki/Set_theoretic_programming</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Functor">https://en.wikipedia.org/wiki/Functor</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Natural_transformation">https://en.wikipedia.org/wiki/Natural_transformation</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>

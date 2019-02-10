@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Semantics Research Group</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Semantics Research Group</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(72w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#examples">Examples?</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#semantics">Semantics?</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#a-set-theoretic-programming-language">A set-theoretic programming language?</a></span><span class="word_count">(923w~5m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#three-semantics-of-horn-clauses">Three semantics of Horn clauses?</a></span><span class="word_count">(62w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#semantics-should-we-worry-about-this-earlier">Semantics (should we worry about this earlier?)</a></span><span class="word_count">(109w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#how-should-lambda-calculus-be-implemented">How should lambda-calculus be implemented?</a></span><span class="word_count">(116w~1m)</span></li>
+</ul>
+</div>
+<h2 id="what"><span class="section_number">1</span><span class="section_title">What</span></h2>
+<p>The semantics of a statement in an imperative language is usually an endofunction whose domain is the set of all possible world states.</p>
+<p>The semantics of untyped lambda calculus involves domain theory? So does the semantics of functional languages?</p>
+<p>The semantics of logic languages involves model theory?</p>
+<p>Lloyd 1993 <span class="citation" data-cites="lloyd1993foundations">[<a href="#ref-lloyd1993foundations">1</a>]</span>: declarative semantics and operational semantics of Prolog.</p>
+<p>What is this &quot;stable model semantics&quot; thing? <a href="https://arxiv.org/abs/cs/0312028">https://arxiv.org/abs/cs/0312028</a></p>
+<p>Is there a declarative language that unifies domain theory and model theory?</p>
+<h2 id="examples"><span class="section_number">2</span><span class="section_title">Examples?</span></h2>
+<p>The semantics of a program <span class="math inline">\(\Gamma \vdash P\)</span> is whether <span class="math inline">\(\Gamma\)</span> proves <span class="math inline">\(P\)</span>?</p>
+<p><a href="https://en.wikipedia.org/wiki/First-order_logic#Semantics">https://en.wikipedia.org/wiki/First-order_logic#Semantics</a></p>
+<p>Slide 31: difference between imperative, functional, and declarative<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Thus, ordered by declarativeness, Scheme &lt; Haskell &lt; Prolog. But what about Scheme macros?</p>
+<p>What? <a href="https://www.researchgate.net/publication/2763490_A_Denotational_Semantics_for_Prolog">https://www.researchgate.net/publication/2763490_A_Denotational_Semantics_for_Prolog</a></p>
+<p>Toy example: first-order logic language?</p>
+<pre class="example"><code>(#with
+  [
+    (lt a b)
+    (lt b c)
+    (lt c d)
+    (#forall [a b]
+      (#horn (lt a b)
+        (#exists [c] (#and (lt a c) (lt c b)))))
+  ]
+  (#exists [x y] (lt x y)))
+</code></pre>
+<h2 id="semantics"><span class="section_number">3</span><span class="section_title">Semantics?</span></h2>
+<p>Mechanized semantics <a href="https://hal.inria.fr/inria-00529848/document">https://hal.inria.fr/inria-00529848/document</a></p>
+<h2 id="a-set-theoretic-programming-language"><span class="section_number">4</span><span class="section_title">A set-theoretic programming language?</span></h2>
+<p>(A mess. Do not see.)</p>
+<p>Titles?</p>
+<ul>
+<li>Lambda-calculus with functors and monads</li>
+<li>Lambda-calculus with built-in functors and monads</li>
+<li>Restricted set theory instead of type theory?</li>
+</ul>
+<p>To-do:</p>
+<ul>
+<li>How is this language better than Haskell?</li>
+<li>How is this language worse than Haskell?</li>
+<li>Proof-of-concept implementation (interpreter from the semantic equations)</li>
+</ul>
+<p>The key idea is to involve functors and monads in the denotational semantics of the language.</p>
+<p>The type theory is a restricted set theory whose membership-check is practical.</p>
+<p>We define a programming language. The idea seems very similar to SETL<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p>We begin with lambda calculus, and we add strings, sets, sequences, and builtins.</p>
+<p>TODO switch to logical structure formalism <span class="math inline">\((D,I,f_1^{m_1},\ldots,R_1^{n_1},\ldots)\)</span>?</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#the-universe-of-values-the-domain-of-discourse">The universe of values, the domain of discourse</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#the-abstract-syntax-and-semantics">The abstract syntax and semantics</a></span><span class="word_count">(559w~3m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#the-concrete-syntax">The concrete syntax</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#motivation-monads-in-set-theoretic-lambda-calculus">Motivation: Monads in set-theoretic lambda-calculus?</a></span><span class="word_count">(189w~1m)</span></li>
+</ul>
+</div>
+<h3 id="the-universe-of-values-the-domain-of-discourse"><span class="section_number">4.1</span><span class="section_title">The universe of values, the domain of discourse</span></h3>
+<p>The universe (the domain of discourse) is <span class="math inline">\(D\)</span>.</p>
+<ul>
+<li>If <span class="math inline">\(x\)</span> is a string, then <span class="math inline">\(x \in D\)</span>.</li>
+<li>If <span class="math inline">\(x\)</span> is a set, then <span class="math inline">\(x \in D\)</span>.</li>
+<li>If <span class="math inline">\(x\)</span> is a sequence, then <span class="math inline">\(x \in D\)</span>.</li>
+</ul>
+<p>A relation is a sequence (domain,codomain,subset) of length three. A lambda abstraction expression is an expression, not a function.</p>
+<p>Some axioms:</p>
+<span class="math display">\[\begin{align*}
+\forall A \quad D \cup A = D
+\end{align*}
+\]</span>
+<p><span class="math inline">\(
+\newcommand\semantics[1]{\langle #1 \rangle}
+\newcommand\bigsemantics[1]{S\left(#1\right)}
+\newcommand\universe{\Omega}
+\)</span></p>
+<h3 id="the-abstract-syntax-and-semantics"><span class="section_number">4.2</span><span class="section_title">The abstract syntax and semantics</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.2.1</span><span class="section_title"><a href="#summary-of-the-semantics-of-the-programming-languages-abstract-syntax">Summary of the semantics of the programming language's abstract syntax</a></span><span class="word_count">(343w~2m)</span></li>
+<li><span class="section_number">4.2.2</span><span class="section_title"><a href="#what-1">What?</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">4.2.3</span><span class="section_title"><a href="#literal-expressions">Literal expressions</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">4.2.4</span><span class="section_title"><a href="#lambda-expressions">Lambda expressions</a></span><span class="word_count">(79w~1m)</span></li>
+<li><span class="section_number">4.2.5</span><span class="section_title"><a href="#set-expressions">Set expressions</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">4.2.6</span><span class="section_title"><a href="#sequence-expressions">Sequence expressions</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">4.2.7</span><span class="section_title"><a href="#logical-expressions">Logical expressions</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">4.2.8</span><span class="section_title"><a href="#builtins">Builtins</a></span><span class="word_count">(7w~1m)</span></li>
+</ul>
+</div>
+<h4 id="summary-of-the-semantics-of-the-programming-languages-abstract-syntax"><span class="section_number">4.2.1</span><span class="section_title">Summary of the semantics of the programming language's abstract syntax</span></h4>
+<p>Notations:</p>
+<span class="math display">\[\begin{align*}
+F(X,Y) &amp;= (F(X))(Y) &amp; \text{currying}
+\\ A \to B \to C &amp;= A \to (B \to C)
+\\ [D,C,F]x &amp;= y \text{ such that } (x,y) \in F &amp; \text{function application}
+\\ B[P := X] &amp;= \text{\(B\) with each free \(P\) replaced with \(X\)} &amp; \text{substitution}
+\end{align*}
+\]</span>
+<p>Laws:</p>
+<span class="math display">\[\begin{align*}
+\\ (A \cup B) \cup C &amp;= A \cup (B \cup C) &amp; \text{associativity of set union}
+\\ (A \times B) \times C &amp;= A \times (B \times C) &amp; \text{associativity of Cartesian product}
+\\ \universe \to \universe &amp;\subset \universe
+\end{align*}
+\]</span>
+<p>The trivial stuffs:</p>
+<span class="math display">\[\begin{align*}
+\semantics{\{\}} &amp;= \{\} &amp; \text{empty set}
+\\ \semantics{\universe} &amp;= \universe &amp; \text{universe}
+\\ \semantics{\{A\}} &amp;= \{ \semantics{A} \} &amp; \text{singleton set}
+\\ \semantics{A \cup B} &amp;= \semantics{A} \cup \semantics{B} &amp; \text{set union}
+\\ \semantics{A \times B} &amp;= \semantics{A} \times \semantics{B} &amp; \text{Cartesian product}
+\\ \semantics{[]} &amp;= [] &amp; \text{empty sequence}
+\\ \semantics{[A]} &amp;= [\semantics{A}] &amp; \text{singleton sequence}
+\\ \semantics{cons(A,B)} &amp;= cons(\semantics{A},\semantics{B}) &amp; \text{sequence construction}
+\\ \semantics{uncons(F,G,L)} &amp;= uncons(\semantics{F},\semantics{G},\semantics{L}) &amp; \text{sequence deconstruction}
+\\ \semantics{concat(A,B)} &amp;= concat(\semantics{A},\semantics{B}) &amp; \text{sequence concatenation}
+\\ \semantics{N} &amp;= parsenumeral(N) &amp; \text{numeral (numeric literal)}
+\end{align*}
+\]</span>
+<p>Lambda-calculus semantics:</p>
+<span class="math display">\[\begin{align*}
+\semantics{P \mapsto B} &amp;= [\universe,\universe,\{(x,\semantics{B[P:=x]}) ~|~ x \in \universe \}] &amp; \text{lambda abstraction}
+\\ \semantics{F(X)} &amp;= (\semantics{F})(\semantics{X}) &amp; \text{function application}
+\end{align*}
+\]</span>
+<p>Function spaces:</p>
+<span class="math display">\[\begin{align*}
+\semantics{A \to B} &amp;= \{ [\semantics{A},\semantics{B},F] ~|~ F \subseteq \semantics{A} \times \semantics{B}, ~ F \text{ is functional} \}
+\\ F \text{ is functional} &amp;\equiv \forall x \forall y \forall z (F(x,y) \wedge F(x,z) \to y=z)
+\end{align*}
+\]</span>
+<p>We extend the notion of &quot;application&quot; from functions to also include functors, in the type level. If <span class="math inline">\(f : A \to B\)</span>, <span class="math inline">\(x : F(A)\)</span>, and <span class="math inline">\(F = functor(M,m)\)</span>, then <span class="math inline">\(x : M(A)\)</span> and <span class="math inline">\( \semantics{f(x)} = \semantics{m(f,x)} \)</span>.</p>
+<p>The expression <span class="math inline">\(x:T\)</span> is the same as <span class="math inline">\(x\)</span> but also asserts <span class="math inline">\(x \in T\)</span> to the domain-checker.</p>
+<p>A <em>triple</em> is <span class="math inline">\((D,C,S)\)</span>. Such triple can be thought as a relaxed/generalized/improper <em>relation</em>. If <span class="math inline">\(S\)</span> is functional, then the triple is a function. Such function is <em>partial</em> iff <span class="math inline">\(\exists x \exists y : D(x) \wedge \neg S(x,y)\)</span>. Such function is <em>deceptive</em> iff <span class="math inline">\(\exists x \exists y : \neg C(y) \wedge S(x,y)\)</span>.</p>
+<span class="math display">\[\begin{align*}
+\exists x \in D (\neg \exists y S(x,y)) &amp;&amp; \text{partial}
+\\ \exists y \not \in C (\exists x S(x,y)) &amp;&amp; \text{deceptive}
+\\ \exists x \not \in D (\exists y S(x,y)) &amp;&amp; \text{superfluous}
+\end{align*}
+\]</span>
+<p>A superfluous function has unnecessary mapping.</p>
+<p>If each of <span class="math inline">\(D,C,S\)</span> is finite, it is straightforward to check a function application.</p>
+<pre class="example"><code>extend [D, Maybe C, F] = [
+    Maybe D,
+    Maybe C,
+    F \union { [Nothing, Nothing] }
+]
+
+extend [D, Risky E C, F] = [
+    Risky E D,
+    Risky E C,
+    F \union { [Left, e] | e \in E }
+]
+</code></pre>
+<p>We replace subtyping with subsetting.</p>
+<p>Because <span class="math inline">\(A \subseteq Maybe(A)\)</span>, each element of <span class="math inline">\(A\)</span> can be passed to a function whose domain is <span class="math inline">\(Maybe(A)\)</span>.</p>
+<p>Superfluous functions are harmless if we do domain check at each function application.</p>
+<p>In this programming language, every functor is an endofunctor of Set. Such functor is <span class="math inline">\((F,m)\)</span> where <span class="math inline">\(F : Set \to Set\)</span> and <span class="math inline">\(m : \forall A \forall B . (A \to B) \to (FA \to FB)\)</span> such that <span class="math inline">\(m(id) = id\)</span> and <span class="math inline">\(m(f \circ g) = m(f) \circ m(g)\)</span>.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>In this programming language, two endofunctors <span class="math inline">\(F\)</span> and <span class="math inline">\(G\)</span> are <em>adjoint</em> iff there is an isomorphism (bijection) between <span class="math inline">\(FY \to X\)</span> and <span class="math inline">\(Y \to GX\)</span>, for all two sets <span class="math inline">\(X,Y\)</span>. It seems that adjunctions don't work with endofunctors: we would have to find mutually inverse functions <span class="math inline">\(p : \forall X \forall Y . FY \to X\)</span> and <span class="math inline">\(q : \forall X \forall Y . Y \to GX\)</span>.</p>
+<p>A <em>natural transformation from endofunctor <span class="math inline">\(F\)</span> to endofunctor <span class="math inline">\(G\)</span></em> is a function <span class="math inline">\(\eta : \Pi \alpha . F(\alpha) \to G(\alpha)\)</span> such that <span class="math inline">\(\eta(Y) \circ \mu_F(f) = \mu_G(f) \circ \eta(X)\)</span> for every <span class="math inline">\(f : A \to B\)</span>. An example is <span class="math inline">\( \eta(a) : risky(e,a) \to maybe(a) \)</span>. What?<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<pre class="example"><code>class (Functor f, Functor g) =&gt; NaturalTransformation f g where
+    eta :: f a -&gt; g a -- where eta . fmap f = fmap f . eta
+
+class NatTrans f g where
+    eta :: f -&gt; g
+
+instance NaturalTransformation Identity Maybe where
+    eta (Identity x) = Just x
+
+instance NaturalTransformation (Either e) Maybe where
+    eta (Left _) = Nothing
+    eta (Right x) = Just x
+
+instance (Monoid e) =&gt; NaturalTransformation Maybe (Either e) where
+    eta (Just x) = Right x
+    eta Nothing = mempty
+</code></pre>
+<p>A monad is <span class="math inline">\((F,m)\)</span> where <span class="math inline">\(FFX = FX\)</span>. An example monad is <span class="math inline">\(F(X) = 2^X\)</span> (power set-ing).</p>
+<h4 id="what-1"><span class="section_number">4.2.2</span><span class="section_title">What?</span></h4>
+<p>We write <span class="math inline">\(M(A)\)</span> or <span class="math inline">\(MA\)</span> to mean &quot;the meaning of <span class="math inline">\(A\)</span>&quot;. <span class="math inline">\(M\)</span> is not a function; it is just a notation. The meaning depends on context. The context contains name bindings.</p>
+<h4 id="literal-expressions"><span class="section_number">4.2.3</span><span class="section_title">Literal expressions</span></h4>
+<p>The <em>universe literal expression</em> <code>\universe</code> means <span class="math inline">\(D\)</span>.</p>
+<p>A <em>string literal expression</em> <code>\string what</code> means <code>what</code> itself.</p>
+<h4 id="lambda-expressions"><span class="section_number">4.2.4</span><span class="section_title">Lambda expressions</span></h4>
+<p>A <em>lambda abstraction expression</em> <code>\lambda a b</code> means a subset of <span class="math inline">\(D \times D\)</span> according to beta-reduction. Thus, if <span class="math inline">\(L\)</span> is such expression, then <span class="math inline">\(M(L)\)</span> is not a function, but <span class="math inline">\((A,B,M(L))\)</span> is a function if it domain-checks.</p>
+<p>An <em>application expression</em> <code>\app f x</code> means <span class="math inline">\((Mf)(Mx)\)</span>. Every application expression is <em>domain-checked</em>. <span class="math inline">\(Mf\)</span> has to be a function (a triple).</p>
+<p>A <em>substituting expression</em> <code>\subst name</code> means the meaning of that name as bound by the nearest lambda abstraction that bounds that name.</p>
+<h4 id="set-expressions"><span class="section_number">4.2.5</span><span class="section_title">Set expressions</span></h4>
+<p>A <em>set expression</em> <code>\set a b c ...</code> means the set <span class="math inline">\(\{M(a),M(b),M(c),\ldots\}\)</span>.</p>
+<p>A <em>set union expression</em> <code>\union A B ...</code> means <span class="math inline">\(M(A) \cup M(B) \cup \ldots\)</span>.</p>
+<p>A <em>Cartesian product expression</em> <code>\times A B ...</code> means <span class="math inline">\(M(A) \times M(B) \times \ldots\)</span>.</p>
+<h4 id="sequence-expressions"><span class="section_number">4.2.6</span><span class="section_title">Sequence expressions</span></h4>
+<p>A <em>sequence expression</em> <code>\seq a b c ...</code> means <span class="math inline">\([M(a),M(b),M(c),\ldots]\)</span>.</p>
+<p>A <em>sequence concatenation expression</em> <code>\concat a b c ...</code> means <span class="math inline">\(M(a)+M(b)+M(c)+\ldots\)</span> where <span class="math inline">\(+\)</span> is sequence concatenation.</p>
+<p>A <em>sequence projection expression</em> <code>\project n s</code> means <span class="math inline">\(\pi_n M(s)\)</span> (the <span class="math inline">\(n\)</span>th component of <span class="math inline">\(M(s)\)</span>) where <span class="math inline">\(n\)</span> starts from one.</p>
+<h4 id="logical-expressions"><span class="section_number">4.2.7</span><span class="section_title">Logical expressions</span></h4>
+<p><code>\member</code></p>
+<p><code>\and</code></p>
+<p><code>\or</code></p>
+<h4 id="builtins"><span class="section_number">4.2.8</span><span class="section_title">Builtins</span></h4>
+<p><code>\println</code> for testing purposes only.</p>
+<p><code>\procedural</code> executes sequentially.</p>
+<pre class="example"><code>(\procedural
+  (\println 1)
+  (\println [2 3 4])
+  (\println {5 6 7})
+)
+</code></pre>
+<h3 id="the-concrete-syntax"><span class="section_number">4.3</span><span class="section_title">The concrete syntax</span></h3>
+<p>Convenience concrete syntax:</p>
+<ul>
+<li><code>\let name = what in exp</code> means <code>(\ name -&gt; exp) what</code></li>
+<li><code>\with</code> means chained <code>\let</code></li>
+</ul>
+<h3 id="motivation-monads-in-set-theoretic-lambda-calculus"><span class="section_number">4.4</span><span class="section_title">Motivation: Monads in set-theoretic lambda-calculus?</span></h3>
+<p>We want <span class="math inline">\(Maybe(A) = A \cup \{Nothing\}\)</span> for each set <span class="math inline">\(A\)</span>. It follows from that definition that:</p>
+<span class="math display">\[\begin{align*}
+A &amp;\subseteq Maybe(A)
+\\ Maybe(Maybe(A)) &amp;= Maybe(A)
+\end{align*}
+\]</span>
+<p>We want <span class="math inline">\(Risky(A,B) = \{ (Fail,a) ~|~ a \in A \} \cup B\)</span> for each set <span class="math inline">\(A\)</span> and each set <span class="math inline">\(B\)</span>. It follows from that definition that:</p>
+<span class="math display">\[\begin{align*}
+B &amp;\subseteq Risky(A,B)
+\\ Risky(A,Risky(A,B)) &amp;= Risky(A,B)
+\end{align*}
+\]</span>
+<p>Thus <span class="math inline">\(Maybe : D \to D\)</span> and <span class="math inline">\(Risky : D \to D \to D\)</span>.</p>
+<p>Risky is similar to Haskell Either, but the name &quot;Risky&quot; makes it clear that the parameters are not interchangeable.</p>
+<pre class="example"><code>(\with
+  ( A {0 1}
+    B {0 1}
+    Maybe [\universe \universe (\ a (\union $a {Nothing}))]
+    F [$A $B {[0 1] [1 0]}]
+    G [($Maybe $A)
+      (\union $B {none})
+      (\union (\mapping $F) {[Nothing none]})]
+  )
+  (\and ($F 0 1) ($F 1 0))
+)
+</code></pre>
+<p>A <em>relation</em> is a triple <span class="math inline">\((A,B,R)\)</span> where <span class="math inline">\(R \subseteq A \times B\)</span>. We write <span class="math inline">\(R(x,y)\)</span> to mean <span class="math inline">\((x,y) \in R\)</span>.</p>
+<p><span class="math inline">\((A,B,R)\)</span> is a <em>subrelation</em> of <span class="math inline">\((A&#39;,B&#39;,R&#39;)\)</span> iff <span class="math inline">\(A \subseteq A&#39;\)</span>, <span class="math inline">\(B \subseteq B&#39;\)</span>, <span class="math inline">\(R \subseteq R&#39;\)</span>, and <span class="math inline">\(R&#39; \subseteq A&#39; \times B&#39;\)</span>.</p>
+<p>A <em>monad</em> (in the category of sets) is <span class="math inline">\((M,r,j)\)</span> where <span class="math inline">\(M : \Omega \to \Omega\)</span>, <span class="math inline">\(r : \forall A . A \to M(A)\)</span>, <span class="math inline">\(\forall X : M(M(X)) = M(X)\)</span>.</p>
+<p>A monad maps each relation <span class="math inline">\((A,B,R)\)</span> to <span class="math inline">\((MA,MB,LR)\)</span> where <span class="math inline">\(A \subseteq MA\)</span>, <span class="math inline">\(R \subseteq LR\)</span>, <span class="math inline">\(p : A \to MA\)</span>, <span class="math inline">\(j : MMA \to MA\)</span>.</p>
+<p>If a hole expects an element of <span class="math inline">\(A\)</span>, then it accepts an element of <span class="math inline">\(A&#39; \subseteq A\)</span>.</p>
+<p>Abdullah's law of continuity:</p>
+<pre class="example"><code>extend return = id
+
+extend : (a -&gt; m b) -&gt; (m a -&gt; m b)
+return :          a -&gt; m a
+id     :        m a -&gt; m a
+</code></pre>
+<h2 id="three-semantics-of-horn-clauses"><span class="section_number">5</span><span class="section_title">Three semantics of Horn clauses?</span></h2>
+<p>We use &quot;cause semantics&quot; for gui.</p>
+<p>Rule semantics A :- B means &quot;If B then A&quot;.</p>
+<p>turn_on_air_conditioner :- air_feels_hot.</p>
+<p>Proof semantics of Prolog A :- B means to prove A, prove B. even(z). even(s(s(N))) :- even(N).</p>
+<p>Cause semantics of Prolog A :- B means B causes A. name_value(mytextbox, yes) :- name_isdown(mybutton, true). That means &quot;pressing mybutton causes mytextbox value to be yes&quot;.</p>
+<h2 id="semantics-should-we-worry-about-this-earlier"><span class="section_number">6</span><span class="section_title">Semantics (should we worry about this earlier?)</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#cost-model">Cost model</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#denotational-semantics">Denotational semantics</a></span><span class="word_count">(79w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#operational-semantics-and-evaluationreduction-strategy">Operational semantics and evaluation/reduction strategy</a></span><span class="word_count">(15w~1m)</span></li>
+</ul>
+</div>
+<h3 id="cost-model"><span class="section_number">6.1</span><span class="section_title">Cost model</span></h3>
+<ul>
+<li>&quot;Cost models based on the lambda-calculus&quot;, <a href="http://www.cs.cmu.edu/~guyb/papers/lambdaInria.pdf">pdf slides</a>, from <a href="http://www.cs.cmu.edu/~guyb/">http://www.cs.cmu.edu/~guyb/</a></li>
+</ul>
+<h3 id="denotational-semantics"><span class="section_number">6.2</span><span class="section_title">Denotational semantics</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.2.1</span><span class="section_title"><a href="#intro-to-denotational-semantics">Intro to denotational semantics</a></span><span class="word_count">(66w~1m)</span></li>
+<li><span class="section_number">6.2.2</span><span class="section_title"><a href="#does-lambda-calculus-have-a-semantics-that-doesnt-depend-on-reduction-strategy"><span class="todo TODO">TODO</span> Does lambda calculus have a semantics that doesn't depend on reduction strategy?</a></span><span class="word_count">(13w~1m)</span></li>
+</ul>
+</div>
+<h4 id="intro-to-denotational-semantics"><span class="section_number">6.2.1</span><span class="section_title">Intro to denotational semantics</span></h4>
+<ul>
+<li>1971, monograph, Dana Scott and Christopher Strachey, &quot;Toward a mathematical semantics for computer languages&quot;, <a href="https://www.cs.ox.ac.uk/files/3228/PRG06.pdf">pdf</a></li>
+<li><a href="https://pdfs.semanticscholar.org/presentation/76cd/955ec6dafde3699d64e50882ec7fb4384803.pdf">pdf slides</a></li>
+<li><a href="https://www.seas.harvard.edu/courses/cs152/2016sp/sections/sec-2016-02-18-soln.pdf">Exercises</a> about denotational semantics and lambda calculus</li>
+<li>1997, book, &quot;Denotational semantics: a methodology for language development&quot;, <a href="http://www.bcl.hamilton.ie/~barak/teach/F2008/NUIM/CS424/texts/ds.pdf">pdf</a></li>
+<li>1989, PhD thesis, Frank Steven Kent Silbermann, &quot;A Denotational Semantics Approach to Functional and Logic Programming&quot;, chapter 3, <a href="http://www.cs.unc.edu/techreports/89-030.pdf">pdf</a>
+<ul>
+<li>&quot;A novel approach is taken in constructing an operational semantics directly from the denotational description.&quot;</li>
+</ul></li>
+</ul>
+<h4 id="does-lambda-calculus-have-a-semantics-that-doesnt-depend-on-reduction-strategy"><span class="section_number">6.2.2</span><span class="section_title"><span class="todo TODO">TODO</span> Does lambda calculus have a semantics that doesn't depend on reduction strategy?</span></h4>
+<h3 id="operational-semantics-and-evaluationreduction-strategy"><span class="section_number">6.3</span><span class="section_title">Operational semantics and evaluation/reduction strategy</span></h3>
+<p>Which one should we choose, and why?</p>
+<ul>
+<li>call-by-name</li>
+<li>call-by-value</li>
+<li>call-by-need</li>
+<li>what else?</li>
+</ul>
+<p>&lt;2018-09-29&gt; Wikipedia needs cleanup:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Reduction_strategy_(lambda_calculus)">https://en.wikipedia.org/wiki/Reduction_strategy_(lambda_calculus)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Lambda_calculus#Reduction_strategies">https://en.wikipedia.org/wiki/Lambda_calculus#Reduction_strategies</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Evaluation_strategy">https://en.wikipedia.org/wiki/Evaluation_strategy</a></li>
+</ul>
+<h2 id="how-should-lambda-calculus-be-implemented"><span class="section_number">7</span><span class="section_title">How should lambda-calculus be implemented?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#what-is-an-operational-semantics-of-lambda-calculus">What is an operational semantics of lambda calculus?</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#how">How?</a></span><span class="word_count">(105w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-is-an-operational-semantics-of-lambda-calculus"><span class="section_number">7.1</span><span class="section_title">What is an operational semantics of lambda calculus?</span></h3>
+<h3 id="how"><span class="section_number">7.2</span><span class="section_title">How?</span></h3>
+<p>Normal-order reduction enables us to write fixed points. Should we let the programmer choose the evaluation strategy? Currying simplifies reasoning but complicates implementation (because applications may then nest deeply to the left). What is optimal reduction?<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<p>Lambda-calculus is unsound.<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> What does that imply about programming languages containing lambda calculus?</p>
+<p>Let <span class="math inline">\( A[B := C] \)</span> mean <span class="math inline">\(A\)</span> but with each free occurrence of <span class="math inline">\(B\)</span> replaced with <span class="math inline">\(C\)</span>. Let <span class="math inline">\( eval(A,B) \)</span> means that <span class="math inline">\(A\)</span> normalizes to <span class="math inline">\(B\)</span>.</p>
+<p>Applicative-order evaluation is the easiest to implement.</p>
+<p>Where do these things fit in the big picture of lambda-calculus implementations? G-machine, STG, GRIN<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
+<p>Reading queue:</p>
+<ul>
+<li><a href="https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently">https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently</a></li>
+<li><a href="https://www.researchgate.net/publication/312462365_About_the_efficient_reduction_of_lambda_terms">https://www.researchgate.net/publication/312462365_About_the_efficient_reduction_of_lambda_terms</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/2zqtfk/why_isnt_anyone_talking_about_optimal_lambda/">https://www.reddit.com/r/haskell/comments/2zqtfk/why_isnt_anyone_talking_about_optimal_lambda/</a></li>
+<li>compiling monads <a href="https://www.irif.fr/~mellies/mpri/mpri-ens/articles/danvy-koslowski-malmkjaer-compiling-monads.pdf">https://www.irif.fr/~mellies/mpri/mpri-ens/articles/danvy-koslowski-malmkjaer-compiling-monads.pdf</a></li>
+<li>modular monadic semantics <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.136.1656&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.136.1656&amp;rep=rep1&amp;type=pdf</a></li>
+</ul>
+<div id="refs" class="references">
+<div id="ref-lloyd1993foundations">
+<p>[1] Lloyd, J.W. 1993. <em>Foundations of logic programming</em>. Springer-Verlag.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.comp.nus.edu.sg/~kanmy/courses/3243_2005/lectureNotes/w8-all.pdf">https://www.comp.nus.edu.sg/~kanmy/courses/3243_2005/lectureNotes/w8-all.pdf</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/SETL">https://en.wikipedia.org/wiki/SETL</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Set_theoretic_programming">https://en.wikipedia.org/wiki/Set_theoretic_programming</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Functor">https://en.wikipedia.org/wiki/Functor</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Natural_transformation">https://en.wikipedia.org/wiki/Natural_transformation</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently">https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://en.wikipedia.org/wiki/Lambda_calculus#Optimal_reduction">https://en.wikipedia.org/wiki/Lambda_calculus#Optimal_reduction</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://en.wikipedia.org/wiki/Fixed-point_combinator">https://en.wikipedia.org/wiki/Fixed-point_combinator</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://github.com/grin-tech/grin">https://github.com/grin-tech/grin</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/semantics.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/semantics.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-02-10 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
