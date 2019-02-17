@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Looking for a publishing system</title>
+        <title>Publishing Research Group</title>
         <link rel="stylesheet" href="/assets/main.css"/>
         <script>
 // Help the reader estimate how much time the reading is going to take.
@@ -156,30 +156,111 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="wrapper">
                 <article class="post">
                     <header class="post-header">
-                        <h1 class="post-title">Looking for a publishing system</h1>
+                        <h1 class="post-title">Publishing Research Group</h1>
                     </header>
                 </article>
                 <div class="post-content">
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#current-system">Current system</a></span><span class="word_count">(35w~1m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#what-i-have-tried">What I have tried</a></span><span class="word_count">(157w~1m)</span></li>
-<li><span class="section_number">3</span><span class="section_title"><a href="#write-a-prolog-static-site-generator-to-translate-org-mode-and-markdown-to-html">Write a Prolog static site generator to translate Org-Mode and Markdown to HTML</a></span><span class="word_count">(317w~2m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#current-system-we-are-using-to-publish-this-website">Current system we are using to publish this website</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#why-do-we-want-our-own-publishing-system">Why do we want our own publishing system?</a></span><span class="word_count">(278w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#our-requirements">Our requirements</a></span><span class="word_count">(332w~2m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#ontology">Ontology</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#write-a-prolog-static-site-generator-to-translate-org-mode-and-markdown-to-html">Write a Prolog static site generator to translate Org-Mode and Markdown to HTML</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#the-lmx-latex-markdown-xml-markup-language">The LMX (LaTeX-Markdown-XML) markup language?</a></span><span class="word_count">(119w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#designing-our-publishing-system">Designing our publishing system</a></span><span class="word_count">(50w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#how-should-we-publish-on-the-internet">How should we publish on the Internet?</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(21w~1m)</span></li>
 </ul>
 </div>
-<h2 id="current-system"><span class="section_number">1</span><span class="section_title">Current system</span></h2>
+<h2 id="current-system-we-are-using-to-publish-this-website"><span class="section_number">1</span><span class="section_title">Current system we are using to publish this website</span></h2>
 <p>The page you are looking at is written in Org Mode, and then converted to HTML with Pandoc and a Pandoc Lua filter. My only reason for using Org Mode is its Outline Mode.</p>
-<h2 id="what-i-have-tried"><span class="section_number">2</span><span class="section_title">What I have tried</span></h2>
-<p>I tried Org Exporter; it was too slow. On &lt;2019-01-01&gt;, I tried <a href="https://github.com/pandoc-scholar/pandoc-scholar">pandoc-scholar</a>, but it was too slow for my needs; I need to routinely convert my website. Thus I wrote a Pandoc Lua filter to translate org mode to jekyll html. It is still somewhat slow, but its output is acceptable. The alternative is to switch from Org to Markdown, but find a Markdown editor that can fold sections<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Set up vim markdown folding, or get a markdown editor that can fold sections, maybe vscode. I prefer vim to emacs because I can move around much faster in vim. Vim is designed for motion. Emacs is designed for extensibility. I could also use regex to replace org <code>***</code> with markdown <code>###</code> as a preprocessing step before calling Pandoc, but I would rather have a non-hacky long-term solution. I think I will need to reimplement some of Jekyll + Pandoc + Org in Prolog.</p>
-<h2 id="write-a-prolog-static-site-generator-to-translate-org-mode-and-markdown-to-html"><span class="section_number">3</span><span class="section_title">Write a Prolog static site generator to translate Org-Mode and Markdown to HTML</span></h2>
-<p>I need a publishing system, preferably written in Prolog.</p>
+<h2 id="why-do-we-want-our-own-publishing-system"><span class="section_number">2</span><span class="section_title">Why do we want our own publishing system?</span></h2>
+<p>Because existing systems <em>do not</em> and <em>will not</em> satisfy our requirements. When nobody else is going to do it, we have to do it ourselves.</p>
+<p>These are strong reasons for rolling our own publication system in Prolog:</p>
+<p>As we age, we learn that a hack/quick-fix/duct-tape only leads to misery, regret, and self-hate.</p>
+<p>However, the last time we tried to create our own publishing system was a big XML disaster.</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">3.1</span><span class="section_title"><a href="#features-goals-and-constraints">Features, goals, and constraints</a></span><span class="word_count">(178w~1m)</span></li>
-<li><span class="section_number">3.2</span><span class="section_title"><a href="#d-implement-lmx-latex-markdown-xml-markup-language">?7d: Implement LMX (LaTeX-Markdown-XML) markup language</a></span><span class="word_count">(120w~1m)</span></li>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#what-unsatisfactory-things-exist">What unsatisfactory things exist?</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#what-unsatisfactory-things-have-we-tried">What unsatisfactory things have we tried?</a></span><span class="word_count">(160w~1m)</span></li>
 </ul>
 </div>
-<h3 id="features-goals-and-constraints"><span class="section_number">3.1</span><span class="section_title">Features, goals, and constraints</span></h3>
+<h3 id="what-unsatisfactory-things-exist"><span class="section_number">2.1</span><span class="section_title">What unsatisfactory things exist?</span></h3>
+<p>LaTeX2HTML<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>Why not MathML? Chicken-and-egg problem.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>These things do not satisfy us and will not satisfy us.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1.1</span><span class="section_title"><a href="#pandoc">Pandoc</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">2.1.2</span><span class="section_title"><a href="#latex">LaTeX</a></span><span class="word_count">(1w~1m)</span></li>
+<li><span class="section_number">2.1.3</span><span class="section_title"><a href="#markdown">Markdown</a></span><span class="word_count">(1w~1m)</span></li>
+<li><span class="section_number">2.1.4</span><span class="section_title"><a href="#org-mode">Org Mode</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">2.1.5</span><span class="section_title"><a href="#rst">RST</a></span><span class="word_count">(1w~1m)</span></li>
+</ul>
+</div>
+<h4 id="pandoc"><span class="section_number">2.1.1</span><span class="section_title">Pandoc</span></h4>
+<p>(WONTFIX) Org Mode Reader duplicates footnotes<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p>(workaround available) HTML writer does not separate adjacent footnote references<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<p>amsthm, theorem/lemma/definition/proof</p>
+<p>We want by default #+OPTIONS: ^:nil.</p>
+<p>Multi-authorship?</p>
+<p>Issue 1608<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>LaTeX command argument, hard to fix, practically wontfix<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<h4 id="latex"><span class="section_number">2.1.2</span><span class="section_title">LaTeX</span></h4>
+<h4 id="markdown"><span class="section_number">2.1.3</span><span class="section_title">Markdown</span></h4>
+<h4 id="org-mode"><span class="section_number">2.1.4</span><span class="section_title">Org Mode</span></h4>
+<h4 id="rst"><span class="section_number">2.1.5</span><span class="section_title">RST</span></h4>
+<h3 id="what-unsatisfactory-things-have-we-tried"><span class="section_number">2.2</span><span class="section_title">What unsatisfactory things have we tried?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.2.1</span><span class="section_title"><a href="#org-exporter">Org Exporter</a></span><span class="word_count">(155w~1m)</span></li>
+</ul>
+</div>
+<h4 id="org-exporter"><span class="section_number">2.2.1</span><span class="section_title">Org Exporter</span></h4>
+<p>I tried Org Exporter; it was too slow. On &lt;2019-01-01&gt;, I tried <a href="https://github.com/pandoc-scholar/pandoc-scholar">pandoc-scholar</a>, but it was too slow for my needs; I need to routinely convert my website. Thus I wrote a Pandoc Lua filter to translate org mode to jekyll html. It is still somewhat slow, but its output is acceptable. The alternative is to switch from Org to Markdown, but find a Markdown editor that can fold sections<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>. Set up vim markdown folding, or get a markdown editor that can fold sections, maybe vscode. I prefer vim to emacs because I can move around much faster in vim. Vim is designed for motion. Emacs is designed for extensibility. I could also use regex to replace org <code>***</code> with markdown <code>###</code> as a preprocessing step before calling Pandoc, but I would rather have a non-hacky long-term solution. I think I will need to reimplement some of Jekyll + Pandoc + Org in Prolog.</p>
+<h2 id="our-requirements"><span class="section_number">3</span><span class="section_title">Our requirements</span></h2>
+<p>&lt;2018-12-19&gt; Example 24 &quot;Markdown citations&quot; <a href="https://pandoc.org/demos.html">https://pandoc.org/demos.html</a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#input">Input</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#output">Output</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#build">Build</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#online-navigation-features">Online-navigation features?</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#book-publishing-features">Book-publishing features</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#latex-features">LaTeX features</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">3.7</span><span class="section_title"><a href="#academic-publishing-features">Academic publishing features</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">3.8</span><span class="section_title"><a href="#features-goals-and-constraints">Features, goals, and constraints</a></span><span class="word_count">(178w~1m)</span></li>
+</ul>
+</div>
+<h3 id="input"><span class="section_number">3.1</span><span class="section_title">Input</span></h3>
+<p>The input may have Unicode characters, mathematics, physical quantities with units, and chemical equations.</p>
+<p>The input encoding is UTF-8.</p>
+<p>The input may be Org Mode or Modified LaTeX.</p>
+<p>The input must be as semantic as possible (content, not presentation). Consider sTeX<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> <span class="citation" data-cites="kohlhase2008using">[<a href="#ref-kohlhase2008using">1</a>]</span>.</p>
+<h3 id="output"><span class="section_number">3.2</span><span class="section_title">Output</span></h3>
+<p>The output may be HTML, possibly with CSS and JavaScript.</p>
+<p>The output may be LaTeX acceptable by xelatex for PDF output.</p>
+<p>The output must be a <em>static</em> page that can easily be assembled into a <em>static website</em>.</p>
+<p>The output must not depend on URL rewriting.</p>
+<h3 id="build"><span class="section_number">3.3</span><span class="section_title">Build</span></h3>
+<p>Incremental build.</p>
+<p>There are several choices: MathML, SVG fonts, HTML+CSS flex boxes.</p>
+<p>LaTeX math requirements: underbrace, index, superscript, subscript, left superscript, left subscript, big delimiters, cases, equal-sign alignment, equation numbering, <em>theorem</em> environments.</p>
+<h3 id="online-navigation-features"><span class="section_number">3.4</span><span class="section_title">Online-navigation features?</span></h3>
+<p>Breadcrumbs?</p>
+<p>Tagging?</p>
+<h3 id="book-publishing-features"><span class="section_number">3.5</span><span class="section_title">Book-publishing features</span></h3>
+<p>Table of contents with word count and reading time.</p>
+<p>Indexing, <em>local</em> table of contents, list of tables, list of figures, list of theorems.</p>
+<p>LaTeX index entry format.</p>
+<p>Cross-references to pages, sections, equations, etc.</p>
+<h3 id="latex-features"><span class="section_number">3.6</span><span class="section_title">LaTeX features</span></h3>
+<p>siunitx</p>
+<h3 id="academic-publishing-features"><span class="section_number">3.7</span><span class="section_title">Academic publishing features</span></h3>
+<p>Citations.</p>
+<p>Bibliography. Bibtex/Biblatex input with all strange characters.</p>
+<h3 id="features-goals-and-constraints"><span class="section_number">3.8</span><span class="section_title">Features, goals, and constraints</span></h3>
 <p>This basically reimplements some of Pandoc in Prolog.</p>
 <p>I need this big yak shaving because:</p>
 <ul>
@@ -220,7 +301,12 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>VERY IMPORTANT: the ability to handle citations without slowing down everything</p>
 <p>We can use <a href="http://www.swi-prolog.org/pack/list?p=bibtex">http://www.swi-prolog.org/pack/list?p=bibtex</a></p>
 <p>We are going to use LMX instead of <a href="https://github.com/SWI-Prolog/packages-ltx2htm">https://github.com/SWI-Prolog/packages-ltx2htm</a></p>
-<h3 id="d-implement-lmx-latex-markdown-xml-markup-language"><span class="section_number">3.2</span><span class="section_title">?7d: Implement LMX (LaTeX-Markdown-XML) markup language</span></h3>
+<h2 id="ontology"><span class="section_number">4</span><span class="section_title">Ontology</span></h2>
+<p>A page has a name, a title, an author list, a creation date, an update date, a file name.</p>
+<p>A file name has a name and an optional dotted extension.</p>
+<h2 id="write-a-prolog-static-site-generator-to-translate-org-mode-and-markdown-to-html"><span class="section_number">5</span><span class="section_title">Write a Prolog static site generator to translate Org-Mode and Markdown to HTML</span></h2>
+<p>I need a publishing system, preferably written in Prolog.</p>
+<h2 id="the-lmx-latex-markdown-xml-markup-language"><span class="section_number">6</span><span class="section_title">The LMX (LaTeX-Markdown-XML) markup language?</span></h2>
 <p>LMX is a LaTeX-like surface syntax for XML; this enables you to replace the closing tag with a closing brace.</p>
 <p>LMX is a combination of Org-Mode.</p>
 <pre class="example"><code>This is a paragraph.
@@ -302,10 +388,46 @@ HTML entities:
 <li>escaping square brackets <a href="https://tex.stackexchange.com/questions/6683/escaping-square-braces">https://tex.stackexchange.com/questions/6683/escaping-square-braces</a></li>
 <li>escaping curly braces <a href="https://tex.stackexchange.com/questions/181118/how-to-escape-curly-braces-within-texttt">https://tex.stackexchange.com/questions/181118/how-to-escape-curly-braces-within-texttt</a></li>
 </ul>
+<h2 id="designing-our-publishing-system"><span class="section_number">7</span><span class="section_title">Designing our publishing system</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#how-far-can-we-go-with-htmlcss">How far can we go with HTML+CSS?</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#how-far-can-we-go-javascript">How far can we go JavaScript?</a></span><span class="word_count">(10w~1m)</span></li>
+</ul>
+</div>
+<h3 id="how-far-can-we-go-with-htmlcss"><span class="section_number">7.1</span><span class="section_title">How far can we go with HTML+CSS?</span></h3>
+<p><a href="http://www.zipcon.net/~swhite/docs/math/math.html">http://www.zipcon.net/~swhite/docs/math/math.html</a></p>
+<p><a href="http://jkorpela.fi/math/">http://jkorpela.fi/math/</a></p>
+<p>Fractions with HTML tables or CSS flex boxes.</p>
+<p>Superscripts, subscripts, indexes</p>
+<p>Proof trees with HTML tables or CSS flex boxes.</p>
+<p>Drupal will not do. We want a static website. <a href="https://math.stackexchange.com/questions/51903/best-way-to-set-up-a-wiki-for-maintaining-a-structured-math-journal">https://math.stackexchange.com/questions/51903/best-way-to-set-up-a-wiki-for-maintaining-a-structured-math-journal</a></p>
+<p>Radicals/surds/roots? 12th root of 2? <a href="https://www.mathworks.com/matlabcentral/answers/298325-how-to-make-published-html-look-as-good-as-the-blogs-on-matlab-central">https://www.mathworks.com/matlabcentral/answers/298325-how-to-make-published-html-look-as-good-as-the-blogs-on-matlab-central</a></p>
+<p><a href="https://www.authorea.com/users/5713/articles/19359-latex-is-dead-long-live-latex-typesetting-in-the-digital-age/_show_article">https://www.authorea.com/users/5713/articles/19359-latex-is-dead-long-live-latex-typesetting-in-the-digital-age/_show_article</a></p>
+<p><a href="https://janmr.com/blog/2015/01/typesetting-math-with-html-and-css-fractions/">https://janmr.com/blog/2015/01/typesetting-math-with-html-and-css-fractions/</a></p>
+<h3 id="how-far-can-we-go-javascript"><span class="section_number">7.2</span><span class="section_title">How far can we go JavaScript?</span></h3>
+<p><a href="https://stackoverflow.com/questions/796890/whats-the-best-way-to-write-mathematical-equations-on-the-web">https://stackoverflow.com/questions/796890/whats-the-best-way-to-write-mathematical-equations-on-the-web</a></p>
+<p>DOM layout reflow is slow.</p>
+<h2 id="how-should-we-publish-on-the-internet"><span class="section_number">8</span><span class="section_title">How should we publish on the Internet?</span></h2>
+<p>I also write <a href="emacs.html">Using Emacs and Org Mode</a>, <a href="emacsvi.html">Emacs for vi users</a>, <a href="writing.html">Writing</a>, and <a href="markdown.html">Working around Markdown</a>.</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">9</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-kohlhase2008using">
+<p>[1] Kohlhase, M. 2008. Using latex as a semantic markup format. <em>Mathematics in Computer Science</em>. 2, 2 (2008), 279–304. url: &lt;<a href="https://kwarc.info/people/mkohlhase/papers/mcs08-stex.pdf">https://kwarc.info/people/mkohlhase/papers/mcs08-stex.pdf</a>&gt;.</p>
+</div>
+</div>
 <section class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p><a href="https://vi.stackexchange.com/questions/9543/how-to-fold-markdown-using-the-built-in-markdown-mode">https://vi.stackexchange.com/questions/9543/how-to-fold-markdown-using-the-built-in-markdown-mode</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p><a href="https://texfaq.org/FAQ-LaTeX2HTML">https://texfaq.org/FAQ-LaTeX2HTML</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://jblevins.org/log/mathml-and-chrome">https://jblevins.org/log/mathml-and-chrome</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://github.com/jgm/pandoc/issues/5196">https://github.com/jgm/pandoc/issues/5196</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://github.com/jgm/pandoc/issues/5197">https://github.com/jgm/pandoc/issues/5197</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://github.com/jgm/pandoc/issues/1608">https://github.com/jgm/pandoc/issues/1608</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://github.com/jgm/pandoc/issues/5261">https://github.com/jgm/pandoc/issues/5261</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://github.com/jgm/pandoc/issues/3047">https://github.com/jgm/pandoc/issues/3047</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://vi.stackexchange.com/questions/9543/how-to-fold-markdown-using-the-built-in-markdown-mode">https://vi.stackexchange.com/questions/9543/how-to-fold-markdown-using-the-built-in-markdown-mode</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://kwarc.info/systems/sTeX/">https://kwarc.info/systems/sTeX/</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
