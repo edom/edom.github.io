@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sketching a declarative programming language</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Sketching a declarative programming language</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#milestone-planning">Milestone planning?</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#example-fragment">Example fragment?</a></span><span class="word_count">(116w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#design">Design</a></span><span class="word_count">(44w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#core-language">Core language</a></span><span class="word_count">(262w~2m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#convenience-language">Convenience language</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(752w~4m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(39w~1m)</span></li>
+</ul>
+</div>
+<h2 id="milestone-planning"><span class="section_number">1</span><span class="section_title">Milestone planning?</span></h2>
+<p>Version, milestone, man-day</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#section">0</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#unplanned">Unplanned</a></span><span class="word_count">(3w~1m)</span></li>
+</ul>
+</div>
+<h3 id="section"><span class="section_number">1.1</span><span class="section_title">0</span></h3>
+<ul>
+<li>0.0.0: Capture essential complexity
+<ul>
+<li>Type definitions</li>
+<li>Use-case expression language / feature expression language, something like ML?</li>
+</ul></li>
+<li>0.1.0
+<ul>
+<li>Translation to Java 8, Servlet API 3.1, HTML 5, CSS 3, JDBC 4.2, PostgreSQL 9.5.</li>
+</ul></li>
+<li>0.2.0
+<ul>
+<li>HTTP basic authentication</li>
+<li>Authorization</li>
+<li>Sign out</li>
+</ul></li>
+<li>0.3.0
+<ul>
+<li>Query parallelization and caching</li>
+<li>Implement some of <a href="https://en.wikipedia.org/wiki/Relational_algebra">https://en.wikipedia.org/wiki/Relational_algebra</a></li>
+<li>Query cost guesser</li>
+</ul></li>
+<li>0.4.0
+<ul>
+<li>Google OAuth.</li>
+</ul></li>
+</ul>
+<h3 id="unplanned"><span class="section_number">1.2</span><span class="section_title">Unplanned</span></h3>
+<p>Read-only storage</p>
+<p>Writable storage</p>
+<h2 id="example-fragment"><span class="section_number">2</span><span class="section_title">Example fragment?</span></h2>
+<p>This is similar to, if not inspired by, Moseley &amp; Marks 2006 <span class="citation" data-cites="moseley2006out">[<a href="#ref-moseley2006out">2</a>]</span>.</p>
+<p>The essence of data is what can be done with it, not what it is? Only database designers care about how data is stored. Database users care about what can be done with the data in a reasonable amount of time.</p>
+<p>Balzer 1967 <span class="citation" data-cites="balzer1967dataless">[<a href="#ref-balzer1967dataless">1</a>]</span>?</p>
+<p>The goal is to come up with an expressive enough specification language whose specifications happen to be translatable to reasonably efficient implementations. The goal is to make a specification language whose denotational semantics nicely coincide with its operational semantics. The goal is to make a specification language that happens to also be a programming language.</p>
+<p>Is that Coq or Agda? Program extraction?</p>
+<pre class="example"><code>type surrogate_id = natural;
+
+let employee = type {
+    id : surrogate_id;
+    name : string;
+    birth_date : date;
+    join_date : date;
+    payments : collection payment;
+};
+
+let payment = type {
+    id : surrogate_id;
+    date : date;
+    amount : real;
+    note : string;
+};
+
+let department = type {
+    id : surrogate_id;
+    name : string;
+    establishment_date : date;
+};
+
+let my_app_ = application {
+    -- application state type
+    state = {
+        employees : relation employee;
+        departments : relation department;
+    };
+    -- An use case is an application-state endofunction.
+    add_employee (e : employee) (s : state) : state =
+        ASSERT e IN s.employees
+};
+
+let my_app_imp = implementation of my_app with state mapping {
+    employees -&gt; db, schema &quot;my_app&quot;, table &quot;employees&quot;;
+    departments -&gt; db, schema &quot;my_app&quot;, table &quot;employees&quot;;
+} with type replacement {
+    surrogate_id -&gt; uint64; -- with overflow check, non modular
+} where
+    db = database {
+        type = postgresql;
+        host = 127.0.0.1;
+        username = &quot;user&quot;;
+        password = &quot;pass&quot;;
+    };
+</code></pre>
+<pre class="example"><code>let f (x : natural) = x + 1
+
+let g = quotient of f by replacing natural arithmetic with modular unsigned 32-bit arithmetic
+let h = quotient of f by replacing natural arithmetic with overflow-checked unsigned 32-bit arithmetic
+</code></pre>
+<h2 id="design"><span class="section_number">3</span><span class="section_title">Design</span></h2>
+<p>The language is embedded in Prolog.</p>
+<p>There is some type-checking.</p>
+<p>Our goals:</p>
+<ul>
+<li>The key concept: <em>Move accidental complexity from the source language to the translator.</em></li>
+<li>Specify system state (application + database).</li>
+<li>Specify use cases and business logic.</li>
+<li>Generate a Java program and a PostgreSQL database implementing the specification.</li>
+</ul>
+<p>What is XL<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>?</p>
+<h2 id="core-language"><span class="section_number">4</span><span class="section_title">Core language</span></h2>
+<p>The core language is intended for machines. Humans should use the convenient language.</p>
+<p>Each expression carries its own type.</p>
+<p>Combine lambda calculus and relational calculus/algebra.</p>
+<p>Should we use relational algebra or relational calculus<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>? Codd's theorem<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> says that they are equivalent. Relational model<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>? Codd prefers relational calculus<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>? What is a relational database?<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#lambda-calculus">Lambda calculus</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#basic-expressions">Basic expressions</a></span><span class="word_count">(33w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#relation-expressions">Relation expressions</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#storage-expressions">Storage expressions</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">4.5</span><span class="section_title"><a href="#implementation-expressions">Implementation expressions</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">4.6</span><span class="section_title"><a href="#types">Types</a></span><span class="word_count">(84w~1m)</span></li>
+<li><span class="section_number">4.7</span><span class="section_title"><a href="#should-we-adopt-lisp-syntax">Should we adopt Lisp syntax?</a></span><span class="word_count">(5w~1m)</span></li>
+</ul>
+</div>
+<h3 id="lambda-calculus"><span class="section_number">4.1</span><span class="section_title">Lambda calculus</span></h3>
+<p><code>lambda(Param,Body)</code> is a lambda expression.</p>
+<p><code>let(Binds,Body)</code>. Example: <code>let([ a = 1, b = 2 ], a + b)</code></p>
+<p><code>apply(Fun,Arg)</code></p>
+<h3 id="basic-expressions"><span class="section_number">4.2</span><span class="section_title">Basic expressions</span></h3>
+<p><code>set(Type,List)</code> represents a set in which each element has type <code>Type</code>.</p>
+<p><code>function(Dom,Cod,Map)</code> function expression. Example: <code>function([1,2],natural,[1-10,2-20])</code>. Example: <code>function(natural,natural,lambda([x],x+1))</code>. The function must be total; it must be defined for each element of the domain.</p>
+<h3 id="relation-expressions"><span class="section_number">4.3</span><span class="section_title">Relation expressions</span></h3>
+<p>A relation expression describes a relation (a triple of domain, codomain, and mapping).</p>
+<p><code>relation(Dom,Cod,Map)</code>. Example: <code>relation(natural,natural,[1-10, 2-20, 3-30])</code>.</p>
+<p><code>all(Dom,Cod,S)</code> where S is a storage expression</p>
+<p>Example: <code>relation(natural,natural,lambda([x],(x+1 ; x+2)))</code>. Nondeterministic lambda.</p>
+<p>How do we have anonymous predicates? Fixed points? Clojure recur?</p>
+<h3 id="storage-expressions"><span class="section_number">4.4</span><span class="section_title">Storage expressions</span></h3>
+<p>A storage expression describes how data is stored.</p>
+<p>Storage expressions:</p>
+<p><code>memory</code>: volatile memory, destroyed when the program terminates.</p>
+<p><code>postgresql(Props)</code>. Example: <code>postgresql([major(9), minor(5), host(Host), port(Port), catalog(bar), schema(foo), table(bar)])</code></p>
+<h3 id="implementation-expressions"><span class="section_number">4.5</span><span class="section_title">Implementation expressions</span></h3>
+<p>A function may be implemented as a dictionary, a lookup table, a subroutine, or something else.</p>
+<h3 id="types"><span class="section_number">4.6</span><span class="section_title">Types</span></h3>
+<p>A value may have several types.</p>
+<p>A type describes a set of values.</p>
+<p>Name types.</p>
+<p><code>atom</code> describes Prolog atoms</p>
+<p><code>term</code> describes Prolog terms, which is everything expressible in Prolog</p>
+<p><code>expression</code> describes our language expressions</p>
+<p>Numeric types.</p>
+<p><code>natural</code></p>
+<p><code>integer</code></p>
+<p><code>rational</code></p>
+<p><code>real</code></p>
+<p>Mathematical types.</p>
+<p><code>singleton(Value)</code> describes a singleton set that contains only Value</p>
+<p><code>set(Type)</code> describes a homogeneous set</p>
+<p><code>relation(Dom,Cod)</code></p>
+<p><code>function(Dom,Cod)</code></p>
+<p><code>field(Name,Type)</code> where Name is an atom</p>
+<p><code>sequence(Types)</code> where Types is a list of Type</p>
+<p>A Record is a sequence of Fields.</p>
+<p><code>product(Types)</code> where Types is a list of Type</p>
+<p><code>union(Types)</code> where Types is a list of Type</p>
+<p>Questionable types.</p>
+<p><code>identifier(Bit)</code> is unique only inside the same system instance</p>
+<p><code>int(Bit)</code></p>
+<p><code>uint(Bit)</code></p>
+<p><code>thing</code></p>
+<p><code>string</code></p>
+<h3 id="should-we-adopt-lisp-syntax"><span class="section_number">4.7</span><span class="section_title">Should we adopt Lisp syntax?</span></h3>
+<pre class="example"><code>(relation natural natural
+  (lambda (x) (choice (+ x 1) (+ x 2))))
+
+(function (1 2) natural ((1 10) (2 20)))
+</code></pre>
+<h2 id="convenience-language"><span class="section_number">5</span><span class="section_title">Convenience language</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#expressions">Expressions</a></span><span class="word_count">(22w~1m)</span></li>
+</ul>
+</div>
+<h3 id="expressions"><span class="section_number">5.1</span><span class="section_title">Expressions</span></h3>
+<p><code>function(Map)</code> finite function expression, with domain and codomain inferred to be the smallest possible that encompasses the mapping. Example: <code>function([1-a, 2-b, 3-c])</code>.</p>
+<h2 id="what"><span class="section_number">6</span><span class="section_title">What</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#prolog-implementation">Prolog implementation?</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#system-state">System state</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#model-theoretic-principles-implementation-model-specification">Model-theoretic principles: implementation, model, specification</a></span><span class="word_count">(74w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#universal-meta-model-example-upper-ontology">Universal meta model? Example upper ontology?</a></span><span class="word_count">(70w~1m)</span></li>
+<li><span class="section_number">6.5</span><span class="section_title"><a href="#surrogate-keys-equality-equivalence-identity">Surrogate keys, equality, equivalence, identity</a></span><span class="word_count">(481w~3m)</span></li>
+<li><span class="section_number">6.6</span><span class="section_title"><a href="#caching-expensive-intermediate-result">Caching expensive intermediate result?</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">6.7</span><span class="section_title"><a href="#a-vision">A vision?</a></span><span class="word_count">(98w~1m)</span></li>
+<li><span class="section_number">6.8</span><span class="section_title"><a href="#easy-things-generating-java-data-transfer-object-classes-from-specification">Easy things: generating Java data-transfer-object classes from specification</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">6.9</span><span class="section_title"><a href="#hard-things-generating-java-programs-from-specification">Hard things: generating Java programs from specification</a></span><span class="word_count">(7w~1m)</span></li>
+</ul>
+</div>
+<h3 id="prolog-implementation"><span class="section_number">6.1</span><span class="section_title">Prolog implementation?</span></h3>
+<p>Predicate type(Name,TypeExp) defines types</p>
+<h3 id="system-state"><span class="section_number">6.2</span><span class="section_title">System state</span></h3>
+<p>The system state is essentially a big record/dictionary/tuple/product</p>
+<h3 id="model-theoretic-principles-implementation-model-specification"><span class="section_number">6.3</span><span class="section_title">Model-theoretic principles: implementation, model, specification</span></h3>
+<p>An <em>implementation</em> is a <em>finite model</em> of a <em>specification</em>, where &quot;model&quot; means what it means in model theory. A <em>specification</em> is a big logical sentence in conjunctive normal form, in which each conjunct is a requirement (a property) that the system has to satisfy.</p>
+<p>The computer, with some hints, should be able to derive a finite model from a specification.</p>
+<p>The primary tools for formalizing an ontology are logic and set theory.</p>
+<h3 id="universal-meta-model-example-upper-ontology"><span class="section_number">6.4</span><span class="section_title">Universal meta model? Example upper ontology?</span></h3>
+<p>In other words, we are looking for an upper ontology<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> of program translation.</p>
+<p>&quot;X <em>is a</em> Y&quot; means X is an element of the set Y.</p>
+<p>&quot;Every X <em>has a</em> Y&quot; means there is a <em>projection</em> from the set X to the set Y.</p>
+<p>Everything has a <em>type</em>.</p>
+<p>Every <em>finite thing</em> can be represented by finitely many bits.</p>
+<p>Every <em>finite thing</em> can be <em>stored</em> in a finite amount of space.</p>
+<h3 id="surrogate-keys-equality-equivalence-identity"><span class="section_number">6.5</span><span class="section_title">Surrogate keys, equality, equivalence, identity</span></h3>
+<p>A <em>surrogate key</em> reduces identity check to equivalence check. A surrogate key enables us to concisely answer &quot;which&quot; questions. A surrogate key is a unique name. We consider two things different iff their identifiers differ.</p>
+<p>The only thing we can do to distinguish the identity of abstract objects is to give them <em>different names</em>.</p>
+<p>A surrogate key conflates equivalence and identity.</p>
+<p>Without surrogate keys, there is no way for us to know whether duplicate records represent the same physical object. For example, suppose that there happens to be five (john, 30 years old) rows in the database. How do we know that all those five rows truly refer to the same person or are merely due to a programming error?</p>
+<p>My conclusion is that <em>every relation that represents concrete objects should have a surrogate key.</em> A concrete object is an object that has material existence. Examples are people, cars, houses. Do bank accounts have material existence? No, a bank account is not a concrete object, but we care about the identity of a bank account: we care about distinguishing a bank account from another. I can open two bank accounts, and we care about that they have different identity. Two bank accounts differ merely by having different names (identifiers). Even if I equalize their account holders and their balances, they will still have different identifiers.</p>
+<p><em>Every relation whose identity matters should have a surrogate key.</em> When does identity matter?</p>
+<p><em>If we may need to <strong>refer</strong> to a particular element of a relation, then the relation should have a surrogate key.</em> If we need to ask &quot;Delete which element?&quot; or &quot;Update which element?&quot;, then the relation should have a surrogate key.</p>
+<p>There are two cases: where equality determines identity, and where equality is insufficient to determine identity. The first case usually happens when representing concrete objects. The second case usually happens when representing of abstract objects.</p>
+<p>But are surrogate keys accidental complexity? Without surrogate keys, how is an information system going to answer &quot;which customer&quot;, &quot;which employee&quot;, &quot;which book&quot;, etc? It is possible that two people have the same name. In a developing nation, it is normal for people to have several national IDs.</p>
+<p>Two tuples <span class="math inline">\((a_1,b_1)\)</span> and <span class="math inline">\((a_2,b_2)\)</span> are equal iff <span class="math inline">\(a_1=a_2\)</span> and <span class="math inline">\(b_1=b_2\)</span>. If the first component is a surrogate key, then we compare only the first component to determine equivalence, and we conflate this equivalence with equality.</p>
+<p>In programming, we usually assume a closed world, that is, the program is all that exists.</p>
+<p>X is a Y.</p>
+<p>X has a Y that is a Z.</p>
+<p>X is a relation.</p>
+<p>All data is relational?</p>
+<p>The system state may be <em>distributed</em>. For example, the system state may be a combination of the Java application state and the PostgreSQL database state. But this distribution of state is <em>accidental</em>, not essential. The specification language must have the same syntax for both updating a local in-memory relation and updating a relation in a remote database.</p>
+<h3 id="caching-expensive-intermediate-result"><span class="section_number">6.6</span><span class="section_title">Caching expensive intermediate result?</span></h3>
+<p>How do we do that?</p>
+<h3 id="a-vision"><span class="section_number">6.7</span><span class="section_title">A vision?</span></h3>
+<p>HTTP, HTML, JavaScript, AJAX, client-server, and network connections are accidental complexity. What is essential is that the user wants to do something quickly. The programmer should care about what the user cares about.</p>
+<p>URLs are accidental complexity. The user does not care about URLs.</p>
+<p>The language user should only care about what the end user cares about.</p>
+<p>The main task of the language user is to formalize the ontology implied by the mental model of the end user.</p>
+<p>strcpy does what we want: it copies strings, but that is not all: it may overwrite a memory region it should not touch.</p>
+<h3 id="easy-things-generating-java-data-transfer-object-classes-from-specification"><span class="section_number">6.8</span><span class="section_title">Easy things: generating Java data-transfer-object classes from specification</span></h3>
+<h3 id="hard-things-generating-java-programs-from-specification"><span class="section_number">6.9</span><span class="section_title">Hard things: generating Java programs from specification</span></h3>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">7</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-balzer1967dataless">
+<p>[1] Balzer, R.M. 1967. Dataless programming. <em>Proceedings of the november 14-16, 1967, fall joint computer conference</em> (1967), 535–544. url: &lt;<a href="https://www.computer.org/csdl/proceedings/afips/1967/5070/00/50700535.pdf">https://www.computer.org/csdl/proceedings/afips/1967/5070/00/50700535.pdf</a>&gt;.</p>
+</div>
+<div id="ref-moseley2006out">
+<p>[2] Moseley, B. and Marks, P. 2006. Out of the tar pit. <em>Software Practice Advancement (SPA)</em>. 2006, (2006). url: &lt;<a href="https://pdfs.semanticscholar.org/0f27/8cf94ac0d7fe15a7c4e0f283446e9fc07474.pdf?_ga=2.208528338.1128729619.1551205683-948180562.1545583661">https://pdfs.semanticscholar.org/0f27/8cf94ac0d7fe15a7c4e0f283446e9fc07474.pdf?_ga=2.208528338.1128729619.1551205683-948180562.1545583661</a>&gt;.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/XL_(programming_language)">https://en.wikipedia.org/wiki/XL_(programming_language)</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Relational_calculus">https://en.wikipedia.org/wiki/Relational_calculus</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Codd%27s_theorem">https://en.wikipedia.org/wiki/Codd%27s_theorem</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Relational_model">https://en.wikipedia.org/wiki/Relational_model</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Alpha_(programming_language)">https://en.wikipedia.org/wiki/Alpha_(programming_language)</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Codd%27s_12_rules">https://en.wikipedia.org/wiki/Codd%27s_12_rules</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://en.wikipedia.org/wiki/Upper_ontology">https://en.wikipedia.org/wiki/Upper_ontology</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/program-sketch.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/program-sketch.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-03-01 04:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

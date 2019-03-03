@@ -151,6 +151,10 @@ document.addEventListener("DOMContentLoaded", function () {
     \newcommand\Search{\text{Search}}
     % model theory structure
     \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
     \)</div>
         <main class="page-content" aria-label="Content">
             <div class="wrapper">
@@ -166,10 +170,9 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">2</span><span class="section_title"><a href="#examples">Examples?</a></span><span class="word_count">(39w~1m)</span></li>
 <li><span class="section_number">3</span><span class="section_title"><a href="#semantics">Semantics?</a></span><span class="word_count">(3w~1m)</span></li>
 <li><span class="section_number">4</span><span class="section_title"><a href="#what-is-denotational-semantics-useful-for">What is denotational semantics useful for?</a></span><span class="word_count">(23w~1m)</span></li>
-<li><span class="section_number">5</span><span class="section_title"><a href="#a-set-theoretic-programming-language">A set-theoretic programming language?</a></span><span class="word_count">(938w~5m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#a-set-theoretic-programming-language">A set-theoretic programming language?</a></span><span class="word_count">(934w~5m)</span></li>
 <li><span class="section_number">6</span><span class="section_title"><a href="#three-semantics-of-horn-clauses">Three semantics of Horn clauses?</a></span><span class="word_count">(62w~1m)</span></li>
-<li><span class="section_number">7</span><span class="section_title"><a href="#semantics-should-we-worry-about-this-earlier">Semantics (should we worry about this earlier?)</a></span><span class="word_count">(109w~1m)</span></li>
-<li><span class="section_number">8</span><span class="section_title"><a href="#how-should-lambda-calculus-be-implemented">How should lambda-calculus be implemented?</a></span><span class="word_count">(116w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#semantics-should-we-worry-about-this-earlier">Semantics (should we worry about this earlier?)</a></span><span class="word_count">(117w~1m)</span></li>
 </ul>
 </div>
 <h2 id="what"><span class="section_number">1</span><span class="section_title">What</span></h2>
@@ -222,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>TODO switch to logical structure formalism <span class="math inline">\((D,I,f_1^{m_1},\ldots,R_1^{n_1},\ldots)\)</span>?</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">5.1</span><span class="section_title"><a href="#the-universe-of-values-the-domain-of-discourse">The universe of values, the domain of discourse</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#the-universe-of-values-the-domain-of-discourse">The universe of values, the domain of discourse</a></span><span class="word_count">(59w~1m)</span></li>
 <li><span class="section_number">5.2</span><span class="section_title"><a href="#the-abstract-syntax-and-semantics">The abstract syntax and semantics</a></span><span class="word_count">(559w~3m)</span></li>
 <li><span class="section_number">5.3</span><span class="section_title"><a href="#the-concrete-syntax">The concrete syntax</a></span><span class="word_count">(19w~1m)</span></li>
 <li><span class="section_number">5.4</span><span class="section_title"><a href="#motivation-monads-in-set-theoretic-lambda-calculus">Motivation: Monads in set-theoretic lambda-calculus?</a></span><span class="word_count">(189w~1m)</span></li>
@@ -242,8 +245,6 @@ document.addEventListener("DOMContentLoaded", function () {
 \end{align*}
 \]</span>
 <p><span class="math inline">\(
-\newcommand\semantics[1]{\langle #1 \rangle}
-\newcommand\bigsemantics[1]{S\left(#1\right)}
 \newcommand\universe{\Omega}
 \)</span></p>
 <h3 id="the-abstract-syntax-and-semantics"><span class="section_number">5.2</span><span class="section_title">The abstract syntax and semantics</span></h3>
@@ -435,7 +436,7 @@ id     :        m a -&gt; m a
 <ul>
 <li><span class="section_number">7.1</span><span class="section_title"><a href="#cost-model">Cost model</a></span><span class="word_count">(11w~1m)</span></li>
 <li><span class="section_number">7.2</span><span class="section_title"><a href="#denotational-semantics">Denotational semantics</a></span><span class="word_count">(79w~1m)</span></li>
-<li><span class="section_number">7.3</span><span class="section_title"><a href="#operational-semantics-and-evaluationreduction-strategy">Operational semantics and evaluation/reduction strategy</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">7.3</span><span class="section_title"><a href="#operational-semantics-and-evaluationreduction-strategy">Operational semantics and evaluation/reduction strategy</a></span><span class="word_count">(23w~1m)</span></li>
 </ul>
 </div>
 <h3 id="cost-model"><span class="section_number">7.1</span><span class="section_title">Cost model</span></h3>
@@ -475,28 +476,6 @@ id     :        m a -&gt; m a
 <li><a href="https://en.wikipedia.org/wiki/Lambda_calculus#Reduction_strategies">https://en.wikipedia.org/wiki/Lambda_calculus#Reduction_strategies</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Evaluation_strategy">https://en.wikipedia.org/wiki/Evaluation_strategy</a></li>
 </ul>
-<h2 id="how-should-lambda-calculus-be-implemented"><span class="section_number">8</span><span class="section_title">How should lambda-calculus be implemented?</span></h2>
-<div class="local_table_of_contents">
-<ul>
-<li><span class="section_number">8.1</span><span class="section_title"><a href="#what-is-an-operational-semantics-of-lambda-calculus">What is an operational semantics of lambda calculus?</a></span><span class="word_count">(8w~1m)</span></li>
-<li><span class="section_number">8.2</span><span class="section_title"><a href="#how">How?</a></span><span class="word_count">(105w~1m)</span></li>
-</ul>
-</div>
-<h3 id="what-is-an-operational-semantics-of-lambda-calculus"><span class="section_number">8.1</span><span class="section_title">What is an operational semantics of lambda calculus?</span></h3>
-<h3 id="how"><span class="section_number">8.2</span><span class="section_title">How?</span></h3>
-<p>Normal-order reduction enables us to write fixed points. Should we let the programmer choose the evaluation strategy? Currying simplifies reasoning but complicates implementation (because applications may then nest deeply to the left). What is optimal reduction?<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
-<p>Lambda-calculus is unsound.<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> What does that imply about programming languages containing lambda calculus?</p>
-<p>Let <span class="math inline">\( A[B := C] \)</span> mean <span class="math inline">\(A\)</span> but with each free occurrence of <span class="math inline">\(B\)</span> replaced with <span class="math inline">\(C\)</span>. Let <span class="math inline">\( eval(A,B) \)</span> means that <span class="math inline">\(A\)</span> normalizes to <span class="math inline">\(B\)</span>.</p>
-<p>Applicative-order evaluation is the easiest to implement.</p>
-<p>Where do these things fit in the big picture of lambda-calculus implementations? G-machine, STG, GRIN<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
-<p>Reading queue:</p>
-<ul>
-<li><a href="https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently">https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently</a></li>
-<li><a href="https://www.researchgate.net/publication/312462365_About_the_efficient_reduction_of_lambda_terms">https://www.researchgate.net/publication/312462365_About_the_efficient_reduction_of_lambda_terms</a></li>
-<li><a href="https://www.reddit.com/r/haskell/comments/2zqtfk/why_isnt_anyone_talking_about_optimal_lambda/">https://www.reddit.com/r/haskell/comments/2zqtfk/why_isnt_anyone_talking_about_optimal_lambda/</a></li>
-<li>compiling monads <a href="https://www.irif.fr/~mellies/mpri/mpri-ens/articles/danvy-koslowski-malmkjaer-compiling-monads.pdf">https://www.irif.fr/~mellies/mpri/mpri-ens/articles/danvy-koslowski-malmkjaer-compiling-monads.pdf</a></li>
-<li>modular monadic semantics <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.136.1656&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.136.1656&amp;rep=rep1&amp;type=pdf</a></li>
-</ul>
 <div id="refs" class="references">
 <div id="ref-lloyd1993foundations">
 <p>[1] Lloyd, J.W. 1993. <em>Foundations of logic programming</em>. Springer-Verlag.</p>
@@ -510,10 +489,6 @@ id     :        m a -&gt; m a
 <li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Set_theoretic_programming">https://en.wikipedia.org/wiki/Set_theoretic_programming</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
 <li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Functor">https://en.wikipedia.org/wiki/Functor</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
 <li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Natural_transformation">https://en.wikipedia.org/wiki/Natural_transformation</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p><a href="https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently">https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p><a href="https://en.wikipedia.org/wiki/Lambda_calculus#Optimal_reduction">https://en.wikipedia.org/wiki/Lambda_calculus#Optimal_reduction</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p><a href="https://en.wikipedia.org/wiki/Fixed-point_combinator">https://en.wikipedia.org/wiki/Fixed-point_combinator</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p><a href="https://github.com/grin-tech/grin">https://github.com/grin-tech/grin</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>

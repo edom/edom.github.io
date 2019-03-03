@@ -151,6 +151,10 @@ document.addEventListener("DOMContentLoaded", function () {
     \newcommand\Search{\text{Search}}
     % model theory structure
     \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
     \)</div>
         <main class="page-content" aria-label="Content">
             <div class="wrapper">
@@ -162,14 +166,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="post-content">
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#what-is-parsing">What is parsing?</a></span><span class="word_count">(852w~5m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#left-recursion-elimination">Left-recursion elimination</a></span><span class="word_count">(473w~3m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what-is-parsing">What is parsing?</a></span><span class="word_count">(825w~5m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#left-recursion-elimination">Left-recursion elimination</a></span><span class="word_count">(645w~4m)</span></li>
 <li><span class="section_number">3</span><span class="section_title"><a href="#language-oriented-approach">Language-oriented approach</a></span><span class="word_count">(47w~1m)</span></li>
 <li><span class="section_number">4</span><span class="section_title"><a href="#what-is-the-inverse-of-parsing">What is the inverse of parsing?</a></span><span class="word_count">(150w~1m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#relational-parsing">Relational parsing</a></span><span class="word_count">(228w~2m)</span></li>
-<li><span class="section_number">6</span><span class="section_title"><a href="#how-do-we-parse-how-should-we">How do we parse? How should we?</a></span><span class="word_count">(1781w~9m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#how-do-we-parse-how-should-we">How do we parse? How should we?</a></span><span class="word_count">(1785w~9m)</span></li>
 <li><span class="section_number">7</span><span class="section_title"><a href="#conferences">Conferences</a></span><span class="word_count">(4w~1m)</span></li>
-<li><span class="section_number">8</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(285w~2m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#why-cant-top-down-parsers-prolog-dcg-handle-left-recursion">Why can't top-down parsers (Prolog DCG) handle left recursion?</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#can-we-extend-brzozowski-derivatives-to-context-sensitive-expressions">Can we extend Brzozowski derivatives to context-sensitive expressions?</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#politics-of-parsing">Politics of parsing</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#declarative-programming-research-group">Declarative Programming Research Group</a></span><span class="word_count">(322w~2m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(285w~2m)</span></li>
 </ul>
 </div>
 <h2 id="what-is-parsing"><span class="section_number">1</span><span class="section_title">What is parsing?</span></h2>
@@ -177,8 +185,8 @@ document.addEventListener("DOMContentLoaded", function () {
 <div class="local_table_of_contents">
 <ul>
 <li><span class="section_number">1.1</span><span class="section_title"><a href="#what-is-the-problem">What is the problem?</a></span><span class="word_count">(122w~1m)</span></li>
-<li><span class="section_number">1.2</span><span class="section_title"><a href="#parsing-with-brzozowski-quotients">Parsing with Brzozowski quotients</a></span><span class="word_count">(354w~2m)</span></li>
-<li><span class="section_number">1.3</span><span class="section_title"><a href="#what-1">What</a></span><span class="word_count">(137w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#parsing-with-brzozowski-quotients">Parsing with Brzozowski quotients</a></span><span class="word_count">(350w~2m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#what-1">What</a></span><span class="word_count">(114w~1m)</span></li>
 <li><span class="section_number">1.4</span><span class="section_title"><a href="#the-semantics-of-grammar-expressions">The semantics of grammar expressions</a></span><span class="word_count">(23w~1m)</span></li>
 <li><span class="section_number">1.5</span><span class="section_title"><a href="#possible-prefix-incremental-parsing">Possible-prefix incremental parsing?</a></span><span class="word_count">(18w~1m)</span></li>
 <li><span class="section_number">1.6</span><span class="section_title"><a href="#a-language-can-be-thought-as-a-possibly-infinite-set-of-strings">A language can be thought as a possibly infinite set of strings</a></span><span class="word_count">(12w~1m)</span></li>
@@ -207,8 +215,6 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul>
 <p>Equational theories? Now that's a principled parsing.</p>
 <p>The result of left-dividing a language <span class="math inline">\(L\)</span> by a string <span class="math inline">\(c\)</span> is <span class="math inline">\(
-\newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
-\newcommand\Set[1]{\{#1\}}
 c \backslash L = \SetBuilder{w}{cw \in L}
 \)</span>. <span class="citation" data-cites="brzozowski1964derivatives">[<a href="#ref-brzozowski1964derivatives">2</a>]</span> <span class="citation" data-cites="might2011parsing">[<a href="#ref-might2011parsing">8</a>]</span></p>
 <p>Atoms<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
@@ -261,7 +267,6 @@ D_a(PQ) = (D_a P) Q + \delta(P) D_a Q
 <p>The <em>right division</em> of a string <span class="math inline">\(x\)</span> by divisor <span class="math inline">\(y\)</span> is <span class="math inline">\(x y^{-1}\)</span>.</p>
 <p>How do we define quotient and remainder?</p>
 <p>The Brzozowski derivative is a quotient<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>, because it is the result of dividing a language (a set of strings) by a string.</p>
-<p>The multiplication of two languages <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> is the Cartesian product <span class="math inline">\(AB = \\{ ab ~\|~ a \in A, b \in B \\}\)</span>.</p>
 <h3 id="the-semantics-of-grammar-expressions"><span class="section_number">1.4</span><span class="section_title">The semantics of grammar expressions</span></h3>
 <p>Consider the expression X,Y. Declaratively it means X followed by Y. Operationally it means match X <em>then</em> match Y.</p>
 <h3 id="possible-prefix-incremental-parsing"><span class="section_number">1.5</span><span class="section_title">Possible-prefix incremental parsing?</span></h3>
@@ -288,41 +293,58 @@ D_a(PQ) = (D_a P) Q + \delta(P) D_a Q
 P(xy) = combine(P(x), P(y))
 \]</span></p>
 <h2 id="left-recursion-elimination"><span class="section_number">2</span><span class="section_title">Left-recursion elimination</span></h2>
-<p>&quot;Basically almost all parsing is done by top-down search with left-recursion protection&quot;<span class="citation" data-cites="grune2008parsing">[<a href="#ref-grune2008parsing">4</a>]</span>.</p>
-<p>I got this idea for left-recursion elimination on &lt;2019-02-20&gt;, but this may be well-known.</p>
+<p>Why do we care about left recursion? Grune &amp; Jacobs 2008 sums it up: &quot;Basically almost all parsing is done by top-down search with left-recursion protection&quot;<span class="citation" data-cites="grune2008parsing">[<a href="#ref-grune2008parsing">4</a>]</span>.</p>
+<p>We are interested in eliminating left recursion from Prolog definite-clause grammars (DCGs).</p>
 <p>to-do: summarize:</p>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Left_recursion">https://en.wikipedia.org/wiki/Left_recursion</a></li>
 <li><a href="https://www.microsoft.com/en-us/research/publication/removing-left-recursion-from-context-free-grammars/">https://www.microsoft.com/en-us/research/publication/removing-left-recursion-from-context-free-grammars/</a></li>
 </ul>
+<p>I got this idea for left-recursion elimination on &lt;2019-02-20&gt;, but this may be well-known.</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">2.1</span><span class="section_title"><a href="#semiring-of-languages">Semiring of languages</a></span><span class="word_count">(54w~1m)</span></li>
-<li><span class="section_number">2.2</span><span class="section_title"><a href="#left-recursive-non-terminal">Left-recursive non-terminal</a></span><span class="word_count">(23w~1m)</span></li>
-<li><span class="section_number">2.3</span><span class="section_title"><a href="#production-rule-language-endofunction-and-least-fixed-point">Production rule, language endofunction, and least fixed point</a></span><span class="word_count">(74w~1m)</span></li>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#what-is-left-recursion">What is left recursion?</a></span><span class="word_count">(101w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#semiring-of-languages">Semiring of languages</a></span><span class="word_count">(77w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#production-rule-language-endofunction-and-least-fixed-point">Production rule, language endofunction, and least fixed point</a></span><span class="word_count">(94w~1m)</span></li>
 <li><span class="section_number">2.4</span><span class="section_title"><a href="#factoring-finite-left-recursion">Factoring finite left-recursion</a></span><span class="word_count">(43w~1m)</span></li>
 <li><span class="section_number">2.5</span><span class="section_title"><a href="#left-recursive-language">Left-recursive language</a></span><span class="word_count">(90w~1m)</span></li>
 <li><span class="section_number">2.6</span><span class="section_title"><a href="#left-recursion-elimination-algorithm">Left-recursion elimination algorithm</a></span><span class="word_count">(129w~1m)</span></li>
 <li><span class="section_number">2.7</span><span class="section_title"><a href="#inlining-the-auxiliary-rules-parse-tree">Inlining the auxiliary rule's parse tree</a></span><span class="word_count">(27w~1m)</span></li>
-<li><span class="section_number">2.8</span><span class="section_title"><a href="#prolog-implementation"><span class="todo TODO">TODO</span> Prolog implementation</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">2.8</span><span class="section_title"><a href="#prolog-implementation"><span class="todo TODO">TODO</span> Prolog implementation</a></span><span class="word_count">(39w~1m)</span></li>
 </ul>
 </div>
-<h3 id="semiring-of-languages"><span class="section_number">2.1</span><span class="section_title">Semiring of languages</span></h3>
-<p>A <em>semiring</em> is—roughly—an additive group, a multiplicative group, and an interaction between addition and multiplication.</p>
-<p>The languages of the same alphabet form a semiring.</p>
-<p>0 is the empty set.</p>
-<p>1 is <span class="math inline">\(\Set{\epsilon}\)</span>, the language that consists of the empty string only.</p>
-<p>Addition is set union.</p>
-<p>Multiplication is language concatenation: <span class="math inline">\(AB = \SetBuilder{ab}{a \in A, b \in B}\)</span>.</p>
-<h3 id="left-recursive-non-terminal"><span class="section_number">2.2</span><span class="section_title">Left-recursive non-terminal</span></h3>
+<h3 id="what-is-left-recursion"><span class="section_number">2.1</span><span class="section_title">What is left recursion?</span></h3>
+<p>This is a grammar with three left-recursive non-terminals.</p>
+<span class="math display">\[\begin{align*}
+A &amp;\to B | C
+\\ B &amp;\to Ab | b
+\\ C &amp;\to Bc | c
+\end{align*}
+\]</span>
+<p>We say that <span class="math inline">\(A\)</span> <em>left-calls</em> <span class="math inline">\(B\)</span> iff there exists a reduction <span class="math inline">\(A \to B C\)</span>.</p>
 <p>A non-terminal <span class="math inline">\(A\)</span> is <em>left-recursive</em> iff it may reduce to something beginning with itself. For example, the following rule <span class="math inline">\(A\)</span> is left-recursive.</p>
 <span class="math display">\[\begin{align*}
 A &amp;\to B
 \\ B &amp;\to \epsilon | AC
 \end{align*}
 \]</span>
+<p>The left-call graph. Each vertex represents a non-terminal. An edge <span class="math inline">\((A,B)\)</span> represents that <span class="math inline">\(A\)</span> left-calls <span class="math inline">\(B\)</span>.</p>
+<p>If the left-call graph is cyclic, then a top-down parser may not work.</p>
+<p>Left-recursion elimination is about breaking cycles in the left-call graph.</p>
+<p>How do we delete the minimum number of edges from a graph to make it acyclic? Is this problem NP-hard?</p>
+<h3 id="semiring-of-languages"><span class="section_number">2.2</span><span class="section_title">Semiring of languages</span></h3>
+<p>We care about algebra because it guides us to <em>correct</em> algorithms.</p>
+<p>A <em>semiring</em> is—roughly—an additive group, a multiplicative group, and an interaction between addition and multiplication.</p>
+<p>The alphabet is <span class="math inline">\(A\)</span>. It is a finite set.</p>
+<p>The semiring's underlying set is <span class="math inline">\(A^*\)</span>.</p>
+<p>The languages of the same alphabet form a semiring.</p>
+<p>0 is the empty set.</p>
+<p>1 is <span class="math inline">\(\Set{\epsilon}\)</span>, the language that consists of the empty string only.</p>
+<p>Addition is set union.</p>
+<p>Multiplication is language concatenation: <span class="math inline">\(AB = \SetBuilder{ab}{a \in A, b \in B}\)</span>.</p>
 <h3 id="production-rule-language-endofunction-and-least-fixed-point"><span class="section_number">2.3</span><span class="section_title">Production rule, language endofunction, and least fixed point</span></h3>
 <p>We can think of a production rule as a <em>language endofunction</em>. For example, we can think of the rule <span class="math inline">\(A \to \epsilon | a A\)</span> as the function <span class="math inline">\(A \mapsto 1 + \Set{a} A\)</span>. Then, we can think of the language described by the rule as the <em>least fixed point</em> of the corresponding function, that is, the smallest set such that <span class="math inline">\(A = 1 + \Set{a} A\)</span>.</p>
+<p>If a rule is non-recursive, then the corresponding language endofunction is a constant function that does not depend on the parameter.</p>
 <h3 id="factoring-finite-left-recursion"><span class="section_number">2.4</span><span class="section_title">Factoring finite left-recursion</span></h3>
 <p>Conjecture: Every finite left-recursive rule can be factored into the form <span class="math inline">\(A \to AB | C\)</span> such that the rule <span class="math inline">\(A \to C\)</span> would not be left-recursive.</p>
 <p>Example of <em>infinite</em> left recursion: <span class="math inline">\(A \to Aa\)</span>. It matches an infinite string of <span class="math inline">\(a\)</span>.</p>
@@ -380,6 +402,7 @@ exp0 :- &quot;&quot; ; (&quot;*&quot;, exp ; &quot;+&quot;, exp), exp0
 <p>Unfortunately left-recursion elimination changes the syntax tree. How do we unchange it?</p>
 <h3 id="prolog-implementation"><span class="section_number">2.8</span><span class="section_title"><span class="todo TODO">TODO</span> Prolog implementation</span></h3>
 <p>Write a Prolog program to eliminate left recursion from definite-clause grammars.</p>
+<p>The logical meaning of the Prolog DCG rule <span class="math inline">\(A(x) \to B_1(x), \ldots, B_n(x)\)</span> is the predicate <span class="math inline">\(A\)</span> where <span class="math inline">\(A(x,s_1,s_{n+1}) \leftarrow ( B_1(x,s_1,s_2) \wedge \ldots \wedge B_n(x,s_n,s_{n+1}) )\)</span>.</p>
 <h2 id="language-oriented-approach"><span class="section_number">3</span><span class="section_title">Language-oriented approach</span></h2>
 <p>The language-oriented approach to parsing is to make a language for expressing a relation between strings and trees.</p>
 <p>The structure of the concrete syntax tree reflects the structure of the grammar production rules.</p>
@@ -432,7 +455,7 @@ exp0 :- &quot;&quot; ; (&quot;*&quot;, exp ; &quot;+&quot;, exp), exp0
 <h2 id="how-do-we-parse-how-should-we"><span class="section_number">6</span><span class="section_title">How do we parse? How should we?</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">6.1</span><span class="section_title"><a href="#how">How?</a></span><span class="word_count">(235w~2m)</span></li>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#how">How?</a></span><span class="word_count">(239w~2m)</span></li>
 <li><span class="section_number">6.2</span><span class="section_title"><a href="#incrementalonline-parsing">Incremental/online parsing</a></span><span class="word_count">(65w~1m)</span></li>
 <li><span class="section_number">6.3</span><span class="section_title"><a href="#how-should-we-generate-parsers-and-unparsers-from-grammars">How should we generate parsers and unparsers from grammars?</a></span><span class="word_count">(117w~1m)</span></li>
 <li><span class="section_number">6.4</span><span class="section_title"><a href="#what-parsing-techniquesformalisms-are-there">What parsing techniques/formalisms are there?</a></span><span class="word_count">(280w~2m)</span></li>
@@ -449,7 +472,7 @@ exp0 :- &quot;&quot; ; (&quot;*&quot;, exp ; &quot;+&quot;, exp), exp0
 <p>Zaytsev &amp; Bagge 2014 <span class="citation" data-cites="zaytsev2014parsing">[<a href="#ref-zaytsev2014parsing">14</a>]</span> survey</p>
 <p><span class="citation" data-cites="Mu2004AnIL">[<a href="#ref-Mu2004AnIL">9</a>]</span></p>
 <p><span class="citation" data-cites="alimarine2005there">[<a href="#ref-alimarine2005there">1</a>]</span></p>
-<p><span class="citation" data-cites="Kourzanov2014BidirectionalPA">[<a href="#ref-Kourzanov2014BidirectionalPA">5</a>]</span></p>
+<p>Kourzanov 2014 <span class="citation" data-cites="kourzanov2014bidirectional">[<a href="#ref-kourzanov2014bidirectional">5</a>]</span> bidirectional parsing</p>
 <p><span class="citation" data-cites="caballero1999functional">[<a href="#ref-caballero1999functional">3</a>]</span></p>
 <p>somewhat unrelated <span class="citation" data-cites="Tan2016BidirectionalGF">[<a href="#ref-Tan2016BidirectionalGF">13</a>]</span></p>
 <p><span class="citation" data-cites="Matsuda2013FliPprAP">[<a href="#ref-Matsuda2013FliPprAP">7</a>]</span></p>
@@ -899,7 +922,35 @@ number ::= digit | digit number
 <p>&quot;Jacc's LR-Parsing with Dynamic Operators&quot; &quot;This part of the Jacc documentation explains the modifications we can make to a basic table-driven LR parser generator à la yacc to accommodate support for Prolog's dynamic operators.&quot; <a href="http://www.hassan-ait-kaci.net/hlt/doc/hlt/jaccdoc/dynamicLR.html">http://www.hassan-ait-kaci.net/hlt/doc/hlt/jaccdoc/dynamicLR.html</a></p>
 <h2 id="conferences"><span class="section_number">7</span><span class="section_title">Conferences</span></h2>
 <p>ACM SIGPLAN SLE <a href="http://www.sleconf.org/blog/11-20-2013-parsing-at-sle-2013">http://www.sleconf.org/blog/11-20-2013-parsing-at-sle-2013</a></p>
-<h2 id="bibliography" class="unnumbered"><span class="section_number">8</span><span class="section_title">Bibliography</span></h2>
+<h2 id="why-cant-top-down-parsers-prolog-dcg-handle-left-recursion"><span class="section_number">8</span><span class="section_title">Why can't top-down parsers (Prolog DCG) handle left recursion?</span></h2>
+<p>Can we fix it by prescribing a different operational semantics?</p>
+<p>Should we just use bottom-up parsers?</p>
+<h2 id="can-we-extend-brzozowski-derivatives-to-context-sensitive-expressions"><span class="section_number">9</span><span class="section_title">Can we extend Brzozowski derivatives to context-sensitive expressions?</span></h2>
+<p>Context-free expression is regular expression plus fixed points.</p>
+<p>A context-sensitive rule has a left-hand side that may contain more than one non-terminal. An example of such rule is <span class="math inline">\(AB \to C\)</span>.</p>
+<h2 id="politics-of-parsing"><span class="section_number">10</span><span class="section_title">Politics of parsing</span></h2>
+<p>This patent (US patent 6449589, &quot;Elimination of left recursion from context-free grammars&quot;)<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a><a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a> should not exist?</p>
+<h2 id="declarative-programming-research-group"><span class="section_number">11</span><span class="section_title">Declarative Programming Research Group</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">11.1</span><span class="section_title"><a href="#transitive-closure">Transitive closure</a></span><span class="word_count">(280w~2m)</span></li>
+<li><span class="section_number">11.2</span><span class="section_title"><a href="#transitive-closure-in-prolog">Transitive closure in Prolog</a></span><span class="word_count">(40w~1m)</span></li>
+</ul>
+</div>
+<h3 id="transitive-closure"><span class="section_number">11.1</span><span class="section_title">Transitive closure</span></h3>
+<p>There are several ways of thinking about transitivity: relation, logic, graph, fixed-point, and limit.</p>
+<p>A relation <span class="math inline">\(R\)</span> is <em>transitive</em> iff <span class="math inline">\(\forall x \forall y \forall z [(R(x,y) \wedge R(y,z)) \to R(x,z)]\)</span>.</p>
+<p>The transitive closure of a relation <span class="math inline">\(R\)</span> is the smallest transitive superrelation of <span class="math inline">\(R\)</span>. Such closure is obtained by adding the fewest number of edges to make <span class="math inline">\(R\)</span> transitive.</p>
+<p>The <em>transitive closure of an arity-2 predicate <span class="math inline">\(P\)</span></em> is <span class="math inline">\(T(P)\)</span> where <span class="math inline">\(T(P,x,y) = P(x,y) \vee \exists i (P(x,i) \wedge T(P,i,y)) \)</span>. The transitive closure of a first-order logic predicate is a first-order logic predicate. But the transitive closure <em>operator</em> <span class="math inline">\(T\)</span> is a second-order logic predicate. Fagin 1974 proves that transitive closure makes first-order logic more expressive.<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a></p>
+<p>The <em>transitive closure of an arity-2 relation <span class="math inline">\(R\)</span></em> is <span class="math inline">\(R \cup R_2 \cup R_3 \cup \ldots = \bigcup_{k \in \Nat \ge 1} R_k\)</span> where <span class="math inline">\(R_k = \underbrace{R \circ \ldots \circ R}_k\)</span>. But this assumes that the relation is countable. If the relation is finite and its domain has <span class="math inline">\(n\)</span> elements, then <span class="math inline">\(k\)</span> does not need to go higher than <span class="math inline">\(n-1\)</span>, because the shortest path between two connected vertices in that graph will have at most <span class="math inline">\(n-1\)</span> edges. Thus <span class="math inline">\(T(R)\)</span> is the smallest set that satisfies the equation <span class="math inline">\(T(R) = T(R) \cup R\)</span>. Thus <span class="math inline">\(T(R)\)</span> is the least fixed point of the function <span class="math inline">\(A \mapsto (A \cup R)\)</span>.</p>
+<p>We can also think of transitive closure of <span class="math inline">\(R\)</span> as the limit <span class="math inline">\(\lim_{n\to\infty} S_n\)</span> But this also assumes that the relation is countable. where <span class="math inline">\(S_1 = R\)</span> and <span class="math inline">\(S_{n+1} = (S_n \circ R) \cup R\)</span> and <span class="math inline">\((B,C,S) \circ (A,B,R) = (A,C,\SetBuilder{(x,z)}{\exists x (R(x,y) \wedge S(y,z))})\)</span>. We can think of <span class="math inline">\(S_n\)</span> as the set of paths whose length does not exceed <span class="math inline">\(n\)</span>.</p>
+<h3 id="transitive-closure-in-prolog"><span class="section_number">11.2</span><span class="section_title">Transitive closure in Prolog</span></h3>
+<p>This naïve Prolog predicate <code>t/2</code> may not terminate if the graph represented by <code>edge</code> is cyclic. Direct translation of the logical formula does not work.</p>
+<pre class="example"><code>t(A,B) :- edge(A,B).
+t(A,C) :- edge(A,B), t(B,C).
+</code></pre>
+<p>How do we make Prolog smarter so that the above predicate <code>t/2</code> terminates?</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">12</span><span class="section_title">Bibliography</span></h2>
 <div id="refs" class="references">
 <div id="ref-alimarine2005there">
 <p>[1] Alimarine, A. et al. 2005. There and back again: Arrows for invertible programming. <em>Proceedings of the 2005 acm sigplan workshop on haskell</em> (2005), 86–97. url: &lt;<a href="https://www.cs.ru.nl/~marko/research/pubs/2005/bi-arrows.pdf">https://www.cs.ru.nl/~marko/research/pubs/2005/bi-arrows.pdf</a>&gt;.</p>
@@ -913,7 +964,7 @@ number ::= digit | digit number
 <div id="ref-grune2008parsing">
 <p>[4] Grune, D. and Jacobs, C.J. 2008. Parsing techniques: A practical guide. (2008).</p>
 </div>
-<div id="ref-Kourzanov2014BidirectionalPA">
+<div id="ref-kourzanov2014bidirectional">
 <p>[5] Kourzanov, P. 2014. Bidirectional parsing a functional / logic perspective. (2014). url: &lt;<a href="https://ifl2014.github.io/submissions/ifl2014_submission_18.pdf">https://ifl2014.github.io/submissions/ifl2014_submission_18.pdf</a>&gt;.</p>
 </div>
 <div id="ref-laurent2016taming">
@@ -963,6 +1014,9 @@ number ::= digit | digit number
 <li id="fn14"><p><a href="https://en.wikipedia.org/wiki/Bidirectional_transformation">https://en.wikipedia.org/wiki/Bidirectional_transformation</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
 <li id="fn15"><p><a href="https://topps.diku.dk/pirc/?id=janus">https://topps.diku.dk/pirc/?id=janus</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
 <li id="fn16"><p><a href="https://en.wikipedia.org/wiki/Janus_(time-reversible_computing_programming_language)">https://en.wikipedia.org/wiki/Janus_(time-reversible_computing_programming_language)</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p><a href="http://www.freepatentsonline.com/6449589.html">http://www.freepatentsonline.com/6449589.html</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p><a href="https://patents.google.com/patent/US6449589B1/">https://patents.google.com/patent/US6449589B1/</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p><a href="https://en.wikipedia.org/wiki/Transitive_closure#In_logic_and_computational_complexity">https://en.wikipedia.org/wiki/Transitive_closure#In_logic_and_computational_complexity</a><a href="#fnref19" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
