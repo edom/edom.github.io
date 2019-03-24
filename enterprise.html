@@ -166,16 +166,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="post-content">
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#motivation">Motivation</a></span><span class="word_count">(220w~2m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#the-end-users-mental-model">The end-user's mental model</a></span><span class="word_count">(1987w~10m)</span></li>
-<li><span class="section_number">3</span><span class="section_title"><a href="#ontology-engineering">Ontology engineering</a></span><span class="word_count">(249w~2m)</span></li>
-<li><span class="section_number">4</span><span class="section_title"><a href="#bending-prolog-to-my-will">Bending Prolog to my will</a></span><span class="word_count">(1811w~10m)</span></li>
-<li><span class="section_number">5</span><span class="section_title"><a href="#what-mess">What mess?</a></span><span class="word_count">(1132w~6m)</span></li>
-<li><span class="section_number">6</span><span class="section_title"><a href="#existing-systems">Existing systems</a></span><span class="word_count">(273w~2m)</span></li>
-<li><span class="section_number">7</span><span class="section_title"><a href="#literature-study">Literature study</a></span><span class="word_count">(584w~3m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#motivation">Motivation</a></span><span class="word_count">(480w~3m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#ontology-engineering-our-mental-models-and-software-systems">Ontology engineering, our mental models, and software systems</a></span><span class="word_count">(2581w~13m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#bending-prolog-to-my-will">Bending Prolog to my will</a></span><span class="word_count">(1825w~10m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#what-mess">What mess?</a></span><span class="word_count">(1230w~7m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#existing-systems">Existing systems</a></span><span class="word_count">(273w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#literature-study">Literature study</a></span><span class="word_count">(607w~4m)</span></li>
 </ul>
 </div>
 <h2 id="motivation"><span class="section_number">1</span><span class="section_title">Motivation</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#backstory">Backstory</a></span><span class="word_count">(220w~2m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#answering-ridwan">&lt;2019-03-24&gt; Answering Ridwan</a></span><span class="word_count">(261w~2m)</span></li>
+</ul>
+</div>
+<h3 id="backstory"><span class="section_number">1.1</span><span class="section_title">Backstory</span></h3>
 <p>I think I may have a way to be a <em>30x engineer</em>, or this might just be another manic episode of mine. The idea is to use <em>Prolog</em> to <em>model</em> enterprise software systems and to <em>transform</em> those models into complete <em>full-stack</em> working code. In my dream, the programmer writes many lines of Prolog and zero lines of Java, which is now like Assembly: translated from a higher-level language. Software engineering labor is now specialized into <em>infrastructure</em> engineer (language designer, software architect) and <em>suprastructure</em> engineer (language user, business programmer, system analyst), instead of <em>back-end</em> engineer and <em>front-end</em> engineer. Software architect now designs formal models and formal ontologies instead of drawing fragile charts ignored by machines.</p>
 <p>What is an enterprise application? Mostly information systems<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
 <p>I see some similarities among enterprise applications.</p>
@@ -183,32 +189,126 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>Now, I need to get down to reality, and see how much of that dream can be realized.</p>
 <p>Using Prolog to extract data and logic from legacy systems?</p>
 <p>Using Prolog to specify refactoring?</p>
-<h2 id="the-end-users-mental-model"><span class="section_number">2</span><span class="section_title">The end-user's mental model</span></h2>
+<h3 id="answering-ridwan"><span class="section_number">1.2</span><span class="section_title">&lt;2019-03-24&gt; Answering Ridwan</span></h3>
+<p>Ridwan<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> asked, &quot;I'm intrigued on what you said about 30x developer efficiency with prolog, even 10x developer is somewhat considered a myth. So how is it even?&quot;</p>
+<p>It's not a myth. There are a few 1,000,000x engineers. Examples are the people who built things like Google and StackOverflow. Someone who can make 500,000 engineers twice as productive is a 1,000,000x engineer. If there are 1,000,000x engineers, then there must be more 30x engineers, because it should be easier to be a 30x engineer than to be a 1,000,000x engineer.</p>
+<p>The key idea of this Prolog stuff is simple, and is not new:</p>
+<ul>
+<li>Formalize the end-user's mental model in Prolog.</li>
+<li>Write model transformations in Prolog.</li>
+<li>Generate a full-stack web application (Java + JavaScript + HTTP + HTML + SQL).</li>
+</ul>
+<p>An example model transformation: &quot;If class C has property named P of type T, then Java class entity(C) has field named P of type JT.&quot; Such model transformation can be written as a Prolog rule (a Horn clause) like this:</p>
+<pre><code>java_class_field(entity(C), P, JT) :-
+    class_property_type(C, P, T),
+    type_javatype(T, JT).
+</code></pre>
+<p>Model-driven engineering tools already exist. An example is Eclipse's EMF, but it is limited to modeling only structure and not behavior. Another example that does model behavior is fUML+Alf.</p>
+<p>The 30x is an asymptote. It is only true when you have to make many instances of the same class of apps.</p>
+<p>Let N be the number of similar applications you have to make. Which would you rather write:</p>
+<ul>
+<li>N * 30,000 lines of Java</li>
+<li>10,000 + N * 1,000 lines of Prolog</li>
+</ul>
+<p>The limit of 30000n / (10000 + 1000n) as n grows unbounded is 30. That is where the 30x come from.</p>
+<h2 id="ontology-engineering-our-mental-models-and-software-systems"><span class="section_number">2</span><span class="section_title">Ontology engineering, our mental models, and software systems</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">2.1</span><span class="section_title"><a href="#understanding-the-end-users-train-of-thought">Understanding the end-user's train of thought</a></span><span class="word_count">(187w~1m)</span></li>
-<li><span class="section_number">2.2</span><span class="section_title"><a href="#their-practical-philosophy-mental-model-and-ontological-commitments">Their practical philosophy, mental model, and ontological commitments</a></span><span class="word_count">(748w~4m)</span></li>
-<li><span class="section_number">2.3</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(21w~1m)</span></li>
-<li><span class="section_number">2.4</span><span class="section_title"><a href="#gradual-refinement-of-ontologies">Gradual refinement of ontologies</a></span><span class="word_count">(438w~3m)</span></li>
-<li><span class="section_number">2.5</span><span class="section_title"><a href="#classes-and-instances-universals-and-particulars-and-properties">Classes and instances; universals and particulars; and properties</a></span><span class="word_count">(83w~1m)</span></li>
-<li><span class="section_number">2.6</span><span class="section_title"><a href="#statics-and-dynamics-structure-and-behavior">Statics and dynamics; structure and behavior</a></span><span class="word_count">(64w~1m)</span></li>
-<li><span class="section_number">2.7</span><span class="section_title"><a href="#philosophy-of-abstract-objects">Philosophy of abstract objects?</a></span><span class="word_count">(178w~1m)</span></li>
-<li><span class="section_number">2.8</span><span class="section_title"><a href="#what-is-the-difference-between-ontology-and-metaphysics">What is the difference between ontology and metaphysics?</a></span><span class="word_count">(8w~1m)</span></li>
-<li><span class="section_number">2.9</span><span class="section_title"><a href="#owl">OWL</a></span><span class="word_count">(120w~1m)</span></li>
-<li><span class="section_number">2.10</span><span class="section_title"><a href="#the-ontology-of-enterprise-web-applications">The ontology of enterprise web applications?</a></span><span class="word_count">(115w~1m)</span></li>
-<li><span class="section_number">2.11</span><span class="section_title"><a href="#rdf-triples">RDF triples</a></span><span class="word_count">(12w~1m)</span></li>
-<li><span class="section_number">2.12</span><span class="section_title"><a href="#objects">Objects</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#introduction-to-ontology">Introduction to ontology</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#ontology-engineering-with-competency-questions">Ontology engineering with competency questions</a></span><span class="word_count">(211w~2m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#ontology-vs-model-vs-data-model-vs-language-vs-vocabulary-what-are-the-similarities-and-differences">Ontology vs model vs data-model vs language vs vocabulary: What are the similarities and differences?</a></span><span class="word_count">(137w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#things-common-to-many-ontologies">Things common to many ontologies</a></span><span class="word_count">(139w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#understanding-the-end-users-mental-model">Understanding the end-user's mental model</a></span><span class="word_count">(914w~5m)</span></li>
+<li><span class="section_number">2.6</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">2.7</span><span class="section_title"><a href="#gradual-refinement-of-ontologies">Gradual refinement of ontologies</a></span><span class="word_count">(438w~3m)</span></li>
+<li><span class="section_number">2.8</span><span class="section_title"><a href="#classes-and-instances-universals-and-particulars-and-properties">Classes and instances; universals and particulars; and properties</a></span><span class="word_count">(83w~1m)</span></li>
+<li><span class="section_number">2.9</span><span class="section_title"><a href="#statics-and-dynamics-structure-and-behavior">Statics and dynamics; structure and behavior</a></span><span class="word_count">(64w~1m)</span></li>
+<li><span class="section_number">2.10</span><span class="section_title"><a href="#philosophy-of-abstract-objects">Philosophy of abstract objects?</a></span><span class="word_count">(178w~1m)</span></li>
+<li><span class="section_number">2.11</span><span class="section_title"><a href="#what-is-the-difference-between-ontology-and-metaphysics">What is the difference between ontology and metaphysics?</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">2.12</span><span class="section_title"><a href="#owl">OWL</a></span><span class="word_count">(120w~1m)</span></li>
+<li><span class="section_number">2.13</span><span class="section_title"><a href="#the-ontology-of-enterprise-web-applications">The ontology of enterprise web applications?</a></span><span class="word_count">(115w~1m)</span></li>
+<li><span class="section_number">2.14</span><span class="section_title"><a href="#rdf-triples">RDF triples</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">2.15</span><span class="section_title"><a href="#objects">Objects</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">2.16</span><span class="section_title"><a href="#object-role-modeling">Object-role modeling</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">2.17</span><span class="section_title"><a href="#logic-of-lists-or-sequences-ordered-collections">Logic of lists or sequences (ordered collections)</a></span><span class="word_count">(55w~1m)</span></li>
 </ul>
 </div>
-<h3 id="understanding-the-end-users-train-of-thought"><span class="section_number">2.1</span><span class="section_title">Understanding the end-user's train of thought</span></h3>
-<p>I think software development can be sped up by minimizing the gap between the end-user's mental model and the programmer's mental model. Matching mental model is a requirement of good user experience.</p>
-<p>The users think of a software system as the set of things that they can do with it, as the set of the ways they can interact with the system, as a set of possible queries and commands. The user's mental model is imperative/procedural.</p>
-<p>We classify things all the time. At first, evolutionarily, I think we classify things into two: those that help us survive, and those that do not. Every adjective divides the world into two: the set of things that satisfy it, and the set of things that don't. We classify things into food and non-food, drink and non-drink, kin and non-kin, harm and non-harm, insider and outsider.</p>
-<p>For example, everyone knows that profit is income minus expenses. But not everyone has the same idea about income.</p>
-<p>UML can express cardinality constraints, but only 1:1, 1:N, N:1, and M:N are implementable in SQL. But that is no problem. Zero, one, or infinity.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
-<h3 id="their-practical-philosophy-mental-model-and-ontological-commitments"><span class="section_number">2.2</span><span class="section_title">Their practical philosophy, mental model, and ontological commitments</span></h3>
+<h3 id="introduction-to-ontology"><span class="section_number">2.1</span><span class="section_title">Introduction to ontology</span></h3>
+<p>For introduction to ontologies, see Marek Obitko's 2007 tutorial &quot;Introduction to Ontologies and Semantic Web&quot;<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>Smith 2006 &quot;Against Idiosyncrasy in Ontology Development&quot; <span class="citation" data-cites="smith2006against">[<a href="#ref-smith2006against">13</a>]</span></p>
+<p>Slide 6: five ways to represent knowledge, from <a href="https://www.scss.tcd.ie/Owen.Conlan/CS7063/06%20Introduction%20to%20OWL%20(1%20Lecture).ppt.pdf">Owen Conlan's &quot;Introduction to OWL&quot;</a>.</p>
+<p>Should we teach ontology design with wine examples?</p>
+<p>Ontology Development Pitfalls<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>Care has to be taken when formalizing natural language, due to polysemy (manymeaningedness). One source of confusion is the many meanings of the copula.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<h3 id="ontology-engineering-with-competency-questions"><span class="section_number">2.2</span><span class="section_title">Ontology engineering with competency questions</span></h3>
+<p>We shall begin to design an ontology by formulating the <em>competency questions</em> <span class="citation" data-cites="noy2001ontology">[<a href="#ref-noy2001ontology">11</a>]</span>: the questions that the ontology should be able to answer.</p>
+<p>For example, accounting system competency questions:</p>
+<ul>
+<li>What is our balance sheet this year? (This is a lot of questions: What is our assets this year, what is our liabilities this year, etc.)</li>
+<li>How much profit/loss do we make this year?</li>
+<li>How much tax does the government expect to racketeer from me this year?</li>
+</ul>
+<p>The end goal of an accounting ontology is for reporting, auditing, automation, calculation, and integration.</p>
+<p>For example, hotel supply chain management tool competency questions:</p>
+<ul>
+<li>Should we restock property P?
+<ul>
+<li>What is the current stock level at property P?</li>
+<li>How many rooms do property P have?</li>
+<li>When do we expect property P to run out of stock?</li>
+</ul></li>
+<li>When did a property experience stock-outs?</li>
+</ul>
+<p>Ontology of opinions? Relationship between a person and an opinion: approve, disapprove, unaware, indifferent, impartial, ignorant. The sentiment of an opinion is either positive, neutral, or negative.</p>
+<p>Ontology is not only taxonomy/classification/categorization. What is the difference between taxonomy, classification, and categorization? What is the difference between taxon, class, and category?</p>
+<p>What is the difference between ontology and model? Ontology = model + meta-model + logic?</p>
+<p>UEML/GEM vs OWL <span class="citation" data-cites="khan2011transformation">[<a href="#ref-khan2011transformation">9</a>]</span>. Enterprise software model (UEML, GEM) vs enterprise software ontology (on OWL perhaps)?</p>
+<p>ER: Chen 1976 <span class="citation" data-cites="chen1976entity">[<a href="#ref-chen1976entity">2</a>]</span></p>
+<h3 id="ontology-vs-model-vs-data-model-vs-language-vs-vocabulary-what-are-the-similarities-and-differences"><span class="section_number">2.3</span><span class="section_title">Ontology vs model vs data-model vs language vs vocabulary: What are the similarities and differences?</span></h3>
+<p>Every model <em>implies</em> an ontology. Every model has a set of <em>ontological commitments</em>.</p>
+<p>Ontology = axioms + vocabulary?</p>
+<p>If ontologies enable information sharing, then how do they differ from languages?</p>
+<p>An ontology is a <em>knowledge-representation convention</em>.</p>
+<p>It is harder to name relations than non-relations. Every noun names a term. Every verb names a relation. Example: eat(john,hamburger). Thus, the convention: Verb(Noun1, …, NounN).</p>
+<p>But that is not always desirable. We have another convention: Class1_Class2(Instance1, Instance2). Example: list_length/2.</p>
+<p>But it is not clear. What is the meaning of person_food/2? The person likes the food? The person hates the food? The person eats the food?</p>
+<p>I am against inflecting relation names. I am against pluralizing table names. I use infinitive-form verbs and singular nouns. But, without inflection, we may confuse commands and relations?</p>
+<h3 id="things-common-to-many-ontologies"><span class="section_number">2.4</span><span class="section_title">Things common to many ontologies</span></h3>
+<p>This Wikipedia page<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<p>Many authors use different but equivalent terms. Jake Mitchell pointed out<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> that there are a lot of confusing pair of terms in philosophy: sense and reference<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> (Frege), signifier and signified (de Saussure), use-mention distinction, concept and object.</p>
+<p>Synonym sets of concepts in ontology</p>
+<p>Each list item is a synonym set.</p>
+<ul>
+<li>class, category, concept, universal</li>
+<li>thing, object, entity, instance, individual, particular, ground-level object</li>
+<li>instance of, member of, element of</li>
+<li>property, attribute</li>
+<li>relation, relationship</li>
+<li>classification, categorization</li>
+<li>name and referent<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>, signifier and signified (de Saussure)</li>
+<li>triangle of reference<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>, meaning triangle<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>, semiotic triangle</li>
+<li>semiotics, semiology<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></li>
+<li>model (abstraction that ignores irrelevant details), theory</li>
+</ul>
+<p>Let D be the domain of discourse. In Prolog, D is the set of all terms.</p>
+<p>A class C is modeled by a predicate P. An individual of C is modeled by an element of D that satisfies P. This element of D is the <em>name</em> of the individual.</p>
+<h3 id="understanding-the-end-users-mental-model"><span class="section_number">2.5</span><span class="section_title">Understanding the end-user's mental model</span></h3>
+<p>The users think of a software system:</p>
+<ul>
+<li>the set of things that exist in the system</li>
+<li>the actions that can be done with the system</li>
+<li>the set of the possible interactions with the system</li>
+<li>a set of possible queries and commands</li>
+</ul>
+<p>The user's mental model is imperative/procedural.</p>
+<p>The mental model of a software user is the same as that of a machine operator.</p>
+<p>We classify things all the time. I think, early in our evolution we classify things into two: those that help us survive, and those that do not. We classify things into food and non-food, kin and non-kin, insider and outsider, and so on.</p>
+<p>Every adjective divides the world into two: the set of things that satisfy it, and the set of things that don't.</p>
+<p>For example, everyone agrees that profit is income minus expenses. But not everyone agrees on what income is.</p>
+<p>UML can express cardinality constraints, but only 1:1, 1:N, N:1, and M:N are implementable in SQL. But that is no problem. Zero, one, or infinity.<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a></p>
+<p>What is the users' practical philosophy, mental model, and ontological commitments?</p>
 <p>The users know their goals, but they don't know how to interact with the software system to achieve those goals.</p>
-<p>The users have an ontology, although they may not be aware that it is called &quot;ontology&quot;. The users have a <em>mental model</em> of what classes and individuals exist in the software system. The users have an idea about what the software system knows and what it does not. The users apply their <em>theory of mind</em><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> to the software system. They may be thinking in terms of classes, properties, and individuals. They may be thinking in terms of objects, properties, and values. They may be thinking in terms of entities and relationships<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. Which is the users' mental model: object-property-value, entity-relationship, or something else?</p>
+<p>The users have an ontology, although they may not be aware that it is called &quot;ontology&quot;. The users have a <em>mental model</em> of what classes and individuals exist in the software system. The users have an idea about what the software system knows and what it does not. The users apply their <em>theory of mind</em><a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> to the software system. They may be thinking in terms of classes, properties, and individuals. They may be thinking in terms of objects, properties, and values. They may be thinking in terms of entities and relationships<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>. Which is the users' mental model: object-property-value, entity-relationship, or something else?</p>
 <p>The users believe that pressing the &quot;Save&quot; button will cause the system to &quot;remember&quot; something. Thus the users think of a software system as a combination of memory and rules.</p>
 <p>We readily think in classes. We readily categorize things.</p>
 <p>What is a layperson's ontology?</p>
@@ -235,7 +335,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>Objects have identity.</p>
 <p>How do software users think about what exists? What is their mental model?</p>
 <p>How does the user think about a web application? Teleologically. A stateful system. A rigid assistant. What can the user do with it.</p>
-<p>Software users assume that abstract objects exist when they are using the software<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. Software users suspend their disbeliefs<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> as long as they are using the software. Gamers suspend their disbeliefs while they are playing. Of course we know that an email does not have to have material existence. But we also know that our reaction to emails is real, and thus emails can have real effects.</p>
+<p>Software users assume that abstract objects exist when they are using the software<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>. Software users suspend their disbeliefs<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a> as long as they are using the software. Gamers suspend their disbeliefs while they are playing. Of course we know that an email does not have to have material existence. But we also know that our reaction to emails is real, and thus emails can have real effects.</p>
 <p>For example, consider email provider.</p>
 <ul>
 <li>A mail exists.</li>
@@ -289,13 +389,13 @@ concept_attribute_type(employee, name, #string).
 </code></pre>
 <p>The user thinks that, for each class, the system knows a set of individuals of such classes. For example, there is an implicit set of employees known by the system.</p>
 <p><em>Computerizing the process does not change the user's ontology.</em> The user has the same ontology, regardless of whether the accounting is done by hand or by machine. The business process has existed before computerization.</p>
-<p>The user thinks that an accounting transaction is one object. The computer stores an accounting transaction as several rows in a table. The user expects to input a transaction in one HTTP request. The user does not expect to submit each part of the transaction separately. SQL conflates aggregation, composition, and what? SQL conflates mereology and relationship? SQL conflates whether one X is related to many Y and whether one X consists of many Y. SQL conflates relationship and composition. But we have nullable foreign keys to distinguish between association, aggregation, and composition? Aggregation vs composition: In aggregation, the children can exist independently of the parent. Not so in composition.<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
-<h3 id="what"><span class="section_number">2.3</span><span class="section_title">What</span></h3>
+<p>The user thinks that an accounting transaction is one object. The computer stores an accounting transaction as several rows in a table. The user expects to input a transaction in one HTTP request. The user does not expect to submit each part of the transaction separately. SQL conflates aggregation, composition, and what? SQL conflates mereology and relationship? SQL conflates whether one X is related to many Y and whether one X consists of many Y. SQL conflates relationship and composition. But we have nullable foreign keys to distinguish between association, aggregation, and composition? Aggregation vs composition: In aggregation, the children can exist independently of the parent. Not so in composition.<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a></p>
+<h3 id="what"><span class="section_number">2.6</span><span class="section_title">What</span></h3>
 <p>Formal ontology, knowledge representation, modeling an enterprise software in Prolog</p>
 <p>Synonym set: domain of discourse, domain of interest, subject matter</p>
 <p>Related: expert system</p>
-<h3 id="gradual-refinement-of-ontologies"><span class="section_number">2.4</span><span class="section_title">Gradual refinement of ontologies</span></h3>
-<p>Here we try to build ontologies by gradually adding constructs and thus gradually increasing expressiveness. This gradualism imitates van Roy &amp; Haridi 2004 <span class="citation" data-cites="van2004concepts">[<a href="#ref-van2004concepts">15</a>]</span>, but this is about ontologies instead of computation models. Adding more constructs increases expressivity but decreases reasonability.</p>
+<h3 id="gradual-refinement-of-ontologies"><span class="section_number">2.7</span><span class="section_title">Gradual refinement of ontologies</span></h3>
+<p>Here we try to build ontologies by gradually adding constructs and thus gradually increasing expressiveness. This gradualism imitates van Roy &amp; Haridi 2004 <span class="citation" data-cites="van2004concepts">[<a href="#ref-van2004concepts">16</a>]</span>, but this is about ontologies instead of computation models. Adding more constructs increases expressivity but decreases reasonability.</p>
 <p>Increasing expressiveness:</p>
 <ul>
 <li>propositional logic</li>
@@ -359,7 +459,7 @@ person_email(P, V) :- person_proplist(P, L), member(email-V, L).
 </code></pre>
 <p>But that has two problems:</p>
 <ul>
-<li>That cannot express the cardinality<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> of relations.</li>
+<li>That cannot express the cardinality<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a><a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a> of relations.</li>
 <li>That cannot express the type of property values, but we can add class_property_type/3.</li>
 </ul>
 <p>SQL implements some cardinality constraints with unique indexes. A property translates to an SQL column. An entity translates to an SQL table with a surrogate primary key. A relationship of arity N translates to an SQL table with N columns, each a foreign key to the corresponding entity table.</p>
@@ -369,14 +469,14 @@ person_email(P, V) :- person_proplist(P, L), member(email-V, L).
 <li>What exist?</li>
 <li>How do we talk about what exists? What language should we use?</li>
 </ul>
-<p>Skeletons and shells <span class="citation" data-cites="sterling1996logic">[<a href="#ref-sterling1996logic">13</a>]</span></p>
-<p>&quot;Ontological commitment is an agreement to consistently use a vocabulary with respect to a theory specified by an ontology&quot; <span class="citation" data-cites="jurisica1999using">[<a href="#ref-jurisica1999using">7</a>]</span></p>
+<p>Skeletons and shells <span class="citation" data-cites="sterling1996logic">[<a href="#ref-sterling1996logic">14</a>]</span></p>
+<p>&quot;Ontological commitment is an agreement to consistently use a vocabulary with respect to a theory specified by an ontology&quot; <span class="citation" data-cites="jurisica1999using">[<a href="#ref-jurisica1999using">8</a>]</span></p>
 <p>If A is a <em>subclass</em> of B, then every instance of A is <em>also</em> an instance of B.</p>
 <p>At which level is OWL?</p>
-<p>OWL Lite vs DL vs Full<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
+<p>OWL Lite vs DL vs Full<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>.</p>
 <p>What is the Bunge–Wand–Weber ontology? &quot;BWW ontology is a generic framework for analysis and conceptualization of real world objects&quot;</p>
 <p>What is the Shlaer–Mellor method?</p>
-<h3 id="classes-and-instances-universals-and-particulars-and-properties"><span class="section_number">2.5</span><span class="section_title">Classes and instances; universals and particulars; and properties</span></h3>
+<h3 id="classes-and-instances-universals-and-particulars-and-properties"><span class="section_number">2.8</span><span class="section_title">Classes and instances; universals and particulars; and properties</span></h3>
 <p><em>Classes and instances</em> are also called <em>universals and particulars</em>.</p>
 <p>We group things into classes because we want to <em>uniformly</em> treat every instance of the class. Which is more important, that two things are similar in essence, or that two things can be used for the same purpose?</p>
 <p>IF class C has property P of type T, AND I instance of C, AND the P of I is V, THEN V instance of T.</p>
@@ -401,7 +501,7 @@ class_instance(color, red).
 class_instance(color, green).
 class_instance(color, blue).
 </code></pre>
-<h3 id="statics-and-dynamics-structure-and-behavior"><span class="section_number">2.6</span><span class="section_title">Statics and dynamics; structure and behavior</span></h3>
+<h3 id="statics-and-dynamics-structure-and-behavior"><span class="section_number">2.9</span><span class="section_title">Statics and dynamics; structure and behavior</span></h3>
 <p>Models of a software system can be divided into two groups:</p>
 <ul>
 <li>structural model,</li>
@@ -412,28 +512,28 @@ class_instance(color, blue).
 <p>Class-property model. Entity-relationship model.</p>
 <p>Synonyms: class, category, concept</p>
 <p>Synonyms: object, thing, entity</p>
-<p>Synonyms: property<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>, attribute<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></p>
-<p>What is a concept?<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a></p>
-<p>Turner 2007 <span class="citation" data-cites="turner2007towards">[<a href="#ref-turner2007towards">14</a>]</span>, programming-language ontology.</p>
-<h3 id="philosophy-of-abstract-objects"><span class="section_number">2.7</span><span class="section_title">Philosophy of abstract objects?</span></h3>
+<p>Synonyms: property<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a>, attribute<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a></p>
+<p>What is a concept?<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a></p>
+<p>Turner 2007 <span class="citation" data-cites="turner2007towards">[<a href="#ref-turner2007towards">15</a>]</span>, programming-language ontology.</p>
+<h3 id="philosophy-of-abstract-objects"><span class="section_number">2.10</span><span class="section_title">Philosophy of abstract objects?</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">2.7.1</span><span class="section_title"><a href="#what-does-it-mean-for-an-abstract-object-to-exist">What does it mean for an abstract object to exist?</a></span><span class="word_count">(158w~1m)</span></li>
-<li><span class="section_number">2.7.2</span><span class="section_title"><a href="#abstract-objects-concrete-consequences">Abstract objects, concrete consequences</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">2.10.1</span><span class="section_title"><a href="#what-does-it-mean-for-an-abstract-object-to-exist">What does it mean for an abstract object to exist?</a></span><span class="word_count">(158w~1m)</span></li>
+<li><span class="section_number">2.10.2</span><span class="section_title"><a href="#abstract-objects-concrete-consequences">Abstract objects, concrete consequences</a></span><span class="word_count">(18w~1m)</span></li>
 </ul>
 </div>
-<h4 id="what-does-it-mean-for-an-abstract-object-to-exist"><span class="section_number">2.7.1</span><span class="section_title">What does it mean for an abstract object to exist?</span></h4>
-<p>Is software development applied metaphysics?<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a><a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a></p>
-<p>Theory of abstract objects<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a></p>
-<p>What does it mean for a mathematical object to exist?<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a></p>
+<h4 id="what-does-it-mean-for-an-abstract-object-to-exist"><span class="section_number">2.10.1</span><span class="section_title">What does it mean for an abstract object to exist?</span></h4>
+<p>Is software development applied metaphysics?<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a><a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a></p>
+<p>Theory of abstract objects<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a></p>
+<p>What does it mean for a mathematical object to exist?<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a></p>
 <p>It is simple to define a mathematical object.</p>
 <p>Describability does not imply existence. Imaginability does not imply existence.</p>
-<p>Whether anything exists depends on how we interpret &quot;thing&quot; and &quot;exist&quot;. For example, if by &quot;unicorn&quot; we mean horned horse, and by &quot;exist&quot; we mean to have material existence, then no, unicorns do not exist. If by &quot;exist&quot; we mean to be imaginable, then yes, unicorns do exist. What is a unicorn? If we transplant a horn onto a horse, would it be a unicorn? Must a unicorn be a unicorn by birth? It is conceivable to draw unicorns. A search on the Internet produces an image in a few seconds. Does the question &quot;Does unicorn exist?&quot; even make sense at all? Can everybody agree on what a unicorn is and what existence is? What is existence?<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a></p>
-<h4 id="abstract-objects-concrete-consequences"><span class="section_number">2.7.2</span><span class="section_title">Abstract objects, concrete consequences</span></h4>
+<p>Whether anything exists depends on how we interpret &quot;thing&quot; and &quot;exist&quot;. For example, if by &quot;unicorn&quot; we mean horned horse, and by &quot;exist&quot; we mean to have material existence, then no, unicorns do not exist. If by &quot;exist&quot; we mean to be imaginable, then yes, unicorns do exist. What is a unicorn? If we transplant a horn onto a horse, would it be a unicorn? Must a unicorn be a unicorn by birth? It is conceivable to draw unicorns. A search on the Internet produces an image in a few seconds. Does the question &quot;Does unicorn exist?&quot; even make sense at all? Can everybody agree on what a unicorn is and what existence is? What is existence?<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a></p>
+<h4 id="abstract-objects-concrete-consequences"><span class="section_number">2.10.2</span><span class="section_title">Abstract objects, concrete consequences</span></h4>
 <p>Ranking algorithms have real consequences. Algorithms impose onto everyone the value system of the programmers.</p>
-<h3 id="what-is-the-difference-between-ontology-and-metaphysics"><span class="section_number">2.8</span><span class="section_title">What is the difference between ontology and metaphysics?</span></h3>
-<h3 id="owl"><span class="section_number">2.9</span><span class="section_title">OWL</span></h3>
-<p>We shall concern ourselves with the Primer<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a> and not the other documents<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a> for implementors.</p>
+<h3 id="what-is-the-difference-between-ontology-and-metaphysics"><span class="section_number">2.11</span><span class="section_title">What is the difference between ontology and metaphysics?</span></h3>
+<h3 id="owl"><span class="section_number">2.12</span><span class="section_title">OWL</span></h3>
+<p>We shall concern ourselves with the Primer<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a> and not the other documents<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a> for implementors.</p>
 <p>It is straightforward to translate the Functional-style syntax examples in OWL 2 Primer to Prolog.</p>
 <p>OWL and Prolog differs in open vs closed world.</p>
 <p>OWL assumes open world:</p>
@@ -448,19 +548,19 @@ class_instance(color, blue).
 <li>If <span class="math inline">\(p\)</span> is not provable, then <span class="math inline">\(p\)</span> is false.</li>
 </ul>
 <p>We can use closed-world assumption in our enterprise software model. If a class is not modeled in the Prolog, then it will not be in the generated Java source code.</p>
-<p>an example of second-order reasoning in OWL<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a></p>
-<h3 id="the-ontology-of-enterprise-web-applications"><span class="section_number">2.10</span><span class="section_title">The ontology of enterprise web applications?</span></h3>
+<p>an example of second-order reasoning in OWL<a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a></p>
+<h3 id="the-ontology-of-enterprise-web-applications"><span class="section_number">2.13</span><span class="section_title">The ontology of enterprise web applications?</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">2.10.1</span><span class="section_title"><a href="#entities">Entities</a></span><span class="word_count">(14w~1m)</span></li>
-<li><span class="section_number">2.10.2</span><span class="section_title"><a href="#properties-extrinsic-properties">Properties (extrinsic properties)</a></span><span class="word_count">(93w~1m)</span></li>
-<li><span class="section_number">2.10.3</span><span class="section_title"><a href="#combining-entities">Combining entities</a></span><span class="word_count">(2w~1m)</span></li>
-<li><span class="section_number">2.10.4</span><span class="section_title"><a href="#mapping-entities-to-storages">Mapping entities to storages</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">2.13.1</span><span class="section_title"><a href="#entities">Entities</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">2.13.2</span><span class="section_title"><a href="#properties-extrinsic-properties">Properties (extrinsic properties)</a></span><span class="word_count">(93w~1m)</span></li>
+<li><span class="section_number">2.13.3</span><span class="section_title"><a href="#combining-entities">Combining entities</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">2.13.4</span><span class="section_title"><a href="#mapping-entities-to-storages">Mapping entities to storages</a></span><span class="word_count">(4w~1m)</span></li>
 </ul>
 </div>
-<h4 id="entities"><span class="section_number">2.10.1</span><span class="section_title">Entities</span></h4>
+<h4 id="entities"><span class="section_number">2.13.1</span><span class="section_title">Entities</span></h4>
 <p>An <em>entity</em> is something that has identity. Every entity is distinguishable from other entities.</p>
-<h4 id="properties-extrinsic-properties"><span class="section_number">2.10.2</span><span class="section_title">Properties (extrinsic properties)</span></h4>
+<h4 id="properties-extrinsic-properties"><span class="section_number">2.13.2</span><span class="section_title">Properties (extrinsic properties)</span></h4>
 <p>A <em>property</em> of an entity is something that makes the entity what it is.</p>
 <p>In software modeling, properties are usually extrinsic properties.</p>
 <p>An extrinsic property of an entity is something we give to the entity, not something that comes with the entity.</p>
@@ -471,71 +571,55 @@ class_instance(color, blue).
 </ul>
 <p>A <em>property</em> is a function from entity E to value V.</p>
 <p><a href="https://en.wikipedia.org/wiki/Intrinsic_and_extrinsic_properties">https://en.wikipedia.org/wiki/Intrinsic_and_extrinsic_properties</a></p>
-<h4 id="combining-entities"><span class="section_number">2.10.3</span><span class="section_title">Combining entities</span></h4>
-<h4 id="mapping-entities-to-storages"><span class="section_number">2.10.4</span><span class="section_title">Mapping entities to storages</span></h4>
-<h3 id="rdf-triples"><span class="section_number">2.11</span><span class="section_title">RDF triples</span></h3>
+<h4 id="combining-entities"><span class="section_number">2.13.3</span><span class="section_title">Combining entities</span></h4>
+<h4 id="mapping-entities-to-storages"><span class="section_number">2.13.4</span><span class="section_title">Mapping entities to storages</span></h4>
+<h3 id="rdf-triples"><span class="section_number">2.14</span><span class="section_title">RDF triples</span></h3>
 <p>Similar concepts:</p>
 <ul>
 <li>subject-predicate-object in Semantic-Web RDF</li>
 <li>object-property-value in philosophical ontology</li>
 <li>entity-attribute-value in computer programming</li>
 </ul>
-<h3 id="objects"><span class="section_number">2.12</span><span class="section_title">Objects</span></h3>
+<h3 id="objects"><span class="section_number">2.15</span><span class="section_title">Objects</span></h3>
 <p>An object has identity. Two objects may have the same properties, but if their ObjectId differs, then they are not identical.</p>
-<h2 id="ontology-engineering"><span class="section_number">3</span><span class="section_title">Ontology engineering</span></h2>
-<p>For introduction, see Marek Obitko's 2007 tutorial &quot;Introduction to Ontologies and Semantic Web&quot;<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a></p>
-<p>We shall begin to design an ontology by formulating the <em>competency questions</em> <span class="citation" data-cites="noy2001ontology">[<a href="#ref-noy2001ontology">10</a>]</span>: the questions that the ontology should be able to answer.</p>
-<p>For example, accounting system competency questions:</p>
-<ul>
-<li>What is our balance sheet this year? (This is a lot of questions: What is our assets this year, what is our liabilities this year, etc.)</li>
-<li>How much profit/loss do we make this year?</li>
-<li>How much tax does the government expect to racketeer from me this year?</li>
-</ul>
-<p>Smith 2006 &quot;Against Idiosyncrasy in Ontology Development&quot; <span class="citation" data-cites="smith2006against">[<a href="#ref-smith2006against">12</a>]</span></p>
-<p>The end goal of an accounting ontology is for reporting, auditing, automation, calculation, and integration.</p>
-<p>For example, hotel supply chain management tool competency questions:</p>
-<ul>
-<li>Should we restock property P?
-<ul>
-<li>What is the current stock level at property P?</li>
-<li>How many rooms do property P have?</li>
-<li>When do we expect property P to run out of stock?</li>
-</ul></li>
-<li>When did a property experience stock-outs?</li>
-</ul>
-<p>Slide 6: five ways to represent knowledge<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a></p>
-<p>Should we teach ontology design with wine examples?</p>
-<p>Ontology Development Pitfalls<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a></p>
-<p>One source of confusion is the many meanings of the copula.<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a></p>
-<p>Ontology of opinions? Relationship between a person and an opinion: approve, disapprove, unaware, indifferent, impartial, ignorant. The sentiment of an opinion is either positive, neutral, or negative.</p>
-<p>Ontology is not only taxonomy/classification/categorization. What is the difference between taxonomy, classification, and categorization? What is the difference between taxon, class, and category?</p>
-<p>What is the difference between ontology and model? Ontology = model + meta-model + logic?</p>
-<p>UEML/GEM vs OWL <span class="citation" data-cites="khan2011transformation">[<a href="#ref-khan2011transformation">8</a>]</span>. Enterprise software model (UEML, GEM) vs enterprise software ontology (on OWL perhaps)?</p>
-<h2 id="bending-prolog-to-my-will"><span class="section_number">4</span><span class="section_title">Bending Prolog to my will</span></h2>
+<h3 id="object-role-modeling"><span class="section_number">2.16</span><span class="section_title">Object-role modeling</span></h3>
+<p><a href="https://en.wikipedia.org/wiki/Object-role_modeling">https://en.wikipedia.org/wiki/Object-role_modeling</a></p>
+<p>Should we care about attribute-freeness?</p>
+<h3 id="logic-of-lists-or-sequences-ordered-collections"><span class="section_number">2.17</span><span class="section_title">Logic of lists or sequences (ordered collections)</span></h3>
+<p>Suppose that we want to write a Prolog knowledge base that models the sequence [a,b,c].</p>
+<p>With numbers, it is easy to model an ordered collection. We can piggyback on the natural ordering of the numbers.</p>
+<pre class="example"><code>list(1, a).
+list(2, b).
+list(3, c).
+</code></pre>
+<p>Without numbers, it is harder to model an ordered collection. This only works for finite sequences.</p>
+<pre class="example"><code>lt0(a, b).
+lt0(b, c).
+lt(A, C) :- lt0(A, B), lt(B, C).
+</code></pre>
+<h2 id="bending-prolog-to-my-will"><span class="section_number">3</span><span class="section_title">Bending Prolog to my will</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">4.1</span><span class="section_title"><a href="#componentmodule-system-socket-plug-metaphor">Component/module system, socket-plug metaphor</a></span><span class="word_count">(127w~1m)</span></li>
-<li><span class="section_number">4.2</span><span class="section_title"><a href="#using-prolog-for-model-driven-enterprise-software-engineering">Using Prolog for model-driven enterprise software engineering</a></span><span class="word_count">(59w~1m)</span></li>
-<li><span class="section_number">4.3</span><span class="section_title"><a href="#bottom-up-vs-top-down">Bottom-up vs top-down</a></span><span class="word_count">(37w~1m)</span></li>
-<li><span class="section_number">4.4</span><span class="section_title"><a href="#modeling-the-application-in-prolog">Modeling the application in Prolog</a></span><span class="word_count">(15w~1m)</span></li>
-<li><span class="section_number">4.5</span><span class="section_title"><a href="#the-easy-things-modeling-static-structures">The easy things: Modeling static structures</a></span><span class="word_count">(53w~1m)</span></li>
-<li><span class="section_number">4.6</span><span class="section_title"><a href="#the-hard-thing-abstracting-both-java-and-sql-into-er-and-pal">The hard thing: abstracting both Java and SQL into ER and PAL?</a></span><span class="word_count">(22w~1m)</span></li>
-<li><span class="section_number">4.7</span><span class="section_title"><a href="#the-even-harder-thing-combining-them-all-into-a-coherent-abstraction">The even harder thing: combining them all into a coherent abstraction</a></span><span class="word_count">(11w~1m)</span></li>
-<li><span class="section_number">4.8</span><span class="section_title"><a href="#modeling-a-web-application">Modeling a web application?</a></span><span class="word_count">(240w~2m)</span></li>
-<li><span class="section_number">4.9</span><span class="section_title"><a href="#the-meaninginterpretation-of-prolog-programs">The meaning/interpretation of Prolog programs</a></span><span class="word_count">(417w~3m)</span></li>
-<li><span class="section_number">4.10</span><span class="section_title"><a href="#the-procedural-provability-logic-interpretation-of-prolog-horn-clauses">The procedural-provability-logic interpretation of Prolog Horn clauses</a></span><span class="word_count">(58w~1m)</span></li>
-<li><span class="section_number">4.11</span><span class="section_title"><a href="#writing-enterprise-web-applications">Writing enterprise web applications?</a></span><span class="word_count">(135w~1m)</span></li>
-<li><span class="section_number">4.12</span><span class="section_title"><a href="#related-fields">Related fields</a></span><span class="word_count">(7w~1m)</span></li>
-<li><span class="section_number">4.13</span><span class="section_title"><a href="#nonsensical-models-due-to-violation-of-simplifying-assumption">Nonsensical models due to violation of simplifying assumption</a></span><span class="word_count">(47w~1m)</span></li>
-<li><span class="section_number">4.14</span><span class="section_title"><a href="#ontology">Ontology?</a></span><span class="word_count">(131w~1m)</span></li>
-<li><span class="section_number">4.15</span><span class="section_title"><a href="#a-note-on-temporal-modeling">A note on temporal modeling</a></span><span class="word_count">(27w~1m)</span></li>
-<li><span class="section_number">4.16</span><span class="section_title"><a href="#one-property-one-predicate-representation-of-objects">One-property-one-predicate representation of objects</a></span><span class="word_count">(38w~1m)</span></li>
-<li><span class="section_number">4.17</span><span class="section_title"><a href="#a-relation-can-be-thought-as-an-interpretation-of-function-terms-or-how-prolog-is-ideal-for-writing-dsls">A relation can be thought as an interpretation of function terms, or, how Prolog is ideal for writing DSLs</a></span><span class="word_count">(63w~1m)</span></li>
-<li><span class="section_number">4.18</span><span class="section_title"><a href="#abstractions">Abstractions</a></span><span class="word_count">(30w~1m)</span></li>
-<li><span class="section_number">4.19</span><span class="section_title"><a href="#logic-of-objects">Logic of objects</a></span><span class="word_count">(308w~2m)</span></li>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#componentmodule-system-socket-plug-metaphor">Component/module system, socket-plug metaphor</a></span><span class="word_count">(127w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#using-prolog-for-model-driven-enterprise-software-engineering">Using Prolog for model-driven enterprise software engineering</a></span><span class="word_count">(59w~1m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#bottom-up-vs-top-down">Bottom-up vs top-down</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#modeling-the-application-in-prolog">Modeling the application in Prolog</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#overview-design-of-the-meta-programming-system">Overview, design of the meta-programming system</a></span><span class="word_count">(94w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#modeling-a-web-application">Modeling a web application?</a></span><span class="word_count">(240w~2m)</span></li>
+<li><span class="section_number">3.7</span><span class="section_title"><a href="#the-meaninginterpretation-of-prolog-programs">The meaning/interpretation of Prolog programs</a></span><span class="word_count">(422w~3m)</span></li>
+<li><span class="section_number">3.8</span><span class="section_title"><a href="#the-procedural-provability-logic-interpretation-of-prolog-horn-clauses">The procedural-provability-logic interpretation of Prolog Horn clauses</a></span><span class="word_count">(58w~1m)</span></li>
+<li><span class="section_number">3.9</span><span class="section_title"><a href="#writing-enterprise-web-applications">Writing enterprise web applications?</a></span><span class="word_count">(135w~1m)</span></li>
+<li><span class="section_number">3.10</span><span class="section_title"><a href="#related-fields">Related fields</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">3.11</span><span class="section_title"><a href="#nonsensical-models-due-to-violation-of-simplifying-assumption">Nonsensical models due to violation of simplifying assumption</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">3.12</span><span class="section_title"><a href="#ontology">Ontology?</a></span><span class="word_count">(131w~1m)</span></li>
+<li><span class="section_number">3.13</span><span class="section_title"><a href="#a-note-on-temporal-modeling">A note on temporal modeling</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">3.14</span><span class="section_title"><a href="#one-property-one-predicate-representation-of-objects">One-property-one-predicate representation of objects</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">3.15</span><span class="section_title"><a href="#a-relation-can-be-thought-as-an-interpretation-of-function-terms-or-how-prolog-is-ideal-for-writing-dsls">A relation can be thought as an interpretation of function terms, or, how Prolog is ideal for writing DSLs</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">3.16</span><span class="section_title"><a href="#abstractions">Abstractions</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">3.17</span><span class="section_title"><a href="#logic-of-objects">Logic of objects</a></span><span class="word_count">(307w~2m)</span></li>
 </ul>
 </div>
-<h3 id="componentmodule-system-socket-plug-metaphor"><span class="section_number">4.1</span><span class="section_title">Component/module system, socket-plug metaphor</span></h3>
+<h3 id="componentmodule-system-socket-plug-metaphor"><span class="section_number">3.1</span><span class="section_title">Component/module system, socket-plug metaphor</span></h3>
 <p>I need a component system for programming in the large. Prolog module system is a building block, but Prolog modules by themselves are not enough. Socket-and-plug metaphor fits nicely? The name tells it all: a socket is a female connector and a plug is a male connector, and we connect plugs to sockets, and Prolog should complain if it sees a socket that is connected not exactly once.</p>
 <p>An input is a multifile predicate.</p>
 <p>A pin is a Name/Arity term.</p>
@@ -544,8 +628,8 @@ class_instance(color, blue).
 <p>A module may have multiple plugs and sockets.</p>
 <p>Pins are matched by NameArity. The ordering of pins does not matter.</p>
 <p>A Prolog module system is either <em>predicate-based</em> or <em>atom-based</em>. XSB is atom-based. SWI is predicate-based. GNU Prolog does not have a module system.</p>
-<h3 id="using-prolog-for-model-driven-enterprise-software-engineering"><span class="section_number">4.2</span><span class="section_title">Using Prolog for model-driven enterprise software engineering</span></h3>
-<p>The system is being sketched at a directory in our Git repository<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a>. This document is a sketch of that system. Not much has been implemented.</p>
+<h3 id="using-prolog-for-model-driven-enterprise-software-engineering"><span class="section_number">3.2</span><span class="section_title">Using Prolog for model-driven enterprise software engineering</span></h3>
+<p>The system is being sketched at a directory in our Git repository<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a>. This document is a sketch of that system. Not much has been implemented.</p>
 <p>The expected workflow:</p>
 <ul>
 <li>Model the application in Prolog.</li>
@@ -555,10 +639,10 @@ class_instance(color, blue).
 <li>Interpretation: Execute the model in Prolog.</li>
 </ul></li>
 </ul>
-<h3 id="bottom-up-vs-top-down"><span class="section_number">4.3</span><span class="section_title">Bottom-up vs top-down</span></h3>
+<h3 id="bottom-up-vs-top-down"><span class="section_number">3.3</span><span class="section_title">Bottom-up vs top-down</span></h3>
 <p>The bottom-up way is to start with Java and SQL, and abstract both Java and SQL into fUML/ALF or something else, etc.</p>
 <p>The top-down way is to start with the business users' mental model, and …?</p>
-<h3 id="modeling-the-application-in-prolog"><span class="section_number">4.4</span><span class="section_title">Modeling the application in Prolog</span></h3>
+<h3 id="modeling-the-application-in-prolog"><span class="section_number">3.4</span><span class="section_title">Modeling the application in Prolog</span></h3>
 <p>Clarify the ontology first. The model follows from the ontology.</p>
 <p>For example:</p>
 <pre class="example"><code>class(employee).
@@ -570,24 +654,20 @@ class(department).
 relation(work_at, [employee,department]).
 % ...
 </code></pre>
-<h3 id="the-easy-things-modeling-static-structures"><span class="section_number">4.5</span><span class="section_title">The easy things: Modeling static structures</span></h3>
-<p>A Java program corresponds to one JVM instance. A Java program is a set of source codes and dependencies.</p>
-<p>A model of a Java program is straightforward: class/1, class_package_name/2, class_name/2, class_field/2, field_name/2, field_type/2, and so on.</p>
-<p>A model of relational databases is straightforward: table/1, table_name/2, table_column/2, column_name/2, and so on.</p>
-<h3 id="the-hard-thing-abstracting-both-java-and-sql-into-er-and-pal"><span class="section_number">4.6</span><span class="section_title">The hard thing: abstracting both Java and SQL into ER and PAL?</span></h3>
-<p>ER = entity-relationship</p>
-<p>PAL = procedural action language; similar to fUML ALF</p>
-<h3 id="the-even-harder-thing-combining-them-all-into-a-coherent-abstraction"><span class="section_number">4.7</span><span class="section_title">The even harder thing: combining them all into a coherent abstraction</span></h3>
-<h3 id="modeling-a-web-application"><span class="section_number">4.8</span><span class="section_title">Modeling a web application?</span></h3>
+<h3 id="overview-design-of-the-meta-programming-system"><span class="section_number">3.5</span><span class="section_title">Overview, design of the meta-programming system</span></h3>
+<p>The easy things: Modeling static structures. A Java program corresponds to one JVM instance. A Java program is a set of source codes and dependencies. A model of a Java program is straightforward: class/1, class_package_name/2, class_name/2, class_field/2, field_name/2, field_type/2, and so on. A model of relational databases is straightforward: table/1, table_name/2, table_column/2, column_name/2, and so on.</p>
+<p>The hard thing: abstracting both Java and SQL into ER and PAL?. ER = entity-relationship. PAL = procedural action language; similar to fUML ALF.</p>
+<p>The even harder thing: combining them all into a coherent abstraction.</p>
+<h3 id="modeling-a-web-application"><span class="section_number">3.6</span><span class="section_title">Modeling a web application?</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">4.8.1</span><span class="section_title"><a href="#picking-a-modeling-language">Picking a modeling language</a></span><span class="word_count">(41w~1m)</span></li>
-<li><span class="section_number">4.8.2</span><span class="section_title"><a href="#example-of-modeling-web-application">Example of modeling web application</a></span><span class="word_count">(187w~1m)</span></li>
-<li><span class="section_number">4.8.3</span><span class="section_title"><a href="#zotonic">Zotonic?</a></span><span class="word_count">(10w~1m)</span></li>
-<li><span class="section_number">4.8.4</span><span class="section_title"><a href="#urweb">Ur/Web?</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">3.6.1</span><span class="section_title"><a href="#picking-a-modeling-language">Picking a modeling language</a></span><span class="word_count">(41w~1m)</span></li>
+<li><span class="section_number">3.6.2</span><span class="section_title"><a href="#example-of-modeling-web-application">Example of modeling web application</a></span><span class="word_count">(187w~1m)</span></li>
+<li><span class="section_number">3.6.3</span><span class="section_title"><a href="#zotonic">Zotonic?</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">3.6.4</span><span class="section_title"><a href="#urweb">Ur/Web?</a></span><span class="word_count">(2w~1m)</span></li>
 </ul>
 </div>
-<h4 id="picking-a-modeling-language"><span class="section_number">4.8.1</span><span class="section_title">Picking a modeling language</span></h4>
+<h4 id="picking-a-modeling-language"><span class="section_number">3.6.1</span><span class="section_title">Picking a modeling language</span></h4>
 <p>I have narrowed down:</p>
 <ul>
 <li>a relational language such as Prolog, Kanren, Mercury</li>
@@ -599,7 +679,7 @@ relation(work_at, [employee,department]).
 <li><a href="https://en.wikipedia.org/wiki/Modeling_language">https://en.wikipedia.org/wiki/Modeling_language</a></li>
 </ul>
 <p>What is AsmL? <a href="https://cs.wmich.edu/~OODA/translate.html">https://cs.wmich.edu/~OODA/translate.html</a></p>
-<h4 id="example-of-modeling-web-application"><span class="section_number">4.8.2</span><span class="section_title">Example of modeling web application</span></h4>
+<h4 id="example-of-modeling-web-application"><span class="section_number">3.6.2</span><span class="section_title">Example of modeling web application</span></h4>
 <p>What do we think a web application is?</p>
 <p>What do users think? What do users care? What are the users' mental model? How can we formalize the users' mental model, and use that formal model to develop an application with less effort?</p>
 <p>Users think of an app as a <em>tool</em>, like a complicated hammer:</p>
@@ -612,19 +692,19 @@ relation(work_at, [employee,department]).
 <p>We use a Prolog atom to <em>refer</em> to an <em>entity</em> (something that is unique, has an identity, is identical only to itself, is not identical to any other entity). Thus a Prolog atom is similar to an English <em>word</em>, and the Prolog knowledge base <em>gives meaning</em> to that atom.</p>
 <p>The formula <code>application__sql_table(A,T)</code> means that application A uses SQL table T.</p>
 <p>The formula <code>application__page(A,P)</code> means the application A serves page P.</p>
-<h4 id="zotonic"><span class="section_number">4.8.3</span><span class="section_title">Zotonic?</span></h4>
+<h4 id="zotonic"><span class="section_number">3.6.3</span><span class="section_title">Zotonic?</span></h4>
 <p>Zotonic's authors at least has thought about its ontology <a href="http://zotonic.com/page/618/flexible-datamodel">http://zotonic.com/page/618/flexible-datamodel</a></p>
-<h4 id="urweb"><span class="section_number">4.8.4</span><span class="section_title">Ur/Web?</span></h4>
+<h4 id="urweb"><span class="section_number">3.6.4</span><span class="section_title">Ur/Web?</span></h4>
 <p>Language-level integration.</p>
-<h3 id="the-meaninginterpretation-of-prolog-programs"><span class="section_number">4.9</span><span class="section_title">The meaning/interpretation of Prolog programs</span></h3>
+<h3 id="the-meaninginterpretation-of-prolog-programs"><span class="section_number">3.7</span><span class="section_title">The meaning/interpretation of Prolog programs</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">4.9.1</span><span class="section_title"><a href="#the-meanings-of-a-horn-clause">The meanings of a Horn clause</a></span><span class="word_count">(200w~1m)</span></li>
-<li><span class="section_number">4.9.2</span><span class="section_title"><a href="#epistemic-interpretation-of-prolog-programs-failure-as-ignorance">Epistemic interpretation of Prolog programs: Failure as ignorance</a></span><span class="word_count">(154w~1m)</span></li>
-<li><span class="section_number">4.9.3</span><span class="section_title"><a href="#some-prolog-tricks">Some Prolog tricks?</a></span><span class="word_count">(61w~1m)</span></li>
+<li><span class="section_number">3.7.1</span><span class="section_title"><a href="#the-meanings-of-a-horn-clause">The meanings of a Horn clause</a></span><span class="word_count">(200w~1m)</span></li>
+<li><span class="section_number">3.7.2</span><span class="section_title"><a href="#epistemic-interpretation-of-prolog-programs-failure-as-ignorance">Epistemic interpretation of Prolog programs: Failure as ignorance</a></span><span class="word_count">(159w~1m)</span></li>
+<li><span class="section_number">3.7.3</span><span class="section_title"><a href="#some-prolog-tricks">Some Prolog tricks?</a></span><span class="word_count">(61w~1m)</span></li>
 </ul>
 </div>
-<h4 id="the-meanings-of-a-horn-clause"><span class="section_number">4.9.1</span><span class="section_title">The meanings of a Horn clause</span></h4>
+<h4 id="the-meanings-of-a-horn-clause"><span class="section_number">3.7.1</span><span class="section_title">The meanings of a Horn clause</span></h4>
 <p>A Horn clause in Prolog looks like <code>A :- B</code>.</p>
 <p>A Horn clause can be thought of in several ways.</p>
 <p>The operational meaning of <code>A :- B1, ..., Bn</code> is that calling the procedure A causes B1, …, Bn to be called in that order. This is the actual meaning of Prolog programs. All other meanings are useful fantasies.</p>
@@ -641,28 +721,32 @@ b.
 </code></pre>
 <p>Enhancing the declarativeness of Prolog requires <em>memoization</em>.</p>
 <p>What is the relationship between logic programming, relational programming, logic, Horn clauses, theorem proving, searching, and backtracking?</p>
-<h4 id="epistemic-interpretation-of-prolog-programs-failure-as-ignorance"><span class="section_number">4.9.2</span><span class="section_title">Epistemic interpretation of Prolog programs: Failure as ignorance</span></h4>
-<p>Sometimes a Prolog program should be interpreted epistemically, in which Prolog's <em>fail</em> is treated as <em>unknown</em> instead of <em>false</em>. Succeeding to prove a goal G means that we know that G is true. Failing to prove a goal G means that we do not know anything about G.</p>
+<h4 id="epistemic-interpretation-of-prolog-programs-failure-as-ignorance"><span class="section_number">3.7.2</span><span class="section_title">Epistemic interpretation of Prolog programs: Failure as ignorance</span></h4>
+<p>Sometimes a Prolog program should be interpreted epistemically, in which Prolog's <em>fail</em> is treated as <em>unknown</em> instead of <em>false</em>. In this interpretation:</p>
+<ul>
+<li>Succeeding to prove a goal G means that we know that G is true.</li>
+<li>Failing to prove a goal G means that we do not know anything about G.</li>
+</ul>
+<p>There are two negations: There is a difference between not/1 and \+/1. In the epistemic interpretation, &quot;\+&quot; should be read as &quot;unknown&quot;.</p>
 <p><code>\+G</code> means we do not know G.</p>
 <p>Succeeding to prove not(G) means that we know that G is false.</p>
 <pre class="example"><code>:- multifile not/1.
 </code></pre>
-<p>There is a difference between not/1 and \+/1. In the epistemic interpretation, &quot;\+&quot; should be read as &quot;unknown&quot;.</p>
 <p>We waive the law of excluded middle. In our Prolog program it does not hold that G ; not(G).</p>
 <p>Suppose is_big(john). If is_big(X) fails, it simply means that we don't know whether X is big.</p>
 <p>Suppose that is_big(john,true) means we know that John is big. And is_big(john,false) means we know that John is not big. If is_big(john,_) fails, then we don't know whether John is big or not.</p>
-<h4 id="some-prolog-tricks"><span class="section_number">4.9.3</span><span class="section_title">Some Prolog tricks?</span></h4>
+<h4 id="some-prolog-tricks"><span class="section_number">3.7.3</span><span class="section_title">Some Prolog tricks?</span></h4>
 <p>Prolog <code>\+</code> can be used to limit the scope of unification, although not the scope of the variable itself. This exploits the fact that throw/1 does not backtrack in the way fail/0 does.</p>
 <p>When using Prolog procedurally, we often want throw/1 instead of fail/0.</p>
 <p>It makes more sense to design a procedural DSL on Prolog than to use Prolog itself procedurally.</p>
-<h3 id="the-procedural-provability-logic-interpretation-of-prolog-horn-clauses"><span class="section_number">4.10</span><span class="section_title">The procedural-provability-logic interpretation of Prolog Horn clauses</span></h3>
+<h3 id="the-procedural-provability-logic-interpretation-of-prolog-horn-clauses"><span class="section_number">3.8</span><span class="section_title">The procedural-provability-logic interpretation of Prolog Horn clauses</span></h3>
 <p><code>p :- q, r</code> can be interpreted as &quot;to prove p, first prove q, and then prove r&quot;.</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">4.10.1</span><span class="section_title"><a href="#problem-horn-clauses-and-biimplications">Problem: Horn clauses and biimplications</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">3.8.1</span><span class="section_title"><a href="#problem-horn-clauses-and-biimplications">Problem: Horn clauses and biimplications</a></span><span class="word_count">(35w~1m)</span></li>
 </ul>
 </div>
-<h4 id="problem-horn-clauses-and-biimplications"><span class="section_number">4.10.1</span><span class="section_title">Problem: Horn clauses and biimplications</span></h4>
+<h4 id="problem-horn-clauses-and-biimplications"><span class="section_number">3.8.1</span><span class="section_title">Problem: Horn clauses and biimplications</span></h4>
 <p>Classical propositional logic formula <span class="math inline">\( a \iff b \)</span> (which is equivalent to <span class="math inline">\((a \to b) \wedge (b \to a)\)</span>) does <em>not</em> translate to this Prolog program:</p>
 <pre class="example"><code>a :- b.
 b :- a.
@@ -677,20 +761,20 @@ a(H) :- \+ member(a,H), b(H).
 b(H) :- member(b,H).
 b(H) :- \+ member(b,H), a(H).
 </code></pre>
-<h3 id="writing-enterprise-web-applications"><span class="section_number">4.11</span><span class="section_title">Writing enterprise web applications?</span></h3>
+<h3 id="writing-enterprise-web-applications"><span class="section_number">3.9</span><span class="section_title">Writing enterprise web applications?</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">4.11.1</span><span class="section_title"><a href="#comparison-between-ontology-relational-programming-and-database-programming">Comparison between ontology, relational programming, and database programming</a></span><span class="word_count">(30w~1m)</span></li>
-<li><span class="section_number">4.11.2</span><span class="section_title"><a href="#knowledge-representation-and-software-specification">Knowledge representation and software specification</a></span><span class="word_count">(53w~1m)</span></li>
-<li><span class="section_number">4.11.3</span><span class="section_title"><a href="#logic-programming-vs-theorem-proving">Logic programming vs theorem proving</a></span><span class="word_count">(5w~1m)</span></li>
-<li><span class="section_number">4.11.4</span><span class="section_title"><a href="#swi-prolog-postgresql-and-odbc">SWI-Prolog, PostgreSQL, and ODBC</a></span><span class="word_count">(44w~1m)</span></li>
-<li><span class="section_number">4.11.5</span><span class="section_title"><a href="#deductive-databases-and-datalog">Deductive databases and Datalog?</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">3.9.1</span><span class="section_title"><a href="#comparison-between-ontology-relational-programming-and-database-programming">Comparison between ontology, relational programming, and database programming</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">3.9.2</span><span class="section_title"><a href="#knowledge-representation-and-software-specification">Knowledge representation and software specification</a></span><span class="word_count">(53w~1m)</span></li>
+<li><span class="section_number">3.9.3</span><span class="section_title"><a href="#logic-programming-vs-theorem-proving">Logic programming vs theorem proving</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">3.9.4</span><span class="section_title"><a href="#swi-prolog-postgresql-and-odbc">SWI-Prolog, PostgreSQL, and ODBC</a></span><span class="word_count">(44w~1m)</span></li>
+<li><span class="section_number">3.9.5</span><span class="section_title"><a href="#deductive-databases-and-datalog">Deductive databases and Datalog?</a></span><span class="word_count">(4w~1m)</span></li>
 </ul>
 </div>
-<h4 id="comparison-between-ontology-relational-programming-and-database-programming"><span class="section_number">4.11.1</span><span class="section_title">Comparison between ontology, relational programming, and database programming</span></h4>
+<h4 id="comparison-between-ontology-relational-programming-and-database-programming"><span class="section_number">3.9.1</span><span class="section_title">Comparison between ontology, relational programming, and database programming</span></h4>
 <p>Open World Assumption vs Closed World Assumption <a href="http://www.mkbergman.com/852/the-open-world-assumption-elephant-in-the-room/">http://www.mkbergman.com/852/the-open-world-assumption-elephant-in-the-room/</a></p>
 <p>How do we combine closed-world assumption (logic programming / relational database) and open-world assumption (web ontology)?</p>
-<h4 id="knowledge-representation-and-software-specification"><span class="section_number">4.11.2</span><span class="section_title">Knowledge representation and software specification</span></h4>
+<h4 id="knowledge-representation-and-software-specification"><span class="section_number">3.9.2</span><span class="section_title">Knowledge representation and software specification</span></h4>
 <ol>
 <li><p>Their relationships</p>
 <ul>
@@ -710,24 +794,24 @@ b(H) :- \+ member(b,H), a(H).
 <li>lightweight executable mathematics <a href="https://www.cl.cam.ac.uk/~pes20/lem/">https://www.cl.cam.ac.uk/~pes20/lem/</a></li>
 </ul></li>
 </ol>
-<h4 id="logic-programming-vs-theorem-proving"><span class="section_number">4.11.3</span><span class="section_title">Logic programming vs theorem proving</span></h4>
+<h4 id="logic-programming-vs-theorem-proving"><span class="section_number">3.9.3</span><span class="section_title">Logic programming vs theorem proving</span></h4>
 <ul>
 <li><a href="https://stackoverflow.com/questions/36335633/difference-between-logic-programming-and-automated-theorem-proving">https://stackoverflow.com/questions/36335633/difference-between-logic-programming-and-automated-theorem-proving</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Automated_theorem_proving">https://en.wikipedia.org/wiki/Automated_theorem_proving</a></li>
 </ul>
-<h4 id="swi-prolog-postgresql-and-odbc"><span class="section_number">4.11.4</span><span class="section_title">SWI-Prolog, PostgreSQL, and ODBC</span></h4>
+<h4 id="swi-prolog-postgresql-and-odbc"><span class="section_number">3.9.4</span><span class="section_title">SWI-Prolog, PostgreSQL, and ODBC</span></h4>
 <p>Install the Ubuntu 14.04 package <code>odbc-postgresql</code>.</p>
 <p>I want my application to self-contain its configuration. I don't configure ODBC INI files.</p>
 <p>ODBC Data Source Name (DSN) connection string</p>
 <p>Relevant commands: <code>odbcinst -j</code></p>
 <p>The file <code>/etc/odbcinst.ini</code> contains a list of driver names.</p>
 <p><a href="http://www.swi-prolog.org/pldoc/doc_for?object=section(%2527packages/cql.html%2527)">SWI-Prolog CQL documentation</a> doesn't inspire confidence.</p>
-<h4 id="deductive-databases-and-datalog"><span class="section_number">4.11.5</span><span class="section_title">Deductive databases and Datalog?</span></h4>
-<h3 id="related-fields"><span class="section_number">4.12</span><span class="section_title">Related fields</span></h3>
+<h4 id="deductive-databases-and-datalog"><span class="section_number">3.9.5</span><span class="section_title">Deductive databases and Datalog?</span></h4>
+<h3 id="related-fields"><span class="section_number">3.10</span><span class="section_title">Related fields</span></h3>
 <p>Formal methods, formal verification, model checking</p>
-<h3 id="nonsensical-models-due-to-violation-of-simplifying-assumption"><span class="section_number">4.13</span><span class="section_title">Nonsensical models due to violation of simplifying assumption</span></h3>
+<h3 id="nonsensical-models-due-to-violation-of-simplifying-assumption"><span class="section_number">3.11</span><span class="section_title">Nonsensical models due to violation of simplifying assumption</span></h3>
 <p>It is possible to have a record in which an employee's join date precedes the date of birth. But it is physically impossible for an employee to join the company before the employee is born. Every model has simplifying assumptions.</p>
-<h3 id="ontology"><span class="section_number">4.14</span><span class="section_title">Ontology?</span></h3>
+<h3 id="ontology"><span class="section_number">3.12</span><span class="section_title">Ontology?</span></h3>
 <p>A class C has properties P1, P2, P3, etc. How do we represent an <em>instance</em> of C in Prolog? There are at least two ways: <em>many-predicates</em> and <em>one-term</em>.</p>
 <p>The <em>many-predicates</em> representation makes it easy to add derived properties. One predicate represents one property. This is similar to 6NF (sixth normal form) in database theory.</p>
 <pre class="example"><code>c_prop1(InstanceId, Prop1).
@@ -757,19 +841,19 @@ c_prop3(InstanceId, Prop3) :- c(InstanceId, Props), member(prop3-Prop3, Props).
 <li>A module may internally specify objects in the one-term (denormal-form) style, but should only export predicates in the many-predicates (normal-form) style.</li>
 <li>A translation should not import denormal-form predicates.</li>
 </ul>
-<h3 id="a-note-on-temporal-modeling"><span class="section_number">4.15</span><span class="section_title">A note on temporal modeling</span></h3>
+<h3 id="a-note-on-temporal-modeling"><span class="section_number">3.13</span><span class="section_title">A note on temporal modeling</span></h3>
 <p><code>employee_department/2</code> cannot keep track of movement history. If it is important to keep track of employee movement, we should use <code>employee_join_department/3</code> and <code>employee_leave_department/3</code>.</p>
 <pre class="example"><code>employee_department(?EmpId,?DepId)
 employee_join_department(?EmpId,?DepId,?Time)
 employee_leave_department(?EmpId,?DepId,?Time)
 </code></pre>
-<h3 id="one-property-one-predicate-representation-of-objects"><span class="section_number">4.16</span><span class="section_title">One-property-one-predicate representation of objects</span></h3>
+<h3 id="one-property-one-predicate-representation-of-objects"><span class="section_number">3.14</span><span class="section_title">One-property-one-predicate representation of objects</span></h3>
 <p>Another core idea is the <em>one-property one-predicate</em> representation, with surrogate primary keys. This enables us to represent objects in Prolog. Objects have identities. Two objects are identical iff their identifiers (primary keys) are equal. Example:</p>
 <pre class="example"><code>person(PersonId)
 person_name(PersonId, Name)
 person_birthdate(PersonId, BirthDate)
 </code></pre>
-<h3 id="a-relation-can-be-thought-as-an-interpretation-of-function-terms-or-how-prolog-is-ideal-for-writing-dsls"><span class="section_number">4.17</span><span class="section_title">A relation can be thought as an interpretation of function terms, or, how Prolog is ideal for writing DSLs</span></h3>
+<h3 id="a-relation-can-be-thought-as-an-interpretation-of-function-terms-or-how-prolog-is-ideal-for-writing-dsls"><span class="section_number">3.15</span><span class="section_title">A relation can be thought as an interpretation of function terms, or, how Prolog is ideal for writing DSLs</span></h3>
 <p>For example, m0/2 and m1/2 give different meanings to the same function term f/1.</p>
 <pre class="example"><code>m0(f(X), Y) :- Y is X+1.
 m1(f(X), Y) :- Y is 2*X.
@@ -784,9 +868,9 @@ exp_val(S, T) :- number(S), !, S = T.
 exp_val(A+B, C) :- string(A), string(B), !, string_concat(A, B, C).
 exp_val(A+B, C) :- number(A), number(B), !, C is A+B.
 </code></pre>
-<h3 id="abstractions"><span class="section_number">4.18</span><span class="section_title">Abstractions</span></h3>
+<h3 id="abstractions"><span class="section_number">3.16</span><span class="section_title">Abstractions</span></h3>
 <p>The system should present the illusion that every system state is as simple as a global variable. A PostgreSQL table is modeled as a global variable whose type is list.</p>
-<h3 id="logic-of-objects"><span class="section_number">4.19</span><span class="section_title">Logic of objects</span></h3>
+<h3 id="logic-of-objects"><span class="section_number">3.17</span><span class="section_title">Logic of objects</span></h3>
 <p>&quot;Mapping Objects to Persistent Predicates&quot; <a href="https://pdfs.semanticscholar.org/f1ec/9e0e24faa1332d0cb60149e1d633b8d2509e.pdf">https://pdfs.semanticscholar.org/f1ec/9e0e24faa1332d0cb60149e1d633b8d2509e.pdf</a></p>
 <p>Should we write our DSL in Twelf instead of Prolog? <a href="http://twelf.org/wiki/LF">http://twelf.org/wiki/LF</a></p>
 <p>&quot;Objects with logic&quot; 1990 <a href="https://dl.acm.org/citation.cfm?id=100368">https://dl.acm.org/citation.cfm?id=100368</a></p>
@@ -804,31 +888,31 @@ exp_val(A+B, C) :- number(A), number(B), !, C is A+B.
 <p>The 1-property-1-predicate representation (is this database in sixth normal form?): person_name(alice,&quot;Alice&quot;). person_pet(alice,cat). person_pet(alice,dog). Note that we do not write person_pets(alice,[cat,dog]). person_name(bob,&quot;Bob&quot;).</p>
 <p>The ontological representation: kind_surrogate_property_value(person,alice,name,&quot;Alice&quot;). kind_surrogate_property_value(person,alice,birthdate,date(1990,1,1)).</p>
 <p>The parameter O serves as an internal name. The equality of that parameter determines the identity of the represented object.</p>
-<p><a href="https://en.wikipedia.org/wiki/Triangle_of_reference">https://en.wikipedia.org/wiki/Triangle_of_reference</a> <a href="http://www.jfsowa.com/ontology/ontometa.htm">http://www.jfsowa.com/ontology/ontometa.htm</a></p>
 <p>Two objects can be equal but not identical.</p>
 <p>A value has no identity. An object has an <em>identity</em>.</p>
 <p>Iff object_property(O,P) is provable, then object O has property P.</p>
-<h2 id="what-mess"><span class="section_number">5</span><span class="section_title">What mess?</span></h2>
+<h2 id="what-mess"><span class="section_number">4</span><span class="section_title">What mess?</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">5.1</span><span class="section_title"><a href="#model-transformation-as-horn-clauses">Model transformation as Horn clauses</a></span><span class="word_count">(51w~1m)</span></li>
-<li><span class="section_number">5.2</span><span class="section_title"><a href="#total-code-generation-from-modelontology">Total code generation from model/ontology</a></span><span class="word_count">(100w~1m)</span></li>
-<li><span class="section_number">5.3</span><span class="section_title"><a href="#mixing-bottom-up-and-top-down">Mixing bottom-up and top-down</a></span><span class="word_count">(172w~1m)</span></li>
-<li><span class="section_number">5.4</span><span class="section_title"><a href="#unifying-several-closely-related-subfields">Unifying several closely-related subfields</a></span><span class="word_count">(30w~1m)</span></li>
-<li><span class="section_number">5.5</span><span class="section_title"><a href="#the-human-aspects-of-the-envisioned-usage-infrastructure-engineers-and-suprastructure-engineers">The human aspects of the envisioned usage: infrastructure engineers and suprastructure engineers</a></span><span class="word_count">(77w~1m)</span></li>
-<li><span class="section_number">5.6</span><span class="section_title"><a href="#language-oriented-programming-domain-specific-languages-dsls">Language-oriented programming, domain-specific languages (DSLs)</a></span><span class="word_count">(48w~1m)</span></li>
-<li><span class="section_number">5.7</span><span class="section_title"><a href="#a-type-system-that-is-an-algebra-of-unary-predicates">A type system that is an algebra of unary predicates</a></span><span class="word_count">(72w~1m)</span></li>
-<li><span class="section_number">5.8</span><span class="section_title"><a href="#software-architecture-of-logic-programs">Software architecture of logic programs?</a></span><span class="word_count">(16w~1m)</span></li>
-<li><span class="section_number">5.9</span><span class="section_title"><a href="#some-kinds-of-software-systems">Some kinds of software systems</a></span><span class="word_count">(43w~1m)</span></li>
-<li><span class="section_number">5.10</span><span class="section_title"><a href="#developing-software-for-the-web">Developing software for the Web</a></span><span class="word_count">(134w~1m)</span></li>
-<li><span class="section_number">5.11</span><span class="section_title"><a href="#mathematical-history">Mathematical history?</a></span><span class="word_count">(21w~1m)</span></li>
-<li><span class="section_number">5.12</span><span class="section_title"><a href="#even-technical-writing-should-be-narrative">Even technical writing should be narrative</a></span><span class="word_count">(60w~1m)</span></li>
-<li><span class="section_number">5.13</span><span class="section_title"><a href="#presentation-is-accidental-complexity">Presentation is accidental complexity</a></span><span class="word_count">(129w~1m)</span></li>
-<li><span class="section_number">5.14</span><span class="section_title"><a href="#a-curious-relationship">A curious relationship</a></span><span class="word_count">(70w~1m)</span></li>
-<li><span class="section_number">5.15</span><span class="section_title"><a href="#how-do-we-model-historical-data-in-sql">How do we model historical data in SQL?</a></span><span class="word_count">(122w~1m)</span></li>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#model-transformation-as-horn-clauses">Model transformation as Horn clauses</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#total-code-generation-from-modelontology">Total code generation from model/ontology</a></span><span class="word_count">(100w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#mixing-bottom-up-and-top-down">Mixing bottom-up and top-down</a></span><span class="word_count">(172w~1m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#unifying-several-closely-related-subfields">Unifying several closely-related subfields</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">4.5</span><span class="section_title"><a href="#the-human-aspects-of-the-envisioned-usage-infrastructure-engineers-and-suprastructure-engineers">The human aspects of the envisioned usage: infrastructure engineers and suprastructure engineers</a></span><span class="word_count">(77w~1m)</span></li>
+<li><span class="section_number">4.6</span><span class="section_title"><a href="#language-oriented-programming-domain-specific-languages-dsls">Language-oriented programming, domain-specific languages (DSLs)</a></span><span class="word_count">(48w~1m)</span></li>
+<li><span class="section_number">4.7</span><span class="section_title"><a href="#a-type-system-that-is-an-algebra-of-unary-predicates">A type system that is an algebra of unary predicates</a></span><span class="word_count">(72w~1m)</span></li>
+<li><span class="section_number">4.8</span><span class="section_title"><a href="#software-architecture-of-logic-programs">Software architecture of logic programs?</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">4.9</span><span class="section_title"><a href="#some-kinds-of-software-systems">Some kinds of software systems</a></span><span class="word_count">(43w~1m)</span></li>
+<li><span class="section_number">4.10</span><span class="section_title"><a href="#developing-software-for-the-web">Developing software for the Web</a></span><span class="word_count">(134w~1m)</span></li>
+<li><span class="section_number">4.11</span><span class="section_title"><a href="#mathematical-history">Mathematical history?</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">4.12</span><span class="section_title"><a href="#even-technical-writing-should-be-narrative">Even technical writing should be narrative</a></span><span class="word_count">(60w~1m)</span></li>
+<li><span class="section_number">4.13</span><span class="section_title"><a href="#presentation-is-accidental-complexity">Presentation is accidental complexity</a></span><span class="word_count">(129w~1m)</span></li>
+<li><span class="section_number">4.14</span><span class="section_title"><a href="#a-curious-relationship">A curious relationship</a></span><span class="word_count">(70w~1m)</span></li>
+<li><span class="section_number">4.15</span><span class="section_title"><a href="#how-do-we-model-historical-data-in-sql">How do we model historical data in SQL?</a></span><span class="word_count">(122w~1m)</span></li>
+<li><span class="section_number">4.16</span><span class="section_title"><a href="#maniac-marketing-materials">Maniac marketing materials</a></span><span class="word_count">(99w~1m)</span></li>
 </ul>
 </div>
-<h3 id="model-transformation-as-horn-clauses"><span class="section_number">5.1</span><span class="section_title">Model transformation as Horn clauses</span></h3>
+<h3 id="model-transformation-as-horn-clauses"><span class="section_number">4.1</span><span class="section_title">Model transformation as Horn clauses</span></h3>
 <p>Model transformation is a Prolog module (a set of Horn clauses).</p>
 <p>The idea is to represent a model transformation as a set of Horn clauses in Prolog. For example, we state that &quot;There is a Java class for each SQL table&quot; as:</p>
 <pre class="example"><code>java_class(sql_dto(T)) :- sql_table(T).
@@ -841,9 +925,9 @@ opv(java_class(sql_dto(T)), name, JavaName) :-
     opv(sql_table(T), name, SqlName),
     sqlname_javaname(SqlName, JavaName).
 </code></pre>
-<h3 id="total-code-generation-from-modelontology"><span class="section_number">5.2</span><span class="section_title">Total code generation from model/ontology</span></h3>
+<h3 id="total-code-generation-from-modelontology"><span class="section_number">4.2</span><span class="section_title">Total code generation from model/ontology</span></h3>
 <p>We aim for <em>total</em> code generation from model/ontology. Not only structure (Java classes and fields), but also behavior (Java method contents). Not only the static aspects, but also the dynamic aspects. Some model-driven software development approaches such as EMF models the structure but not the behavior; thus they are not expressive enough to express all the information required to translate the model into a complete program, but only the entity classes and perhaps some validation and serialization; the engineer still has to write Java code. Some others such as fUML/ALF try to also model the behavior.</p>
-<h3 id="mixing-bottom-up-and-top-down"><span class="section_number">5.3</span><span class="section_title">Mixing bottom-up and top-down</span></h3>
+<h3 id="mixing-bottom-up-and-top-down"><span class="section_number">4.3</span><span class="section_title">Mixing bottom-up and top-down</span></h3>
 <p>There are two ways to something complex (that is pretty much anything): <em>bottom-up</em> and <em>top-down</em>.</p>
 <p>There are two ways to design an ontology or a software: <em>bottom-up</em> (gradual abstraction) and <em>top-down</em> (gradual concretion).</p>
 <p>The advantages of bottom-up:</p>
@@ -857,14 +941,14 @@ opv(java_class(sql_dto(T)), name, JavaName) :-
 <p>The top-down camp starts from mathematics and goes down toward machines. This camp produces Lisp, Scheme, Prolog, ML, Ocaml, Haskell, Coq, Idris, Agda, Lean. This camp produced elegant but slow implementations. Big design up front.</p>
 <p>They seem to be converging to a middle ground: ugly and slow.</p>
 <p>Why can't we get fast and elegant?</p>
-<h3 id="unifying-several-closely-related-subfields"><span class="section_number">5.4</span><span class="section_title">Unifying several closely-related subfields</span></h3>
+<h3 id="unifying-several-closely-related-subfields"><span class="section_number">4.4</span><span class="section_title">Unifying several closely-related subfields</span></h3>
 <p>These are close. We should unify these.</p>
 <ul>
 <li>ontology engineering and model-driven software development</li>
 <li>database theory, logic programming, and relational programming</li>
 </ul>
 <p>Database normalization theory is related to writing good logic programs.</p>
-<h3 id="the-human-aspects-of-the-envisioned-usage-infrastructure-engineers-and-suprastructure-engineers"><span class="section_number">5.5</span><span class="section_title">The human aspects of the envisioned usage: infrastructure engineers and suprastructure engineers</span></h3>
+<h3 id="the-human-aspects-of-the-envisioned-usage-infrastructure-engineers-and-suprastructure-engineers"><span class="section_number">4.5</span><span class="section_title">The human aspects of the envisioned usage: infrastructure engineers and suprastructure engineers</span></h3>
 <ul>
 <li>Suprastructure software engineer (language user) captures business logic into high-level program.
 <ul>
@@ -879,7 +963,7 @@ opv(java_class(sql_dto(T)), name, JavaName) :-
 </ul></li>
 <li>some mention of &quot;suprastructure&quot; and &quot;infrastructure&quot; <a href="https://en.wikipedia.org/wiki/Process_architecture">https://en.wikipedia.org/wiki/Process_architecture</a></li>
 </ul>
-<h3 id="language-oriented-programming-domain-specific-languages-dsls"><span class="section_number">5.6</span><span class="section_title">Language-oriented programming, domain-specific languages (DSLs)</span></h3>
+<h3 id="language-oriented-programming-domain-specific-languages-dsls"><span class="section_number">4.6</span><span class="section_title">Language-oriented programming, domain-specific languages (DSLs)</span></h3>
 <p>The 2010 article &quot;Using DSLs for Developing Enterprise Systems&quot; <a href="https://research.cyber.ee/simpl/enterprise-dsl.pdf">pdf</a>:</p>
 <ul>
 <li>It uses the terms &quot;language engineer&quot;, &quot;transformation specialist&quot;, and &quot;business engineer&quot;.</li>
@@ -888,7 +972,7 @@ opv(java_class(sql_dto(T)), name, JavaName) :-
 <li>It compares some DSL tools.</li>
 </ul>
 <p>That paper should have been a wiki article.</p>
-<h3 id="a-type-system-that-is-an-algebra-of-unary-predicates"><span class="section_number">5.7</span><span class="section_title">A type system that is an algebra of unary predicates</span></h3>
+<h3 id="a-type-system-that-is-an-algebra-of-unary-predicates"><span class="section_number">4.7</span><span class="section_title">A type system that is an algebra of unary predicates</span></h3>
 <p>This is just an algebra of sets.</p>
 <p>A type can be thought as a set. A set can be thought as a unary predicate. A type can be thought as a unary predicate.</p>
 <span class="math display">\[\begin{align*}
@@ -900,10 +984,10 @@ gt(10) &amp;= \forall a. gt&#39;(a,10) = \forall a. a &gt; 10
 \end{align*}
 \]</span>
 <p>where <span class="math inline">\(p&#39;\)</span> means the meaning (the unary predicate interpretation) of <span class="math inline">\(p\)</span>.</p>
-<p>The algebra of unary predicates is analogous to the algebra of sets<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a>: conjunction is intersection, disjunction is union, implication is subset, etc.</p>
-<h3 id="software-architecture-of-logic-programs"><span class="section_number">5.8</span><span class="section_title">Software architecture of logic programs?</span></h3>
+<p>The algebra of unary predicates is analogous to the algebra of sets<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a>: conjunction is intersection, disjunction is union, implication is subset, etc.</p>
+<h3 id="software-architecture-of-logic-programs"><span class="section_number">4.8</span><span class="section_title">Software architecture of logic programs?</span></h3>
 <p>How should logic programs be architected? Can we generate architecture from semantics?</p>
-<h3 id="some-kinds-of-software-systems"><span class="section_number">5.9</span><span class="section_title">Some kinds of software systems</span></h3>
+<h3 id="some-kinds-of-software-systems"><span class="section_number">4.9</span><span class="section_title">Some kinds of software systems</span></h3>
 <p>Some flavors of big software systems with similar characteristics and programming techniques:</p>
 <ul>
 <li>enterprise programming</li>
@@ -912,15 +996,15 @@ gt(10) &amp;= \forall a. gt&#39;(a,10) = \forall a. a &gt; 10
 </ul>
 <p>Can we build every big software with model-driven software engineering?</p>
 <p>Operating system exists because programming languages are inadequate. Singularity operating system.</p>
-<h3 id="developing-software-for-the-web"><span class="section_number">5.10</span><span class="section_title">Developing software for the Web</span></h3>
+<h3 id="developing-software-for-the-web"><span class="section_number">4.10</span><span class="section_title">Developing software for the Web</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">5.10.1</span><span class="section_title"><a href="#the-web-was-not-designed-to-be-a-software-platform">The Web was not designed to be a software platform</a></span><span class="word_count">(73w~1m)</span></li>
-<li><span class="section_number">5.10.2</span><span class="section_title"><a href="#web-application-frameworks">Web application frameworks?</a></span><span class="word_count">(3w~1m)</span></li>
-<li><span class="section_number">5.10.3</span><span class="section_title"><a href="#how-do-we-develop-enterprise-web-applications-efficiently"><span class="todo TODO">TODO</span> How do we develop enterprise web applications efficiently?</a></span><span class="word_count">(56w~1m)</span></li>
+<li><span class="section_number">4.10.1</span><span class="section_title"><a href="#the-web-was-not-designed-to-be-a-software-platform">The Web was not designed to be a software platform</a></span><span class="word_count">(73w~1m)</span></li>
+<li><span class="section_number">4.10.2</span><span class="section_title"><a href="#web-application-frameworks">Web application frameworks?</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">4.10.3</span><span class="section_title"><a href="#how-do-we-develop-enterprise-web-applications-efficiently"><span class="todo TODO">TODO</span> How do we develop enterprise web applications efficiently?</a></span><span class="word_count">(56w~1m)</span></li>
 </ul>
 </div>
-<h4 id="the-web-was-not-designed-to-be-a-software-platform"><span class="section_number">5.10.1</span><span class="section_title">The Web was not designed to be a software platform</span></h4>
+<h4 id="the-web-was-not-designed-to-be-a-software-platform"><span class="section_number">4.10.1</span><span class="section_title">The Web was not designed to be a software platform</span></h4>
 <ul>
 <li><a href="https://news.ycombinator.com/item?id=11035143">The sad state of web development</a> (not everyone agrees).</li>
 <li>It's time to kill the web <a href="https://blog.plan99.net/its-time-to-kill-the-web-974a9fe80c89">https://blog.plan99.net/its-time-to-kill-the-web-974a9fe80c89</a>
@@ -936,32 +1020,32 @@ gt(10) &amp;= \forall a. gt&#39;(a,10) = \forall a. a &gt; 10
 <li>Do you handle network interruptions? How does the user continue scrolling after network connection is restored? Is there an unhandled exception in your script?</li>
 </ul></li>
 </ul>
-<h4 id="web-application-frameworks"><span class="section_number">5.10.2</span><span class="section_title">Web application frameworks?</span></h4>
+<h4 id="web-application-frameworks"><span class="section_number">4.10.2</span><span class="section_title">Web application frameworks?</span></h4>
 <p><a href="http://zotonic.com/">http://zotonic.com/</a></p>
-<h4 id="how-do-we-develop-enterprise-web-applications-efficiently"><span class="section_number">5.10.3</span><span class="section_title"><span class="todo TODO">TODO</span> How do we develop enterprise web applications efficiently?</span></h4>
+<h4 id="how-do-we-develop-enterprise-web-applications-efficiently"><span class="section_number">4.10.3</span><span class="section_title"><span class="todo TODO">TODO</span> How do we develop enterprise web applications efficiently?</span></h4>
 <ol>
 <li><p>&lt;2018-09-27&gt; Enterprise application development is like three blind people describing an elephant.</p>
 <p>Every team is a blind people.</p>
 <p>The company's actual ontology is the elephant.</p>
 <p>How do we unify enterprise systems? Should we combine subsystem ontologies to produce the actual ontology, or should we derive subsystem ontologies from the actual ontology?</p></li>
 </ol>
-<h3 id="mathematical-history"><span class="section_number">5.11</span><span class="section_title">Mathematical history?</span></h3>
-<p>Gillies 2002 <span class="citation" data-cites="gillies2002logicism">[<a href="#ref-gillies2002logicism">6</a>]</span> has a concise insightful historical summary explanation of the three schools of mathematics: logicism, formalism, and intuitionism.</p>
-<h3 id="even-technical-writing-should-be-narrative"><span class="section_number">5.12</span><span class="section_title">Even technical writing should be narrative</span></h3>
-<p>&quot;A group of well-formed sentences does not necessarily form a coherent paragraph. The order in which they are placed can significantly alter the ease with which they can be understood&quot; <span class="citation" data-cites="de2007narrative">[<a href="#ref-de2007narrative">2</a>]</span></p>
+<h3 id="mathematical-history"><span class="section_number">4.11</span><span class="section_title">Mathematical history?</span></h3>
+<p>Gillies 2002 <span class="citation" data-cites="gillies2002logicism">[<a href="#ref-gillies2002logicism">7</a>]</span> has a concise insightful historical summary explanation of the three schools of mathematics: logicism, formalism, and intuitionism.</p>
+<h3 id="even-technical-writing-should-be-narrative"><span class="section_number">4.12</span><span class="section_title">Even technical writing should be narrative</span></h3>
+<p>&quot;A group of well-formed sentences does not necessarily form a coherent paragraph. The order in which they are placed can significantly alter the ease with which they can be understood&quot; <span class="citation" data-cites="de2007narrative">[<a href="#ref-de2007narrative">3</a>]</span></p>
 <p>The problem with description: it does not tell <em>why</em>. A narration or an argument tells why.</p>
 <p>Structuring our writing as narrative may help expose the incoherence.</p>
-<h3 id="presentation-is-accidental-complexity"><span class="section_number">5.13</span><span class="section_title">Presentation is accidental complexity</span></h3>
+<h3 id="presentation-is-accidental-complexity"><span class="section_number">4.13</span><span class="section_title">Presentation is accidental complexity</span></h3>
 <p>The essence of an interaction is the conveyed information, not the appearance. HTML is accidental complexity. An interaction is either a <em>query</em> or a <em>command</em>. A query does not change the system state. A command changes the system state. Application logic vs presentation logic. The essence is the data. The user can enumerate the finite number of things that can be done with a web application. The architecture is onion.</p>
 <p>Suppose that an application is ported from Google Sheets to Java. What does not change? The ontology, the concepts, the formulas</p>
 <p>A user is essentially making a remote procedure call to a web application..</p>
 <p>A system is to help us store, retrieve, and compute information.</p>
 <p>Presentation logic: HTTP-HTML-browser, SSH-CLI. Changing the presentation does not change the application logic at all.</p>
-<h3 id="a-curious-relationship"><span class="section_number">5.14</span><span class="section_title">A curious relationship</span></h3>
+<h3 id="a-curious-relationship"><span class="section_number">4.14</span><span class="section_title">A curious relationship</span></h3>
 <p>SQL schema ~ Prolog module ~ model-theory signature database theory / relational algebra ~ logic programming / relational programming</p>
 <p>&lt;2019-03-06&gt; I am surprised. Database theory is surprisingly relevant to logic programming. Database normalization is surprisingly relevant to writing good Prolog code.</p>
 <p>Suppose Prolog. From logic programming point of view, the comma can be thought as a conjunction. From database point of view, the comma can be thought as a join.</p>
-<h3 id="how-do-we-model-historical-data-in-sql"><span class="section_number">5.15</span><span class="section_title">How do we model historical data in SQL?</span></h3>
+<h3 id="how-do-we-model-historical-data-in-sql"><span class="section_number">4.15</span><span class="section_title">How do we model historical data in SQL?</span></h3>
 <ul>
 <li>Do we have to use SQL?</li>
 <li>Is SQL the best tool for the job?</li>
@@ -973,10 +1057,10 @@ gt(10) &amp;= \forall a. gt&#39;(a,10) = \forall a. a &gt; 10
 </ul>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">5.15.1</span><span class="section_title"><a href="#read"><span class="todo TODO">TODO</span> &lt;2018-09-19&gt; Read</a></span><span class="word_count">(74w~1m)</span></li>
+<li><span class="section_number">4.15.1</span><span class="section_title"><a href="#read"><span class="todo TODO">TODO</span> &lt;2018-09-19&gt; Read</a></span><span class="word_count">(74w~1m)</span></li>
 </ul>
 </div>
-<h4 id="read"><span class="section_number">5.15.1</span><span class="section_title"><span class="todo TODO">TODO</span> &lt;2018-09-19&gt; Read</span></h4>
+<h4 id="read"><span class="section_number">4.15.1</span><span class="section_title"><span class="todo TODO">TODO</span> &lt;2018-09-19&gt; Read</span></h4>
 <ul>
 <li><a href="https://stackoverflow.com/questions/3874199/how-to-store-historical-data">database design - How to Store Historical Data - Stack Overflow</a></li>
 <li><a href="https://grisha.org/blog/2015/09/23/storing-time-series-in-postgresql-efficiently/">Storing Time Series in PostgreSQL efficiently - Gregory Trubetskoy</a></li>
@@ -990,25 +1074,35 @@ gt(10) &amp;= \forall a. gt&#39;(a,10) = \forall a. a &gt; 10
 <li>Where is the SQL DDL/schema?</li>
 </ul></li>
 </ul>
-<h2 id="existing-systems"><span class="section_number">6</span><span class="section_title">Existing systems</span></h2>
+<h3 id="maniac-marketing-materials"><span class="section_number">4.16</span><span class="section_title">Maniac marketing materials</span></h3>
+<p>(This may not be true.)</p>
+<p>Let N be the number of enterprise applications you have to make. Which would you rather write:</p>
+<ul>
+<li>N * 30,000 lines of Java</li>
+<li>10,000 + N * 3,000 lines of Prolog</li>
+</ul>
+<p>That is, do you fear being asymptotically 10 times more productive? Do you fear success?</p>
+<p>Your favorite shiny framework is just a faster horse. You need a <span class="underline">car</span> that is model-driven software engineering in Prolog. This is a real car, not just another faster-horse framework.</p>
+<p>We write software to help others do their jobs. Why don't we write software to help us do our jobs (write software)?</p>
+<h2 id="existing-systems"><span class="section_number">5</span><span class="section_title">Existing systems</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">6.1</span><span class="section_title"><a href="#a-little-history-of-model-driven-engineering">A little history of model-driven engineering?</a></span><span class="word_count">(37w~1m)</span></li>
-<li><span class="section_number">6.2</span><span class="section_title"><a href="#how-standard-is-kif-knowledge-interchange-format">How standard is KIF (Knowledge Interchange Format)?</a></span><span class="word_count">(7w~1m)</span></li>
-<li><span class="section_number">6.3</span><span class="section_title"><a href="#ontologies-for-enterprise-software-systems">Ontologies for enterprise software systems</a></span><span class="word_count">(21w~1m)</span></li>
-<li><span class="section_number">6.4</span><span class="section_title"><a href="#existing-ontologies-models-meta-models-and-modeling-methods">Existing ontologies, models, meta-models, and modeling methods</a></span><span class="word_count">(195w~1m)</span></li>
-<li><span class="section_number">6.5</span><span class="section_title"><a href="#problem-rdf-triple-with-non-binary-predicates">Problem: RDF triple with non-binary predicates</a></span><span class="word_count">(10w~1m)</span></li>
-<li><span class="section_number">6.6</span><span class="section_title"><a href="#common-to-all-ontologies-classes-and-instances">Common to all ontologies: classes and instances</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#a-little-history-of-model-driven-engineering">A little history of model-driven engineering?</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#how-standard-is-kif-knowledge-interchange-format">How standard is KIF (Knowledge Interchange Format)?</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">5.3</span><span class="section_title"><a href="#ontologies-for-enterprise-software-systems">Ontologies for enterprise software systems</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">5.4</span><span class="section_title"><a href="#existing-ontologies-models-meta-models-and-modeling-methods">Existing ontologies, models, meta-models, and modeling methods</a></span><span class="word_count">(195w~1m)</span></li>
+<li><span class="section_number">5.5</span><span class="section_title"><a href="#problem-rdf-triple-with-non-binary-predicates">Problem: RDF triple with non-binary predicates</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">5.6</span><span class="section_title"><a href="#common-to-all-ontologies-classes-and-instances">Common to all ontologies: classes and instances</a></span><span class="word_count">(7w~1m)</span></li>
 </ul>
 </div>
-<h3 id="a-little-history-of-model-driven-engineering"><span class="section_number">6.1</span><span class="section_title">A little history of model-driven engineering?</span></h3>
-<p>1989: OMG<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a> was founded. 1990s: OOP Method Wars. CASE tools. 1997: OMG adopted UML<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>. MDA<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>.</p>
+<h3 id="a-little-history-of-model-driven-engineering"><span class="section_number">5.1</span><span class="section_title">A little history of model-driven engineering?</span></h3>
+<p>1989: OMG<a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a> was founded. 1990s: OOP Method Wars. CASE tools. 1997: OMG adopted UML<a href="#fn36" class="footnote-ref" id="fnref36"><sup>36</sup></a>. MDA<a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a>.</p>
 <p>UML is focused on visualization for humans. UML does not have a clear formal ontology for machine translation.</p>
-<h3 id="how-standard-is-kif-knowledge-interchange-format"><span class="section_number">6.2</span><span class="section_title">How standard is KIF (Knowledge Interchange Format)?</span></h3>
-<h3 id="ontologies-for-enterprise-software-systems"><span class="section_number">6.3</span><span class="section_title">Ontologies for enterprise software systems</span></h3>
-<p>Is there already an ontology for enterprise software systems? Fox &amp; Grüninger 1997 <span class="citation" data-cites="fox1997ontologies">[<a href="#ref-fox1997ontologies">4</a>]</span>? Dietz 2012 <span class="citation" data-cites="dietz2012enterprise">[<a href="#ref-dietz2012enterprise">3</a>]</span>?</p>
-<h3 id="existing-ontologies-models-meta-models-and-modeling-methods"><span class="section_number">6.4</span><span class="section_title">Existing ontologies, models, meta-models, and modeling methods</span></h3>
-<p>Introduction to knowledge representation: John F. Sowa's 2011 introduction to common logic<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a>. Compares these notations: Frege 1879, Peirce 1885, Peano 1895, Peirce 1897. They have identical semantics.</p>
+<h3 id="how-standard-is-kif-knowledge-interchange-format"><span class="section_number">5.2</span><span class="section_title">How standard is KIF (Knowledge Interchange Format)?</span></h3>
+<h3 id="ontologies-for-enterprise-software-systems"><span class="section_number">5.3</span><span class="section_title">Ontologies for enterprise software systems</span></h3>
+<p>Is there already an ontology for enterprise software systems? Fox &amp; Grüninger 1997 <span class="citation" data-cites="fox1997ontologies">[<a href="#ref-fox1997ontologies">5</a>]</span>? Dietz 2012 <span class="citation" data-cites="dietz2012enterprise">[<a href="#ref-dietz2012enterprise">4</a>]</span>?</p>
+<h3 id="existing-ontologies-models-meta-models-and-modeling-methods"><span class="section_number">5.4</span><span class="section_title">Existing ontologies, models, meta-models, and modeling methods</span></h3>
+<p>Introduction to knowledge representation: John F. Sowa's 2011 introduction to common logic<a href="#fn38" class="footnote-ref" id="fnref38"><sup>38</sup></a>. Compares these notations: Frege 1879, Peirce 1885, Peano 1895, Peirce 1897. They have identical semantics.</p>
 <p>Ideally we build a lower (domain-specific) ontology on an upper ontology.</p>
 <ul>
 <li>BFO (Basic Formal Ontology) <span class="citation" data-cites="arp2015building">[<a href="#ref-arp2015building">1</a>]</span></li>
@@ -1022,149 +1116,159 @@ gt(10) &amp;= \forall a. gt&#39;(a,10) = \forall a. a &gt; 10
 <li>Entity-relationship modeling</li>
 <li>Subject-predicate-object, RDF triple</li>
 <li>Object-property-value</li>
-<li>Entity-attribute-value<a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a></li>
-<li>Category of being<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a></li>
+<li>Entity-attribute-value<a href="#fn39" class="footnote-ref" id="fnref39"><sup>39</sup></a></li>
+<li>Category of being<a href="#fn40" class="footnote-ref" id="fnref40"><sup>40</sup></a></li>
 </ul>
 <p>Some interesting things: OMG MOF (Meta Object Facility), fUML/ALF.</p>
-<p>fUML: Mayerhofer 2014 <span class="citation" data-cites="mayerhofer2014defining">[<a href="#ref-mayerhofer2014defining">9</a>]</span></p>
-<p>Shan 2008 <span class="citation" data-cites="shan2008code">[<a href="#ref-shan2008code">11</a>]</span>: &quot;Trinity PhD Simone Grassi has carried out his research to create an abstract specification of algorithms (based on a set of ontologies) as a Model Driven Platform to build software […]&quot;</p>
+<p>fUML: Mayerhofer 2014 <span class="citation" data-cites="mayerhofer2014defining">[<a href="#ref-mayerhofer2014defining">10</a>]</span></p>
+<p>Shan 2008 <span class="citation" data-cites="shan2008code">[<a href="#ref-shan2008code">12</a>]</span>: &quot;Trinity PhD Simone Grassi has carried out his research to create an abstract specification of algorithms (based on a set of ontologies) as a Model Driven Platform to build software […]&quot;</p>
 <p><a href="https://en.wikipedia.org/wiki/Data_model">https://en.wikipedia.org/wiki/Data_model</a></p>
-<p>Ontology vs data model<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a></p>
-<p>ClioPatria<a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a> concise RDF triple syntax: predicate logic without XML noise.</p>
-<p>RDF vs OWL<a href="#fn36" class="footnote-ref" id="fnref36"><sup>36</sup></a>. Basically, RDF is like a Prolog fact, and OWL is like a Prolog Horn clause.</p>
-<p>With Prolog syntax, we can just skip all the XML-URI shenanigans<a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a>.</p>
-<h3 id="problem-rdf-triple-with-non-binary-predicates"><span class="section_number">6.5</span><span class="section_title">Problem: RDF triple with non-binary predicates</span></h3>
+<p>Ontology vs data model<a href="#fn41" class="footnote-ref" id="fnref41"><sup>41</sup></a></p>
+<p>ClioPatria<a href="#fn42" class="footnote-ref" id="fnref42"><sup>42</sup></a> concise RDF triple syntax: predicate logic without XML noise.</p>
+<p>RDF vs OWL<a href="#fn43" class="footnote-ref" id="fnref43"><sup>43</sup></a>. Basically, RDF is like a Prolog fact, and OWL is like a Prolog Horn clause.</p>
+<p>With Prolog syntax, we can just skip all the XML-URI shenanigans<a href="#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a>.</p>
+<h3 id="problem-rdf-triple-with-non-binary-predicates"><span class="section_number">5.5</span><span class="section_title">Problem: RDF triple with non-binary predicates</span></h3>
 <p>Unary, ternary, n-ary Intransitive verbs</p>
-<h3 id="common-to-all-ontologies-classes-and-instances"><span class="section_number">6.6</span><span class="section_title">Common to all ontologies: classes and instances</span></h3>
-<h2 id="literature-study"><span class="section_number">7</span><span class="section_title">Literature study</span></h2>
+<h3 id="common-to-all-ontologies-classes-and-instances"><span class="section_number">5.6</span><span class="section_title">Common to all ontologies: classes and instances</span></h3>
+<h2 id="literature-study"><span class="section_number">6</span><span class="section_title">Literature study</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">7.1</span><span class="section_title"><a href="#unknown-to-find-out">Unknown, to find out</a></span><span class="word_count">(139w~1m)</span></li>
-<li><span class="section_number">7.2</span><span class="section_title"><a href="#things-that-do-not-suit-my-wants">Things that do not suit my wants</a></span><span class="word_count">(445w~3m)</span></li>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#unknown-to-find-out">Unknown, to find out</a></span><span class="word_count">(139w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#things-that-do-not-suit-my-wants">Things that do not suit my wants</a></span><span class="word_count">(468w~3m)</span></li>
 </ul>
 </div>
-<h3 id="unknown-to-find-out"><span class="section_number">7.1</span><span class="section_title">Unknown, to find out</span></h3>
+<h3 id="unknown-to-find-out"><span class="section_number">6.1</span><span class="section_title">Unknown, to find out</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">7.1.1</span><span class="section_title"><a href="#fumlalf">fUML/ALF</a></span><span class="word_count">(6w~1m)</span></li>
-<li><span class="section_number">7.1.2</span><span class="section_title"><a href="#how-far-can-protege-generate-java-code">How far can Protege generate Java code?</a></span><span class="word_count">(7w~1m)</span></li>
-<li><span class="section_number">7.1.3</span><span class="section_title"><a href="#escher-systems-perfect-developer">Escher Systems Perfect Developer</a></span><span class="word_count">(19w~1m)</span></li>
-<li><span class="section_number">7.1.4</span><span class="section_title"><a href="#there-are-too-many-tools">There are too many tools</a></span><span class="word_count">(107w~1m)</span></li>
+<li><span class="section_number">6.1.1</span><span class="section_title"><a href="#fumlalf">fUML/ALF</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">6.1.2</span><span class="section_title"><a href="#how-far-can-protege-generate-java-code">How far can Protege generate Java code?</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">6.1.3</span><span class="section_title"><a href="#escher-systems-perfect-developer">Escher Systems Perfect Developer</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">6.1.4</span><span class="section_title"><a href="#there-are-too-many-tools">There are too many tools</a></span><span class="word_count">(107w~1m)</span></li>
 </ul>
 </div>
-<h4 id="fumlalf"><span class="section_number">7.1.1</span><span class="section_title">fUML/ALF</span></h4>
+<h4 id="fumlalf"><span class="section_number">6.1.1</span><span class="section_title">fUML/ALF</span></h4>
 <p>fUML/ALF with text instead of graphics?</p>
-<h4 id="how-far-can-protege-generate-java-code"><span class="section_number">7.1.2</span><span class="section_title">How far can Protege generate Java code?</span></h4>
-<h4 id="escher-systems-perfect-developer"><span class="section_number">7.1.3</span><span class="section_title">Escher Systems Perfect Developer</span></h4>
-<p>I somewhat agree with this &quot;correct-by-construction&quot; spirit<a href="#fn38" class="footnote-ref" id="fnref38"><sup>38</sup></a>. But the website is all marketing and no technical.</p>
-<h4 id="there-are-too-many-tools"><span class="section_number">7.1.4</span><span class="section_title">There are too many tools</span></h4>
+<h4 id="how-far-can-protege-generate-java-code"><span class="section_number">6.1.2</span><span class="section_title">How far can Protege generate Java code?</span></h4>
+<h4 id="escher-systems-perfect-developer"><span class="section_number">6.1.3</span><span class="section_title">Escher Systems Perfect Developer</span></h4>
+<p>I somewhat agree with this &quot;correct-by-construction&quot; spirit<a href="#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a>. But the website is all marketing and no technical.</p>
+<h4 id="there-are-too-many-tools"><span class="section_number">6.1.4</span><span class="section_title">There are too many tools</span></h4>
 <p>Which one is free-libre-open-source? <a href="https://en.wikipedia.org/wiki/Model-driven_engineering">https://en.wikipedia.org/wiki/Model-driven_engineering</a></p>
-<p>Topcased and Papyrus <span class="citation" data-cites="gamalielsson2011open">[<a href="#ref-gamalielsson2011open">5</a>]</span>.</p>
+<p>Topcased and Papyrus <span class="citation" data-cites="gamalielsson2011open">[<a href="#ref-gamalielsson2011open">6</a>]</span>.</p>
 <p>People use an open source project if they <em>perceives</em> that reusing the project is cheaper than redoing it. But how can you know you can even reuse that project, if that project has no documentation? The first question of a person who is thinking about using your open-source project is: Who else uses this? Am I alone? Will shit happen? Who maintains this? If the maintainer dies or gets bored, will I be in deep shit? Can I use this as is? Can I tailor this to my needs? Will this project go against my needs?</p>
-<h3 id="things-that-do-not-suit-my-wants"><span class="section_number">7.2</span><span class="section_title">Things that do not suit my wants</span></h3>
+<h3 id="things-that-do-not-suit-my-wants"><span class="section_number">6.2</span><span class="section_title">Things that do not suit my wants</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">7.2.1</span><span class="section_title"><a href="#emf">EMF</a></span><span class="word_count">(147w~1m)</span></li>
-<li><span class="section_number">7.2.2</span><span class="section_title"><a href="#java-ee">Java EE</a></span><span class="word_count">(293w~2m)</span></li>
+<li><span class="section_number">6.2.1</span><span class="section_title"><a href="#emf">EMF</a></span><span class="word_count">(147w~1m)</span></li>
+<li><span class="section_number">6.2.2</span><span class="section_title"><a href="#java-ee">Java EE</a></span><span class="word_count">(316w~2m)</span></li>
 </ul>
 </div>
-<h4 id="emf"><span class="section_number">7.2.1</span><span class="section_title">EMF</span></h4>
+<h4 id="emf"><span class="section_number">6.2.1</span><span class="section_title">EMF</span></h4>
 <p>EMF is limited to structure and not behavior. EMF can generate code for domain model (similar to Java bean) and validation, but not business logic. The programmer writes the business logic in Java, and EMF uses code-merging. EMF has persistence framework. EMF does not go far enough.</p>
-<p>EMF overview<a href="#fn39" class="footnote-ref" id="fnref39"><sup>39</sup></a> Ecore is similar to EMOF (Essential MOF), with some small differences, mostly naming differences. &quot;EMF does not model behavior, so the implementation must be provided by user-written Java code.&quot; Modeling dynamic behavior is harder than modeling static structure. Modeling behavior is practically creating a programming language.</p>
+<p>EMF overview<a href="#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a> Ecore is similar to EMOF (Essential MOF), with some small differences, mostly naming differences. &quot;EMF does not model behavior, so the implementation must be provided by user-written Java code.&quot; Modeling dynamic behavior is harder than modeling static structure. Modeling behavior is practically creating a programming language.</p>
 <p>This is similar to Eclipse Modeling Framework (EMF). The difference is: EMF leaves behavior specification to Java, but I think Java is too low-level. EMF models structure but not behavior. EMF does not go far enough.</p>
 <p>Java is too low-level. Writing an enterprise application in Java is like teaching graduate physics using only simple sentences.</p>
-<h4 id="java-ee"><span class="section_number">7.2.2</span><span class="section_title">Java EE</span></h4>
+<h4 id="java-ee"><span class="section_number">6.2.2</span><span class="section_title">Java EE</span></h4>
 <p><a href="https://docs.oracle.com/javaee/6/tutorial/doc/gjiup.html">https://docs.oracle.com/javaee/6/tutorial/doc/gjiup.html</a></p>
 <p>Mateu MDD uses Vaadin <a href="https://github.com/miguelperezcolom/mateu-mdd">https://github.com/miguelperezcolom/mateu-mdd</a></p>
 <div id="refs" class="references">
 <div id="ref-arp2015building">
 <p>[1] Arp, R. et al. 2015. <em>Building ontologies with basic formal ontology</em>. Mit Press.</p>
 </div>
+<div id="ref-chen1976entity">
+<p>[2] Chen, P.P.-S. 1976. The entity-relationship model—toward a unified view of data. <em>ACM Transactions on Database Systems (TODS)</em>. 1, 1 (1976), 9–36. url: &lt;<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.123.1085&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.123.1085&amp;rep=rep1&amp;type=pdf</a>&gt;.</p>
+</div>
 <div id="ref-de2007narrative">
-<p>[2] De Silva, N.H. and Henderson, P. 2007. Narrative-based writing for coherent technical documents. <em>Proceedings of the 25th annual acm international conference on design of communication</em> (2007), 208–215. url: &lt;<a href="https://eprints.soton.ac.uk/264969/1/sigdoc46-desilva.pdf">https://eprints.soton.ac.uk/264969/1/sigdoc46-desilva.pdf</a>&gt;.</p>
+<p>[3] De Silva, N.H. and Henderson, P. 2007. Narrative-based writing for coherent technical documents. <em>Proceedings of the 25th annual acm international conference on design of communication</em> (2007), 208–215. url: &lt;<a href="https://eprints.soton.ac.uk/264969/1/sigdoc46-desilva.pdf">https://eprints.soton.ac.uk/264969/1/sigdoc46-desilva.pdf</a>&gt;.</p>
 </div>
 <div id="ref-dietz2012enterprise">
-<p>[3] Dietz, J.L. 2012. Enterprise ontology driven software generation. <em>ICSOFT</em> (2012). url: &lt;<a href="http://www.icsoft.org/Documents/Previous_Invited_Speakers/2012/ICSOFT2012_DIETZ.pdf">http://www.icsoft.org/Documents/Previous_Invited_Speakers/2012/ICSOFT2012_DIETZ.pdf</a>&gt;.</p>
+<p>[4] Dietz, J.L. 2012. Enterprise ontology driven software generation. <em>ICSOFT</em> (2012). url: &lt;<a href="http://www.icsoft.org/Documents/Previous_Invited_Speakers/2012/ICSOFT2012_DIETZ.pdf">http://www.icsoft.org/Documents/Previous_Invited_Speakers/2012/ICSOFT2012_DIETZ.pdf</a>&gt;.</p>
 </div>
 <div id="ref-fox1997ontologies">
-<p>[4] Fox, M.S. and Grüninger, M. 1997. On ontologies and enterprise modelling. <em>Enterprise engineering and integration</em>. Springer. 190–200. url: &lt;<a href="https://pdfs.semanticscholar.org/974e/53d190fe4ec0cb088e32c456ceb1a4322984.pdf">https://pdfs.semanticscholar.org/974e/53d190fe4ec0cb088e32c456ceb1a4322984.pdf</a>&gt;.</p>
+<p>[5] Fox, M.S. and Grüninger, M. 1997. On ontologies and enterprise modelling. <em>Enterprise engineering and integration</em>. Springer. 190–200. url: &lt;<a href="https://pdfs.semanticscholar.org/974e/53d190fe4ec0cb088e32c456ceb1a4322984.pdf">https://pdfs.semanticscholar.org/974e/53d190fe4ec0cb088e32c456ceb1a4322984.pdf</a>&gt;.</p>
 </div>
 <div id="ref-gamalielsson2011open">
-<p>[5] Gamalielsson, J. et al. 2011. Open source software for model driven development: A case study. <em>IFIP international conference on open source systems</em> (2011), 348–367. url: &lt;<a href="https://link.springer.com/content/pdf/10.1007/978-3-642-24418-6_30.pdf">https://link.springer.com/content/pdf/10.1007/978-3-642-24418-6_30.pdf</a>&gt;.</p>
+<p>[6] Gamalielsson, J. et al. 2011. Open source software for model driven development: A case study. <em>IFIP international conference on open source systems</em> (2011), 348–367. url: &lt;<a href="https://link.springer.com/content/pdf/10.1007/978-3-642-24418-6_30.pdf">https://link.springer.com/content/pdf/10.1007/978-3-642-24418-6_30.pdf</a>&gt;.</p>
 </div>
 <div id="ref-gillies2002logicism">
-<p>[6] Gillies, D. 2002. Logicism and the development of computer science. <em>Computational logic: Logic programming and beyond</em>. Springer. 588–604. url: &lt;<a href="https://core.ac.uk/download/pdf/1685231.pdf">https://core.ac.uk/download/pdf/1685231.pdf</a>&gt;.</p>
+<p>[7] Gillies, D. 2002. Logicism and the development of computer science. <em>Computational logic: Logic programming and beyond</em>. Springer. 588–604. url: &lt;<a href="https://core.ac.uk/download/pdf/1685231.pdf">https://core.ac.uk/download/pdf/1685231.pdf</a>&gt;.</p>
 </div>
 <div id="ref-jurisica1999using">
-<p>[7] Jurisica, I. et al. 1999. Using ontologies for knowledge management: An information systems perspective. <em>Proceedings of the annual meeting-american society for information science</em> (1999), 482–496. url: &lt;<a href="http://www.cs.toronto.edu/pub/eric/asis99.pdf">http://www.cs.toronto.edu/pub/eric/asis99.pdf</a>&gt;.</p>
+<p>[8] Jurisica, I. et al. 1999. Using ontologies for knowledge management: An information systems perspective. <em>Proceedings of the annual meeting-american society for information science</em> (1999), 482–496. url: &lt;<a href="http://www.cs.toronto.edu/pub/eric/asis99.pdf">http://www.cs.toronto.edu/pub/eric/asis99.pdf</a>&gt;.</p>
 </div>
 <div id="ref-khan2011transformation">
-<p>[8] Khan, N.A. 2011. Transformation of enterprise model to enterprise ontology. url: &lt;<a href="https://www.diva-portal.org/smash/get/diva2:429566/FULLTEXT01.pdf">https://www.diva-portal.org/smash/get/diva2:429566/FULLTEXT01.pdf</a>&gt;.</p>
+<p>[9] Khan, N.A. 2011. Transformation of enterprise model to enterprise ontology. url: &lt;<a href="https://www.diva-portal.org/smash/get/diva2:429566/FULLTEXT01.pdf">https://www.diva-portal.org/smash/get/diva2:429566/FULLTEXT01.pdf</a>&gt;.</p>
 </div>
 <div id="ref-mayerhofer2014defining">
-<p>[9] Mayerhofer, T. 2014. Defining executable modeling languages with fUML. <em>Vienna University of Technology, Austria, Vienna</em>. (2014), 252. url: &lt;<a href="https://publik.tuwien.ac.at/files/PubDat_233990.pdf">https://publik.tuwien.ac.at/files/PubDat_233990.pdf</a>&gt;.</p>
+<p>[10] Mayerhofer, T. 2014. Defining executable modeling languages with fUML. <em>Vienna University of Technology, Austria, Vienna</em>. (2014), 252. url: &lt;<a href="https://publik.tuwien.ac.at/files/PubDat_233990.pdf">https://publik.tuwien.ac.at/files/PubDat_233990.pdf</a>&gt;.</p>
 </div>
 <div id="ref-noy2001ontology">
-<p>[10] Noy, N.F. et al. 2001. Ontology development 101: A guide to creating your first ontology. Stanford knowledge systems laboratory technical report KSL-01-05 and …. url: &lt;<a href="https://protege.stanford.edu/publications/ontology_development/ontology101.pdf">https://protege.stanford.edu/publications/ontology_development/ontology101.pdf</a>&gt;.</p>
+<p>[11] Noy, N.F. et al. 2001. Ontology development 101: A guide to creating your first ontology. Stanford knowledge systems laboratory technical report KSL-01-05 and …. url: &lt;<a href="https://protege.stanford.edu/publications/ontology_development/ontology101.pdf">https://protege.stanford.edu/publications/ontology_development/ontology101.pdf</a>&gt;.</p>
 </div>
 <div id="ref-shan2008code">
-<p>[11] Shan, L. 2008. <em>Code generation of ontology-based abstract algorithms</em>. Trinity College. url: &lt;<a href="https://scss.tcd.ie/publications/tech-reports/reports.08/TCD-CS-2008-54.pdf">https://scss.tcd.ie/publications/tech-reports/reports.08/TCD-CS-2008-54.pdf</a>&gt;.</p>
+<p>[12] Shan, L. 2008. <em>Code generation of ontology-based abstract algorithms</em>. Trinity College. url: &lt;<a href="https://scss.tcd.ie/publications/tech-reports/reports.08/TCD-CS-2008-54.pdf">https://scss.tcd.ie/publications/tech-reports/reports.08/TCD-CS-2008-54.pdf</a>&gt;.</p>
 </div>
 <div id="ref-smith2006against">
-<p>[12] Smith, B. 2006. Against idiosyncrasy in ontology development. <em>Frontiers in Artificial Intelligence and Applications</em>. 150, (2006), 15. url: &lt;<a href="http://ontology.buffalo.edu/bfo/west.pdf">http://ontology.buffalo.edu/bfo/west.pdf</a>&gt;.</p>
+<p>[13] Smith, B. 2006. Against idiosyncrasy in ontology development. <em>Frontiers in Artificial Intelligence and Applications</em>. 150, (2006), 15. url: &lt;<a href="http://ontology.buffalo.edu/bfo/west.pdf">http://ontology.buffalo.edu/bfo/west.pdf</a>&gt;.</p>
 </div>
 <div id="ref-sterling1996logic">
-<p>[13] Sterling, L. and Yalçinalp, Ü. 1996. Logic programming and software engineering—implications for software design. <em>The Knowledge Engineering Review</em>. 11, 4 (1996), 333–345. url: &lt;<a href="https://pdfs.semanticscholar.org/a58d/c68f53af502c043793f49e5cd7c7a44d2914.pdf">https://pdfs.semanticscholar.org/a58d/c68f53af502c043793f49e5cd7c7a44d2914.pdf</a>&gt;.</p>
+<p>[14] Sterling, L. and Yalçinalp, Ü. 1996. Logic programming and software engineering—implications for software design. <em>The Knowledge Engineering Review</em>. 11, 4 (1996), 333–345. url: &lt;<a href="https://pdfs.semanticscholar.org/a58d/c68f53af502c043793f49e5cd7c7a44d2914.pdf">https://pdfs.semanticscholar.org/a58d/c68f53af502c043793f49e5cd7c7a44d2914.pdf</a>&gt;.</p>
 </div>
 <div id="ref-turner2007towards">
-<p>[14] Turner, R. and Eden, A.H. 2007. <em>Towards a programming language ontology</em>. Citeseer. url: &lt;<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.82.194&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.82.194&amp;rep=rep1&amp;type=pdf</a>&gt;.</p>
+<p>[15] Turner, R. and Eden, A.H. 2007. <em>Towards a programming language ontology</em>. Citeseer. url: &lt;<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.82.194&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.82.194&amp;rep=rep1&amp;type=pdf</a>&gt;.</p>
 </div>
 <div id="ref-van2004concepts">
-<p>[15] Van-Roy, P. and Haridi, S. 2004. <em>Concepts, techniques, and models of computer programming</em>. MIT press.</p>
+<p>[16] Van-Roy, P. and Haridi, S. 2004. <em>Concepts, techniques, and models of computer programming</em>. MIT press.</p>
 </div>
 </div>
 <section class="footnotes">
 <hr />
 <ol>
 <li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Information_system">https://en.wikipedia.org/wiki/Information_system</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Zero_one_infinity_rule">https://en.wikipedia.org/wiki/Zero_one_infinity_rule</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Theory_of_mind">https://en.wikipedia.org/wiki/Theory_of_mind</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Entity–relationship_model">https://en.wikipedia.org/wiki/Entity–relationship_model</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p><a href="http://williamnava.com/abstract-objects-exist/">http://williamnava.com/abstract-objects-exist/</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Suspension_of_disbelief">https://en.wikipedia.org/wiki/Suspension_of_disbelief</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p><a href="https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-aggregation-vs-composition/">https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-aggregation-vs-composition/</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>also called &quot;degree of relationship&quot; or &quot;multiplicity&quot;<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p><a href="https://en.wikipedia.org/wiki/Cardinality_(data_modeling)">https://en.wikipedia.org/wiki/Cardinality_(data_modeling)</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p><a href="https://ragrawal.wordpress.com/2007/02/20/difference-between-owl-lite-dl-and-full/">https://ragrawal.wordpress.com/2007/02/20/difference-between-owl-lite-dl-and-full/</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p><a href="https://en.wikipedia.org/wiki/Property_(philosophy)">https://en.wikipedia.org/wiki/Property_(philosophy)</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p><a href="https://en.wikipedia.org/wiki/Attribute_(computing)">https://en.wikipedia.org/wiki/Attribute_(computing)</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p><a href="https://en.wikipedia.org/wiki/Concept">https://en.wikipedia.org/wiki/Concept</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p><a href="https://skepticalmethodologist.wordpress.com/2013/12/08/software-development-applied-metaphysics/">https://skepticalmethodologist.wordpress.com/2013/12/08/software-development-applied-metaphysics/</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
-<li id="fn15"><p><a href="https://www.eschrade.com/page/metaphysics-and-software-design/">https://www.eschrade.com/page/metaphysics-and-software-design/</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
-<li id="fn16"><p><a href="https://mally.stanford.edu/theory.html">https://mally.stanford.edu/theory.html</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
-<li id="fn17"><p><a href="https://www.math.toronto.edu/mathnet/answers/existence.html">https://www.math.toronto.edu/mathnet/answers/existence.html</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
-<li id="fn18"><p><a href="https://www.ontology.co/existence.htm">https://www.ontology.co/existence.htm</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
-<li id="fn19"><p><a href="https://www.w3.org/TR/2012/REC-owl2-primer-20121211/">https://www.w3.org/TR/2012/REC-owl2-primer-20121211/</a><a href="#fnref19" class="footnote-back">↩</a></p></li>
-<li id="fn20"><p><a href="https://www.w3.org/TR/2012/REC-owl2-overview-20121211/#Documentation_Roadmap">https://www.w3.org/TR/2012/REC-owl2-overview-20121211/#Documentation_Roadmap</a><a href="#fnref20" class="footnote-back">↩</a></p></li>
-<li id="fn21"><p><a href="http://www.xfront.com/why-use-owl.html">http://www.xfront.com/why-use-owl.html</a><a href="#fnref21" class="footnote-back">↩</a></p></li>
-<li id="fn22"><p><a href="https://www.obitko.com/tutorials/ontologies-semantic-web/">https://www.obitko.com/tutorials/ontologies-semantic-web/</a><a href="#fnref22" class="footnote-back">↩</a></p></li>
-<li id="fn23"><p><a href="https://www.scss.tcd.ie/Owen.Conlan/CS7063/06%20Introduction%20to%20OWL%20(1%20Lecture).ppt.pdf">https://www.scss.tcd.ie/Owen.Conlan/CS7063/06%20Introduction%20to%20OWL%20(1%20Lecture).ppt.pdf</a><a href="#fnref23" class="footnote-back">↩</a></p></li>
-<li id="fn24"><p><a href="http://www.adampease.org/OP/Pitfalls.html">http://www.adampease.org/OP/Pitfalls.html</a><a href="#fnref24" class="footnote-back">↩</a></p></li>
-<li id="fn25"><p><a href="https://en.wikipedia.org/wiki/E-Prime#Different_functions_of_%22to_be%22">https://en.wikipedia.org/wiki/E-Prime#Different_functions_of_%22to_be%22</a><a href="#fnref25" class="footnote-back">↩</a></p></li>
-<li id="fn26"><p><a href="https://github.com/edom/work/tree/master/software/enterprise">https://github.com/edom/work/tree/master/software/enterprise</a><a href="#fnref26" class="footnote-back">↩</a></p></li>
-<li id="fn27"><p><a href="https://en.wikipedia.org/wiki/Algebra_of_sets">https://en.wikipedia.org/wiki/Algebra_of_sets</a><a href="#fnref27" class="footnote-back">↩</a></p></li>
-<li id="fn28"><p><a href="https://en.wikipedia.org/wiki/Object_Management_Group">https://en.wikipedia.org/wiki/Object_Management_Group</a><a href="#fnref28" class="footnote-back">↩</a></p></li>
-<li id="fn29"><p><a href="https://en.wikipedia.org/wiki/Unified_Modeling_Language">https://en.wikipedia.org/wiki/Unified_Modeling_Language</a><a href="#fnref29" class="footnote-back">↩</a></p></li>
-<li id="fn30"><p><a href="https://en.wikipedia.org/wiki/Model-driven_architecture">https://en.wikipedia.org/wiki/Model-driven_architecture</a><a href="#fnref30" class="footnote-back">↩</a></p></li>
-<li id="fn31"><p><a href="http://www.jfsowa.com/talks/clintro.pdf">http://www.jfsowa.com/talks/clintro.pdf</a><a href="#fnref31" class="footnote-back">↩</a></p></li>
-<li id="fn32"><p><a href="https://en.wikipedia.org/wiki/Entity–attribute–value_model">https://en.wikipedia.org/wiki/Entity–attribute–value_model</a><a href="#fnref32" class="footnote-back">↩</a></p></li>
-<li id="fn33"><p><a href="https://en.wikipedia.org/wiki/Category_of_being">https://en.wikipedia.org/wiki/Category_of_being</a><a href="#fnref33" class="footnote-back">↩</a></p></li>
-<li id="fn34"><p><a href="https://www.topquadrant.com/2011/09/30/ontologies-and-data-models-are-they-the-same/">https://www.topquadrant.com/2011/09/30/ontologies-and-data-models-are-they-the-same/</a><a href="#fnref34" class="footnote-back">↩</a></p></li>
-<li id="fn35"><p><a href="https://cliopatria.swi-prolog.org/help/whitepaper.html">https://cliopatria.swi-prolog.org/help/whitepaper.html</a><a href="#fnref35" class="footnote-back">↩</a></p></li>
-<li id="fn36"><p><a href="https://stackoverflow.com/questions/1740341/what-is-the-difference-between-rdf-and-owl">https://stackoverflow.com/questions/1740341/what-is-the-difference-between-rdf-and-owl</a><a href="#fnref36" class="footnote-back">↩</a></p></li>
-<li id="fn37"><p><a href="https://www.w3.org/RDF/Metalog/docs/sw-easy">https://www.w3.org/RDF/Metalog/docs/sw-easy</a><a href="#fnref37" class="footnote-back">↩</a></p></li>
-<li id="fn38"><p><a href="https://www.eschertech.com/products/correct_by_construction.php">https://www.eschertech.com/products/correct_by_construction.php</a><a href="#fnref38" class="footnote-back">↩</a></p></li>
-<li id="fn39"><p><a href="https://help.eclipse.org/photon/index.jsp?topic=%2Forg.eclipse.emf.doc%2Freferences%2Foverview%2FEMF.html">https://help.eclipse.org/photon/index.jsp?topic=%2Forg.eclipse.emf.doc%2Freferences%2Foverview%2FEMF.html</a><a href="#fnref39" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://github.com/reed1">https://github.com/reed1</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://www.obitko.com/tutorials/ontologies-semantic-web/">https://www.obitko.com/tutorials/ontologies-semantic-web/</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="http://www.adampease.org/OP/Pitfalls.html">http://www.adampease.org/OP/Pitfalls.html</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/E-Prime#Different_functions_of_%22to_be%22">https://en.wikipedia.org/wiki/E-Prime#Different_functions_of_%22to_be%22</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Ontology_components">https://en.wikipedia.org/wiki/Ontology_components</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://twitter.com/mekajfire/status/1090689517701349376">https://twitter.com/mekajfire/status/1090689517701349376</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://en.wikipedia.org/wiki/Sense_and_reference">https://en.wikipedia.org/wiki/Sense_and_reference</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://en.wikipedia.org/wiki/Referent">https://en.wikipedia.org/wiki/Referent</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://en.wikipedia.org/wiki/Triangle_of_reference">https://en.wikipedia.org/wiki/Triangle_of_reference</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="http://www.jfsowa.com/ontology/ontometa.htm">http://www.jfsowa.com/ontology/ontometa.htm</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://changingminds.org/explanations/critical_theory/schools/semiotics.htm">https://changingminds.org/explanations/critical_theory/schools/semiotics.htm</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p><a href="https://en.wikipedia.org/wiki/Zero_one_infinity_rule">https://en.wikipedia.org/wiki/Zero_one_infinity_rule</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://en.wikipedia.org/wiki/Theory_of_mind">https://en.wikipedia.org/wiki/Theory_of_mind</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p><a href="https://en.wikipedia.org/wiki/Entity–relationship_model">https://en.wikipedia.org/wiki/Entity–relationship_model</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p><a href="http://williamnava.com/abstract-objects-exist/">http://williamnava.com/abstract-objects-exist/</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p><a href="https://en.wikipedia.org/wiki/Suspension_of_disbelief">https://en.wikipedia.org/wiki/Suspension_of_disbelief</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p><a href="https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-aggregation-vs-composition/">https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-aggregation-vs-composition/</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p>also called &quot;degree of relationship&quot; or &quot;multiplicity&quot;<a href="#fnref19" class="footnote-back">↩</a></p></li>
+<li id="fn20"><p><a href="https://en.wikipedia.org/wiki/Cardinality_(data_modeling)">https://en.wikipedia.org/wiki/Cardinality_(data_modeling)</a><a href="#fnref20" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p><a href="https://ragrawal.wordpress.com/2007/02/20/difference-between-owl-lite-dl-and-full/">https://ragrawal.wordpress.com/2007/02/20/difference-between-owl-lite-dl-and-full/</a><a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p><a href="https://en.wikipedia.org/wiki/Property_(philosophy)">https://en.wikipedia.org/wiki/Property_(philosophy)</a><a href="#fnref22" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p><a href="https://en.wikipedia.org/wiki/Attribute_(computing)">https://en.wikipedia.org/wiki/Attribute_(computing)</a><a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn24"><p><a href="https://en.wikipedia.org/wiki/Concept">https://en.wikipedia.org/wiki/Concept</a><a href="#fnref24" class="footnote-back">↩</a></p></li>
+<li id="fn25"><p><a href="https://skepticalmethodologist.wordpress.com/2013/12/08/software-development-applied-metaphysics/">https://skepticalmethodologist.wordpress.com/2013/12/08/software-development-applied-metaphysics/</a><a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn26"><p><a href="https://www.eschrade.com/page/metaphysics-and-software-design/">https://www.eschrade.com/page/metaphysics-and-software-design/</a><a href="#fnref26" class="footnote-back">↩</a></p></li>
+<li id="fn27"><p><a href="https://mally.stanford.edu/theory.html">https://mally.stanford.edu/theory.html</a><a href="#fnref27" class="footnote-back">↩</a></p></li>
+<li id="fn28"><p><a href="https://www.math.toronto.edu/mathnet/answers/existence.html">https://www.math.toronto.edu/mathnet/answers/existence.html</a><a href="#fnref28" class="footnote-back">↩</a></p></li>
+<li id="fn29"><p><a href="https://www.ontology.co/existence.htm">https://www.ontology.co/existence.htm</a><a href="#fnref29" class="footnote-back">↩</a></p></li>
+<li id="fn30"><p><a href="https://www.w3.org/TR/2012/REC-owl2-primer-20121211/">https://www.w3.org/TR/2012/REC-owl2-primer-20121211/</a><a href="#fnref30" class="footnote-back">↩</a></p></li>
+<li id="fn31"><p><a href="https://www.w3.org/TR/2012/REC-owl2-overview-20121211/#Documentation_Roadmap">https://www.w3.org/TR/2012/REC-owl2-overview-20121211/#Documentation_Roadmap</a><a href="#fnref31" class="footnote-back">↩</a></p></li>
+<li id="fn32"><p><a href="http://www.xfront.com/why-use-owl.html">http://www.xfront.com/why-use-owl.html</a><a href="#fnref32" class="footnote-back">↩</a></p></li>
+<li id="fn33"><p><a href="https://github.com/edom/work/tree/master/software/enterprise">https://github.com/edom/work/tree/master/software/enterprise</a><a href="#fnref33" class="footnote-back">↩</a></p></li>
+<li id="fn34"><p><a href="https://en.wikipedia.org/wiki/Algebra_of_sets">https://en.wikipedia.org/wiki/Algebra_of_sets</a><a href="#fnref34" class="footnote-back">↩</a></p></li>
+<li id="fn35"><p><a href="https://en.wikipedia.org/wiki/Object_Management_Group">https://en.wikipedia.org/wiki/Object_Management_Group</a><a href="#fnref35" class="footnote-back">↩</a></p></li>
+<li id="fn36"><p><a href="https://en.wikipedia.org/wiki/Unified_Modeling_Language">https://en.wikipedia.org/wiki/Unified_Modeling_Language</a><a href="#fnref36" class="footnote-back">↩</a></p></li>
+<li id="fn37"><p><a href="https://en.wikipedia.org/wiki/Model-driven_architecture">https://en.wikipedia.org/wiki/Model-driven_architecture</a><a href="#fnref37" class="footnote-back">↩</a></p></li>
+<li id="fn38"><p><a href="http://www.jfsowa.com/talks/clintro.pdf">http://www.jfsowa.com/talks/clintro.pdf</a><a href="#fnref38" class="footnote-back">↩</a></p></li>
+<li id="fn39"><p><a href="https://en.wikipedia.org/wiki/Entity–attribute–value_model">https://en.wikipedia.org/wiki/Entity–attribute–value_model</a><a href="#fnref39" class="footnote-back">↩</a></p></li>
+<li id="fn40"><p><a href="https://en.wikipedia.org/wiki/Category_of_being">https://en.wikipedia.org/wiki/Category_of_being</a><a href="#fnref40" class="footnote-back">↩</a></p></li>
+<li id="fn41"><p><a href="https://www.topquadrant.com/2011/09/30/ontologies-and-data-models-are-they-the-same/">https://www.topquadrant.com/2011/09/30/ontologies-and-data-models-are-they-the-same/</a><a href="#fnref41" class="footnote-back">↩</a></p></li>
+<li id="fn42"><p><a href="https://cliopatria.swi-prolog.org/help/whitepaper.html">https://cliopatria.swi-prolog.org/help/whitepaper.html</a><a href="#fnref42" class="footnote-back">↩</a></p></li>
+<li id="fn43"><p><a href="https://stackoverflow.com/questions/1740341/what-is-the-difference-between-rdf-and-owl">https://stackoverflow.com/questions/1740341/what-is-the-difference-between-rdf-and-owl</a><a href="#fnref43" class="footnote-back">↩</a></p></li>
+<li id="fn44"><p><a href="https://www.w3.org/RDF/Metalog/docs/sw-easy">https://www.w3.org/RDF/Metalog/docs/sw-easy</a><a href="#fnref44" class="footnote-back">↩</a></p></li>
+<li id="fn45"><p><a href="https://www.eschertech.com/products/correct_by_construction.php">https://www.eschertech.com/products/correct_by_construction.php</a><a href="#fnref45" class="footnote-back">↩</a></p></li>
+<li id="fn46"><p><a href="https://help.eclipse.org/photon/index.jsp?topic=%2Forg.eclipse.emf.doc%2Freferences%2Foverview%2FEMF.html">https://help.eclipse.org/photon/index.jsp?topic=%2Forg.eclipse.emf.doc%2Freferences%2Foverview%2FEMF.html</a><a href="#fnref46" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
