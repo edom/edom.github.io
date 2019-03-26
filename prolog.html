@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">1</span><span class="section_title"><a href="#before-you-go-full-prolog">Before you go full Prolog</a></span><span class="word_count">(1032w~6m)</span></li>
 <li><span class="section_number">2</span><span class="section_title"><a href="#workflow">Workflow</a></span><span class="word_count">(495w~3m)</span></li>
 <li><span class="section_number">3</span><span class="section_title"><a href="#the-things-we-have-to-know">The things we have to know</a></span><span class="word_count">(374w~2m)</span></li>
-<li><span class="section_number">4</span><span class="section_title"><a href="#declarative-prolog-and-other-beautiful-things">Declarative Prolog, and other beautiful things</a></span><span class="word_count">(531w~3m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#declarative-prolog-and-other-beautiful-things">Declarative Prolog, and other beautiful things</a></span><span class="word_count">(1075w~6m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#imperative-prolog-and-other-ugly-things">Imperative Prolog, and other ugly things</a></span><span class="word_count">(1023w~6m)</span></li>
 <li><span class="section_number">6</span><span class="section_title"><a href="#programming-in-the-large-with-prolog">Programming in the large with Prolog</a></span><span class="word_count">(427w~3m)</span></li>
 <li><span class="section_number">7</span><span class="section_title"><a href="#theories">Theories</a></span><span class="word_count">(325w~2m)</span></li>
@@ -455,17 +455,93 @@ document.addEventListener("DOMContentLoaded", function () {
 <h2 id="declarative-prolog-and-other-beautiful-things"><span class="section_number">4</span><span class="section_title">Declarative Prolog, and other beautiful things</span></h2>
 <p>What is the meaning/interpretation of a Prolog program?</p>
 <p>How to read a Prolog program?</p>
+<p>Usually we begin with genealogy like Abraham's<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>. Family tree is actually not a tree but a directed graph. Inbreeding.</p>
+<p>The words &quot;father&quot; and &quot;mother&quot; are to be interpreted as verbs here.</p>
+<pre class="example"><code>father(abraham, isaac).
+father(abraham, ishmael).
+father(isaac, esau).
+father(isaac, jacob).
+
+mother(sarah, isaac).
+mother(hagar, ishmael).
+mother(rebecca, esau).
+mother(rebecca, jacob).
+
+parent(A, B) :- father(A,B) ; mother(A,B).
+</code></pre>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">4.1</span><span class="section_title"><a href="#how-to-read-declarative-prolog-programs">How to read declarative Prolog programs</a></span><span class="word_count">(185w~1m)</span></li>
-<li><span class="section_number">4.2</span><span class="section_title"><a href="#epistemic-interpretation-of-prolog-programs-failure-as-ignorance">Epistemic interpretation of Prolog programs: Failure as ignorance</a></span><span class="word_count">(159w~1m)</span></li>
-<li><span class="section_number">4.3</span><span class="section_title"><a href="#designing-predicates-naming-is-hard.">Designing predicates: naming is hard.</a></span><span class="word_count">(97w~1m)</span></li>
-<li><span class="section_number">4.4</span><span class="section_title"><a href="#naming-the-parts-of-a-list-head-tail-and-butt">Naming the parts of a list: head, tail, and butt</a></span><span class="word_count">(23w~1m)</span></li>
-<li><span class="section_number">4.5</span><span class="section_title"><a href="#total-relational-programming-relational-programs-that-can-be-proven-to-terminate">Total relational programming? Relational programs that can be proven to terminate?</a></span><span class="word_count">(48w~1m)</span></li>
-<li><span class="section_number">4.6</span><span class="section_title"><a href="#defining-your-own-operators">Defining your own operators</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#multi-directional-predicates">Multi-directional predicates</a></span><span class="word_count">(81w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#why-do-we-need-predicates-at-all-if-we-can-do-with-one-unary-predicate">Why do we need predicates at all if we can do with one unary predicate?</a></span><span class="word_count">(109w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#functional-deterministic-relation">Functional (deterministic) relation</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#how-to-read-declarative-prolog-programs">How to read declarative Prolog programs</a></span><span class="word_count">(185w~1m)</span></li>
+<li><span class="section_number">4.5</span><span class="section_title"><a href="#epistemic-interpretation-of-prolog-programs-failure-as-ignorance">Epistemic interpretation of Prolog programs: Failure as ignorance</a></span><span class="word_count">(159w~1m)</span></li>
+<li><span class="section_number">4.6</span><span class="section_title"><a href="#designing-predicates-naming-is-hard.">Designing predicates: naming is hard.</a></span><span class="word_count">(97w~1m)</span></li>
+<li><span class="section_number">4.7</span><span class="section_title"><a href="#naming-the-parts-of-a-list-head-tail-and-butt">Naming the parts of a list: head, tail, and butt</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">4.8</span><span class="section_title"><a href="#total-relational-programming-relational-programs-that-can-be-proven-to-terminate">Total relational programming? Relational programs that can be proven to terminate?</a></span><span class="word_count">(48w~1m)</span></li>
+<li><span class="section_number">4.9</span><span class="section_title"><a href="#defining-your-own-operators">Defining your own operators</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">4.10</span><span class="section_title"><a href="#logic-of-objects">Logic of objects</a></span><span class="word_count">(326w~2m)</span></li>
 </ul>
 </div>
-<h3 id="how-to-read-declarative-prolog-programs"><span class="section_number">4.1</span><span class="section_title">How to read declarative Prolog programs</span></h3>
+<h3 id="multi-directional-predicates"><span class="section_number">4.1</span><span class="section_title">Multi-directional predicates</span></h3>
+<p>A predicate has several uses: iteration, searching, testing, and other computation. A predicate can be used both to enumerate/iterate a finite set, to search for a satisfier, and to test membership.</p>
+<pre class="example"><code>person(alice).
+person(bob).
+
+?- person(charlie). % test membership
+?- once(person(A)). % satisfy
+?- person(A), !. % satisfy
+?- person(A). % iterate
+</code></pre>
+<p>A predicate can be used both to enumerate some infinite sets and to test membership. The programmer is reponsible to ensure that the recursion terminates.</p>
+<pre class="example"><code>nat(z).
+nat(s(A)) :- nat(A).
+</code></pre>
+<pre class="example"><code>succ(A, s(A)).
+
+succ(A, s(A)) :- nat(A).
+</code></pre>
+<p>For non-pure Prolog programs, we have to do some repetition if we want a multi-directional relation.</p>
+<pre class="example"><code>succ(A, B) :- integer(A), !, B is A+1.
+succ(A, B) :- integer(B), !, A is B-1.
+succ(A, B) :- !, type_error(succ, succ(A,B)).
+</code></pre>
+<p>But that can be done more elegantly with <em>constraint logic programming</em>.</p>
+<pre class="example"><code>succ(A, B) :- A + 1 #= B.
+</code></pre>
+<h3 id="why-do-we-need-predicates-at-all-if-we-can-do-with-one-unary-predicate"><span class="section_number">4.2</span><span class="section_title">Why do we need predicates at all if we can do with one unary predicate?</span></h3>
+<pre class="example"><code>:- op(600,xfy,:).
+:- op(650,xfx,@).
+
+invoke(father @ [abraham, isaac]).
+invoke(father @ [abraham, ishmael]).
+invoke(list_length @ [[], z]).
+invoke(list_length @ [[_|A], N]) :-
+    invoke(list_length @ [A,N0]),
+    invoke(succ @ [N0,N]).
+invoke(nat @ [z]).
+invoke(nat @ [s(A)]) :- invoke(nat @ [A]).
+invoke(succ @ [A, s(A)]) :- invoke(nat @ [A]).
+</code></pre>
+<p>We can even do module systems.</p>
+<p>We can encode 1 module as 1 predicate.</p>
+<pre class="example"><code>module1(pred @ [Arg1, Arg2, ...]) ...
+module2(pred @ [Arg1, Arg2, ...]) ...
+</code></pre>
+<p>We can encode all modules as 1 predicate. We can have meta-predicates. We can have variable-arity predicates.</p>
+<pre class="example"><code>invoke(module1:pred @ [Arg1, ...]) ...
+invoke(module2(pred) @ [Arg1, ...]) ...
+invoke(call @ [F|A]) :- invoke(F @ A).
+</code></pre>
+<p>We can do first-order logic with one predicate only and unlimited function symbols. We can convert predicates into function symbols: We can transform <span class="math inline">\( p_1(\vec{x}_1), \ldots, p_n(\vec{x}_n) \)</span> to <span class="math inline">\( P(p_k, \vec{x}_k) \)</span>. This is like writing the interpretation function inside the formal system itself. This is still first-order logic.</p>
+<p>Should <code>a:b@c</code> be interpreted as <code>(a:b)@c</code> (call a:b with arguments c) or <code>a:(b@c)</code> (call b with context a and arguments c)?</p>
+<h3 id="functional-deterministic-relation"><span class="section_number">4.3</span><span class="section_title">Functional (deterministic) relation</span></h3>
+<pre class="example"><code>f(In1, Out1) :- Guard1, !, Body1.
+...
+f(InN, OutN) :- GuardN, !, BodyN.
+f(In, _) :- !, type_error(Type, In).
+</code></pre>
+<h3 id="how-to-read-declarative-prolog-programs"><span class="section_number">4.4</span><span class="section_title">How to read declarative Prolog programs</span></h3>
 <p>A <em>Horn clause</em> <code>A :- B</code> means &quot;to prove A, prove B&quot;. The left-arrow <code>:-</code> can be read as &quot;if&quot;.</p>
 <pre class="example"><code>wet :- rain.
 wet :- sprinkle.
@@ -475,7 +551,7 @@ wet :- sprinkle.
 wet :- rain ; sprinkle.
 </code></pre>
 <p>The conjunction <code>A,B</code> means prove A <em>and then</em> prove B. Prolog proves them in sequence.</p>
-<p>Example: The fire triangle<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>:</p>
+<p>Example: The fire triangle<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>:</p>
 <pre class="example"><code>% A line comment begins with a percent sign.
 
 fire :- oxygen, heat, fuel.
@@ -506,7 +582,7 @@ person(joe).
 % natural ~ {0, 1, 2, ...}
 natural(N) :- integer(N), N &gt;= 0.
 </code></pre>
-<h3 id="epistemic-interpretation-of-prolog-programs-failure-as-ignorance"><span class="section_number">4.2</span><span class="section_title">Epistemic interpretation of Prolog programs: Failure as ignorance</span></h3>
+<h3 id="epistemic-interpretation-of-prolog-programs-failure-as-ignorance"><span class="section_number">4.5</span><span class="section_title">Epistemic interpretation of Prolog programs: Failure as ignorance</span></h3>
 <p>Sometimes a Prolog program should be interpreted epistemically, in which Prolog's <em>fail</em> is treated as <em>unknown</em> instead of <em>false</em>. In this interpretation:</p>
 <ul>
 <li>Succeeding to prove a goal G means that we know that G is true.</li>
@@ -520,7 +596,7 @@ natural(N) :- integer(N), N &gt;= 0.
 <p>We waive the law of excluded middle. In our Prolog program it does not hold that G ; not(G).</p>
 <p>Suppose is_big(john). If is_big(X) fails, it simply means that we don't know whether X is big.</p>
 <p>Suppose that is_big(john,true) means we know that John is big. And is_big(john,false) means we know that John is not big. If is_big(john,_) fails, then we don't know whether John is big or not.</p>
-<h3 id="designing-predicates-naming-is-hard."><span class="section_number">4.3</span><span class="section_title">Designing predicates: naming is hard.</span></h3>
+<h3 id="designing-predicates-naming-is-hard."><span class="section_number">4.6</span><span class="section_title">Designing predicates: naming is hard.</span></h3>
 <p>The name of a relation should describe the relationship.</p>
 <p>If we intend that there is only one relation between A and B that makes sense, then we may name that relation A_B. But:</p>
 <ul>
@@ -530,20 +606,64 @@ natural(N) :- integer(N), N &gt;= 0.
 <p>is_thing(A).</p>
 <p>A procedure's name should begin with a verb.</p>
 <p>Order the parameters from the most likely to be bound. If parameter A is more likely to be more bound than parameter B, then A should come before B. Example: Write list_length/2 instead of length_list/2. Unfortunately not everyone follows this convention.</p>
-<h3 id="naming-the-parts-of-a-list-head-tail-and-butt"><span class="section_number">4.4</span><span class="section_title">Naming the parts of a list: head, tail, and butt</span></h3>
+<h3 id="naming-the-parts-of-a-list-head-tail-and-butt"><span class="section_number">4.7</span><span class="section_title">Naming the parts of a list: head, tail, and butt</span></h3>
 <ul>
 <li>&quot;head&quot; is the first element</li>
 <li>&quot;tail&quot; is everything but the head</li>
 <li>&quot;butt&quot; is the last element</li>
 </ul>
-<h3 id="total-relational-programming-relational-programs-that-can-be-proven-to-terminate"><span class="section_number">4.5</span><span class="section_title">Total relational programming? Relational programs that can be proven to terminate?</span></h3>
+<h3 id="total-relational-programming-relational-programs-that-can-be-proven-to-terminate"><span class="section_number">4.8</span><span class="section_title">Total relational programming? Relational programs that can be proven to terminate?</span></h3>
 <p>A total relation is a relation that is defined for every element in its domain.</p>
 <p>If there is total functional programming, then there should be total relational programming.</p>
 <p>It is too easy to write a Prolog program that doesn't terminate.</p>
-<h3 id="defining-your-own-operators"><span class="section_number">4.6</span><span class="section_title">Defining your own operators</span></h3>
+<h3 id="defining-your-own-operators"><span class="section_number">4.9</span><span class="section_title">Defining your own operators</span></h3>
 <ul>
 <li><code>:- op(Precedence, Type, Name)</code></li>
 </ul>
+<h3 id="logic-of-objects"><span class="section_number">4.10</span><span class="section_title">Logic of objects</span></h3>
+<pre class="example"><code>object_class(alice, person).
+object_class(bob, person).
+object_property_value(alice, name, &quot;Alice&quot;).
+object_property_value(bob, name, &quot;Bob&quot;).
+</code></pre>
+<pre class="example"><code>person(alice).
+person(bob).
+person_name(alice, &quot;Alice&quot;).
+person_name(bob, &quot;Bob&quot;).
+</code></pre>
+<p>Do we want to parameterize the class? Note that in Prolog unifying parameters is easier than unifying predicate names. That is, we cannot write <code>P(A) = Q(A)</code> where P and Q are variables.</p>
+<p>&quot;Mapping Objects to Persistent Predicates&quot; <a href="https://pdfs.semanticscholar.org/f1ec/9e0e24faa1332d0cb60149e1d633b8d2509e.pdf">https://pdfs.semanticscholar.org/f1ec/9e0e24faa1332d0cb60149e1d633b8d2509e.pdf</a></p>
+<p>Should we write our DSL in Twelf instead of Prolog? <a href="http://twelf.org/wiki/LF">http://twelf.org/wiki/LF</a></p>
+<p>&quot;Objects with logic&quot; 1990 <a href="https://dl.acm.org/citation.cfm?id=100368">https://dl.acm.org/citation.cfm?id=100368</a></p>
+<p>The difference between object and value is that an object has identity.</p>
+<p>Must everything have a name?</p>
+<p>An object has properties. A property is a key-value pair.</p>
+<p>There are several ways to <em>represent</em> such objects in Prolog.</p>
+<p>The 1-object-1-term representation represents an object as a ground term. There are two choices for such term: (1) a Prolog functor whose arity is the object's property count, or (2) a list of key-value pairs. The meaning of such representation is that iff the list L contains K-V, then the represented object has a property K whose value is V.</p>
+<p>The 1-property-1-predicate representation represents each property as a predicate, but this requires <em>unique surrogate naming</em> of the object for identification: object_property1(O,P). object_property2(O,P).</p>
+<p>It is surprising that database normalization theory explains some characteristics of good Prolog code.</p>
+<p>Example: Suppose that there are two people Alice and Bob.</p>
+<p>The question: is the object an <em>entity</em> or a <em>value</em>? An entity has identity. A value does not have identity. A natural number does not have an identity. A person has an identity. Two people may have the same name while still being two different people. The same natural number may be referred with a Arabic numeral or a Chinese numeral, but both of them refer to the same natural number.</p>
+<p>The 1-object-1-term representation:</p>
+<pre class="example"><code>[name-&quot;Alice&quot;, birthdate-date(1990,1,1), pets-[cat,dog]]
+[name-&quot;Bob&quot;, birthdate-date(1990,1,1), pets-[cat,dog]]
+</code></pre>
+<p>The 1-object-1-predicate representation:</p>
+<pre class="example"><code>person([name-&quot;Alice&quot;,birthdate-date(1990,1,1)).
+person([name-&quot;Bob&quot;,birthdate-date(1990,1,1)]).
+</code></pre>
+<p>The 1-property-1-predicate representation (is this database in sixth normal form?):</p>
+<pre class="example"><code>person_name(alice,&quot;Alice&quot;).
+person_pet(alice,cat).
+person_pet(alice,dog).
+person_name(bob,&quot;Bob&quot;).
+</code></pre>
+<p>Note that we do not write person_pets(alice,[cat,dog]).</p>
+<p>The ontological representation: kind_surrogate_property_value(person,alice,name,&quot;Alice&quot;). kind_surrogate_property_value(person,alice,birthdate,date(1990,1,1)).</p>
+<p>The parameter O serves as an internal name. The equality of that parameter determines the identity of the represented object.</p>
+<p>Two objects can be equal but not identical.</p>
+<p>A value has no identity. An object has an <em>identity</em>.</p>
+<p>Iff object_property(O,P) is provable, then object O has property P.</p>
 <h2 id="imperative-prolog-and-other-ugly-things"><span class="section_number">5</span><span class="section_title">Imperative Prolog, and other ugly things</span></h2>
 <p>Some ugly things are unfortunately necessary. There are always some dirty jobs in real-world programming. Example dirty jobs are input-output and error handling.</p>
 <div class="local_table_of_contents">
@@ -589,21 +709,21 @@ b.
 <h4 id="swapped-phrases"><span class="section_number">5.2.1</span><span class="section_title">Swapped phrases</span></h4>
 <p>There is only a small syntactic difference between <code>dfs</code> and <code>bfs</code> (it's just flipped order).</p>
 <p>Which one exploits tail call optimization (last call optimization)?</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb14-1" title="1">bit(<span class="dv">0</span>)<span class="kw">.</span></a>
-<a class="sourceLine" id="cb14-2" title="2">bit(<span class="dv">1</span>)<span class="kw">.</span></a>
-<a class="sourceLine" id="cb14-3" title="3"></a>
-<a class="sourceLine" id="cb14-4" title="4">dfs([])<span class="kw">.</span></a>
-<a class="sourceLine" id="cb14-5" title="5">dfs([<span class="dt">H</span><span class="fu">|</span><span class="dt">T</span>]) <span class="kw">:-</span> bit(<span class="dt">H</span>)<span class="kw">,</span> dfs(<span class="dt">T</span>)<span class="kw">.</span></a>
-<a class="sourceLine" id="cb14-6" title="6"></a>
-<a class="sourceLine" id="cb14-7" title="7">bfs([])<span class="kw">.</span></a>
-<a class="sourceLine" id="cb14-8" title="8">bfs([<span class="dt">H</span><span class="fu">|</span><span class="dt">T</span>]) <span class="kw">:-</span> bfs(<span class="dt">T</span>)<span class="kw">,</span> bit(<span class="dt">H</span>)<span class="kw">.</span></a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb29-1" title="1">bit(<span class="dv">0</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb29-2" title="2">bit(<span class="dv">1</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb29-3" title="3"></a>
+<a class="sourceLine" id="cb29-4" title="4">dfs([])<span class="kw">.</span></a>
+<a class="sourceLine" id="cb29-5" title="5">dfs([<span class="dt">H</span><span class="fu">|</span><span class="dt">T</span>]) <span class="kw">:-</span> bit(<span class="dt">H</span>)<span class="kw">,</span> dfs(<span class="dt">T</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb29-6" title="6"></a>
+<a class="sourceLine" id="cb29-7" title="7">bfs([])<span class="kw">.</span></a>
+<a class="sourceLine" id="cb29-8" title="8">bfs([<span class="dt">H</span><span class="fu">|</span><span class="dt">T</span>]) <span class="kw">:-</span> bfs(<span class="dt">T</span>)<span class="kw">,</span> bit(<span class="dt">H</span>)<span class="kw">.</span></a></code></pre></div>
 <h4 id="understanding-depth-first-search-backtracking-choice-points-performance-and-cuts"><span class="section_number">5.2.2</span><span class="section_title">Understanding depth-first search, backtracking, choice points, performance, and cuts</span></h4>
 <p>Save this knowledge base into a file, and load it into Prolog.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb15-1" title="1">a(<span class="dv">0</span>)<span class="kw">.</span></a>
-<a class="sourceLine" id="cb15-2" title="2">a(<span class="dv">1</span>)<span class="kw">.</span></a>
-<a class="sourceLine" id="cb15-3" title="3"></a>
-<a class="sourceLine" id="cb15-4" title="4">b(<span class="dv">0</span>)<span class="kw">.</span></a>
-<a class="sourceLine" id="cb15-5" title="5">b(<span class="dv">1</span>)<span class="kw">.</span></a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb30-1" title="1">a(<span class="dv">0</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb30-2" title="2">a(<span class="dv">1</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb30-3" title="3"></a>
+<a class="sourceLine" id="cb30-4" title="4">b(<span class="dv">0</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb30-5" title="5">b(<span class="dv">1</span>)<span class="kw">.</span></a></code></pre></div>
 <p>Run the query <code>a(A), b(B).</code> and press <code>;</code> until Prolog fails.</p>
 <p>This is what Prolog finds (we remove the newlines to make it more readable):</p>
 <pre class="example"><code>A = B, B = 0 ;
@@ -647,16 +767,16 @@ B = 0   B = 1   B = 0   B = 1
 <p>Sometimes we focus too much on the logical reading and neglect the procedural reading.</p>
 <p>For example, suppose that you want to generate all lists whose length doesn't exceed 2.</p>
 <p>The following is a mathematically correct statement about that fact, but it doesn't work in Prolog. It has correct logical reading, but incorrect procedural reading. If you keep pressing <code>;</code>, this will fail to terminate.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb19-1" title="1"><span class="fu">?-</span> length(<span class="dt">A</span><span class="kw">,</span> <span class="dt">LA</span>)<span class="kw">,</span> <span class="dt">LA</span> <span class="dt">=&lt;</span> <span class="dv">2</span><span class="kw">.</span></a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb34-1" title="1"><span class="fu">?-</span> length(<span class="dt">A</span><span class="kw">,</span> <span class="dt">LA</span>)<span class="kw">,</span> <span class="dt">LA</span> <span class="dt">=&lt;</span> <span class="dv">2</span><span class="kw">.</span></a></code></pre></div>
 <p>The correct way to do that is to use <code>between/3</code> (inclusive):</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb20-1" title="1"><span class="fu">?-</span> between(<span class="dv">0</span><span class="kw">,</span> <span class="dv">2</span><span class="kw">,</span> <span class="dt">LA</span>)<span class="kw">,</span> length(<span class="dt">A</span><span class="kw">,</span> <span class="dt">LA</span>)<span class="kw">.</span></a></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb35-1" title="1"><span class="fu">?-</span> between(<span class="dv">0</span><span class="kw">,</span> <span class="dv">2</span><span class="kw">,</span> <span class="dt">LA</span>)<span class="kw">,</span> length(<span class="dt">A</span><span class="kw">,</span> <span class="dt">LA</span>)<span class="kw">.</span></a></code></pre></div>
 <p>We can also use the <code>clpfd</code> library:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">:-</span> use_module(library(clpfd))<span class="kw">.</span></a>
-<a class="sourceLine" id="cb21-2" title="2"></a>
-<a class="sourceLine" id="cb21-3" title="3"><span class="fu">?-</span> <span class="dt">LA</span> in <span class="dv">0</span>..<span class="dv">2</span><span class="kw">,</span> indomain(<span class="dt">LA</span>)<span class="kw">,</span> length(<span class="dt">A</span><span class="kw">,</span> <span class="dt">LA</span>)<span class="kw">.</span></a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb36-1" title="1"><span class="kw">:-</span> use_module(library(clpfd))<span class="kw">.</span></a>
+<a class="sourceLine" id="cb36-2" title="2"></a>
+<a class="sourceLine" id="cb36-3" title="3"><span class="fu">?-</span> <span class="dt">LA</span> in <span class="dv">0</span>..<span class="dv">2</span><span class="kw">,</span> indomain(<span class="dt">LA</span>)<span class="kw">,</span> length(<span class="dt">A</span><span class="kw">,</span> <span class="dt">LA</span>)<span class="kw">.</span></a></code></pre></div>
 <p>We shouldn't have to resort to cuts:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb22-1" title="1"><span class="co">% Don&#39;t do this.</span></a>
-<a class="sourceLine" id="cb22-2" title="2"><span class="fu">?-</span> length(<span class="dt">A</span><span class="kw">,</span> <span class="dt">LA</span>)<span class="kw">,</span> (<span class="dt">LA</span> <span class="dt">=&lt;</span> <span class="dv">2</span> <span class="kw">-&gt;</span> <span class="kw">true;</span> <span class="kw">!,</span> <span class="kw">fail</span>)<span class="kw">.</span></a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb37-1" title="1"><span class="co">% Don&#39;t do this.</span></a>
+<a class="sourceLine" id="cb37-2" title="2"><span class="fu">?-</span> length(<span class="dt">A</span><span class="kw">,</span> <span class="dt">LA</span>)<span class="kw">,</span> (<span class="dt">LA</span> <span class="dt">=&lt;</span> <span class="dv">2</span> <span class="kw">-&gt;</span> <span class="kw">true;</span> <span class="kw">!,</span> <span class="kw">fail</span>)<span class="kw">.</span></a></code></pre></div>
 <p>See also:</p>
 <ul>
 <li><a href="https://www.metalevel.at/prolog/nontermination">https://www.metalevel.at/prolog/nontermination</a>
@@ -694,9 +814,9 @@ f0(X0, Y0), f1(X1, Y1), f2(X2, Y2), g(Y0, Y1, Y2, Z).
 <p>If computation is reversible, relational style wins (half the amount of code of functional style).</p>
 <p>We should use both styles depending on circumstances.</p>
 <p>We can define a functional/expression/applicative/evaluative sublanguage in Prolog, roughly like this:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb24-1" title="1">eval((<span class="dt">A</span> <span class="kw">=</span> <span class="dt">B</span>)<span class="kw">,</span> <span class="dt">Val</span>) <span class="kw">:-</span> <span class="dt">A</span> <span class="kw">=</span> <span class="dt">B</span><span class="kw">,</span> eval(<span class="dt">B</span><span class="kw">,</span> <span class="dt">Val</span>)<span class="kw">,</span> <span class="kw">!.</span></a>
-<a class="sourceLine" id="cb24-2" title="2">eval(<span class="dt">F</span><span class="kw">,</span> <span class="dt">Val</span>) <span class="kw">:-</span> <span class="dt">callable</span>(<span class="dt">F</span>)<span class="kw">,</span> <span class="kw">call</span>(<span class="dt">F</span><span class="kw">,</span> <span class="dt">Val</span>)<span class="kw">,</span> <span class="kw">!.</span> <span class="co">% lots of hand-waving here</span></a>
-<a class="sourceLine" id="cb24-3" title="3"><span class="co">% etc.</span></a></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb39-1" title="1">eval((<span class="dt">A</span> <span class="kw">=</span> <span class="dt">B</span>)<span class="kw">,</span> <span class="dt">Val</span>) <span class="kw">:-</span> <span class="dt">A</span> <span class="kw">=</span> <span class="dt">B</span><span class="kw">,</span> eval(<span class="dt">B</span><span class="kw">,</span> <span class="dt">Val</span>)<span class="kw">,</span> <span class="kw">!.</span></a>
+<a class="sourceLine" id="cb39-2" title="2">eval(<span class="dt">F</span><span class="kw">,</span> <span class="dt">Val</span>) <span class="kw">:-</span> <span class="dt">callable</span>(<span class="dt">F</span>)<span class="kw">,</span> <span class="kw">call</span>(<span class="dt">F</span><span class="kw">,</span> <span class="dt">Val</span>)<span class="kw">,</span> <span class="kw">!.</span> <span class="co">% lots of hand-waving here</span></a>
+<a class="sourceLine" id="cb39-3" title="3"><span class="co">% etc.</span></a></code></pre></div>
 <p>Haskell is weak against the AST decoration problem. Dynamic languages (Scheme, JavaScript, Prolog) / gradual-typed languages (TypeScript) beat static languages (Haskell) on the AST decoration problem. How about Ocaml polymorphic variants?</p>
 <p>Should we move from Prolog to Scheme/miniKanren or Mercury?</p>
 <h3 id="directives-like---op-complicate-parsing-a-prolog-source-code."><span class="section_number">5.6</span><span class="section_title">Directives like <code>:- op</code> complicate parsing a Prolog source code.</span></h3>
@@ -1151,9 +1271,9 @@ false.
 <p>father_child(F,C)</p>
 <p>bool father_child(termref F, termref C) { }</p>
 <h3 id="implicit-state-language"><span class="section_number">10.2</span><span class="section_title">Implicit state language?</span></h3>
-<div class="sourceCode" id="cb45"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb45-1" title="1">interpret(state(<span class="dt">S</span>)<span class="kw">,</span> <span class="dt">S</span><span class="kw">,</span> <span class="dt">S</span>)<span class="kw">.</span></a>
-<a class="sourceLine" id="cb45-2" title="2">interpret(state_set(<span class="dt">S</span>)<span class="kw">,</span> <span class="dt">_</span><span class="kw">,</span> <span class="dt">S</span>)<span class="kw">.</span></a>
-<a class="sourceLine" id="cb45-3" title="3">interpret((<span class="dt">A</span><span class="kw">,</span><span class="dt">B</span>)<span class="kw">,</span><span class="dt">S0</span><span class="kw">,</span><span class="dt">S2</span>) <span class="kw">:-</span> interpret(<span class="dt">A</span><span class="kw">,</span><span class="dt">S0</span><span class="kw">,</span><span class="dt">S1</span>)<span class="kw">,</span> interpret(<span class="dt">B</span><span class="kw">,</span><span class="dt">S1</span><span class="kw">,</span><span class="dt">S2</span>)<span class="kw">.</span></a></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb60-1" title="1">interpret(state(<span class="dt">S</span>)<span class="kw">,</span> <span class="dt">S</span><span class="kw">,</span> <span class="dt">S</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb60-2" title="2">interpret(state_set(<span class="dt">S</span>)<span class="kw">,</span> <span class="dt">_</span><span class="kw">,</span> <span class="dt">S</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb60-3" title="3">interpret((<span class="dt">A</span><span class="kw">,</span><span class="dt">B</span>)<span class="kw">,</span><span class="dt">S0</span><span class="kw">,</span><span class="dt">S2</span>) <span class="kw">:-</span> interpret(<span class="dt">A</span><span class="kw">,</span><span class="dt">S0</span><span class="kw">,</span><span class="dt">S1</span>)<span class="kw">,</span> interpret(<span class="dt">B</span><span class="kw">,</span><span class="dt">S1</span><span class="kw">,</span><span class="dt">S2</span>)<span class="kw">.</span></a></code></pre></div>
 <h3 id="devops-dependency-build-system"><span class="section_number">10.3</span><span class="section_title">Devops, dependency, build system?</span></h3>
 <p>Prolog marelle, Haskell shake, build system?</p>
 <ul>
@@ -1222,12 +1342,12 @@ append [H|A] B [H|C] :- append A B C.
 </ul></li>
 </ul>
 <p>Functional programming is more concise and readable than logic (relational?) programming when we are describing functions:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb47-1" title="1">fib <span class="dv">0</span> <span class="fu">=</span> <span class="dv">1</span></a>
-<a class="sourceLine" id="cb47-2" title="2">fib <span class="dv">1</span> <span class="fu">=</span> <span class="dv">1</span></a>
-<a class="sourceLine" id="cb47-3" title="3">fib n <span class="fu">=</span> fib (n<span class="fu">-</span><span class="dv">1</span>) <span class="fu">+</span> fib (n<span class="fu">-</span><span class="dv">2</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb48"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb48-1" title="1">fib(<span class="dv">0</span><span class="kw">,</span><span class="dv">1</span>)<span class="kw">.</span></a>
-<a class="sourceLine" id="cb48-2" title="2">fib(<span class="dv">1</span><span class="kw">,</span><span class="dv">1</span>)<span class="kw">.</span></a>
-<a class="sourceLine" id="cb48-3" title="3">fib(<span class="dt">N</span><span class="kw">,</span><span class="dt">F</span>) <span class="kw">:-</span> <span class="dt">N1</span> <span class="dt">is</span> <span class="dt">N</span><span class="dv">-1</span><span class="kw">,</span> <span class="dt">N2</span> <span class="dt">is</span> <span class="dt">N</span><span class="dv">-2</span><span class="kw">,</span> fib(<span class="dt">N1</span><span class="kw">,</span><span class="dt">F1</span>)<span class="kw">,</span> fib(<span class="dt">N2</span><span class="kw">,</span><span class="dt">F2</span>)<span class="kw">,</span> <span class="dt">F</span> <span class="dt">is</span> <span class="dt">F1+F2</span><span class="kw">.</span></a></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb62-1" title="1">fib <span class="dv">0</span> <span class="fu">=</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb62-2" title="2">fib <span class="dv">1</span> <span class="fu">=</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb62-3" title="3">fib n <span class="fu">=</span> fib (n<span class="fu">-</span><span class="dv">1</span>) <span class="fu">+</span> fib (n<span class="fu">-</span><span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode prolog"><code class="sourceCode prolog"><a class="sourceLine" id="cb63-1" title="1">fib(<span class="dv">0</span><span class="kw">,</span><span class="dv">1</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb63-2" title="2">fib(<span class="dv">1</span><span class="kw">,</span><span class="dv">1</span>)<span class="kw">.</span></a>
+<a class="sourceLine" id="cb63-3" title="3">fib(<span class="dt">N</span><span class="kw">,</span><span class="dt">F</span>) <span class="kw">:-</span> <span class="dt">N1</span> <span class="dt">is</span> <span class="dt">N</span><span class="dv">-1</span><span class="kw">,</span> <span class="dt">N2</span> <span class="dt">is</span> <span class="dt">N</span><span class="dv">-2</span><span class="kw">,</span> fib(<span class="dt">N1</span><span class="kw">,</span><span class="dt">F1</span>)<span class="kw">,</span> fib(<span class="dt">N2</span><span class="kw">,</span><span class="dt">F2</span>)<span class="kw">,</span> <span class="dt">F</span> <span class="dt">is</span> <span class="dt">F1+F2</span><span class="kw">.</span></a></code></pre></div>
 <p>But we can translate a function to a deterministic (det) predicate in Prolog.</p>
 <h3 id="whaaat"><span class="section_number">10.8</span><span class="section_title">whaaat</span></h3>
 <p>This marshallp guy is… inhuman? He uses Prolog for note taking! <a href="https://news.ycombinator.com/item?id=1142292">https://news.ycombinator.com/item?id=1142292</a></p>
@@ -1498,7 +1618,8 @@ car(a_car, car(&#39;Toyota&#39;, 2000)).
 <li id="fn12"><p><a href="http://www.swi-prolog.org/pldoc/man?section=ext-dquotes-motivation">http://www.swi-prolog.org/pldoc/man?section=ext-dquotes-motivation</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
 <li id="fn13"><p><a href="http://eclipseclp.org/wiki/Prolog/Strings">http://eclipseclp.org/wiki/Prolog/Strings</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
 <li id="fn14"><p><a href="http://fsl.cs.illinois.edu/images/9/9c/PrologStandard.pdf">http://fsl.cs.illinois.edu/images/9/9c/PrologStandard.pdf</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
-<li id="fn15"><p><a href="https://en.wikipedia.org/wiki/Fire_triangle">https://en.wikipedia.org/wiki/Fire_triangle</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p><a href="https://en.wikipedia.org/wiki/Abraham%27s_family_tree">https://en.wikipedia.org/wiki/Abraham%27s_family_tree</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p><a href="https://en.wikipedia.org/wiki/Fire_triangle">https://en.wikipedia.org/wiki/Fire_triangle</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
