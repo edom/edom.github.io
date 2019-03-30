@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">3</span><span class="section_title"><a href="#ontology-engineering">Ontology engineering</a></span><span class="word_count">(1017w~6m)</span></li>
 <li><span class="section_number">4</span><span class="section_title"><a href="#ontology-of-concepts">Ontology of concepts</a></span><span class="word_count">(876w~5m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#our-mental-models-of-software-systems">Our mental models of software systems</a></span><span class="word_count">(1223w~7m)</span></li>
-<li><span class="section_number">6</span><span class="section_title"><a href="#key-ideas">Key ideas</a></span><span class="word_count">(436w~3m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#key-ideas">Key ideas</a></span><span class="word_count">(656w~4m)</span></li>
 <li><span class="section_number">7</span><span class="section_title"><a href="#realizing-the-ideas-in-prolog">Realizing the ideas in Prolog</a></span><span class="word_count">(846w~5m)</span></li>
 <li><span class="section_number">8</span><span class="section_title"><a href="#existing-systems">Existing systems</a></span><span class="word_count">(264w~2m)</span></li>
 <li><span class="section_number">9</span><span class="section_title"><a href="#literature-study">Literature study</a></span><span class="word_count">(297w~2m)</span></li>
@@ -760,6 +760,7 @@ concept_attribute_type(employee, name, #string).
 <li><span class="section_number">6.6</span><span class="section_title"><a href="#presentation-is-accidental-complexity">Presentation is accidental complexity</a></span><span class="word_count">(129w~1m)</span></li>
 <li><span class="section_number">6.7</span><span class="section_title"><a href="#bottom-up-vs-top-down">Bottom-up vs top-down</a></span><span class="word_count">(37w~1m)</span></li>
 <li><span class="section_number">6.8</span><span class="section_title"><a href="#make-restart-cheap-and-restart-on-error">Make restart cheap, and restart on error</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">6.9</span><span class="section_title"><a href="#an-ux-research-topic-does-the-users-native-language-sentence-structure-affect-the-perceived-navigability-of-the-system">An UX research topic: Does the user's native language sentence structure affect the perceived navigability of the system?</a></span><span class="word_count">(221w~2m)</span></li>
 </ul>
 </div>
 <h3 id="common-enterprise-operations"><span class="section_number">6.1</span><span class="section_title">Common enterprise operations</span></h3>
@@ -812,6 +813,47 @@ opv(java_class(sql_dto(T)), name, JavaName) :-
 <p>The top-down way is to start with the business users' mental model, and …?</p>
 <h3 id="make-restart-cheap-and-restart-on-error"><span class="section_number">6.8</span><span class="section_title">Make restart cheap, and restart on error</span></h3>
 <p>Like Erlang.</p>
+<h3 id="an-ux-research-topic-does-the-users-native-language-sentence-structure-affect-the-perceived-navigability-of-the-system"><span class="section_number">6.9</span><span class="section_title">An UX research topic: Does the user's native language sentence structure affect the perceived navigability of the system?</span></h3>
+<p>English imperative VO: &quot;create a new entry&quot;</p>
+<p>Japanese imperative OV: &quot;new entry <em>wo</em> create-&lt;suffix&gt;&quot;</p>
+<p>English SVO &quot;I put the data into the system&quot;</p>
+<p>German SOV &quot;I into the system the data put&quot;</p>
+<p>Japanese SOV &quot;system-into data put-&lt;suffix&gt;&quot;</p>
+<p>The website navigation that is natural for English speakers:</p>
+<ul>
+<li>create
+<ul>
+<li>employee</li>
+<li>department</li>
+</ul></li>
+<li>delete
+<ul>
+<li>employee</li>
+<li>department</li>
+</ul></li>
+</ul>
+<p>The website navigation that is natural for Japanese speakers:</p>
+<ul>
+<li>employee
+<ul>
+<li>create</li>
+<li>delete</li>
+</ul></li>
+<li>department
+<ul>
+<li>create</li>
+<li>delete</li>
+</ul></li>
+</ul>
+<p>The difference:</p>
+<ul>
+<li>An English speaker thinks &quot;I need to <em>create</em> an <em>employee record</em>&quot;. The action comes before the object.</li>
+<li>A Japanese speaker thinks &quot;<em>employee record</em> wo <em>create</em> suru koto wa hitsuyou ga aru&quot; or something like that. The object comes before the action.</li>
+</ul>
+<p>My hypothesis is that the user will feel that the system is more usable if the navigation sequence <em>matches</em> the word sequence in the user's internal phonological loop<a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a>. My hypothesis is that the user will feel less cognitive burden. But what about polyglot/multilingual users? What about a Japanese-native user who is also proficient in English?</p>
+<p>But this is not the case. Grouping the content by topic produces the same navigation structure for both languages.</p>
+<p>The front page should answer the question &quot;How do I do X with this system?&quot;, where the user already knows X beforehand.</p>
+<p>Actions that are done more often should be put nearer to the top of the page. But commands and queries should be separated.</p>
 <h2 id="realizing-the-ideas-in-prolog"><span class="section_number">7</span><span class="section_title">Realizing the ideas in Prolog</span></h2>
 <div class="local_table_of_contents">
 <ul>
@@ -831,7 +873,7 @@ opv(java_class(sql_dto(T)), name, JavaName) :-
 </div>
 <h3 id="using-prolog-for-model-driven-enterprise-software-engineering"><span class="section_number">7.1</span><span class="section_title">Using Prolog for model-driven enterprise software engineering</span></h3>
 <p>See also <a href="prolog.html">file:prolog.html</a>.</p>
-<p>The system is being sketched at a directory in our Git repository<a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a>. This document is a sketch of that system. Not much has been implemented.</p>
+<p>The system is being sketched at a directory in our Git repository<a href="#fn38" class="footnote-ref" id="fnref38"><sup>38</sup></a>. This document is a sketch of that system. Not much has been implemented.</p>
 <p>The expected workflow:</p>
 <ul>
 <li>Model the application in Prolog.</li>
@@ -988,7 +1030,7 @@ person_birthdate(PersonId, BirthDate)
 <p>Formal ontology, knowledge representation, modeling an enterprise software in Prolog</p>
 <p>Synonym set: domain of discourse, domain of interest, subject matter</p>
 <p>Related: expert system</p>
-<p>Zotonic's authors at least has thought about its ontology.<a href="#fn38" class="footnote-ref" id="fnref38"><sup>38</sup></a></p>
+<p>Zotonic's authors at least has thought about its ontology.<a href="#fn39" class="footnote-ref" id="fnref39"><sup>39</sup></a></p>
 <p>Ur/Web has language-level integration?</p>
 <h2 id="existing-systems"><span class="section_number">8</span><span class="section_title">Existing systems</span></h2>
 <div class="local_table_of_contents">
@@ -1001,13 +1043,13 @@ person_birthdate(PersonId, BirthDate)
 </ul>
 </div>
 <h3 id="a-little-history-of-model-driven-engineering"><span class="section_number">8.1</span><span class="section_title">A little history of model-driven engineering?</span></h3>
-<p>1989: OMG<a href="#fn39" class="footnote-ref" id="fnref39"><sup>39</sup></a> was founded. 1990s: OOP Method Wars. CASE tools. 1997: OMG adopted UML<a href="#fn40" class="footnote-ref" id="fnref40"><sup>40</sup></a>. MDA<a href="#fn41" class="footnote-ref" id="fnref41"><sup>41</sup></a>.</p>
+<p>1989: OMG<a href="#fn40" class="footnote-ref" id="fnref40"><sup>40</sup></a> was founded. 1990s: OOP Method Wars. CASE tools. 1997: OMG adopted UML<a href="#fn41" class="footnote-ref" id="fnref41"><sup>41</sup></a>. MDA<a href="#fn42" class="footnote-ref" id="fnref42"><sup>42</sup></a>.</p>
 <p>UML is focused on visualization for humans. UML does not have a clear formal ontology for machine translation.</p>
 <h3 id="how-standard-is-kif-knowledge-interchange-format"><span class="section_number">8.2</span><span class="section_title">How standard is KIF (Knowledge Interchange Format)?</span></h3>
 <h3 id="ontologies-for-enterprise-software-systems"><span class="section_number">8.3</span><span class="section_title">Ontologies for enterprise software systems</span></h3>
 <p>Is there already an ontology for enterprise software systems? Fox &amp; Grüninger 1997 <span class="citation" data-cites="fox1997ontologies">[<a href="#ref-fox1997ontologies">4</a>]</span>? Dietz 2012 <span class="citation" data-cites="dietz2012enterprise">[<a href="#ref-dietz2012enterprise">3</a>]</span>?</p>
 <h3 id="existing-ontologies-models-meta-models-and-modeling-methods"><span class="section_number">8.4</span><span class="section_title">Existing ontologies, models, meta-models, and modeling methods</span></h3>
-<p>Introduction to knowledge representation: John F. Sowa's 2011 introduction to common logic<a href="#fn42" class="footnote-ref" id="fnref42"><sup>42</sup></a>. Compares these notations: Frege 1879, Peirce 1885, Peano 1895, Peirce 1897. They have identical semantics.</p>
+<p>Introduction to knowledge representation: John F. Sowa's 2011 introduction to common logic<a href="#fn43" class="footnote-ref" id="fnref43"><sup>43</sup></a>. Compares these notations: Frege 1879, Peirce 1885, Peano 1895, Peirce 1897. They have identical semantics.</p>
 <p>Ideally we build a lower (domain-specific) ontology on an upper ontology.</p>
 <ul>
 <li>BFO (Basic Formal Ontology) <span class="citation" data-cites="arp2015building">[<a href="#ref-arp2015building">1</a>]</span></li>
@@ -1021,17 +1063,17 @@ person_birthdate(PersonId, BirthDate)
 <li>Entity-relationship modeling</li>
 <li>Subject-predicate-object, RDF triple</li>
 <li>Object-property-value</li>
-<li>Entity-attribute-value<a href="#fn43" class="footnote-ref" id="fnref43"><sup>43</sup></a></li>
-<li>Category of being<a href="#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a></li>
+<li>Entity-attribute-value<a href="#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a></li>
+<li>Category of being<a href="#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a></li>
 </ul>
 <p>Some interesting things: OMG MOF (Meta Object Facility), fUML/ALF.</p>
 <p>fUML: Mayerhofer 2014 <span class="citation" data-cites="mayerhofer2014defining">[<a href="#ref-mayerhofer2014defining">10</a>]</span></p>
 <p>Shan 2008 <span class="citation" data-cites="shan2008code">[<a href="#ref-shan2008code">12</a>]</span>: &quot;Trinity PhD Simone Grassi has carried out his research to create an abstract specification of algorithms (based on a set of ontologies) as a Model Driven Platform to build software […]&quot;</p>
 <p><a href="https://en.wikipedia.org/wiki/Data_model">https://en.wikipedia.org/wiki/Data_model</a></p>
-<p>Ontology vs data model<a href="#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a></p>
-<p>ClioPatria<a href="#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a> concise RDF triple syntax: predicate logic without XML noise.</p>
-<p>RDF vs OWL<a href="#fn47" class="footnote-ref" id="fnref47"><sup>47</sup></a>. Basically, RDF is like a Prolog fact, and OWL is like a Prolog Horn clause.</p>
-<p>With Prolog syntax, we can just skip all the XML-URI shenanigans<a href="#fn48" class="footnote-ref" id="fnref48"><sup>48</sup></a>.</p>
+<p>Ontology vs data model<a href="#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a></p>
+<p>ClioPatria<a href="#fn47" class="footnote-ref" id="fnref47"><sup>47</sup></a> concise RDF triple syntax: predicate logic without XML noise.</p>
+<p>RDF vs OWL<a href="#fn48" class="footnote-ref" id="fnref48"><sup>48</sup></a>. Basically, RDF is like a Prolog fact, and OWL is like a Prolog Horn clause.</p>
+<p>With Prolog syntax, we can just skip all the XML-URI shenanigans<a href="#fn49" class="footnote-ref" id="fnref49"><sup>49</sup></a>.</p>
 <h3 id="common-to-all-ontologies-classes-and-instances"><span class="section_number">8.5</span><span class="section_title">Common to all ontologies: classes and instances</span></h3>
 <h2 id="literature-study"><span class="section_number">9</span><span class="section_title">Literature study</span></h2>
 <div class="local_table_of_contents">
@@ -1053,7 +1095,7 @@ person_birthdate(PersonId, BirthDate)
 <p>fUML/ALF with text instead of graphics?</p>
 <h4 id="how-far-can-protege-generate-java-code"><span class="section_number">9.1.2</span><span class="section_title">How far can Protege generate Java code?</span></h4>
 <h4 id="escher-systems-perfect-developer"><span class="section_number">9.1.3</span><span class="section_title">Escher Systems Perfect Developer</span></h4>
-<p>I somewhat agree with this &quot;correct-by-construction&quot; spirit<a href="#fn49" class="footnote-ref" id="fnref49"><sup>49</sup></a>. But the website is all marketing and no technical.</p>
+<p>I somewhat agree with this &quot;correct-by-construction&quot; spirit<a href="#fn50" class="footnote-ref" id="fnref50"><sup>50</sup></a>. But the website is all marketing and no technical.</p>
 <h4 id="there-are-too-many-tools"><span class="section_number">9.1.4</span><span class="section_title">There are too many tools</span></h4>
 <p>Which one is free-libre-open-source? <a href="https://en.wikipedia.org/wiki/Model-driven_engineering">https://en.wikipedia.org/wiki/Model-driven_engineering</a></p>
 <p>Topcased and Papyrus <span class="citation" data-cites="gamalielsson2011open">[<a href="#ref-gamalielsson2011open">5</a>]</span>.</p>
@@ -1067,7 +1109,7 @@ person_birthdate(PersonId, BirthDate)
 </div>
 <h4 id="emf"><span class="section_number">9.2.1</span><span class="section_title">EMF</span></h4>
 <p>EMF is limited to structure and not behavior. EMF can generate code for domain model (similar to Java bean) and validation, but not business logic. The programmer writes the business logic in Java, and EMF uses code-merging. EMF has persistence framework. EMF does not go far enough.</p>
-<p>EMF overview<a href="#fn50" class="footnote-ref" id="fnref50"><sup>50</sup></a> Ecore is similar to EMOF (Essential MOF), with some small differences, mostly naming differences. &quot;EMF does not model behavior, so the implementation must be provided by user-written Java code.&quot; Modeling dynamic behavior is harder than modeling static structure. Modeling behavior is practically creating a programming language.</p>
+<p>EMF overview<a href="#fn51" class="footnote-ref" id="fnref51"><sup>51</sup></a> Ecore is similar to EMOF (Essential MOF), with some small differences, mostly naming differences. &quot;EMF does not model behavior, so the implementation must be provided by user-written Java code.&quot; Modeling dynamic behavior is harder than modeling static structure. Modeling behavior is practically creating a programming language.</p>
 <p>This is similar to Eclipse Modeling Framework (EMF). The difference is: EMF leaves behavior specification to Java, but I think Java is too low-level. EMF models structure but not behavior. EMF does not go far enough.</p>
 <p>Java is too low-level. Writing an enterprise application in Java is like teaching graduate physics using only simple sentences.</p>
 <h4 id="java-ee"><span class="section_number">9.2.2</span><span class="section_title">Java EE</span></h4>
@@ -1098,7 +1140,7 @@ gt(10) &amp;= \forall a. gt&#39;(a,10) = \forall a. a &gt; 10
 \end{align*}
 \]</span>
 <p>where <span class="math inline">\(p&#39;\)</span> means the meaning (the unary predicate interpretation) of <span class="math inline">\(p\)</span>.</p>
-<p>The algebra of unary predicates is analogous to the algebra of sets<a href="#fn51" class="footnote-ref" id="fnref51"><sup>51</sup></a>: conjunction is intersection, disjunction is union, implication is subset, etc.</p>
+<p>The algebra of unary predicates is analogous to the algebra of sets<a href="#fn52" class="footnote-ref" id="fnref52"><sup>52</sup></a>: conjunction is intersection, disjunction is union, implication is subset, etc.</p>
 <h3 id="software-architecture-of-logic-programs"><span class="section_number">10.2</span><span class="section_title">Software architecture of logic programs?</span></h3>
 <p>How should logic programs be architected? Can we generate architecture from semantics?</p>
 <h3 id="some-kinds-of-software-systems"><span class="section_number">10.3</span><span class="section_title">Some kinds of software systems</span></h3>
@@ -1268,21 +1310,22 @@ gt(10) &amp;= \forall a. gt&#39;(a,10) = \forall a. a &gt; 10
 <li id="fn34"><p><a href="https://en.wikipedia.org/wiki/Property_(philosophy)">https://en.wikipedia.org/wiki/Property_(philosophy)</a><a href="#fnref34" class="footnote-back">↩</a></p></li>
 <li id="fn35"><p><a href="https://en.wikipedia.org/wiki/Attribute_(computing)">https://en.wikipedia.org/wiki/Attribute_(computing)</a><a href="#fnref35" class="footnote-back">↩</a></p></li>
 <li id="fn36"><p><a href="https://en.wikipedia.org/wiki/Concept">https://en.wikipedia.org/wiki/Concept</a><a href="#fnref36" class="footnote-back">↩</a></p></li>
-<li id="fn37"><p><a href="https://github.com/edom/work/tree/master/software/enterprise">https://github.com/edom/work/tree/master/software/enterprise</a><a href="#fnref37" class="footnote-back">↩</a></p></li>
-<li id="fn38"><p><a href="http://zotonic.com/page/618/flexible-datamodel">http://zotonic.com/page/618/flexible-datamodel</a><a href="#fnref38" class="footnote-back">↩</a></p></li>
-<li id="fn39"><p><a href="https://en.wikipedia.org/wiki/Object_Management_Group">https://en.wikipedia.org/wiki/Object_Management_Group</a><a href="#fnref39" class="footnote-back">↩</a></p></li>
-<li id="fn40"><p><a href="https://en.wikipedia.org/wiki/Unified_Modeling_Language">https://en.wikipedia.org/wiki/Unified_Modeling_Language</a><a href="#fnref40" class="footnote-back">↩</a></p></li>
-<li id="fn41"><p><a href="https://en.wikipedia.org/wiki/Model-driven_architecture">https://en.wikipedia.org/wiki/Model-driven_architecture</a><a href="#fnref41" class="footnote-back">↩</a></p></li>
-<li id="fn42"><p><a href="http://www.jfsowa.com/talks/clintro.pdf">http://www.jfsowa.com/talks/clintro.pdf</a><a href="#fnref42" class="footnote-back">↩</a></p></li>
-<li id="fn43"><p><a href="https://en.wikipedia.org/wiki/Entity–attribute–value_model">https://en.wikipedia.org/wiki/Entity–attribute–value_model</a><a href="#fnref43" class="footnote-back">↩</a></p></li>
-<li id="fn44"><p><a href="https://en.wikipedia.org/wiki/Category_of_being">https://en.wikipedia.org/wiki/Category_of_being</a><a href="#fnref44" class="footnote-back">↩</a></p></li>
-<li id="fn45"><p><a href="https://www.topquadrant.com/2011/09/30/ontologies-and-data-models-are-they-the-same/">https://www.topquadrant.com/2011/09/30/ontologies-and-data-models-are-they-the-same/</a><a href="#fnref45" class="footnote-back">↩</a></p></li>
-<li id="fn46"><p><a href="https://cliopatria.swi-prolog.org/help/whitepaper.html">https://cliopatria.swi-prolog.org/help/whitepaper.html</a><a href="#fnref46" class="footnote-back">↩</a></p></li>
-<li id="fn47"><p><a href="https://stackoverflow.com/questions/1740341/what-is-the-difference-between-rdf-and-owl">https://stackoverflow.com/questions/1740341/what-is-the-difference-between-rdf-and-owl</a><a href="#fnref47" class="footnote-back">↩</a></p></li>
-<li id="fn48"><p><a href="https://www.w3.org/RDF/Metalog/docs/sw-easy">https://www.w3.org/RDF/Metalog/docs/sw-easy</a><a href="#fnref48" class="footnote-back">↩</a></p></li>
-<li id="fn49"><p><a href="https://www.eschertech.com/products/correct_by_construction.php">https://www.eschertech.com/products/correct_by_construction.php</a><a href="#fnref49" class="footnote-back">↩</a></p></li>
-<li id="fn50"><p><a href="https://help.eclipse.org/photon/index.jsp?topic=%2Forg.eclipse.emf.doc%2Freferences%2Foverview%2FEMF.html">https://help.eclipse.org/photon/index.jsp?topic=%2Forg.eclipse.emf.doc%2Freferences%2Foverview%2FEMF.html</a><a href="#fnref50" class="footnote-back">↩</a></p></li>
-<li id="fn51"><p><a href="https://en.wikipedia.org/wiki/Algebra_of_sets">https://en.wikipedia.org/wiki/Algebra_of_sets</a><a href="#fnref51" class="footnote-back">↩</a></p></li>
+<li id="fn37"><p><a href="https://en.wikipedia.org/wiki/Baddeley%27s_model_of_working_memory#Phonological_loop">https://en.wikipedia.org/wiki/Baddeley%27s_model_of_working_memory#Phonological_loop</a><a href="#fnref37" class="footnote-back">↩</a></p></li>
+<li id="fn38"><p><a href="https://github.com/edom/work/tree/master/software/enterprise">https://github.com/edom/work/tree/master/software/enterprise</a><a href="#fnref38" class="footnote-back">↩</a></p></li>
+<li id="fn39"><p><a href="http://zotonic.com/page/618/flexible-datamodel">http://zotonic.com/page/618/flexible-datamodel</a><a href="#fnref39" class="footnote-back">↩</a></p></li>
+<li id="fn40"><p><a href="https://en.wikipedia.org/wiki/Object_Management_Group">https://en.wikipedia.org/wiki/Object_Management_Group</a><a href="#fnref40" class="footnote-back">↩</a></p></li>
+<li id="fn41"><p><a href="https://en.wikipedia.org/wiki/Unified_Modeling_Language">https://en.wikipedia.org/wiki/Unified_Modeling_Language</a><a href="#fnref41" class="footnote-back">↩</a></p></li>
+<li id="fn42"><p><a href="https://en.wikipedia.org/wiki/Model-driven_architecture">https://en.wikipedia.org/wiki/Model-driven_architecture</a><a href="#fnref42" class="footnote-back">↩</a></p></li>
+<li id="fn43"><p><a href="http://www.jfsowa.com/talks/clintro.pdf">http://www.jfsowa.com/talks/clintro.pdf</a><a href="#fnref43" class="footnote-back">↩</a></p></li>
+<li id="fn44"><p><a href="https://en.wikipedia.org/wiki/Entity–attribute–value_model">https://en.wikipedia.org/wiki/Entity–attribute–value_model</a><a href="#fnref44" class="footnote-back">↩</a></p></li>
+<li id="fn45"><p><a href="https://en.wikipedia.org/wiki/Category_of_being">https://en.wikipedia.org/wiki/Category_of_being</a><a href="#fnref45" class="footnote-back">↩</a></p></li>
+<li id="fn46"><p><a href="https://www.topquadrant.com/2011/09/30/ontologies-and-data-models-are-they-the-same/">https://www.topquadrant.com/2011/09/30/ontologies-and-data-models-are-they-the-same/</a><a href="#fnref46" class="footnote-back">↩</a></p></li>
+<li id="fn47"><p><a href="https://cliopatria.swi-prolog.org/help/whitepaper.html">https://cliopatria.swi-prolog.org/help/whitepaper.html</a><a href="#fnref47" class="footnote-back">↩</a></p></li>
+<li id="fn48"><p><a href="https://stackoverflow.com/questions/1740341/what-is-the-difference-between-rdf-and-owl">https://stackoverflow.com/questions/1740341/what-is-the-difference-between-rdf-and-owl</a><a href="#fnref48" class="footnote-back">↩</a></p></li>
+<li id="fn49"><p><a href="https://www.w3.org/RDF/Metalog/docs/sw-easy">https://www.w3.org/RDF/Metalog/docs/sw-easy</a><a href="#fnref49" class="footnote-back">↩</a></p></li>
+<li id="fn50"><p><a href="https://www.eschertech.com/products/correct_by_construction.php">https://www.eschertech.com/products/correct_by_construction.php</a><a href="#fnref50" class="footnote-back">↩</a></p></li>
+<li id="fn51"><p><a href="https://help.eclipse.org/photon/index.jsp?topic=%2Forg.eclipse.emf.doc%2Freferences%2Foverview%2FEMF.html">https://help.eclipse.org/photon/index.jsp?topic=%2Forg.eclipse.emf.doc%2Freferences%2Foverview%2FEMF.html</a><a href="#fnref51" class="footnote-back">↩</a></p></li>
+<li id="fn52"><p><a href="https://en.wikipedia.org/wiki/Algebra_of_sets">https://en.wikipedia.org/wiki/Algebra_of_sets</a><a href="#fnref52" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
