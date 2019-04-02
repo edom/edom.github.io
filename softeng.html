@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <div class="local_table_of_contents">
 <ul>
 <li><span class="section_number">1</span><span class="section_title"><a href="#software-engineering">Software engineering</a></span><span class="word_count">(676w~4m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#building-big-software">Building big software</a></span><span class="word_count">(544w~3m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#building-big-software">Building big software</a></span><span class="word_count">(701w~4m)</span></li>
 <li><span class="section_number">3</span><span class="section_title"><a href="#management-hiring-culture-anarchy">Management, hiring, culture, anarchy</a></span><span class="word_count">(283w~2m)</span></li>
 <li><span class="section_number">4</span><span class="section_title"><a href="#maintaining-software">Maintaining software</a></span><span class="word_count">(531w~3m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#raw-stuff-dont-read">Raw stuff; don't read?</a></span><span class="word_count">(8248w~42m)</span></li>
@@ -243,6 +243,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">2.1</span><span class="section_title"><a href="#how-should-we-build-software-especially-big-software">How should we build software, especially big software?</a></span><span class="word_count">(334w~2m)</span></li>
 <li><span class="section_number">2.2</span><span class="section_title"><a href="#why-people-dont-adopt-metaprogramming-tools-and-model-driven-engineering">Why people don't adopt metaprogramming tools (and model-driven engineering?)</a></span><span class="word_count">(66w~1m)</span></li>
 <li><span class="section_number">2.3</span><span class="section_title"><a href="#specialization-of-programmers-into-business-programmers-and-language-programmers">Specialization of programmers into business programmers and language programmers</a></span><span class="word_count">(144w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#reliable-software">Reliable software?</a></span><span class="word_count">(158w~1m)</span></li>
 </ul>
 </div>
 <h3 id="how-should-we-build-software-especially-big-software"><span class="section_number">2.1</span><span class="section_title">How should we build software, especially big software?</span></h3>
@@ -261,6 +262,15 @@ document.addEventListener("DOMContentLoaded", function () {
 <h3 id="specialization-of-programmers-into-business-programmers-and-language-programmers"><span class="section_number">2.3</span><span class="section_title">Specialization of programmers into business programmers and language programmers</span></h3>
 <p>In 2019 it is common to divide programmers into frontend programmers and backend programmers. I think this is wrong. It is like slicing a cake into layers instead of sectors, as if the cake were a tree: One person eats all the topping, another one the butter, another one eats the flour. However, if we talk about <em>making</em> instead of eating a cake, then it makes sense to specialize the chefs into topping specialists and dough specialists. Thus, is software engineering more like eating cakes or making cakes?</p>
 <p>We should divide programmers into <em>business programmer</em> and <em>language programmer</em> instead. The language programmer creates a DSL (domain-specific language). The business programmer captures user requirements into a program (a specification) in that DSL. The language programmer writes a metaprogram that translates the business programmer's declarative program into something efficient.</p>
+<h3 id="reliable-software"><span class="section_number">2.4</span><span class="section_title">Reliable software?</span></h3>
+<p>Reliability is not about the uptime of a single operating system process. Reliability is about the uptime of the whole system.</p>
+<p>There are two attitudes:</p>
+<ul>
+<li>Strive to write fool-proof <em>program</em> that does not leak resources. This may be possible for operating systems, but is too hard for user applications? Let the OS handle the corner cases?</li>
+<li>Use other system component's strengths to compensate for the program's weakness. Avoid stupid leaks, but do not strive to completely preclude resource leaks in corner cases. Make restart cheap and fast, and restart the program often. If the program is a web server, put it behind a load balancer, and rotate several instances often. This is more sane, efficient, and effective.</li>
+</ul>
+<p>Example insanity that arises from writing code that tries to be too smart: What to do if POSIX close fails?<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Eventually we need to reboot the whole damn thing.</p>
+<p>Corner cases exist in the first place due to bad design, unclear semantics, lack of foresight.</p>
 <h2 id="management-hiring-culture-anarchy"><span class="section_number">3</span><span class="section_title">Management, hiring, culture, anarchy</span></h2>
 <div class="local_table_of_contents">
 <ul>
@@ -271,13 +281,13 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 <h3 id="management"><span class="section_number">3.1</span><span class="section_title">Management</span></h3>
 <p>I tried to think about <a href="engman.html">managing software engineers</a>.</p>
-<p>&quot;When hiring senior engineers, you’re not buying, you’re selling.&quot; (Alexander von Franqué)<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
-<p>&quot;Why Developers Become Frustrated And Companies Can’t Find Talent&quot;<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>: &quot;In order to survive, a software project needs to sacrifice quality for money and time. In order to exist, a software project needs to sacrifice money and time for quality.&quot;</p>
+<p>&quot;When hiring senior engineers, you’re not buying, you’re selling.&quot; (Alexander von Franqué)<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>&quot;Why Developers Become Frustrated And Companies Can’t Find Talent&quot;<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>: &quot;In order to survive, a software project needs to sacrifice quality for money and time. In order to exist, a software project needs to sacrifice money and time for quality.&quot;</p>
 <p>Is it just myself, or are engineers generally anarchists?</p>
 <p>Market information, compensation, salary, wage:</p>
 <p>&lt;2019-01-15&gt; Haskell tutelage $75/hour <a href="https://twitter.com/luqui/status/1084837990877327360">https://twitter.com/luqui/status/1084837990877327360</a></p>
 <p>I thought about <a href="salary.html">software engineer salary</a>.</p>
-<p>A guy is charging €639 for a two-day F# course<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>A guy is charging €639 for a two-day F# course<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
 <p>A person is a unbreakable bundle. When you hire a man, you can't just get the good: you get the good, the bad. When you hire a fast coder who is also a drunkard, a gambler, and a thief, you get not only the fast coder, but also the drunkard, the gambler, and the thief. You get all aspects/dimensions/faces/sides of the person. And teaching skills is easier than changing habits or characters.</p>
 <h3 id="how-should-we-build-freelibre-open-source-software"><span class="section_number">3.2</span><span class="section_title">How should we build free/libre open-source software?</span></h3>
 <p>I am thinking about open-source. I prefer cooperation to competition. I write <a href="opensrc.html">Making contributable open-source projects</a>, <a href="community.html">Building online communities</a>. I am thinking about maintaining open-source projects.</p>
@@ -414,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul>
 </div>
 <h3 id="rant"><span class="section_number">5.1</span><span class="section_title">Rant?</span></h3>
-<p>&lt;2018-10-28&gt; Systemd programmers are not competent enough for what they are doing.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<p>&lt;2018-10-28&gt; Systemd programmers are not competent enough for what they are doing.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
 <p>Computers feel slow not because hardware sucks, but because programmers tell it to do stupid things. Ever-stronger hardware lets more programmers get away with writing ever-shittier software.</p>
 <h3 id="how-do-we-reverse-engineer-software"><span class="section_number">5.2</span><span class="section_title">How do we reverse-engineer software?</span></h3>
 <p>Sometimes I think about <a href="reveng.html">reverse software engineering</a>.</p>
@@ -1598,7 +1608,7 @@ Inductive and (A B : Prop) : Prop := and : A -&gt; B -&gt; and A B.
 <li>What mistakes do our tests prevent? How expensive are the mistakes that our tests prevent?</li>
 <li>Which part of our code is most likely to cause expensive mistakes? (Example: testing getters won't prevent expensive mistakes.)</li>
 </ul>
-<p>Code coverage is a meaningless metric. We should measure the expected value of mistakes instead. We should &quot;color&quot; our code: color more risky methods more red, color less risky methods more green, like this travel risk map<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> but for software.</p>
+<p>Code coverage is a meaningless metric. We should measure the expected value of mistakes instead. We should &quot;color&quot; our code: color more risky methods more red, color less risky methods more green, like this travel risk map<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> but for software.</p>
 <p>If you are launching a rocket, then a mistake may cost billions of dollars. It makes sense to invest ten million dollars testing to avoid a 1/100 probability of making a billion-dollar mistake.</p>
 <h3 id="ramblings-wish-lists-too-speculative-unclear-goalreason-condemned-to-oblivion"><span class="section_number">5.6</span><span class="section_title">Ramblings? Wish lists? Too speculative? Unclear goal/reason? Condemned to oblivion?</span></h3>
 <div class="local_table_of_contents">
@@ -2747,7 +2757,7 @@ data S  = S_A1 | S_A2
 </ul></li>
 <li>Is the knowledge applicable? Knowledge that can't be applied is useless.</li>
 </ul>
-<p>Fowler 2003<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> points out the problems with SWEBOK.</p>
+<p>Fowler 2003<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> points out the problems with SWEBOK.</p>
 <h4 id="coupling"><span class="section_number">5.7.11</span><span class="section_title">Coupling</span></h4>
 <ul>
 <li>Coupling is deciding what you can depend on.
@@ -2886,13 +2896,14 @@ data S  = S_A1 | S_A2
 <hr />
 <ol>
 <li id="fn1"><p><a href="https://www.reddit.com/r/java/comments/2jona4/why_does_everyone_hate_eclipse/clea9ok/">https://www.reddit.com/r/java/comments/2jona4/why_does_everyone_hate_eclipse/clea9ok/</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p><a href="https://hiringengineersbook.com/post/trouble-hiring/">https://hiringengineersbook.com/post/trouble-hiring/</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p><a href="https://codeburst.io/why-developers-become-frustrated-and-companies-cant-find-talent-c4114d8b72ac">https://codeburst.io/why-developers-become-frustrated-and-companies-cant-find-talent-c4114d8b72ac</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p><a href="https://www.avanscoperta.it/en/training/practical-machine-learning-with-functional-programming-workshop/">https://www.avanscoperta.it/en/training/practical-machine-learning-with-functional-programming-workshop/</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p><a href="https://blog.erratasec.com/2018/10/systemd-is-bad-parsing-and-should-feel.html">https://blog.erratasec.com/2018/10/systemd-is-bad-parsing-and-should-feel.html</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p><a href="https://www.reddit.com/r/programming/comments/9rtm1f/systemd_is_bad_parsing_and_should_feel_bad/">https://www.reddit.com/r/programming/comments/9rtm1f/systemd_is_bad_parsing_and_should_feel_bad/</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p><a href="https://i.redd.it/ktop13ad2io01.png">https://i.redd.it/ktop13ad2io01.png</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p><a href="https://martinfowler.com/bliki/Swebok.html">https://martinfowler.com/bliki/Swebok.html</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://stackoverflow.com/questions/33114152/what-to-do-if-a-posix-close-call-fails">https://stackoverflow.com/questions/33114152/what-to-do-if-a-posix-close-call-fails</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://hiringengineersbook.com/post/trouble-hiring/">https://hiringengineersbook.com/post/trouble-hiring/</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://codeburst.io/why-developers-become-frustrated-and-companies-cant-find-talent-c4114d8b72ac">https://codeburst.io/why-developers-become-frustrated-and-companies-cant-find-talent-c4114d8b72ac</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://www.avanscoperta.it/en/training/practical-machine-learning-with-functional-programming-workshop/">https://www.avanscoperta.it/en/training/practical-machine-learning-with-functional-programming-workshop/</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://blog.erratasec.com/2018/10/systemd-is-bad-parsing-and-should-feel.html">https://blog.erratasec.com/2018/10/systemd-is-bad-parsing-and-should-feel.html</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://www.reddit.com/r/programming/comments/9rtm1f/systemd_is_bad_parsing_and_should_feel_bad/">https://www.reddit.com/r/programming/comments/9rtm1f/systemd_is_bad_parsing_and_should_feel_bad/</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://i.redd.it/ktop13ad2io01.png">https://i.redd.it/ktop13ad2io01.png</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://martinfowler.com/bliki/Swebok.html">https://martinfowler.com/bliki/Swebok.html</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
