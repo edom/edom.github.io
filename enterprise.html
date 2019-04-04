@@ -168,14 +168,14 @@ document.addEventListener("DOMContentLoaded", function () {
 <ul>
 <li><span class="section_number">1</span><span class="section_title"><a href="#motivation">Motivation</a></span><span class="word_count">(919w~5m)</span></li>
 <li><span class="section_number">2</span><span class="section_title"><a href="#organic-growing-gradualism-development">Organic growing, gradualism, development</a></span><span class="word_count">(660w~4m)</span></li>
-<li><span class="section_number">3</span><span class="section_title"><a href="#ontology-engineering">Ontology engineering</a></span><span class="word_count">(1017w~6m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#ontology-engineering">Ontology engineering</a></span><span class="word_count">(1118w~6m)</span></li>
 <li><span class="section_number">4</span><span class="section_title"><a href="#ontology-of-concepts">Ontology of concepts</a></span><span class="word_count">(876w~5m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#our-mental-models-of-software-systems">Our mental models of software systems</a></span><span class="word_count">(1223w~7m)</span></li>
 <li><span class="section_number">6</span><span class="section_title"><a href="#key-ideas">Key ideas</a></span><span class="word_count">(656w~4m)</span></li>
 <li><span class="section_number">7</span><span class="section_title"><a href="#realizing-the-ideas-in-prolog">Realizing the ideas in Prolog</a></span><span class="word_count">(580w~3m)</span></li>
 <li><span class="section_number">8</span><span class="section_title"><a href="#existing-systems">Existing systems</a></span><span class="word_count">(264w~2m)</span></li>
 <li><span class="section_number">9</span><span class="section_title"><a href="#literature-study">Literature study</a></span><span class="word_count">(297w~2m)</span></li>
-<li><span class="section_number">10</span><span class="section_title"><a href="#what-mess">What mess?</a></span><span class="word_count">(814w~5m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#what-mess">What mess?</a></span><span class="word_count">(817w~5m)</span></li>
 </ul>
 </div>
 <h2 id="motivation"><span class="section_number">1</span><span class="section_title">Motivation</span></h2>
@@ -369,6 +369,7 @@ person_email(P, V) :- person_proplist(P, L), member(email-V, L).
 <li><span class="section_number">3.6</span><span class="section_title"><a href="#problem-rdf-triple-with-non-binary-predicates">Problem: RDF triple with non-binary predicates</a></span><span class="word_count">(10w~1m)</span></li>
 <li><span class="section_number">3.7</span><span class="section_title"><a href="#logic-of-lists-or-sequences-ordered-collections">Logic of lists or sequences (ordered collections)</a></span><span class="word_count">(58w~1m)</span></li>
 <li><span class="section_number">3.8</span><span class="section_title"><a href="#object-property-value-encoding-of-collections">Object-property-value encoding of collections</a></span><span class="word_count">(52w~1m)</span></li>
+<li><span class="section_number">3.9</span><span class="section_title"><a href="#ontology-engineering-choosing-primitive-concepts">Ontology engineering: choosing primitive concepts</a></span><span class="word_count">(102w~1m)</span></li>
 </ul>
 </div>
 <h3 id="introduction-to-ontology"><span class="section_number">3.1</span><span class="section_title">Introduction to ontology</span></h3>
@@ -497,6 +498,18 @@ opv(mylist, element-1, 10). % mylist[1] = 10
 opv(mylist, element-2, 20). % mylist[2] = 20
 opv(mylist, element-3, 30). % mylist[3] = 30
 </code></pre>
+<h3 id="ontology-engineering-choosing-primitive-concepts"><span class="section_number">3.9</span><span class="section_title">Ontology engineering: choosing primitive concepts</span></h3>
+<p>Suppose that we are designing a genealogy database. Which predicate should be chosen as a primitive: father/2 or parent/2? We also want our database to handle transsexuals and inbreeders. Suppose that these happened:</p>
+<ul>
+<li>In 2000, X fathers a son Y.</li>
+<li>In 2010, X changes sex to female.</li>
+<li>In 2020, X has sex with his son Y and begets Z.</li>
+</ul>
+<p>Thus we have this database in which a person can be both a father and a mother:</p>
+<pre class="example"><code>father(x,y).
+mother(x,z).
+</code></pre>
+<p>Thus X is both the mother of Z (because X gives birth to Z) and a grandfather of Z (because Y fathers Z and X fathers Y).</p>
 <h2 id="ontology-of-concepts"><span class="section_number">4</span><span class="section_title">Ontology of concepts</span></h2>
 <div class="local_table_of_contents">
 <ul>
@@ -1052,7 +1065,8 @@ employee_leave_department(?EmpId,?DepId,?Time)
 <li><span class="section_number">10.5</span><span class="section_title"><a href="#mathematical-history">Mathematical history?</a></span><span class="word_count">(21w~1m)</span></li>
 <li><span class="section_number">10.6</span><span class="section_title"><a href="#a-curious-relationship">A curious relationship</a></span><span class="word_count">(70w~1m)</span></li>
 <li><span class="section_number">10.7</span><span class="section_title"><a href="#how-do-we-model-historical-data-in-sql">How do we model historical data in SQL?</a></span><span class="word_count">(122w~1m)</span></li>
-<li><span class="section_number">10.8</span><span class="section_title"><a href="#what-is-the-difference-between-ontology-and-metaphysics">What is the difference between ontology and metaphysics?</a></span><span class="word_count">(344w~2m)</span></li>
+<li><span class="section_number">10.8</span><span class="section_title"><a href="#what-is-the-difference-between-ontology-and-metaphysics">What is the difference between ontology and metaphysics?</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">10.9</span><span class="section_title"><a href="#globalization">Globalization</a></span><span class="word_count">(340w~2m)</span></li>
 </ul>
 </div>
 <h3 id="a-type-system-that-is-an-algebra-of-unary-predicates"><span class="section_number">10.1</span><span class="section_title">A type system that is an algebra of unary predicates</span></h3>
@@ -1144,7 +1158,9 @@ gt(10) &amp;= \forall a. gt&#39;(a,10) = \forall a. a &gt; 10
 <li>Where is the SQL DDL/schema?</li>
 </ul></li>
 </ul>
-<h3 id="what-is-the-difference-between-ontology-and-metaphysics" class="unnumbered"><span class="section_number">10.8</span><span class="section_title">What is the difference between ontology and metaphysics?</span></h3>
+<h3 id="what-is-the-difference-between-ontology-and-metaphysics"><span class="section_number">10.8</span><span class="section_title">What is the difference between ontology and metaphysics?</span></h3>
+<h3 id="globalization"><span class="section_number">10.9</span><span class="section_title">Globalization</span></h3>
+<p>Globalization complicates check mark.<a href="#fn53" class="footnote-ref" id="fnref53"><sup>53</sup></a></p>
 <div id="refs" class="references">
 <div id="ref-arp2015building">
 <p>[1] Arp, R. et al. 2015. <em>Building ontologies with basic formal ontology</em>. Mit Press.</p>
@@ -1253,6 +1269,7 @@ gt(10) &amp;= \forall a. gt&#39;(a,10) = \forall a. a &gt; 10
 <li id="fn50"><p><a href="https://www.eschertech.com/products/correct_by_construction.php">https://www.eschertech.com/products/correct_by_construction.php</a><a href="#fnref50" class="footnote-back">↩</a></p></li>
 <li id="fn51"><p><a href="https://help.eclipse.org/photon/index.jsp?topic=%2Forg.eclipse.emf.doc%2Freferences%2Foverview%2FEMF.html">https://help.eclipse.org/photon/index.jsp?topic=%2Forg.eclipse.emf.doc%2Freferences%2Foverview%2FEMF.html</a><a href="#fnref51" class="footnote-back">↩</a></p></li>
 <li id="fn52"><p><a href="https://en.wikipedia.org/wiki/Algebra_of_sets">https://en.wikipedia.org/wiki/Algebra_of_sets</a><a href="#fnref52" class="footnote-back">↩</a></p></li>
+<li id="fn53"><p><a href="https://en.wikipedia.org/wiki/Check_mark#Unicode">https://en.wikipedia.org/wiki/Check_mark#Unicode</a><a href="#fnref53" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
