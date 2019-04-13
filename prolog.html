@@ -171,16 +171,16 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">3</span><span class="section_title"><a href="#understanding-prolog">Understanding Prolog</a></span><span class="word_count">(2606w~14m)</span></li>
 <li><span class="section_number">4</span><span class="section_title"><a href="#graphical-user-interface-programming">Graphical-user-interface programming</a></span><span class="word_count">(343w~2m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#maintaining-large-knowledge-bases">Maintaining large knowledge bases</a></span><span class="word_count">(844w~5m)</span></li>
-<li><span class="section_number">6</span><span class="section_title"><a href="#rethinking-module-systems-especially-of-prolog">Rethinking module systems, especially of Prolog</a></span><span class="word_count">(3452w~18m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#rethinking-module-systems-especially-of-prolog">Rethinking module systems, especially of Prolog</a></span><span class="word_count">(3478w~18m)</span></li>
 <li><span class="section_number">7</span><span class="section_title"><a href="#ugly-things-awkward-squads-states-and-errors">Ugly things, awkward squads, states and errors</a></span><span class="word_count">(955w~5m)</span></li>
 <li><span class="section_number">8</span><span class="section_title"><a href="#object-logic-programming">Object-logic programming?</a></span><span class="word_count">(623w~4m)</span></li>
-<li><span class="section_number">9</span><span class="section_title"><a href="#writing-enterprise-web-applications">Writing enterprise web applications</a></span><span class="word_count">(1207w~7m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#writing-enterprise-web-applications">Writing enterprise web applications</a></span><span class="word_count">(1211w~7m)</span></li>
 <li><span class="section_number">10</span><span class="section_title"><a href="#dsl-meta-programming-optimizing-checking-multi-paradigm-whatnot">DSL, meta-programming, optimizing, checking, multi-paradigm, whatnot</a></span><span class="word_count">(816w~5m)</span></li>
 <li><span class="section_number">11</span><span class="section_title"><a href="#theoretical-foundations-of-logic-programming">Theoretical foundations of logic programming</a></span><span class="word_count">(696w~4m)</span></li>
 <li><span class="section_number">12</span><span class="section_title"><a href="#artificial-intelligence">Artificial intelligence?</a></span><span class="word_count">(132w~1m)</span></li>
 <li><span class="section_number">13</span><span class="section_title"><a href="#what-next-after-prolog">What next after Prolog?</a></span><span class="word_count">(778w~4m)</span></li>
 <li><span class="section_number">14</span><span class="section_title"><a href="#prolog-implementation">Prolog implementation</a></span><span class="word_count">(350w~2m)</span></li>
-<li><span class="section_number">15</span><span class="section_title"><a href="#what-mess">What mess?</a></span><span class="word_count">(1609w~9m)</span></li>
+<li><span class="section_number">15</span><span class="section_title"><a href="#what-mess">What mess?</a></span><span class="word_count">(1677w~9m)</span></li>
 <li><span class="section_number">16</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(479w~3m)</span></li>
 </ul>
 </div>
@@ -1261,57 +1261,61 @@ invoke(call @ [F|A]) :- invoke(F @ A).
 <h2 id="rethinking-module-systems-especially-of-prolog"><span class="section_number">6</span><span class="section_title">Rethinking module systems, especially of Prolog</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">6.1</span><span class="section_title"><a href="#what-problems-are-modules-trying-to-solve">What problems are modules trying to solve?</a></span><span class="word_count">(614w~4m)</span></li>
-<li><span class="section_number">6.2</span><span class="section_title"><a href="#how-should-modules-and-meta-predicates-interact">How should modules and meta-predicates interact?</a></span><span class="word_count">(173w~1m)</span></li>
-<li><span class="section_number">6.3</span><span class="section_title"><a href="#designing-the-module-system">Designing the module system</a></span><span class="word_count">(821w~5m)</span></li>
-<li><span class="section_number">6.4</span><span class="section_title"><a href="#organizing-and-loading-prolog-source-files-without-name-clashes">Organizing and loading Prolog source files without name clashes</a></span><span class="word_count">(202w~2m)</span></li>
-<li><span class="section_number">6.5</span><span class="section_title"><a href="#from-module.md-designing-module-systems">from module.md (Designing module systems)</a></span><span class="word_count">(908w~5m)</span></li>
-<li><span class="section_number">6.6</span><span class="section_title"><a href="#the-implementation-draft-a-clash-free-module-system">&lt;2019-04-02&gt; The implementation? Draft: A clash-free module system</a></span><span class="word_count">(476w~3m)</span></li>
-<li><span class="section_number">6.7</span><span class="section_title"><a href="#implementing-modules">Implementing modules</a></span><span class="word_count">(259w~2m)</span></li>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#what-are-the-problems-of-existing-module-systems">What are the problems of existing module systems?</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#what-problems-are-modules-trying-to-solve">What problems are modules trying to solve?</a></span><span class="word_count">(614w~4m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#how-should-modules-and-meta-predicates-interact">How should modules and meta-predicates interact?</a></span><span class="word_count">(173w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#designing-the-module-system">Designing the module system</a></span><span class="word_count">(821w~5m)</span></li>
+<li><span class="section_number">6.5</span><span class="section_title"><a href="#organizing-and-loading-prolog-source-files-without-name-clashes">Organizing and loading Prolog source files without name clashes</a></span><span class="word_count">(202w~2m)</span></li>
+<li><span class="section_number">6.6</span><span class="section_title"><a href="#from-module.md-designing-module-systems">from module.md (Designing module systems)</a></span><span class="word_count">(908w~5m)</span></li>
+<li><span class="section_number">6.7</span><span class="section_title"><a href="#the-implementation-draft-a-clash-free-module-system">&lt;2019-04-02&gt; The implementation? Draft: A clash-free module system</a></span><span class="word_count">(476w~3m)</span></li>
+<li><span class="section_number">6.8</span><span class="section_title"><a href="#implementing-modules">Implementing modules</a></span><span class="word_count">(259w~2m)</span></li>
 </ul>
 </div>
-<h3 id="what-problems-are-modules-trying-to-solve"><span class="section_number">6.1</span><span class="section_title">What problems are modules trying to solve?</span></h3>
+<h3 id="what-are-the-problems-of-existing-module-systems"><span class="section_number">6.1</span><span class="section_title">What are the problems of existing module systems?</span></h3>
+<p>A module system is often an afterthought to a core language.<span class="citation" data-cites="miller2012programming">[<a href="#ref-miller2012programming">15</a>]</span></p>
+<p>Chapter 6 of <span class="citation" data-cites="miller2012programming">[<a href="#ref-miller2012programming">15</a>]</span> contains a desiderata for module systems.</p>
+<h3 id="what-problems-are-modules-trying-to-solve"><span class="section_number">6.2</span><span class="section_title">What problems are modules trying to solve?</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">6.1.1</span><span class="section_title"><a href="#two-problems-that-modules-are-trying-to-solve">Two problems that modules are trying to solve</a></span><span class="word_count">(64w~1m)</span></li>
-<li><span class="section_number">6.1.2</span><span class="section_title"><a href="#modules-are-for-humans">Modules are for humans</a></span><span class="word_count">(48w~1m)</span></li>
-<li><span class="section_number">6.1.3</span><span class="section_title"><a href="#why-do-name-clashes-happen">Why do name clashes happen?</a></span><span class="word_count">(34w~1m)</span></li>
-<li><span class="section_number">6.1.4</span><span class="section_title"><a href="#how-does-name-clashes-happen">How does name clashes happen?</a></span><span class="word_count">(5w~1m)</span></li>
-<li><span class="section_number">6.1.5</span><span class="section_title"><a href="#the-key-of-avoiding-name-clashes-things-should-not-name-themselves">The key of avoiding name clashes: Things should not name themselves</a></span><span class="word_count">(116w~1m)</span></li>
-<li><span class="section_number">6.1.6</span><span class="section_title"><a href="#how-do-module-systems-arise">How do module systems arise?</a></span><span class="word_count">(50w~1m)</span></li>
-<li><span class="section_number">6.1.7</span><span class="section_title"><a href="#secondary-uses-of-modules">Secondary uses of modules</a></span><span class="word_count">(115w~1m)</span></li>
-<li><span class="section_number">6.1.8</span><span class="section_title"><a href="#modules-as-protection-of-internals">Modules as protection of internals?</a></span><span class="word_count">(108w~1m)</span></li>
-<li><span class="section_number">6.1.9</span><span class="section_title"><a href="#what-are-hardware-modules">What are hardware modules?</a></span><span class="word_count">(73w~1m)</span></li>
-<li><span class="section_number">6.1.10</span><span class="section_title"><a href="#ciao-prolog-module-system">Ciao Prolog module system?</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">6.2.1</span><span class="section_title"><a href="#two-problems-that-modules-are-trying-to-solve">Two problems that modules are trying to solve</a></span><span class="word_count">(64w~1m)</span></li>
+<li><span class="section_number">6.2.2</span><span class="section_title"><a href="#modules-are-for-humans">Modules are for humans</a></span><span class="word_count">(48w~1m)</span></li>
+<li><span class="section_number">6.2.3</span><span class="section_title"><a href="#why-do-name-clashes-happen">Why do name clashes happen?</a></span><span class="word_count">(34w~1m)</span></li>
+<li><span class="section_number">6.2.4</span><span class="section_title"><a href="#how-does-name-clashes-happen">How does name clashes happen?</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">6.2.5</span><span class="section_title"><a href="#the-key-of-avoiding-name-clashes-things-should-not-name-themselves">The key of avoiding name clashes: Things should not name themselves</a></span><span class="word_count">(116w~1m)</span></li>
+<li><span class="section_number">6.2.6</span><span class="section_title"><a href="#how-do-module-systems-arise">How do module systems arise?</a></span><span class="word_count">(50w~1m)</span></li>
+<li><span class="section_number">6.2.7</span><span class="section_title"><a href="#secondary-uses-of-modules">Secondary uses of modules</a></span><span class="word_count">(115w~1m)</span></li>
+<li><span class="section_number">6.2.8</span><span class="section_title"><a href="#modules-as-protection-of-internals">Modules as protection of internals?</a></span><span class="word_count">(108w~1m)</span></li>
+<li><span class="section_number">6.2.9</span><span class="section_title"><a href="#what-are-hardware-modules">What are hardware modules?</a></span><span class="word_count">(73w~1m)</span></li>
+<li><span class="section_number">6.2.10</span><span class="section_title"><a href="#ciao-prolog-module-system">Ciao Prolog module system?</a></span><span class="word_count">(4w~1m)</span></li>
 </ul>
 </div>
-<h4 id="two-problems-that-modules-are-trying-to-solve"><span class="section_number">6.1.1</span><span class="section_title">Two problems that modules are trying to solve</span></h4>
+<h4 id="two-problems-that-modules-are-trying-to-solve"><span class="section_number">6.2.1</span><span class="section_title">Two problems that modules are trying to solve</span></h4>
 <ul>
 <li>our only mental weapon, to understand code and combat complexity, is divide-and-conquer and abstraction which is often somewhat hierarchical</li>
 <li>name clashes are bound to happen in a large software system</li>
 </ul>
 <p>Modules reduce complexity by partitioning and independence. See <a href="http://www.computing.dcu.ie/~renaat/ca2/ca214/ca214vii.html">Three Universal methods of reducing complexity</a> from the course <a href="http://www.computing.dcu.ie/~renaat/ca2/ca214over.html">CA214 Systems Analysis and Design Page</a>.</p>
 <p>Which is essential: complexity management or namespacing?</p>
-<h4 id="modules-are-for-humans"><span class="section_number">6.1.2</span><span class="section_title">Modules are for humans</span></h4>
+<h4 id="modules-are-for-humans"><span class="section_number">6.2.2</span><span class="section_title">Modules are for humans</span></h4>
 <p>Computers don't need modules. All it needs is a sequence of machine codes.</p>
 <p>Given enough memory, a computer can handle arbitrarily big programs.</p>
 <p>Human uses modules for organizing things. Human uses modules to make machines separate compilation, speed up recompilation, and recompile a part of the program.</p>
-<h4 id="why-do-name-clashes-happen"><span class="section_number">6.1.3</span><span class="section_title">Why do name clashes happen?</span></h4>
+<h4 id="why-do-name-clashes-happen"><span class="section_number">6.2.3</span><span class="section_title">Why do name clashes happen?</span></h4>
 <p>Natural languages also have name clashes.</p>
 <p>English homonyms.</p>
 <p>Why do we have homonyms?</p>
 <p>We use language for practical purposes, not for philosophical purposes. Practically, conflating a thing and its representation makes life easier.</p>
-<h4 id="how-does-name-clashes-happen"><span class="section_number">6.1.4</span><span class="section_title">How does name clashes happen?</span></h4>
-<h4 id="the-key-of-avoiding-name-clashes-things-should-not-name-themselves"><span class="section_number">6.1.5</span><span class="section_title">The key of avoiding name clashes: Things should not name themselves</span></h4>
+<h4 id="how-does-name-clashes-happen"><span class="section_number">6.2.4</span><span class="section_title">How does name clashes happen?</span></h4>
+<h4 id="the-key-of-avoiding-name-clashes-things-should-not-name-themselves"><span class="section_number">6.2.5</span><span class="section_title">The key of avoiding name clashes: Things should not name themselves</span></h4>
 <p>Names and referents should be separated.</p>
 <p>Philosophically, a name of a thing must not be a property of the thing itself. A rock does not implore us to call it &quot;rock&quot;. It is we who name it &quot;rock&quot;. My name is &quot;Erik&quot;, but you can name me anything, although calling me with any other name may fail to grab my attention.</p>
 <p>If A uses B, then A names B, and B must not tell A what to name B.</p>
 <p>Example agreement: JavaScript functions and modules don't have names. What has a name is the variable that refers to the function or to the module.</p>
 <p>Example violation: C functions have names.</p>
-<h4 id="how-do-module-systems-arise"><span class="section_number">6.1.6</span><span class="section_title">How do module systems arise?</span></h4>
+<h4 id="how-do-module-systems-arise"><span class="section_number">6.2.6</span><span class="section_title">How do module systems arise?</span></h4>
 <p>We are merrily writing codes until our program grows big and we have difficulty finding things. Then we feel that something has to be done.</p>
 <p>We make module systems because we are humans with limited working memory. Our only weapon against complexity is divide-and-conquer and hierarchical abstraction/categorization.</p>
-<h4 id="secondary-uses-of-modules"><span class="section_number">6.1.7</span><span class="section_title">Secondary uses of modules</span></h4>
+<h4 id="secondary-uses-of-modules"><span class="section_number">6.2.7</span><span class="section_title">Secondary uses of modules</span></h4>
 <p>All other purposes such as encapsulation and protection are secondary while-we're-at-it additions.</p>
 <ul>
 <li>to separate or parallelize compilation</li>
@@ -1320,7 +1324,7 @@ invoke(call @ [F|A]) :- invoke(F @ A).
 <p>C does not even try: leave it the programmer. C++ solution is better but not satisfactory: automatically prefix everything. JavaScript's solution is fundamentally better: the names of modules, classes and functions can be locally scoped.</p>
 <p>Static typing helps name resoution by overloading like in Java and C++. But this only delays the problem: <em>the types themselves can have clashing names</em>.</p>
 <p>For example, a car driver does not mess with the internals of the car engine while driving.</p>
-<h4 id="modules-as-protection-of-internals"><span class="section_number">6.1.8</span><span class="section_title">Modules as protection of internals?</span></h4>
+<h4 id="modules-as-protection-of-internals"><span class="section_number">6.2.8</span><span class="section_title">Modules as protection of internals?</span></h4>
 <p>There are two opposing hypotheses:</p>
 <ul>
 <li>Good abstraction (implementation-hiding) increases robustness.</li>
@@ -1333,20 +1337,20 @@ invoke(call @ [F|A]) :- invoke(F @ A).
 <li>&quot;[…] to guarantee the semantics of the predicates defined in a library, a module system has however to strictly prevent any predicate execution not allowed by the programmer.&quot;</li>
 <li>&quot;The <em>algebraic approach</em> defines module calculi with operations over sets of program clauses&quot;</li>
 </ul>
-<h4 id="what-are-hardware-modules"><span class="section_number">6.1.9</span><span class="section_title">What are hardware modules?</span></h4>
+<h4 id="what-are-hardware-modules"><span class="section_number">6.2.9</span><span class="section_title">What are hardware modules?</span></h4>
 <p>An example is an integrated circuit, a black box that performs a high-level function. Thinking in terms of op-amps instead of in terms of Maxwell's equations. The essence of hardware module is abstraction. A module is a unit of reasoning. If a module breaks down, the user replaces the entire module. The module creator designs the module such that the module user can think at a higher level of abstraction.</p>
-<h4 id="ciao-prolog-module-system"><span class="section_number">6.1.10</span><span class="section_title">Ciao Prolog module system?</span></h4>
+<h4 id="ciao-prolog-module-system"><span class="section_number">6.2.10</span><span class="section_title">Ciao Prolog module system?</span></h4>
 <p><span class="citation" data-cites="cabeza2000new">[<a href="#ref-cabeza2000new">3</a>]</span></p>
-<h3 id="how-should-modules-and-meta-predicates-interact"><span class="section_number">6.2</span><span class="section_title">How should modules and meta-predicates interact?</span></h3>
+<h3 id="how-should-modules-and-meta-predicates-interact"><span class="section_number">6.3</span><span class="section_title">How should modules and meta-predicates interact?</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">6.2.1</span><span class="section_title"><a href="#what-is-the-name-of-a-thing">What is the name of a thing?</a></span><span class="word_count">(18w~1m)</span></li>
-<li><span class="section_number">6.2.2</span><span class="section_title"><a href="#what-should-call1-mean-what-is-the-reason-for-atom-based-module-systems">What should call/1 mean? What is the reason for atom-based module systems?</a></span><span class="word_count">(151w~1m)</span></li>
+<li><span class="section_number">6.3.1</span><span class="section_title"><a href="#what-is-the-name-of-a-thing">What is the name of a thing?</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">6.3.2</span><span class="section_title"><a href="#what-should-call1-mean-what-is-the-reason-for-atom-based-module-systems">What should call/1 mean? What is the reason for atom-based module systems?</a></span><span class="word_count">(151w~1m)</span></li>
 </ul>
 </div>
-<h4 id="what-is-the-name-of-a-thing"><span class="section_number">6.2.1</span><span class="section_title">What is the name of a thing?</span></h4>
+<h4 id="what-is-the-name-of-a-thing"><span class="section_number">6.3.1</span><span class="section_title">What is the name of a thing?</span></h4>
 <p>The question boils down to &quot;What is the name of a thing?&quot;</p>
-<h4 id="what-should-call1-mean-what-is-the-reason-for-atom-based-module-systems"><span class="section_number">6.2.2</span><span class="section_title">What should call/1 mean? What is the reason for atom-based module systems?</span></h4>
+<h4 id="what-should-call1-mean-what-is-the-reason-for-atom-based-module-systems"><span class="section_number">6.3.2</span><span class="section_title">What should call/1 mean? What is the reason for atom-based module systems?</span></h4>
 <p>We propose two principles for call/1: <em>transparency</em> and <em>lexical binding</em>, because they simplify reasoning about the program.</p>
 <p>Without modules, the meaning of <code>call(foo(A))</code> is straightforward: It is as if the programmer had written <code>foo(A)</code> instead.</p>
 <p><em>Transparency</em> means that textually replacing <code>call(A)</code> with <code>A</code> in the source code should preserve the meaning of the program. The semantics of <code>call(A)</code> should be the same as the semantics of <code>A</code>.</p>
@@ -1354,21 +1358,21 @@ invoke(call @ [F|A]) :- invoke(F @ A).
 <p>An atom-based module system is one way of satisfying those principles. But a predicate-based module system is more amenable to compilation?</p>
 <p>qname_module_name(QualName, Module, Name)</p>
 <p>Lexical binding is a consequence of the <em>principle of least surprise</em>: do what most users most likely expect. But can the principle of least surprise clash with the principle of mathematical elegance?</p>
-<h3 id="designing-the-module-system"><span class="section_number">6.3</span><span class="section_title">Designing the module system</span></h3>
+<h3 id="designing-the-module-system"><span class="section_number">6.4</span><span class="section_title">Designing the module system</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">6.3.1</span><span class="section_title"><a href="#what-is-a-module-functionally-relationally-and-logically">What is a module, functionally, relationally, and logically?</a></span><span class="word_count">(74w~1m)</span></li>
-<li><span class="section_number">6.3.2</span><span class="section_title"><a href="#how-does-a-module-differ-from-dictionary-function-table-map-association">How does a module differ from dictionary, function, table, map, association?</a></span><span class="word_count">(177w~1m)</span></li>
-<li><span class="section_number">6.3.3</span><span class="section_title"><a href="#do-not-conflate-modules-and-files">Do not conflate modules and files</a></span><span class="word_count">(29w~1m)</span></li>
-<li><span class="section_number">6.3.4</span><span class="section_title"><a href="#should-module-names-correspond-to-file-names">Should module names correspond to file names?</a></span><span class="word_count">(307w~2m)</span></li>
-<li><span class="section_number">6.3.5</span><span class="section_title"><a href="#how-do-we-design-a-module-system-that-subsumes-both-atom-based-and-predicate-based-module-systems">How do we design a module system that subsumes both atom-based and predicate-based module systems?</a></span><span class="word_count">(21w~1m)</span></li>
-<li><span class="section_number">6.3.6</span><span class="section_title"><a href="#anonymous-predicates">Anonymous predicates?</a></span><span class="word_count">(43w~1m)</span></li>
-<li><span class="section_number">6.3.7</span><span class="section_title"><a href="#prolog-mixins">Prolog mixins</a></span><span class="word_count">(35w~1m)</span></li>
-<li><span class="section_number">6.3.8</span><span class="section_title"><a href="#component-system-with-socket-plug-metaphor">Component system with socket-plug metaphor</a></span><span class="word_count">(128w~1m)</span></li>
-<li><span class="section_number">6.3.9</span><span class="section_title"><a href="#no-separate-header-files">No separate header files</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">6.4.1</span><span class="section_title"><a href="#what-is-a-module-functionally-relationally-and-logically">What is a module, functionally, relationally, and logically?</a></span><span class="word_count">(74w~1m)</span></li>
+<li><span class="section_number">6.4.2</span><span class="section_title"><a href="#how-does-a-module-differ-from-dictionary-function-table-map-association">How does a module differ from dictionary, function, table, map, association?</a></span><span class="word_count">(177w~1m)</span></li>
+<li><span class="section_number">6.4.3</span><span class="section_title"><a href="#do-not-conflate-modules-and-files">Do not conflate modules and files</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">6.4.4</span><span class="section_title"><a href="#should-module-names-correspond-to-file-names">Should module names correspond to file names?</a></span><span class="word_count">(307w~2m)</span></li>
+<li><span class="section_number">6.4.5</span><span class="section_title"><a href="#how-do-we-design-a-module-system-that-subsumes-both-atom-based-and-predicate-based-module-systems">How do we design a module system that subsumes both atom-based and predicate-based module systems?</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">6.4.6</span><span class="section_title"><a href="#anonymous-predicates">Anonymous predicates?</a></span><span class="word_count">(43w~1m)</span></li>
+<li><span class="section_number">6.4.7</span><span class="section_title"><a href="#prolog-mixins">Prolog mixins</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">6.4.8</span><span class="section_title"><a href="#component-system-with-socket-plug-metaphor">Component system with socket-plug metaphor</a></span><span class="word_count">(128w~1m)</span></li>
+<li><span class="section_number">6.4.9</span><span class="section_title"><a href="#no-separate-header-files">No separate header files</a></span><span class="word_count">(12w~1m)</span></li>
 </ul>
 </div>
-<h4 id="what-is-a-module-functionally-relationally-and-logically"><span class="section_number">6.3.1</span><span class="section_title">What is a module, functionally, relationally, and logically?</span></h4>
+<h4 id="what-is-a-module-functionally-relationally-and-logically"><span class="section_number">6.4.1</span><span class="section_title">What is a module, functionally, relationally, and logically?</span></h4>
 <p>From functional programming perspective, a module is a function from name to value.</p>
 <p>From relational programming perspective, a module is a functional relation between name and value.</p>
 <p>From logic programming perspective, a module is a collection of Horn clauses.</p>
@@ -1385,16 +1389,16 @@ usefoo :-
     import(&quot;foo.pro&quot;, M),
     M:bar.
 </code></pre>
-<h4 id="how-does-a-module-differ-from-dictionary-function-table-map-association"><span class="section_number">6.3.2</span><span class="section_title">How does a module differ from dictionary, function, table, map, association?</span></h4>
+<h4 id="how-does-a-module-differ-from-dictionary-function-table-map-association"><span class="section_number">6.4.2</span><span class="section_title">How does a module differ from dictionary, function, table, map, association?</span></h4>
 <p>What can we do with zero module? We can create the empty module. What can we do with a module? What can we do with many modules?</p>
 <p>Equality vs identity: Must a programming language separate equality and identity? Should two strings be equal, if they have different memory addresses but the same content?</p>
 <p>Let <span class="math inline">\( D \)</span> be the programming language's domain of discourse.</p>
 <p>Let <span class="math inline">\( F(D) = D \to D \)</span> be the set of every endofunction whose domain is <span class="math inline">\( D \)</span>. Let <span class="math inline">\( D \)</span> be the smallest set such that <span class="math inline">\( F(D) \subset D \)</span>. Thus <span class="math inline">\( D \)</span> is the least fixed point of <span class="math inline">\( F \)</span>.</p>
 <p>A dictionary can be a finite function whose domain is a finite subset of <span class="math inline">\( D \)</span>.</p>
 <p>A module can be modeled as a dictionary. A module can be modeled as a finite function <span class="math inline">\( N \to D \)</span> where <span class="math inline">\( N \)</span> is the set of names for which the module has an entry. A module can be modeled as an infinite function <span class="math inline">\( N \to D \)</span> where <span class="math inline">\( N \)</span> is the set of all possible names.</p>
-<h4 id="do-not-conflate-modules-and-files"><span class="section_number">6.3.3</span><span class="section_title">Do not conflate modules and files</span></h4>
+<h4 id="do-not-conflate-modules-and-files"><span class="section_number">6.4.3</span><span class="section_title">Do not conflate modules and files</span></h4>
 <p>A module is the internal representation. File contains the external representation. The analogy: A module contains thoughts. A file countains writings representing those thoughts.</p>
-<h4 id="should-module-names-correspond-to-file-names"><span class="section_number">6.3.4</span><span class="section_title">Should module names correspond to file names?</span></h4>
+<h4 id="should-module-names-correspond-to-file-names"><span class="section_number">6.4.4</span><span class="section_title">Should module names correspond to file names?</span></h4>
 <p>If the relationship between a file and a module does not have to be 1:1, then complications arise.</p>
 <p>We assume 1:1 relationship between files and modules.</p>
 <p>Problems:</p>
@@ -1437,9 +1441,9 @@ usefoo :-
 <p>This SWI-Prolog Google Groups discussion thread<a href="#fn39" class="footnote-ref" id="fnref39"><sup>39</sup></a> is relevant.</p>
 <p>Module is about namespacing.</p>
 <p>We want to say that &quot;The mypred/3 in file1 is the same as the yourpred/3 in file2.&quot;</p>
-<h4 id="how-do-we-design-a-module-system-that-subsumes-both-atom-based-and-predicate-based-module-systems"><span class="section_number">6.3.5</span><span class="section_title">How do we design a module system that subsumes both atom-based and predicate-based module systems?</span></h4>
+<h4 id="how-do-we-design-a-module-system-that-subsumes-both-atom-based-and-predicate-based-module-systems"><span class="section_number">6.4.5</span><span class="section_title">How do we design a module system that subsumes both atom-based and predicate-based module systems?</span></h4>
 <p>A module system is a name-prefixing mechanism.</p>
-<h4 id="anonymous-predicates"><span class="section_number">6.3.6</span><span class="section_title">Anonymous predicates?</span></h4>
+<h4 id="anonymous-predicates"><span class="section_number">6.4.6</span><span class="section_title">Anonymous predicates?</span></h4>
 <ul>
 <li>Do anonymous predicates subsume module systems?</li>
 <li>What may anonymous predicates look like?</li>
@@ -1457,7 +1461,7 @@ usefoo :-
 
 p(A) :- A = 1, A = 2.
 </code></pre>
-<h4 id="prolog-mixins"><span class="section_number">6.3.7</span><span class="section_title">Prolog mixins</span></h4>
+<h4 id="prolog-mixins"><span class="section_number">6.4.7</span><span class="section_title">Prolog mixins</span></h4>
 <p>A Prolog <em>mixin</em> (mix-in) is simply an include file that adds features to the includer. Example, this mixin endows the includer with a static vocabulary about objects and properties, akin to object-orientation without method.</p>
 <pre class="example"><code>% object.pro
 
@@ -1466,7 +1470,7 @@ p(A) :- A = 1, A = 2.
 get(O,P,V) :- \+ opv(O,P,V), throw... . % what?
 get(O,P,V) :- opv(O,P,V).
 </code></pre>
-<h4 id="component-system-with-socket-plug-metaphor"><span class="section_number">6.3.8</span><span class="section_title">Component system with socket-plug metaphor</span></h4>
+<h4 id="component-system-with-socket-plug-metaphor"><span class="section_number">6.4.8</span><span class="section_title">Component system with socket-plug metaphor</span></h4>
 <p>I need a component system for programming in the large. Prolog module system is a building block, but Prolog modules by themselves are not enough. Socket-and-plug metaphor fits nicely? The name tells it all: a socket is a female connector and a plug is a male connector, and we connect plugs to sockets, and Prolog should complain if it sees a socket that is connected not exactly once.</p>
 <p>An input is a multifile predicate.</p>
 <p>A pin is a Name/Arity term.</p>
@@ -1475,9 +1479,9 @@ get(O,P,V) :- opv(O,P,V).
 <p>A module may have multiple plugs and sockets.</p>
 <p>Pins are matched by NameArity. The ordering of pins does not matter.</p>
 <p>A Prolog module system is either <em>predicate-based</em> or <em>atom-based</em>. XSB is atom-based. SWI is predicate-based. GNU Prolog does not have a module system.</p>
-<h4 id="no-separate-header-files"><span class="section_number">6.3.9</span><span class="section_title">No separate header files</span></h4>
+<h4 id="no-separate-header-files"><span class="section_number">6.4.9</span><span class="section_title">No separate header files</span></h4>
 <p>Separate header files are remnants of the big-design-up-front era.</p>
-<h3 id="organizing-and-loading-prolog-source-files-without-name-clashes"><span class="section_number">6.4</span><span class="section_title">Organizing and loading Prolog source files without name clashes</span></h3>
+<h3 id="organizing-and-loading-prolog-source-files-without-name-clashes"><span class="section_number">6.5</span><span class="section_title">Organizing and loading Prolog source files without name clashes</span></h3>
 <p>Prolog multifile predicates can be used for <em>dependency injection</em>. Instead of importing a module, declare a multifile predicate and let the user link that predicate.</p>
 <p>Prolog source files come in <em>two kinds</em> depending on how they are loaded: <em>type-1</em> files and <em>type-2</em> (module-free) files. In short, a type-2 file should not assume that the Prolog implementation has a module system, unless when defining meta-predicates. The discipline is:</p>
 <ul>
@@ -1495,7 +1499,7 @@ get(O,P,V) :- opv(O,P,V).
 <li>Logtalk, logtalk_load/1, logtalk_load/2</li>
 </ul>
 <p>The function of the main file is to link the non-main files. To maximize reusability and minimize name clash, a non-main file must not contain any hard-coded module names: Those files must not contain module/2 declarations and use_module/[1,2] directives.</p>
-<h3 id="from-module.md-designing-module-systems"><span class="section_number">6.5</span><span class="section_title">from module.md (Designing module systems)</span></h3>
+<h3 id="from-module.md-designing-module-systems"><span class="section_number">6.6</span><span class="section_title">from module.md (Designing module systems)</span></h3>
 <ul>
 <li>How do we decompose a program? (I think David Parnas has answered this.)</li>
 <li>How do we organize programs?</li>
@@ -1506,17 +1510,17 @@ get(O,P,V) :- opv(O,P,V).
 </ul>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">6.5.1</span><span class="section_title"><a href="#philosophical-investigation">Philosophical investigation</a></span><span class="word_count">(128w~1m)</span></li>
-<li><span class="section_number">6.5.2</span><span class="section_title"><a href="#key-idea-module-dictionary---dictionary">Key idea: Module = Dictionary -&gt; Dictionary</a></span><span class="word_count">(162w~1m)</span></li>
-<li><span class="section_number">6.5.3</span><span class="section_title"><a href="#partial-query-problem">Partial query problem</a></span><span class="word_count">(36w~1m)</span></li>
-<li><span class="section_number">6.5.4</span><span class="section_title"><a href="#what-are-some-cool-ideas">What are some cool ideas?</a></span><span class="word_count">(15w~1m)</span></li>
-<li><span class="section_number">6.5.5</span><span class="section_title"><a href="#finding-a-programming-language-for-programming-in-the-large">Finding a programming language for programming in the large</a></span><span class="word_count">(337w~2m)</span></li>
-<li><span class="section_number">6.5.6</span><span class="section_title"><a href="#packagedependency-management-tools">package/dependency management tools</a></span><span class="word_count">(13w~1m)</span></li>
-<li><span class="section_number">6.5.7</span><span class="section_title"><a href="#module-algebra-vs-module-calculus">Module algebra vs module calculus?</a></span><span class="word_count">(61w~1m)</span></li>
-<li><span class="section_number">6.5.8</span><span class="section_title"><a href="#other-questions">Other questions?</a></span><span class="word_count">(132w~1m)</span></li>
+<li><span class="section_number">6.6.1</span><span class="section_title"><a href="#philosophical-investigation">Philosophical investigation</a></span><span class="word_count">(128w~1m)</span></li>
+<li><span class="section_number">6.6.2</span><span class="section_title"><a href="#key-idea-module-dictionary---dictionary">Key idea: Module = Dictionary -&gt; Dictionary</a></span><span class="word_count">(162w~1m)</span></li>
+<li><span class="section_number">6.6.3</span><span class="section_title"><a href="#partial-query-problem">Partial query problem</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">6.6.4</span><span class="section_title"><a href="#what-are-some-cool-ideas">What are some cool ideas?</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">6.6.5</span><span class="section_title"><a href="#finding-a-programming-language-for-programming-in-the-large">Finding a programming language for programming in the large</a></span><span class="word_count">(337w~2m)</span></li>
+<li><span class="section_number">6.6.6</span><span class="section_title"><a href="#packagedependency-management-tools">package/dependency management tools</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">6.6.7</span><span class="section_title"><a href="#module-algebra-vs-module-calculus">Module algebra vs module calculus?</a></span><span class="word_count">(61w~1m)</span></li>
+<li><span class="section_number">6.6.8</span><span class="section_title"><a href="#other-questions">Other questions?</a></span><span class="word_count">(132w~1m)</span></li>
 </ul>
 </div>
-<h4 id="philosophical-investigation"><span class="section_number">6.5.1</span><span class="section_title">Philosophical investigation</span></h4>
+<h4 id="philosophical-investigation"><span class="section_number">6.6.1</span><span class="section_title">Philosophical investigation</span></h4>
 <ul>
 <li>What are the properties of a module?</li>
 <li>What are its relationships with other things?
@@ -1546,7 +1550,7 @@ get(O,P,V) :- opv(O,P,V).
 <li>A module is smallest unit of reuse? Isn't that function?</li>
 <li>A module is smallest unit of compilation? Isn't that function?</li>
 </ul>
-<h4 id="key-idea-module-dictionary---dictionary"><span class="section_number">6.5.2</span><span class="section_title">Key idea: Module = Dictionary -&gt; Dictionary</span></h4>
+<h4 id="key-idea-module-dictionary---dictionary"><span class="section_number">6.6.2</span><span class="section_title">Key idea: Module = Dictionary -&gt; Dictionary</span></h4>
 <p>Assume a dependently-typed language.</p>
 <p>Recall some terminologies:</p>
 <ul>
@@ -1584,15 +1588,15 @@ get(O,P,V) :- opv(O,P,V).
 </ul>
 <p>What we are doing here is also known as &quot;blurring the phase distinction&quot;. See <a href="https://futhark-lang.org/blog/2017-01-25-futhark-module-system.html#modules-versus-higher-order-functions">&quot;Modules versus Higher-Order Functions&quot; in Futhark blog post</a>: &quot;A module can be viewed as nothing but a record containing types and values.&quot;</p>
 <p>A problem: compilation may fail to terminate. No big deal. Set a time-out.</p>
-<h4 id="partial-query-problem"><span class="section_number">6.5.3</span><span class="section_title">Partial query problem</span></h4>
+<h4 id="partial-query-problem"><span class="section_number">6.6.3</span><span class="section_title">Partial query problem</span></h4>
 <p>Partial query problem is when an object-relational mapper is not smart enough to avoid pulling unused columns.</p>
 <p>Does lazy evaluation solve the partial query problem elegantly? Lazy evaluation is not a substitute for dependency analysis?</p>
-<h4 id="what-are-some-cool-ideas"><span class="section_number">6.5.4</span><span class="section_title">What are some cool ideas?</span></h4>
+<h4 id="what-are-some-cool-ideas"><span class="section_number">6.6.4</span><span class="section_title">What are some cool ideas?</span></h4>
 <ul>
 <li>Module system: Dhall can import from IPFS.<a href="#fn40" class="footnote-ref" id="fnref40"><sup>40</sup></a></li>
 <li>Elixir can pattern-match maps (dictionaries).</li>
 </ul>
-<h4 id="finding-a-programming-language-for-programming-in-the-large"><span class="section_number">6.5.5</span><span class="section_title">Finding a programming language for programming in the large</span></h4>
+<h4 id="finding-a-programming-language-for-programming-in-the-large"><span class="section_number">6.6.5</span><span class="section_title">Finding a programming language for programming in the large</span></h4>
 <ul>
 <li>Ecosystem, libraries, tools, and communities.</li>
 <li>The most important thing in programming in the large is name management. Namespaces.
@@ -1671,7 +1675,7 @@ get(O,P,V) :- opv(O,P,V).
 </ul></li>
 <li><a href="https://softwareengineering.stackexchange.com/questions/155239/are-all-languages-basically-the-same/155243">Are all languages basically the same? - Software Engineering Stack Exchange</a></li>
 </ul>
-<h4 id="packagedependency-management-tools"><span class="section_number">6.5.6</span><span class="section_title">package/dependency management tools</span></h4>
+<h4 id="packagedependency-management-tools"><span class="section_number">6.6.6</span><span class="section_title">package/dependency management tools</span></h4>
 <ul>
 <li>Java: Maven, Gradle</li>
 <li>OCaml: OPAM</li>
@@ -1679,7 +1683,7 @@ get(O,P,V) :- opv(O,P,V).
 <li>F#: Paket? NuGet?</li>
 <li>C/C++: conan? chocolate? vcpkg?</li>
 </ul>
-<h4 id="module-algebra-vs-module-calculus"><span class="section_number">6.5.7</span><span class="section_title">Module algebra vs module calculus?</span></h4>
+<h4 id="module-algebra-vs-module-calculus"><span class="section_number">6.6.7</span><span class="section_title">Module algebra vs module calculus?</span></h4>
 <p><span class="citation" data-cites="haemmerle2006modules">[<a href="#ref-haemmerle2006modules">7</a>]</span> mentions module algebra (when talking about Prolog modules).</p>
 <p>The following seems different.</p>
 <p>Formally adding modules to lambda calculus: What is module calculus?</p>
@@ -1689,7 +1693,7 @@ get(O,P,V) :- opv(O,P,V).
 <li>2001 article &quot;A Calculus of Module Systems&quot; <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.22.5407">pdf available</a></li>
 <li>2012 course notes &quot;Types for Module Systems&quot; <a href="http://www.ccs.neu.edu/home/amal/course/7480-s12/modules-notes.pdf">pdf</a> from <a href="http://www.ccs.neu.edu/home/amal/course/7480-s12/">CS7480 Type Systems (Spring 2012)</a></li>
 </ul>
-<h4 id="other-questions"><span class="section_number">6.5.8</span><span class="section_title">Other questions?</span></h4>
+<h4 id="other-questions"><span class="section_number">6.6.8</span><span class="section_title">Other questions?</span></h4>
 <ul>
 <li>Does a module have to coincide with a compilation unit?</li>
 <li>Basic module functions?
@@ -1722,19 +1726,19 @@ export(prelude, int, plus, Plus) |- export(my_module, int, three, Plus(1, 2)).
 </ul></li>
 <li>The essence of programming-in-the-large is Don't Repeat Yourself?</li>
 </ul>
-<h3 id="the-implementation-draft-a-clash-free-module-system"><span class="section_number">6.6</span><span class="section_title">&lt;2019-04-02&gt; The implementation? Draft: A clash-free module system</span></h3>
+<h3 id="the-implementation-draft-a-clash-free-module-system"><span class="section_number">6.7</span><span class="section_title">&lt;2019-04-02&gt; The implementation? Draft: A clash-free module system</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">6.6.1</span><span class="section_title"><a href="#about-this-draft">About this draft</a></span><span class="word_count">(64w~1m)</span></li>
-<li><span class="section_number">6.6.2</span><span class="section_title"><a href="#message">Message</a></span><span class="word_count">(182w~1m)</span></li>
-<li><span class="section_number">6.6.3</span><span class="section_title"><a href="#implementation-details">Implementation details</a></span><span class="word_count">(140w~1m)</span></li>
-<li><span class="section_number">6.6.4</span><span class="section_title"><a href="#proposal-import_qualified1-directive">Proposal: import_qualified/1 directive</a></span><span class="word_count">(8w~1m)</span></li>
-<li><span class="section_number">6.6.5</span><span class="section_title"><a href="#the-problem-we-could-be-a-victim-of-our-own-success-if-we-dont-act">The problem: We could be a victim of our own success if we don't act</a></span><span class="word_count">(62w~1m)</span></li>
-<li><span class="section_number">6.6.6</span><span class="section_title"><a href="#criteria-of-a-satisfactory-solution">Criteria of a satisfactory solution</a></span><span class="word_count">(15w~1m)</span></li>
-<li><span class="section_number">6.6.7</span><span class="section_title"><a href="#related-discourses">Related discourses</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">6.7.1</span><span class="section_title"><a href="#about-this-draft">About this draft</a></span><span class="word_count">(64w~1m)</span></li>
+<li><span class="section_number">6.7.2</span><span class="section_title"><a href="#message">Message</a></span><span class="word_count">(182w~1m)</span></li>
+<li><span class="section_number">6.7.3</span><span class="section_title"><a href="#implementation-details">Implementation details</a></span><span class="word_count">(140w~1m)</span></li>
+<li><span class="section_number">6.7.4</span><span class="section_title"><a href="#proposal-import_qualified1-directive">Proposal: import_qualified/1 directive</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">6.7.5</span><span class="section_title"><a href="#the-problem-we-could-be-a-victim-of-our-own-success-if-we-dont-act">The problem: We could be a victim of our own success if we don't act</a></span><span class="word_count">(62w~1m)</span></li>
+<li><span class="section_number">6.7.6</span><span class="section_title"><a href="#criteria-of-a-satisfactory-solution">Criteria of a satisfactory solution</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">6.7.7</span><span class="section_title"><a href="#related-discourses">Related discourses</a></span><span class="word_count">(4w~1m)</span></li>
 </ul>
 </div>
-<h4 id="about-this-draft"><span class="section_number">6.6.1</span><span class="section_title">About this draft</span></h4>
+<h4 id="about-this-draft"><span class="section_number">6.7.1</span><span class="section_title">About this draft</span></h4>
 <p>The target audience is the SWI-Prolog maintainer, Jan Wielemaker.</p>
 <p>I wish to convince Jan that we must have a clash-free module system so that we do not become the victim of our own success when Prolog becomes mainstream.</p>
 <p>I wish to see such module system standardized and implemented.</p>
@@ -1743,7 +1747,7 @@ export(prelude, int, plus, Plus) |- export(my_module, int, three, Plus(1, 2)).
 <li>Post in SWI-Prolog Discourse group <a href="https://swi-prolog.discourse.group">https://swi-prolog.discourse.group</a></li>
 <li>Open an issue in SWI-Prolog Roadmap <a href="https://github.com/SWI-Prolog/roadmap">https://github.com/SWI-Prolog/roadmap</a></li>
 </ul>
-<h4 id="message"><span class="section_number">6.6.2</span><span class="section_title">Message</span></h4>
+<h4 id="message"><span class="section_number">6.7.2</span><span class="section_title">Message</span></h4>
 <p>Dear Prolog implementors,</p>
 <p>The Prolog community seems to be growing, and so is the number of SWI-Prolog packs. As more people write code, name clashes become more likely. We should standardize a clash-free module system before we have too many users and name clashes become too painful.</p>
 <p>There are two ways to avoid name clashes:</p>
@@ -1758,7 +1762,7 @@ export(prelude, int, plus, Plus) |- export(my_module, int, three, Plus(1, 2)).
 <li>Dependency must be specified by file paths and not module names.</li>
 </ul>
 <p>Both predicate-based and atom-based modules are fine, as long as a module does not name itself, that is, as long as a file does not expect to be loaded to a module with a certain name.</p>
-<h4 id="implementation-details"><span class="section_number">6.6.3</span><span class="section_title">Implementation details</span></h4>
+<h4 id="implementation-details"><span class="section_number">6.7.3</span><span class="section_title">Implementation details</span></h4>
 <p>I have a working code for SWI-Prolog in <a href="https://github.com/edom/work/blob/master/software/boot/load.pro">boot/load.pro</a>. It defines an <code>import/2</code> directive using <code>term_expansion/2</code>. The loader generates module names. An example usage looks like this:</p>
 <pre class="example"><code>:- import(&quot;somefile.pl&quot;,[
     pred/1
@@ -1800,7 +1804,7 @@ export let y = 2;
 <p>What do you think?</p>
 <p>Best regards,</p>
 <p>Erik</p>
-<h4 id="proposal-import_qualified1-directive"><span class="section_number">6.6.4</span><span class="section_title">Proposal: import_qualified/1 directive</span></h4>
+<h4 id="proposal-import_qualified1-directive"><span class="section_number">6.7.4</span><span class="section_title">Proposal: import_qualified/1 directive</span></h4>
 <pre class="example"><code>:- import_qualified(file(RelativePath) as local_module(Name)).
 :- import_qualified([
     file(File1) as local_module(Name1),
@@ -1809,32 +1813,32 @@ export let y = 2;
 ]).
 </code></pre>
 <p>This recursively replaces all module expressions.</p>
-<h4 id="the-problem-we-could-be-a-victim-of-our-own-success-if-we-dont-act"><span class="section_number">6.6.5</span><span class="section_title">The problem: We could be a victim of our own success if we don't act</span></h4>
+<h4 id="the-problem-we-could-be-a-victim-of-our-own-success-if-we-dont-act"><span class="section_number">6.7.5</span><span class="section_title">The problem: We could be a victim of our own success if we don't act</span></h4>
 <p>Imagine that there were 10,000 SWI-Prolog packs: There would be naming conflicts. We can learn from the Haskell community's complaints with Haskell's module system, and do it right before it becomes too painful. Let us prepare, so that we do not become a victim of our own success.</p>
-<h4 id="criteria-of-a-satisfactory-solution"><span class="section_number">6.6.6</span><span class="section_title">Criteria of a satisfactory solution</span></h4>
+<h4 id="criteria-of-a-satisfactory-solution"><span class="section_number">6.7.6</span><span class="section_title">Criteria of a satisfactory solution</span></h4>
 <p>Ideally, many people can write and use libraries without name clashes.</p>
-<h4 id="related-discourses"><span class="section_number">6.6.7</span><span class="section_title">Related discourses</span></h4>
+<h4 id="related-discourses"><span class="section_number">6.7.7</span><span class="section_title">Related discourses</span></h4>
 <ul>
 <li>Contributing libraries <a href="https://swi-prolog.discourse.group/t/contributing-libraries/381">https://swi-prolog.discourse.group/t/contributing-libraries/381</a></li>
 </ul>
-<h3 id="implementing-modules"><span class="section_number">6.7</span><span class="section_title">Implementing modules</span></h3>
+<h3 id="implementing-modules"><span class="section_number">6.8</span><span class="section_title">Implementing modules</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">6.7.1</span><span class="section_title"><a href="#adding-module-system-by-term_expansion2">Adding module system by term_expansion/2</a></span><span class="word_count">(44w~1m)</span></li>
-<li><span class="section_number">6.7.2</span><span class="section_title"><a href="#logtalk">Logtalk?</a></span><span class="word_count">(23w~1m)</span></li>
-<li><span class="section_number">6.7.3</span><span class="section_title"><a href="#haskell-first-class-modules">Haskell first-class modules?</a></span><span class="word_count">(7w~1m)</span></li>
-<li><span class="section_number">6.7.4</span><span class="section_title"><a href="#module-systems-in-other-languages">Module systems in other languages?</a></span><span class="word_count">(91w~1m)</span></li>
-<li><span class="section_number">6.7.5</span><span class="section_title"><a href="#comparing-existing-module-systems">Comparing existing module systems</a></span><span class="word_count">(97w~1m)</span></li>
+<li><span class="section_number">6.8.1</span><span class="section_title"><a href="#adding-module-system-by-term_expansion2">Adding module system by term_expansion/2</a></span><span class="word_count">(44w~1m)</span></li>
+<li><span class="section_number">6.8.2</span><span class="section_title"><a href="#logtalk">Logtalk?</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">6.8.3</span><span class="section_title"><a href="#haskell-first-class-modules">Haskell first-class modules?</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">6.8.4</span><span class="section_title"><a href="#module-systems-in-other-languages">Module systems in other languages?</a></span><span class="word_count">(91w~1m)</span></li>
+<li><span class="section_number">6.8.5</span><span class="section_title"><a href="#comparing-existing-module-systems">Comparing existing module systems</a></span><span class="word_count">(97w~1m)</span></li>
 </ul>
 </div>
-<h4 id="adding-module-system-by-term_expansion2"><span class="section_number">6.7.1</span><span class="section_title">Adding module system by term_expansion/2</span></h4>
+<h4 id="adding-module-system-by-term_expansion2"><span class="section_number">6.8.1</span><span class="section_title">Adding module system by term_expansion/2</span></h4>
 <p>If a Prolog system has term_expansion/2 but does not have a module system, then we can add a module system. The idea is to recursively replace each term <code>A</code> with <code>':'(M,A)</code>.</p>
 <p>This makes something similar to XSB Prolog's atom-based module system.</p>
-<h4 id="logtalk"><span class="section_number">6.7.2</span><span class="section_title">Logtalk?</span></h4>
+<h4 id="logtalk"><span class="section_number">6.8.2</span><span class="section_title">Logtalk?</span></h4>
 <p>&quot;You can even use [Logtalk] to run Prolog module code in Prolog compilers such as GNU Prolog that don't include a module system.&quot;<a href="#fn41" class="footnote-ref" id="fnref41"><sup>41</sup></a></p>
-<h4 id="haskell-first-class-modules"><span class="section_number">6.7.3</span><span class="section_title">Haskell first-class modules?</span></h4>
+<h4 id="haskell-first-class-modules"><span class="section_number">6.8.3</span><span class="section_title">Haskell first-class modules?</span></h4>
 <p>Shields &amp; Peyton-Jones 2002 <span class="citation" data-cites="shields2002first">[<a href="#ref-shields2002first">22</a>]</span>.</p>
-<h4 id="module-systems-in-other-languages"><span class="section_number">6.7.4</span><span class="section_title">Module systems in other languages?</span></h4>
+<h4 id="module-systems-in-other-languages"><span class="section_number">6.8.4</span><span class="section_title">Module systems in other languages?</span></h4>
 <p>REBOL module system?</p>
 <p>Bad example: java:</p>
 <ul>
@@ -1848,7 +1852,7 @@ export let y = 2;
 <p>Racket DCG, packrat</p>
 <p>What is a module in an untyped functional programming language such as Tulip?</p>
 <p>Ignored undocumented code sketches: <a href="https://github.com/jordanlewis/simple-module-system">jordanlewis/simple-module-system: Adding modules to a polymorphic lambda calculus</a>, code in SML/NJ.</p>
-<h4 id="comparing-existing-module-systems"><span class="section_number">6.7.5</span><span class="section_title">Comparing existing module systems</span></h4>
+<h4 id="comparing-existing-module-systems"><span class="section_number">6.8.5</span><span class="section_title">Comparing existing module systems</span></h4>
 <p>How do programming languages deal with modules?</p>
 <ul>
 <li><a href="https://github.com/dhall-lang/dhall-lang/issues/182">dhall modules · Issue #182 · dhall-lang/dhall-lang</a></li>
@@ -2116,7 +2120,7 @@ c_prop3(InstanceId, Prop3) :- c(InstanceId, Props), member(prop3-Prop3, Props).
 <li><span class="section_number">9.2</span><span class="section_title"><a href="#modeling-the-dynamic-aspect-of-software-systems-as-inter-agent-dialogs">Modeling the dynamic aspect of software systems as inter-agent dialogs</a></span><span class="word_count">(96w~1m)</span></li>
 <li><span class="section_number">9.3</span><span class="section_title"><a href="#why-should-we-use-a-modeling-language-expressive-enough-to-model-itself">Why should we use a modeling language expressive enough to model itself?</a></span><span class="word_count">(39w~1m)</span></li>
 <li><span class="section_number">9.4</span><span class="section_title"><a href="#convenient-prolog-html-expression">Convenient Prolog HTML Expression</a></span><span class="word_count">(161w~1m)</span></li>
-<li><span class="section_number">9.5</span><span class="section_title"><a href="#sql-prolog-integration-sketch">SQL-Prolog integration sketch</a></span><span class="word_count">(597w~3m)</span></li>
+<li><span class="section_number">9.5</span><span class="section_title"><a href="#sql-prolog-integration-sketch">SQL-Prolog integration sketch</a></span><span class="word_count">(601w~4m)</span></li>
 <li><span class="section_number">9.6</span><span class="section_title"><a href="#relational-multidirectional-logic-programming">Relational-multidirectional-logic programming?</a></span><span class="word_count">(2w~1m)</span></li>
 <li><span class="section_number">9.7</span><span class="section_title"><a href="#the-operations">The operations</a></span><span class="word_count">(101w~1m)</span></li>
 <li><span class="section_number">9.8</span><span class="section_title"><a href="#idea-write-an-sql-database-explorer-in-prolog.">Idea: Write an SQL database explorer in Prolog.</a></span><span class="word_count">(53w~1m)</span></li>
@@ -2199,7 +2203,7 @@ class_property(property, name).
 <li><span class="section_number">9.5.4</span><span class="section_title"><a href="#incrementalprogressive-aggregation">Incremental/progressive aggregation</a></span><span class="word_count">(98w~1m)</span></li>
 <li><span class="section_number">9.5.5</span><span class="section_title"><a href="#what-else-other-similar-implementations">What else? Other similar implementations?</a></span><span class="word_count">(43w~1m)</span></li>
 <li><span class="section_number">9.5.6</span><span class="section_title"><a href="#more-ambitions-all-data-sources-are-predicates-and-predicates-are-iterators">More ambitions: all data sources are predicates, and predicates are iterators</a></span><span class="word_count">(48w~1m)</span></li>
-<li><span class="section_number">9.5.7</span><span class="section_title"><a href="#swi-prolog-postgresql-and-odbc">SWI-Prolog, PostgreSQL, and ODBC</a></span><span class="word_count">(66w~1m)</span></li>
+<li><span class="section_number">9.5.7</span><span class="section_title"><a href="#swi-prolog-postgresql-and-odbc">SWI-Prolog, PostgreSQL, and ODBC</a></span><span class="word_count">(70w~1m)</span></li>
 </ul>
 </div>
 <h4 id="the-idea"><span class="section_number">9.5.1</span><span class="section_title">The idea</span></h4>
@@ -2272,6 +2276,7 @@ CREATE DATABASE test OWNER test;
 <p>The file <code>/etc/odbcinst.ini</code> contains a list of driver names.</p>
 <p><a href="http://www.swi-prolog.org/pldoc/doc_for?object=section(%2527packages/cql.html%2527)">SWI-Prolog CQL documentation</a> doesn't inspire confidence. Draxler 1991 relates database table and Prolog predicate. CQL models SQL query in Prolog terms.</p>
 <p>Sketches, as good as non-existent: PL/SWI-Prolog<a href="#fn57" class="footnote-ref" id="fnref57"><sup>57</sup></a>, psqlog<a href="#fn58" class="footnote-ref" id="fnref58"><sup>58</sup></a>, what<a href="#fn59" class="footnote-ref" id="fnref59"><sup>59</sup></a>.</p>
+<p>XSB-Prolog has viewsys and persistent_tables.<a href="#fn60" class="footnote-ref" id="fnref60"><sup>60</sup></a></p>
 <h3 id="relational-multidirectional-logic-programming"><span class="section_number">9.6</span><span class="section_title">Relational-multidirectional-logic programming?</span></h3>
 <h3 id="the-operations"><span class="section_number">9.7</span><span class="section_title">The operations</span></h3>
 <p>The story does not end with development. After it comes <em>operation</em>. It's a boring task. But someone has to do it. Thus, how we make it as painless as possible?</p>
@@ -2290,6 +2295,7 @@ CREATE DATABASE test OWNER test;
 <li>The computer can't read your mind. You lie to the computer, it does what you told it to do. Don't blame the computer for your failing to tell the computer everything it needs to do the job.</li>
 </ul></li>
 </ul>
+<p><a href="https://cloudbootup.com/post/cloudy-with-a-chance-of-prolog.html">https://cloudbootup.com/post/cloudy-with-a-chance-of-prolog.html</a></p>
 <h3 id="idea-write-an-sql-database-explorer-in-prolog."><span class="section_number">9.8</span><span class="section_title">Idea: Write an SQL database explorer in Prolog.</span></h3>
 <p>CLI interface without ncurses without pager. Imagine printing to paper like early Fortran/Unix/ed. Paper user interface.</p>
 <ul>
@@ -2528,8 +2534,8 @@ false.
 <h4 id="what-is-wrong-with-logic-programming"><span class="section_number">11.2.4</span><span class="section_title">What is wrong with logic programming?</span></h4>
 <p>&quot;What is Wrong with Logic Programming?&quot; &quot;A Deductive Solution to Mutable State and I/O&quot; <a href="https://pdfs.semanticscholar.org/ca08/dcb9eddc1e7651509daac7fa02eddb7f675b.pdf">https://pdfs.semanticscholar.org/ca08/dcb9eddc1e7651509daac7fa02eddb7f675b.pdf</a></p>
 <h3 id="lambda-closure-scoping-higher-order-logic-programming-relational-programming"><span class="section_number">11.3</span><span class="section_title">Lambda, closure, scoping, higher-order logic programming, relational programming</span></h3>
-<p>Ulrich Neumerkel's &quot;Lambdas in ISO Prolog&quot;<a href="#fn60" class="footnote-ref" id="fnref60"><sup>60</sup></a>.</p>
-<p>Logtalk 2.38.0 has lambda expressions.<a href="#fn61" class="footnote-ref" id="fnref61"><sup>61</sup></a></p>
+<p>Ulrich Neumerkel's &quot;Lambdas in ISO Prolog&quot;<a href="#fn61" class="footnote-ref" id="fnref61"><sup>61</sup></a>.</p>
+<p>Logtalk 2.38.0 has lambda expressions.<a href="#fn62" class="footnote-ref" id="fnref62"><sup>62</sup></a></p>
 <p>Why can't it be this? Isn't &quot;apply&quot; just variable substitution? But the problem is not substitution. The problem is <em>scoping</em>.</p>
 <pre class="example"><code>apply(A^B, A, B).
 </code></pre>
@@ -2537,8 +2543,8 @@ false.
 <p>Example of closure:</p>
 <pre class="example"><code>let makeGetter list = \ i -&gt; elemAt list i
 </code></pre>
-<p>We can manually do closure conversion (lambda lifting)<a href="#fn62" class="footnote-ref" id="fnref62"><sup>62</sup></a>.</p>
-<p>Naish 1996 <span class="citation" data-cites="naish1996higher">[<a href="#ref-naish1996higher">18</a>]</span>:<a href="#fn63" class="footnote-ref" id="fnref63"><sup>63</sup></a> &quot;First, we point out that call/N is not the way to go, despite its recent popularity as the primitive to use for higher order logic programming.&quot;</p>
+<p>We can manually do closure conversion (lambda lifting)<a href="#fn63" class="footnote-ref" id="fnref63"><sup>63</sup></a>.</p>
+<p>Naish 1996 <span class="citation" data-cites="naish1996higher">[<a href="#ref-naish1996higher">18</a>]</span>:<a href="#fn64" class="footnote-ref" id="fnref64"><sup>64</sup></a> &quot;First, we point out that call/N is not the way to go, despite its recent popularity as the primitive to use for higher order logic programming.&quot;</p>
 <p>Let's try something else.</p>
 <p>I propose &quot;local predicate&quot; as the logic-relational analog of the functional lambda expression.</p>
 <p>The meaning of the expression <code>A ^ B</code> is &quot;prove B assuming that A is true&quot;. The semantics is substitution.</p>
@@ -2584,8 +2590,8 @@ r (x,y) -&gt; (r x) y
 <p>Prolog is top-down/backward-chaining. Datalog is bottom-up/forward-chaining.</p>
 <h3 id="how-does-lambda-prolog-extend-prolog"><span class="section_number">11.7</span><span class="section_title">How does Lambda-Prolog extend Prolog?</span></h3>
 <p>Nadathur &amp; Miller 1988 <span class="citation" data-cites="nadathur1988overview">[<a href="#ref-nadathur1988overview">17</a>]</span> justifies Lambda-Prolog.</p>
-<p>&quot;The language Lambda-Prolog extends the logic of Horn clauses by allowing the use of implication not just in clauses, but also in goals,&quot; among other things.<a href="#fn64" class="footnote-ref" id="fnref64"><sup>64</sup></a></p>
-<p>&quot;By moving away from classical logic, Lambda Prolog was able to expand to a much larger fragment of logic: higher-order hereditary Harrop formulas. This allows some features, e.g. modules, to be handled in a logical way as opposed to the ad-hoc way they are handled in Prolog.&quot;<a href="#fn65" class="footnote-ref" id="fnref65"><sup>65</sup></a></p>
+<p>&quot;The language Lambda-Prolog extends the logic of Horn clauses by allowing the use of implication not just in clauses, but also in goals,&quot; among other things.<a href="#fn65" class="footnote-ref" id="fnref65"><sup>65</sup></a></p>
+<p>&quot;By moving away from classical logic, Lambda Prolog was able to expand to a much larger fragment of logic: higher-order hereditary Harrop formulas. This allows some features, e.g. modules, to be handled in a logical way as opposed to the ad-hoc way they are handled in Prolog.&quot;<a href="#fn66" class="footnote-ref" id="fnref66"><sup>66</sup></a></p>
 <h3 id="predicate-logic-can-be-thought-of-propositional-logic-with-parameters"><span class="section_number">11.8</span><span class="section_title">Predicate logic can be thought of propositional logic with parameters</span></h3>
 <p>This fragment looks like written by a programmer who does not know arrays or a logician who does not know parameters.</p>
 <pre class="example"><code>handsome_bob
@@ -2622,7 +2628,7 @@ handsome_joe -&gt; man_joe
 <p>We can imagine a relation internal_external(I,E) where I is an internal language of thought and C is an external language (natural language).</p>
 <p>We can see that a relation like english_indonesian(EnglishWord,IndonesianWord) does not have any provisions for using context to disambiguate meanings.</p>
 <h2 id="what-next-after-prolog"><span class="section_number">13</span><span class="section_title">What next after Prolog?</span></h2>
-<p>Gödel, λProlog, Twelf, Datalog, Answer-Set-Programming.<a href="#fn66" class="footnote-ref" id="fnref66"><sup>66</sup></a></p>
+<p>Gödel, λProlog, Twelf, Datalog, Answer-Set-Programming.<a href="#fn67" class="footnote-ref" id="fnref67"><sup>67</sup></a></p>
 <p>Lambda-Prolog 2012 book <span class="citation" data-cites="miller2012programming">[<a href="#ref-miller2012programming">15</a>]</span>.</p>
 <div class="local_table_of_contents">
 <ul>
@@ -2728,7 +2734,7 @@ q :- p.
 true.
 </code></pre>
 <p>It is simple to write a theorem prover for propositional logic. But how about first-order logic?</p>
-<p>What is resolution<a href="#fn67" class="footnote-ref" id="fnref67"><sup>67</sup></a>? Why is it widely used in automatic theorem proving?</p>
+<p>What is resolution<a href="#fn68" class="footnote-ref" id="fnref68"><sup>68</sup></a>? Why is it widely used in automatic theorem proving?</p>
 <p>Aren't theorem provers just constrained rewriting systems?</p>
 <p>Modus ponens <span class="math inline">\( \alpha, (\alpha \to \beta) \vdash \beta \)</span>.</p>
 <h3 id="logic-programming-vs-theorem-proving"><span class="section_number">13.5</span><span class="section_title">Logic programming vs theorem proving</span></h3>
@@ -2771,15 +2777,15 @@ assert(p(A,B) :- f(A), g(A), h(A,B)).
 <h3 id="how-would-we-implement-prolog-in-c"><span class="section_number">14.1</span><span class="section_title">How would we implement Prolog in C?</span></h3>
 <p>SWI-Prolog has the macros <code>PL_succeed</code> and <code>PL_fail</code>.</p>
 <h3 id="why-does-swi-prolog-use-git-submodules-instead-of-a-mono-repo"><span class="section_number">14.2</span><span class="section_title">Why does SWI-Prolog use Git submodules instead of a mono-repo?</span></h3>
-<p>&lt;2019-04-06&gt; Jan Wielemaker wrote on Discourse<a href="#fn68" class="footnote-ref" id="fnref68"><sup>68</sup></a>:</p>
+<p>&lt;2019-04-06&gt; Jan Wielemaker wrote on Discourse<a href="#fn69" class="footnote-ref" id="fnref69"><sup>69</sup></a>:</p>
 <blockquote>
 <p>Submodules have had their value in the past when several of the modules were practically managed by other people. At the moment all package modules are practically in maintenance stage and this doesn’t matter too much, but I still like to be able to do so. Submodules were also intended to be shared with other Prolog systems. That too isn’t active right now, but work is going on between XSB and SWI, so who knows?</p>
 </blockquote>
 <p>XSB Prolog source code is in a Subversion repository.</p>
-<p>Reading &quot;Subversion Design&quot;<a href="#fn69" class="footnote-ref" id="fnref69"><sup>69</sup></a> helps us understand SVN.</p>
+<p>Reading &quot;Subversion Design&quot;<a href="#fn70" class="footnote-ref" id="fnref70"><sup>70</sup></a> helps us understand SVN.</p>
 <ul>
 <li>Subversion can track an empty directory. Git cannot.</li>
-<li>Both SVN<a href="#fn70" class="footnote-ref" id="fnref70"><sup>70</sup></a><a href="#fn71" class="footnote-ref" id="fnref71"><sup>71</sup></a> and Git have problems with merge conflicts that involve renames.</li>
+<li>Both SVN<a href="#fn71" class="footnote-ref" id="fnref71"><sup>71</sup></a><a href="#fn72" class="footnote-ref" id="fnref72"><sup>72</sup></a> and Git have problems with merge conflicts that involve renames.</li>
 </ul>
 <h3 id="how-to-contribute-to-swi-prolog"><span class="section_number">14.3</span><span class="section_title">How to contribute to SWI-Prolog?</span></h3>
 <div class="local_table_of_contents">
@@ -2788,13 +2794,13 @@ assert(p(A,B) :- f(A), g(A), h(A,B)).
 </ul>
 </div>
 <h4 id="how-to-clone-the-git-repository"><span class="section_number">14.3.1</span><span class="section_title">How to clone the Git repository?</span></h4>
-<p>&lt;2019-04-06&gt; SubmitPatch.html<a href="#fn72" class="footnote-ref" id="fnref72"><sup>72</sup></a> is a little messy. See unix.html<a href="#fn73" class="footnote-ref" id="fnref73"><sup>73</sup></a> about git submodules. See also Discourse<a href="#fn74" class="footnote-ref" id="fnref74"><sup>74</sup></a>.</p>
+<p>&lt;2019-04-06&gt; SubmitPatch.html<a href="#fn73" class="footnote-ref" id="fnref73"><sup>73</sup></a> is a little messy. See unix.html<a href="#fn74" class="footnote-ref" id="fnref74"><sup>74</sup></a> about git submodules. See also Discourse<a href="#fn75" class="footnote-ref" id="fnref75"><sup>75</sup></a>.</p>
 <p>It is not a simple git-clone, because we are using submodules.</p>
 <h3 id="foreign-language-interface"><span class="section_number">14.4</span><span class="section_title">Foreign language interface</span></h3>
-<p>SWI-Prolog has a foreign language interface<a href="#fn75" class="footnote-ref" id="fnref75"><sup>75</sup></a>, but I demand more.</p>
+<p>SWI-Prolog has a foreign language interface<a href="#fn76" class="footnote-ref" id="fnref76"><sup>76</sup></a>, but I demand more.</p>
 <p>I want to write low-level code <em>directly in Prolog</em>.</p>
 <p>I want to write C code in Prolog. I want to have C with type inference and other cool features in Prolog.</p>
-<p>I dream of writing foreign code directly in Prolog. I dream of a Prolog code that can output an amd64 ELF binary. Related in mailing list<a href="#fn76" class="footnote-ref" id="fnref76"><sup>76</sup></a>. Related from the 1990s<a href="#fn77" class="footnote-ref" id="fnref77"><sup>77</sup></a>. Related: Warren 1980 <span class="citation" data-cites="warren1980logic">[<a href="#ref-warren1980logic">25</a>]</span>.</p>
+<p>I dream of writing foreign code directly in Prolog. I dream of a Prolog code that can output an amd64 ELF binary. Related in mailing list<a href="#fn77" class="footnote-ref" id="fnref77"><sup>77</sup></a>. Related from the 1990s<a href="#fn78" class="footnote-ref" id="fnref78"><sup>78</sup></a>. Related: Warren 1980 <span class="citation" data-cites="warren1980logic">[<a href="#ref-warren1980logic">25</a>]</span>.</p>
 <p>There are two problems: emitting machine code, and executing machine code.</p>
 <p>Options for emitting machine code:</p>
 <ul>
@@ -2846,6 +2852,8 @@ nb_write_address(+Address, -Thing)
 <li><span class="section_number">15.25</span><span class="section_title"><a href="#drafts-and-archives-of-my-correspondence-with-the-prolog-community">Drafts and archives of my correspondence with the Prolog community</a></span><span class="word_count">(150w~1m)</span></li>
 <li><span class="section_number">15.26</span><span class="section_title"><a href="#discourse-is-interesting">Discourse is interesting</a></span><span class="word_count">(31w~1m)</span></li>
 <li><span class="section_number">15.27</span><span class="section_title"><a href="#unread">Unread</a></span><span class="word_count">(107w~1m)</span></li>
+<li><span class="section_number">15.28</span><span class="section_title"><a href="#what-6">What</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">15.29</span><span class="section_title"><a href="#teachers-who-cant-teach-shouldnt-teach-lest-they-condemn-students-to-hatred">Teachers who can't teach shouldn't teach, lest they condemn students to hatred</a></span><span class="word_count">(54w~1m)</span></li>
 </ul>
 </div>
 <h3 id="gospel"><span class="section_number">15.1</span><span class="section_title">Gospel</span></h3>
@@ -3185,18 +3193,18 @@ car(a_car, car(&#39;Toyota&#39;, 2000)).
 <p>Semantic Web should be applied to make SWI-Prolog packs searchable and manageable.</p>
 <p>SWI-Prolog packs need curation/vetting/testimony/promotion.</p>
 <h4 id="improving-contributor-guide-discoverability"><span class="section_number">15.25.2</span><span class="section_title">&lt;2019-04-07&gt; Improving contributor guide discoverability</span></h4>
-<p>I wrote<a href="#fn78" class="footnote-ref" id="fnref78"><sup>78</sup></a>:</p>
+<p>I wrote<a href="#fn79" class="footnote-ref" id="fnref79"><sup>79</sup></a>:</p>
 <blockquote>
 <p>The information, the person, and the task must be <em>near to each other in space and time</em>. Ideally, the information is presented right where people need it when they need it.</p>
 </blockquote>
 <h4 id="open-source-donation-does-not-work"><span class="section_number">15.25.3</span><span class="section_title">&lt;2019-04-08&gt; Open-source donation does not work</span></h4>
-<p>Jan Wielemaker on swipl-devel pull-request 459<a href="#fn79" class="footnote-ref" id="fnref79"><sup>79</sup></a>:</p>
+<p>Jan Wielemaker on swipl-devel pull-request 459<a href="#fn80" class="footnote-ref" id="fnref80"><sup>80</sup></a>:</p>
 <blockquote>
 <p>I'd drop donating. We've done that in the past. It is mostly hassle that is nice to buy some infrastructure, but doesn't cover salaries. So far we managed to get the required infra structure sponsored directly.</p>
 </blockquote>
 <p>Indeed. It's like digital busking. It is extremely simple to throw money physically at physical buskers. But how do we throw money digitally at people? In 2019 digital money donation is so much hassle and so complex that few actually donate money digitally.</p>
 <h3 id="discourse-is-interesting"><span class="section_number">15.26</span><span class="section_title">Discourse is interesting</span></h3>
-<p>Discourse<a href="#fn80" class="footnote-ref" id="fnref80"><sup>80</sup></a> reputation system is an example of using software to enforce a policy that creates a system that self-heals against attacks.</p>
+<p>Discourse<a href="#fn81" class="footnote-ref" id="fnref81"><sup>81</sup></a> reputation system is an example of using software to enforce a policy that creates a system that self-heals against attacks.</p>
 <p>I should put it in my open-source page somewhere.</p>
 <h3 id="unread"><span class="section_number">15.27</span><span class="section_title">Unread</span></h3>
 <p>&quot;Here I make use of a feature of the SWI Prolog REPL - prefixing a variable with $ will use the value that was assigned to that variable in a previous REPL command.&quot; <a href="https://bluishcoder.co.nz/2018/09/24/concurrent-and-distributed-programming-in-web-prolog.html">https://bluishcoder.co.nz/2018/09/24/concurrent-and-distributed-programming-in-web-prolog.html</a></p>
@@ -3207,6 +3215,12 @@ car(a_car, car(&#39;Toyota&#39;, 2000)).
 <p>&quot;Reform Prolog is an (dependent) AND-parallel system based on recursion parallelism and Reform compilation.&quot; <a href="https://www.reddit.com/r/prolog/comments/9ceohz/reform_prolog_the_language_and_its_implementation/">https://www.reddit.com/r/prolog/comments/9ceohz/reform_prolog_the_language_and_its_implementation/</a></p>
 <p><a href="https://www.reddit.com/r/prolog/new/">https://www.reddit.com/r/prolog/new/</a></p>
 <p>1997 &quot;FAQ: Prolog Resource Guide 1/2 [Monthly posting]&quot; Where is the most recent version? <a href="http://www.faqs.org/faqs/prolog/resource-guide/part1/index.html">http://www.faqs.org/faqs/prolog/resource-guide/part1/index.html</a></p>
+<h3 id="what-6"><span class="section_number">15.28</span><span class="section_title">What</span></h3>
+<p>&quot;Using Logic Programming to Recover C++ Classes and Methods from Compiled Executables. They use XSB Prolog&quot;<a href="#fn82" class="footnote-ref" id="fnref82"><sup>82</sup></a><a href="#fn83" class="footnote-ref" id="fnref83"><sup>83</sup></a></p>
+<h3 id="teachers-who-cant-teach-shouldnt-teach-lest-they-condemn-students-to-hatred"><span class="section_number">15.29</span><span class="section_title">Teachers who can't teach shouldn't teach, lest they condemn students to hatred</span></h3>
+<p>People hate math because they are unfortunate enough to be taught by teachers who can't teach.</p>
+<p>People hate Prolog because they are unfortunate enough to be taught by teachers who can't teach.</p>
+<p>Those students grow up to be adults with atrophied minds condemned to mediocrity.</p>
 <h2 id="bibliography" class="unnumbered"><span class="section_number">16</span><span class="section_title">Bibliography</span></h2>
 <div id="refs" class="references">
 <div id="ref-afshari2012liberating">
@@ -3347,27 +3361,30 @@ car(a_car, car(&#39;Toyota&#39;, 2000)).
 <li id="fn57"><p><a href="https://github.com/salva/plswipl">https://github.com/salva/plswipl</a><a href="#fnref57" class="footnote-back">↩</a></p></li>
 <li id="fn58"><p><a href="http://hiro-tan.org/~ekoontz/psqlog/doc/psqlog.html">http://hiro-tan.org/~ekoontz/psqlog/doc/psqlog.html</a><a href="#fnref58" class="footnote-back">↩</a></p></li>
 <li id="fn59"><p><a href="https://twiki.org/cgi-bin/view/Plugins/SwiPrologToPostgreSqlAddOn">https://twiki.org/cgi-bin/view/Plugins/SwiPrologToPostgreSqlAddOn</a><a href="#fnref59" class="footnote-back">↩</a></p></li>
-<li id="fn60"><p><a href="https://www.complang.tuwien.ac.at/ulrich/Prolog-inedit/ISO-Hiord.html">https://www.complang.tuwien.ac.at/ulrich/Prolog-inedit/ISO-Hiord.html</a><a href="#fnref60" class="footnote-back">↩</a></p></li>
-<li id="fn61"><p><a href="https://blog.logtalk.org/2009/12/lambda-expressions-in-logtalk/">https://blog.logtalk.org/2009/12/lambda-expressions-in-logtalk/</a><a href="#fnref61" class="footnote-back">↩</a></p></li>
-<li id="fn62"><p><a href="https://en.wikipedia.org/wiki/Lambda_lifting">https://en.wikipedia.org/wiki/Lambda_lifting</a><a href="#fnref62" class="footnote-back">↩</a></p></li>
-<li id="fn63"><p><a href="http://www.complang.tuwien.ac.at/ulrich/Prolog-inedit/naish.html">http://www.complang.tuwien.ac.at/ulrich/Prolog-inedit/naish.html</a><a href="#fnref63" class="footnote-back">↩</a></p></li>
-<li id="fn64"><p><a href="http://www.lix.polytechnique.fr/~dale/lolli/">http://www.lix.polytechnique.fr/~dale/lolli/</a><a href="#fnref64" class="footnote-back">↩</a></p></li>
-<li id="fn65"><p><a href="https://math.stackexchange.com/questions/1761680/what-formal-systems-are-various-programming-paradigms-based-on/1761959">https://math.stackexchange.com/questions/1761680/what-formal-systems-are-various-programming-paradigms-based-on/1761959</a><a href="#fnref65" class="footnote-back">↩</a></p></li>
-<li id="fn66"><p><a href="https://github.com/webyrd/miniKanren-uncourse/wiki/Other-Interesting-Logic-or-Relational-Programming-Languages">https://github.com/webyrd/miniKanren-uncourse/wiki/Other-Interesting-Logic-or-Relational-Programming-Languages</a><a href="#fnref66" class="footnote-back">↩</a></p></li>
-<li id="fn67"><p><a href="https://en.wikipedia.org/wiki/Resolution_(logic)">https://en.wikipedia.org/wiki/Resolution_(logic)</a><a href="#fnref67" class="footnote-back">↩</a></p></li>
-<li id="fn68"><p><a href="https://swi-prolog.discourse.group/t/consolidating-the-71-github-repositories-to-simplify-maintenance-and-contribution/492/10">https://swi-prolog.discourse.group/t/consolidating-the-71-github-repositories-to-simplify-maintenance-and-contribution/492/10</a><a href="#fnref68" class="footnote-back">↩</a></p></li>
-<li id="fn69"><p><a href="https://svn.apache.org/repos/asf/subversion/trunk/notes/subversion-design.html">https://svn.apache.org/repos/asf/subversion/trunk/notes/subversion-design.html</a><a href="#fnref69" class="footnote-back">↩</a></p></li>
-<li id="fn70"><p><a href="https://stackoverflow.com/questions/28465362/svn-tree-conflict-when-merging-renamed-folder">https://stackoverflow.com/questions/28465362/svn-tree-conflict-when-merging-renamed-folder</a><a href="#fnref70" class="footnote-back">↩</a></p></li>
-<li id="fn71"><p><a href="https://www.theregister.co.uk/2017/03/17/subversion_svn_file_renaming/">https://www.theregister.co.uk/2017/03/17/subversion_svn_file_renaming/</a><a href="#fnref71" class="footnote-back">↩</a></p></li>
-<li id="fn72"><p><a href="http://www.swi-prolog.org/howto/SubmitPatch.html">http://www.swi-prolog.org/howto/SubmitPatch.html</a><a href="#fnref72" class="footnote-back">↩</a></p></li>
-<li id="fn73"><p><a href="http://www.swi-prolog.org/build/unix.html">http://www.swi-prolog.org/build/unix.html</a><a href="#fnref73" class="footnote-back">↩</a></p></li>
-<li id="fn74"><p><a href="https://swi-prolog.discourse.group/t/being-friendly-to-quick-contributions/493/3">https://swi-prolog.discourse.group/t/being-friendly-to-quick-contributions/493/3</a><a href="#fnref74" class="footnote-back">↩</a></p></li>
-<li id="fn75"><p><a href="http://www.swi-prolog.org/pldoc/man?section=foreign">http://www.swi-prolog.org/pldoc/man?section=foreign</a><a href="#fnref75" class="footnote-back">↩</a></p></li>
-<li id="fn76"><p><a href="https://groups.google.com/forum/#!topic/comp.lang.prolog/-WhsxJqPRRU">https://groups.google.com/forum/#!topic/comp.lang.prolog/-WhsxJqPRRU</a><a href="#fnref76" class="footnote-back">↩</a></p></li>
-<li id="fn77"><p><a href="https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/grammars/compiler2.html">https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/grammars/compiler2.html</a><a href="#fnref77" class="footnote-back">↩</a></p></li>
-<li id="fn78"><p><a href="https://swi-prolog.discourse.group/t/improving-contributor-guide-discoverability-was-consolidating-the-71-github-repositories-to-simplify-maintenance-and-contribution/492/16">https://swi-prolog.discourse.group/t/improving-contributor-guide-discoverability-was-consolidating-the-71-github-repositories-to-simplify-maintenance-and-contribution/492/16</a><a href="#fnref78" class="footnote-back">↩</a></p></li>
-<li id="fn79"><p><a href="https://github.com/SWI-Prolog/swipl-devel/pull/459">https://github.com/SWI-Prolog/swipl-devel/pull/459</a><a href="#fnref79" class="footnote-back">↩</a></p></li>
-<li id="fn80"><p><a href="https://www.discourse.org">https://www.discourse.org</a><a href="#fnref80" class="footnote-back">↩</a></p></li>
+<li id="fn60"><p><a href="http://xsb.sourceforge.net/manual2/manual2.pdf">http://xsb.sourceforge.net/manual2/manual2.pdf</a><a href="#fnref60" class="footnote-back">↩</a></p></li>
+<li id="fn61"><p><a href="https://www.complang.tuwien.ac.at/ulrich/Prolog-inedit/ISO-Hiord.html">https://www.complang.tuwien.ac.at/ulrich/Prolog-inedit/ISO-Hiord.html</a><a href="#fnref61" class="footnote-back">↩</a></p></li>
+<li id="fn62"><p><a href="https://blog.logtalk.org/2009/12/lambda-expressions-in-logtalk/">https://blog.logtalk.org/2009/12/lambda-expressions-in-logtalk/</a><a href="#fnref62" class="footnote-back">↩</a></p></li>
+<li id="fn63"><p><a href="https://en.wikipedia.org/wiki/Lambda_lifting">https://en.wikipedia.org/wiki/Lambda_lifting</a><a href="#fnref63" class="footnote-back">↩</a></p></li>
+<li id="fn64"><p><a href="http://www.complang.tuwien.ac.at/ulrich/Prolog-inedit/naish.html">http://www.complang.tuwien.ac.at/ulrich/Prolog-inedit/naish.html</a><a href="#fnref64" class="footnote-back">↩</a></p></li>
+<li id="fn65"><p><a href="http://www.lix.polytechnique.fr/~dale/lolli/">http://www.lix.polytechnique.fr/~dale/lolli/</a><a href="#fnref65" class="footnote-back">↩</a></p></li>
+<li id="fn66"><p><a href="https://math.stackexchange.com/questions/1761680/what-formal-systems-are-various-programming-paradigms-based-on/1761959">https://math.stackexchange.com/questions/1761680/what-formal-systems-are-various-programming-paradigms-based-on/1761959</a><a href="#fnref66" class="footnote-back">↩</a></p></li>
+<li id="fn67"><p><a href="https://github.com/webyrd/miniKanren-uncourse/wiki/Other-Interesting-Logic-or-Relational-Programming-Languages">https://github.com/webyrd/miniKanren-uncourse/wiki/Other-Interesting-Logic-or-Relational-Programming-Languages</a><a href="#fnref67" class="footnote-back">↩</a></p></li>
+<li id="fn68"><p><a href="https://en.wikipedia.org/wiki/Resolution_(logic)">https://en.wikipedia.org/wiki/Resolution_(logic)</a><a href="#fnref68" class="footnote-back">↩</a></p></li>
+<li id="fn69"><p><a href="https://swi-prolog.discourse.group/t/consolidating-the-71-github-repositories-to-simplify-maintenance-and-contribution/492/10">https://swi-prolog.discourse.group/t/consolidating-the-71-github-repositories-to-simplify-maintenance-and-contribution/492/10</a><a href="#fnref69" class="footnote-back">↩</a></p></li>
+<li id="fn70"><p><a href="https://svn.apache.org/repos/asf/subversion/trunk/notes/subversion-design.html">https://svn.apache.org/repos/asf/subversion/trunk/notes/subversion-design.html</a><a href="#fnref70" class="footnote-back">↩</a></p></li>
+<li id="fn71"><p><a href="https://stackoverflow.com/questions/28465362/svn-tree-conflict-when-merging-renamed-folder">https://stackoverflow.com/questions/28465362/svn-tree-conflict-when-merging-renamed-folder</a><a href="#fnref71" class="footnote-back">↩</a></p></li>
+<li id="fn72"><p><a href="https://www.theregister.co.uk/2017/03/17/subversion_svn_file_renaming/">https://www.theregister.co.uk/2017/03/17/subversion_svn_file_renaming/</a><a href="#fnref72" class="footnote-back">↩</a></p></li>
+<li id="fn73"><p><a href="http://www.swi-prolog.org/howto/SubmitPatch.html">http://www.swi-prolog.org/howto/SubmitPatch.html</a><a href="#fnref73" class="footnote-back">↩</a></p></li>
+<li id="fn74"><p><a href="http://www.swi-prolog.org/build/unix.html">http://www.swi-prolog.org/build/unix.html</a><a href="#fnref74" class="footnote-back">↩</a></p></li>
+<li id="fn75"><p><a href="https://swi-prolog.discourse.group/t/being-friendly-to-quick-contributions/493/3">https://swi-prolog.discourse.group/t/being-friendly-to-quick-contributions/493/3</a><a href="#fnref75" class="footnote-back">↩</a></p></li>
+<li id="fn76"><p><a href="http://www.swi-prolog.org/pldoc/man?section=foreign">http://www.swi-prolog.org/pldoc/man?section=foreign</a><a href="#fnref76" class="footnote-back">↩</a></p></li>
+<li id="fn77"><p><a href="https://groups.google.com/forum/#!topic/comp.lang.prolog/-WhsxJqPRRU">https://groups.google.com/forum/#!topic/comp.lang.prolog/-WhsxJqPRRU</a><a href="#fnref77" class="footnote-back">↩</a></p></li>
+<li id="fn78"><p><a href="https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/grammars/compiler2.html">https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/grammars/compiler2.html</a><a href="#fnref78" class="footnote-back">↩</a></p></li>
+<li id="fn79"><p><a href="https://swi-prolog.discourse.group/t/improving-contributor-guide-discoverability-was-consolidating-the-71-github-repositories-to-simplify-maintenance-and-contribution/492/16">https://swi-prolog.discourse.group/t/improving-contributor-guide-discoverability-was-consolidating-the-71-github-repositories-to-simplify-maintenance-and-contribution/492/16</a><a href="#fnref79" class="footnote-back">↩</a></p></li>
+<li id="fn80"><p><a href="https://github.com/SWI-Prolog/swipl-devel/pull/459">https://github.com/SWI-Prolog/swipl-devel/pull/459</a><a href="#fnref80" class="footnote-back">↩</a></p></li>
+<li id="fn81"><p><a href="https://www.discourse.org">https://www.discourse.org</a><a href="#fnref81" class="footnote-back">↩</a></p></li>
+<li id="fn82"><p><a href="https://twitter.com/r_Prolog/status/1092721329596444672">https://twitter.com/r_Prolog/status/1092721329596444672</a><a href="#fnref82" class="footnote-back">↩</a></p></li>
+<li id="fn83"><p><a href="https://www.reddit.com/r/prolog/comments/ancj74/using_logic_programming_to_recover_c_classes_and/">https://www.reddit.com/r/prolog/comments/ancj74/using_logic_programming_to_recover_c_classes_and/</a><a href="#fnref83" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
