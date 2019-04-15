@@ -174,9 +174,11 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">6</span><span class="section_title"><a href="#declarative">Declarative</a></span><span class="word_count">(421w~3m)</span></li>
 <li><span class="section_number">7</span><span class="section_title"><a href="#interoperation">Interoperation</a></span><span class="word_count">(46w~1m)</span></li>
 <li><span class="section_number">8</span><span class="section_title"><a href="#functional-programming-language-design">Functional programming language design</a></span><span class="word_count">(1232w~7m)</span></li>
-<li><span class="section_number">9</span><span class="section_title"><a href="#programming-language-design-mistakes">Programming language design mistakes?</a></span><span class="word_count">(1055w~6m)</span></li>
-<li><span class="section_number">10</span><span class="section_title"><a href="#total-mess">Total mess</a></span><span class="word_count">(2852w~15m)</span></li>
-<li><span class="section_number">11</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#functional-programming-research">Functional programming research?</a></span><span class="word_count">(2823w~15m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#fix-this-incoherent-java-ramble-dont-read"><span class="todo TODO">TODO</span> Fix this incoherent Java ramble; don't read</a></span><span class="word_count">(1925w~10m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#programming-language-design-mistakes">Programming language design mistakes?</a></span><span class="word_count">(1055w~6m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#total-mess">Total mess</a></span><span class="word_count">(2852w~15m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(51w~1m)</span></li>
 </ul>
 </div>
 <h2 id="names-and-referents-should-be-separated"><span class="section_number">1</span><span class="section_title">Names and referents should be separated</span></h2>
@@ -2095,54 +2097,1663 @@ f : a \to b , ~ x : m~a , ~ Functor~m \vdash (f~x \to_\beta fmap~f~x)
 <ul>
 <li><a href="https://github.com/bennofs/haskell-generate">bennofs/haskell-generate: Type-safe library for generating haskell source code</a></li>
 </ul>
-<h2 id="programming-language-design-mistakes"><span class="section_number">9</span><span class="section_title">Programming language design mistakes?</span></h2>
+<h2 id="functional-programming-research"><span class="section_number">9</span><span class="section_title">Functional programming research?</span></h2>
+<p>Problem: This chapter lacks a narrative.</p>
+<p>Abbreviations:</p>
+<ul>
+<li>CPS: continuation-passing style</li>
+<li>FP: functional programming</li>
+<li>OS: operating system</li>
+<li>PFP: partial functional programming</li>
+<li>TFP: total functional programming</li>
+<li>TFPL: total functional programming language</li>
+<li>TM: Turing machine</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#why-total-functional-programming">Why total functional programming?</a></span><span class="word_count">(192w~1m)</span></li>
+<li><span class="section_number">9.2</span><span class="section_title"><a href="#ramble">Ramble</a></span><span class="word_count">(1204w~7m)</span></li>
+<li><span class="section_number">9.3</span><span class="section_title"><a href="#category-theory-and-programming-languages">Category theory and programming languages?</a></span><span class="word_count">(93w~1m)</span></li>
+<li><span class="section_number">9.4</span><span class="section_title"><a href="#foundation-of-mathematics-especially-for-programming">Foundation of mathematics especially for programming?</a></span><span class="word_count">(75w~1m)</span></li>
+<li><span class="section_number">9.5</span><span class="section_title"><a href="#haskell-strictness-checker">Haskell strictness checker</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">9.6</span><span class="section_title"><a href="#question-for-abdullah">&lt;2018-09-12&gt; question for Abdullah</a></span><span class="word_count">(56w~1m)</span></li>
+<li><span class="section_number">9.7</span><span class="section_title"><a href="#scheme-currying">&lt;2017-09-04&gt; Scheme currying</a></span><span class="word_count">(112w~1m)</span></li>
+<li><span class="section_number">9.8</span><span class="section_title"><a href="#approximating-general-recursion-in-tfp">&lt;2018-04-07&gt; Approximating general recursion in TFP</a></span><span class="word_count">(106w~1m)</span></li>
+<li><span class="section_number">9.9</span><span class="section_title"><a href="#what-2">what</a></span><span class="word_count">(940w~5m)</span></li>
+<li><span class="section_number">9.10</span><span class="section_title"><a href="#programming-language-theory">Programming language theory</a></span><span class="word_count">(3w~1m)</span></li>
+</ul>
+</div>
+<h3 id="why-total-functional-programming"><span class="section_number">9.1</span><span class="section_title">Why total functional programming?</span></h3>
+<ul>
+<li>Can you sell me some TFP?
+<ul>
+<li>What is TFP?
+<ul>
+<li>TFP is functional programming with only total functions.
+<ul>
+<li>A function is total iff it is defined for every element of its domain.</li>
+</ul></li>
+<li>TFP ensures that every function is total by constraining every recursion to be structural recursion.
+<ul>
+<li>Structural recursion is recursion with the constraint that every recursive call is syntactically smaller.</li>
+</ul></li>
+</ul></li>
+<li>Why TFP?
+<ul>
+<li>The practical advantage of TFP is that it is easier (and therefore faster and less costly) to write provably correct programs in TFP compared to PFP or imperative programming.
+<ul>
+<li>This ultimately translates to faster time-to-market, lower development cost, fewer errors, fewer customer complaints, and higher customer satisfaction. (I know this sounds like bullshit. We should not underestimate the ways that humans can screw up.)</li>
+</ul></li>
+<li>The theoretical advantage of TFP is that TFP has simpler denotational semantics compared to PFP because TFP has less bottoms to consider. [Turner2004]</li>
+</ul></li>
+<li>Why not TFP?
+<ul>
+<li>A disadvantage of TFP is that it is not Turing-complete because all programs must terminate, but OSes don't terminate, but we can still write an OS in a TFPL using codata and corecursion [Turner2004] which are discussed in another section in this document.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>[Turner2004] calls TFP &quot;strong functional programming&quot;.</p>
+<h3 id="ramble"><span class="section_number">9.2</span><span class="section_title">Ramble</span></h3>
+<p><strong>You should not read anything below this point.</strong> These are the drafts of my drafts. I think they should be included in this page, but I haven't worked them enough.</p>
+<ul>
+<li>Why did Simon Peyton-Jones write that the next Haskell will be strict?
+<ul>
+<li><a href="http://www.cs.nott.ac.uk/~gmh/appsem-slides/peytonjones.ppt">Simon Peyton-Jones PPT slides</a>.</li>
+<li><a href="https://news.ycombinator.com/item?id=1924061">ycombinator comment thread</a>.</li>
+</ul></li>
+</ul>
+<p>This is a questionnaire, not survey article: A preliminary survey of functional programming Caitlin Sadowski Daan Leijen <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/paper-67.pdf">https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/paper-67.pdf</a></p>
+<ul>
+<li>How do these differ: Agda, Coq, Lean, Isabelle, ACL2, and others?
+<ul>
+<li><a href="https://www.reddit.com/r/haskell/comments/3b498l/if_you_could_change_one_thing_about_haskell_what/csk2gvl/">Conor McBride's tangential opinions</a> on Coq vs Agda vs others</li>
+<li><a href="http://wiki.portal.chalmers.se/agda/pmwiki.php?n=Main.AgdaVsCoq">Agda Wiki: Agda vs Coq</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/30j9l6/lean_the_new_open_source_theorem_prover_developed/">/r/haskell: Lean: the new open source theorem prover developed at Microsoft Research</a></li>
+</ul></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.2.1</span><span class="section_title"><a href="#history-of-lambda-calculus">History of lambda calculus?</a></span><span class="word_count">(115w~1m)</span></li>
+<li><span class="section_number">9.2.2</span><span class="section_title"><a href="#might-be-too-old">might be too old</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">9.2.3</span><span class="section_title"><a href="#codata-corecursion-and-coinduction">Codata, corecursion, and coinduction</a></span><span class="word_count">(99w~1m)</span></li>
+<li><span class="section_number">9.2.4</span><span class="section_title"><a href="#lazy-strict">Lazy, strict</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">9.2.5</span><span class="section_title"><a href="#a-type-theory-is-a-formal-system-not-a-branch-of-mathematics">A type theory is a formal system, not a branch of mathematics</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">9.2.6</span><span class="section_title"><a href="#recursion-and-fixpoint">Recursion and fixpoint</a></span><span class="word_count">(59w~1m)</span></li>
+<li><span class="section_number">9.2.7</span><span class="section_title"><a href="#the-eff-language-and-monad-aware-languages">The Eff language and monad-aware languages</a></span><span class="word_count">(131w~1m)</span></li>
+<li><span class="section_number">9.2.8</span><span class="section_title"><a href="#reading-triage">Reading triage</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">9.2.9</span><span class="section_title"><a href="#tfp-and-turing-completeness">TFP and Turing-completeness</a></span><span class="word_count">(200w~1m)</span></li>
+<li><span class="section_number">9.2.10</span><span class="section_title"><a href="#metaprogramming">Metaprogramming</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">9.2.11</span><span class="section_title"><a href="#structured-editor">Structured editor</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">9.2.12</span><span class="section_title"><a href="#others">Others</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">9.2.13</span><span class="section_title"><a href="#positive-and-negative-positions-strict-positivity">Positive and negative positions, strict positivity</a></span><span class="word_count">(62w~1m)</span></li>
+<li><span class="section_number">9.2.14</span><span class="section_title"><a href="#rewriting-systems">Rewriting systems</a></span><span class="word_count">(310w~2m)</span></li>
+</ul>
+</div>
+<h4 id="history-of-lambda-calculus"><span class="section_number">9.2.1</span><span class="section_title">History of lambda calculus?</span></h4>
+<p>Alonzo Church introduced lambda calculus in 1932 in [Church1932].</p>
+<p>Why did Church invent lambda calculus? What was Church trying to do?</p>
+<p>Notations have changed. Church wrote <span class="math inline">\(S_y^x U\)</span> but we write <span class="math inline">\(U[x := y]\)</span> for the same thing: the expression <span class="math inline">\(U\)</span> but with every occurrence of free variable <span class="math inline">\(x\)</span> replaced by expression <span class="math inline">\(y\)</span>.</p>
+<p>[Church1932] credits a 1924 publication of Moses Schönfinkel for what we call <em>currying</em>: changing a multi-parameter function to a one-parameter function returning another one-parameter function returning yet another one-parameter function, and so on. Currying is changing <span class="math inline">\(f : (a,b) \to c\)</span> to <span class="math inline">\(f&#39; : a \to (b \to c)\)</span> such that <span class="math inline">\(f(x,y) = (f&#39;(x))(y)\)</span>.</p>
+<p>See: Dana Scott's lambda-calculus timeline<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
+<p>See also: <a href="https://en.wikipedia.org/wiki/Lambda_calculus">Wikipedia: Lambda calculus</a>.</p>
+<h4 id="might-be-too-old"><span class="section_number">9.2.2</span><span class="section_title">might be too old</span></h4>
+<ul>
+<li>[Lof1984]</li>
+<li>1986 A survey of functional programming language principles <a href="https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19870002073.pdf">https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19870002073.pdf</a></li>
+</ul>
+<h4 id="codata-corecursion-and-coinduction"><span class="section_number">9.2.3</span><span class="section_title">Codata, corecursion, and coinduction</span></h4>
+<p>For more about codata, corecursion, and coinduction, see:</p>
+<ul>
+<li><a href="http://www.cl.cam.ac.uk/archive/mjcg/plans/Coinduction.html">&quot;Corecursion and coinduction: what they are and how they relate to recursion and induction&quot;, Mike Gordon</a>: &quot;My goal here is to try to understand these things through the activity of creating a simple explanation.&quot;</li>
+<li><a href="http://blog.sigfpe.com/2007/07/data-and-codata.html">&quot;Data and Codata&quot;, Dan Piponi</a>: &quot;The program might not terminate, but from a mathematical perspective this is a completely well defined function.&quot; &quot;Note the duality: in structural recursion we 'deconstruct' the argument and then we're allowed to recurse. In guarded recursion we recurse first, and then we're allowed to use the constructor.&quot;</li>
+<li><a href="https://www.tac-tics.net/blog/data-vs-codata">&quot;Data vs Codata&quot;, Michael Maloney</a></li>
+</ul>
+<h4 id="lazy-strict"><span class="section_number">9.2.4</span><span class="section_title">Lazy, strict</span></h4>
+<ul>
+<li>The Church-Rosser property (<a href="https://en.wikipedia.org/wiki/Church%E2%80%93Rosser_theorem">Wikipedia</a>, <a href="http://mathworld.wolfram.com/Church-RosserProperty.html">Mathworld</a>), eliminates the difference between strict and lazy in a TFPL [Turner2004].</li>
+</ul>
+<h4 id="a-type-theory-is-a-formal-system-not-a-branch-of-mathematics"><span class="section_number">9.2.5</span><span class="section_title">A type theory is a formal system, not a branch of mathematics</span></h4>
+<p>There are at least two type theories: the Martin-Löf type theory, and the calculus of constructions [Bove2001]. I thought &quot;type theory&quot; was a branch of mathematics, like &quot;category theory&quot;, &quot;graph theory&quot;, and &quot;number theory&quot;.</p>
+<p>&quot;Martin-Löf's type theory is basically a theory about sets in which it is possible to interpret a logic.&quot; [Nordstrom1988]</p>
+<h4 id="recursion-and-fixpoint"><span class="section_number">9.2.6</span><span class="section_title">Recursion and fixpoint</span></h4>
+<p>We say that <span class="math inline">\(x\)</span> is a <em>fixpoint</em> of <span class="math inline">\(f\)</span> iff <span class="math inline">\(x = f(x)\)</span>.</p>
+<p>A <a href="https://www.cs.cornell.edu/courses/cs3110/2013sp/supplemental/lectures/lec29-fixpoints/lec29.html">text lecture</a> describes how to obtain the factorial function as a fixed point of successive <em>approximations</em>.</p>
+<p><a href="https://en.wikipedia.org/wiki/Fixed-point_combinator">Wikipedia: Fixed-point combinator</a>. A fixed-point combinator enables <em>anonymous</em> recursive functions.</p>
+<p>TFP rejects the definition <code>fix f = f (fix f)</code> because this is not a structural recursion.</p>
+<p>Recursion is about fixpoint.</p>
+<h4 id="the-eff-language-and-monad-aware-languages"><span class="section_number">9.2.7</span><span class="section_title">The Eff language and monad-aware languages</span></h4>
+<p>Consider this passage from [McBride2015]:</p>
+<blockquote>
+<p>[The Eff language lets] us write in direct style for whatever effectful interface is locally available, then obtain the computation delivered by the appropriate Moggi-style translation into an explicitly monadic kernel.</p>
+</blockquote>
+<p>I think &quot;in direct style&quot; means that in Eff we can write <code>f x</code> to mean what we would write as <code>x &gt;&gt;</code> f= in Haskell, but with the Monad instance automatically inferred based on the locally available effects.</p>
+<p>I think that passage suggests that the Eff language [Bauer2012] is related to the &quot;monad-aware language&quot; that Abdullah is trying to accomplish. The relation is that Eff infers the monad from the locally available effects. However, Eff's type system ignores the effects (like ML's type system) so this is probably not what Abdullah wants.</p>
+<h4 id="reading-triage"><span class="section_number">9.2.8</span><span class="section_title">Reading triage</span></h4>
+<p><a href="http://semantic-domain.blogspot.co.id/2016/03/agda-is-not-purely-functional-language.html">http://semantic-domain.blogspot.co.id/2016/03/agda-is-not-purely-functional-language.html</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Category:Term-rewriting_programming_languages">https://en.wikipedia.org/wiki/Category:Term-rewriting_programming_languages</a></p>
+<p>In a term-rewriting language such as Pure, we can write program transformation as part of the program. <a href="https://stackoverflow.com/questions/24330902/how-does-term-rewriting-based-evaluation-work">https://stackoverflow.com/questions/24330902/how-does-term-rewriting-based-evaluation-work</a></p>
+<p><a href="https://www.quora.com/What-are-examples-of-statically-typed-logic-programming-languages-ex-similar-to-Prolog">https://www.quora.com/What-are-examples-of-statically-typed-logic-programming-languages-ex-similar-to-Prolog</a></p>
+<p><a href="https://mathoverflow.net/questions/3920/what-does-it-mean-to-discharge-assumptions-or-premises">https://mathoverflow.net/questions/3920/what-does-it-mean-to-discharge-assumptions-or-premises</a></p>
+<p><a href="http://www.cs.nott.ac.uk/~pszvc/g54dtp/inductive_domain.v">http://www.cs.nott.ac.uk/~pszvc/g54dtp/inductive_domain.v</a></p>
+<p><a href="https://stackoverflow.com/questions/145263/what-is-total-functional-programming">https://stackoverflow.com/questions/145263/what-is-total-functional-programming</a></p>
+<p>What is a computational effect?</p>
+<p>Does totality really have anything to do with termination?</p>
+<h4 id="tfp-and-turing-completeness"><span class="section_number">9.2.9</span><span class="section_title">TFP and Turing-completeness</span></h4>
+<p>We must distinguish between a Turing machine and its execution.</p>
+<p>A TM needs a tape to run, but does not come with it. To run a TM, you have to supply a tape.</p>
+<p>A <em>tape</em> is a finite sequence of tape symbols.</p>
+<p>A <em>step</em> is a pair of configuration and tape.</p>
+<p>A <em>run</em> is a sequence of steps. This sequence may be infinite.</p>
+<p>A <em>run</em> of a Turing machine <span class="math inline">\(m\)</span> with initial tape <span class="math inline">\(t\)</span> is …</p>
+<p>Instead of thinking about infinitely long tape with infinitely many blank symbols, we think that the tape is finite but the TM may at every step insert, update, or delete a cell.</p>
+<p>A TM is finite by definition: a TM is a tuple whose each component is taken from a finite set. The description of a TM does not include the tape. The execution trace of a TM may be infinite. A TFPL can <em>describe</em> every TM just fine.</p>
+<p>We can describe a Turing machine in a TFPL?</p>
+<p><a href="https://www.reddit.com/r/programming/comments/jvu2w/total_functional_programming_and_the_unimportance/">https://www.reddit.com/r/programming/comments/jvu2w/total_functional_programming_and_the_unimportance/</a></p>
+<p><a href="http://lambda-the-ultimate.org/node/2003">LTU: Total functional programming</a></p>
+<p><a href="https://news.ycombinator.com/item?id=12646390">https://news.ycombinator.com/item?id=12646390</a></p>
+<p><a href="https://existentialtype.wordpress.com/2014/03/20/old-neglected-theorems-are-still-theorems/">https://existentialtype.wordpress.com/2014/03/20/old-neglected-theorems-are-still-theorems/</a></p>
+<p><a href="https://math.stackexchange.com/questions/111773/are-total-recursive-functions-recursively-enumerable">https://math.stackexchange.com/questions/111773/are-total-recursive-functions-recursively-enumerable</a></p>
+<p>How do we write this &quot;echo&quot; program in TFP? Is it even total?</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb30-1" title="1">main <span class="fu">:</span> <span class="dt">IO</span> ()</a>
+<a class="sourceLine" id="cb30-2" title="2">main <span class="fu">=</span> <span class="fu">getLine</span> <span class="fu">&gt;&gt;=</span> <span class="fu">putStrLn</span> <span class="fu">&gt;&gt;</span> main</a></code></pre></div>
+<p>We can <em>describe</em> the infinite list of natural numbers <code>[0,1,2,3,...]</code> in a TFP.</p>
+<pre class="example"><code>f : Nat -&gt; Nat
+f n = n + 1
+
+f : Nat -&gt; Nat
+f n = n
+</code></pre>
+<p><a href="https://arxiv.org/abs/1610.09254">Partiality, Revisited: The Partiality Monad as a Quotient Inductive-Inductive Type</a></p>
+<p><a href="http://www.cl.cam.ac.uk/archive/mjcg/plans/Coinduction.html">http://www.cl.cam.ac.uk/archive/mjcg/plans/Coinduction.html</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Natural_transformation">https://en.wikipedia.org/wiki/Natural_transformation</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Initial_algebra">https://en.wikipedia.org/wiki/Initial_algebra</a> endofunctor, F-algebra, initial object</p>
+<p><a href="https://dtai.cs.kuleuven.be/problog/">probabilistic logic programming</a></p>
+<h4 id="metaprogramming"><span class="section_number">9.2.10</span><span class="section_title">Metaprogramming</span></h4>
+<p>Spoofax vs Xtext vs MPS? <a href="http://www.metaborg.org/en/latest/">http://www.metaborg.org/en/latest/</a> <a href="http://www.metaborg.org/en/latest/source/overview/examples.html">http://www.metaborg.org/en/latest/source/overview/examples.html</a></p>
+<p>PEG (parsing expression grammar)</p>
+<p><a href="http://ttic.uchicago.edu/~dmcallester/foundations.pdf">http://ttic.uchicago.edu/~dmcallester/foundations.pdf</a> <a href="https://en.wikipedia.org/wiki/Foundations_of_mathematics">https://en.wikipedia.org/wiki/Foundations_of_mathematics</a> <a href="https://web.stanford.edu/class/cs103/notes/Mathematical%20Foundations%20of%20Computing.pdf">https://web.stanford.edu/class/cs103/notes/Mathematical%20Foundations%20of%20Computing.pdf</a> <a href="https://github.com/hoplon/javelin">https://github.com/hoplon/javelin</a> <a href="https://codon.com/consider-static-typing">https://codon.com/consider-static-typing</a></p>
+<h4 id="structured-editor"><span class="section_number">9.2.11</span><span class="section_title">Structured editor</span></h4>
+<p><a href="https://news.ycombinator.com/item?id=13773813">https://news.ycombinator.com/item?id=13773813</a></p>
+<p><a href="https://www.reddit.com/r/programming/comments/1tp83j/lamdu_structuralast_editor/">https://www.reddit.com/r/programming/comments/1tp83j/lamdu_structuralast_editor/</a></p>
+<h4 id="others"><span class="section_number">9.2.12</span><span class="section_title">Others</span></h4>
+<p><a href="https://tio.run/#agda">Compile and run Agda programs online</a>.</p>
+<h4 id="positive-and-negative-positions-strict-positivity"><span class="section_number">9.2.13</span><span class="section_title">Positive and negative positions, strict positivity</span></h4>
+<p>In the function type <span class="math inline">\(A \to B\)</span>, we say that <span class="math inline">\(A\)</span> occurs in a <em>negative</em> position and <span class="math inline">\(B\)</span> occurs in a <em>positive</em> position. See <a href="https://cs.stackexchange.com/questions/42150/meaning-of-positive-position-and-negative-position-in-type-theory">CS StackExchange 42150</a>.</p>
+<p>For the <em>strict positivity</em> constraint of a data type definition, see these: <a href="https://cs.stackexchange.com/questions/55646/strict-positivity">CS StackExchange 55646</a>, <a href="http://wiki.portal.chalmers.se/agda/pmwiki.php?n=ReferenceManual.SimpleInductiveTypes?from=ReferenceManual.Datatypes#Strictpositivity">Agda Wiki: Strict positivity</a>.</p>
+<p>In a TFPL, there is no expression whose type is <code>forall a. a</code>.</p>
+<pre class="example"><code>exit : IO a
+</code></pre>
+<h4 id="rewriting-systems"><span class="section_number">9.2.14</span><span class="section_title">Rewriting systems</span></h4>
+<p>A TFPL program is a terminating ARS. <a href="https://en.m.wikipedia.org/wiki/Termination_(term_rewriting)">https://en.m.wikipedia.org/wiki/Termination_(term_rewriting)</a></p>
+<p><a href="https://softoption.us/content/node/37">SoftOption: normal forms and termination</a></p>
+<p><a href="https://softoption.us/content/node/654">SoftOption: lambda calculus and combinatory logic</a></p>
+<p>There are at least two widely used confluent term-rewriting systems:</p>
+<ul>
+<li>applicative, lambda calculus, beta-reduction</li>
+<li>concatenative, postfix notation, PostScript, Forth</li>
+</ul>
+<p>An expression is in normal form iff there is no applicable rewrite rule. See <a href="https://en.wikipedia.org/wiki/Normal_form_(abstract_rewriting)">Wikipedia: Normal form (abstract rewriting)</a>.</p>
+<p>The following <code>hang</code> function is not total. Why?</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb33-1" title="1">hang <span class="fu">:</span> <span class="dt">Nat</span> <span class="ot">-&gt;</span> <span class="dt">Nat</span></a>
+<a class="sourceLine" id="cb33-2" title="2">hang x <span class="ot">=&gt;</span> hang x</a></code></pre></div>
+<p>The expression <code>hang x</code> can be rewritten to <code>hang x</code>, so <code>hang x</code> is not a normal form, but this goes on forever, so <code>hang x</code> does not have a normal form, and thus <code>hang x</code> is not total.</p>
+<p>This <code>loop</code> thing is not a function in the mathematical sense. Why is that?</p>
+<pre class="example"><code>loop : a
+loop =&gt; loop
+</code></pre>
+<p>Consider this, where <code>exit</code> terminates the program.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb35-1" title="1">what <span class="fu">:</span> <span class="dt">Nat</span></a>
+<a class="sourceLine" id="cb35-2" title="2">what <span class="ot">=&gt;</span> exit</a></code></pre></div>
+<p>The function <code>crash</code> also does not produce a <code>Nat</code>.</p>
+<ul>
+<li><p>What is Scott continuity?</p>
+<ul>
+<li>Why is it named &quot;continuity&quot;?</li>
+</ul></li>
+</ul>
+<p><a href="https://cs.stackexchange.com/questions/1371/scott-continuous-functions-an-alternative-definition">https://cs.stackexchange.com/questions/1371/scott-continuous-functions-an-alternative-definition</a></p>
+<p>Girard's System F <a href="https://people.mpi-sws.org/~skilpat/plerg/papers/harper-system-f-2up.pdf">https://people.mpi-sws.org/~skilpat/plerg/papers/harper-system-f-2up.pdf</a> <a href="https://www.reddit.com/r/haskell/comments/2zqtfk/why_isnt_anyone_talking_about_optimal_lambda/">https://www.reddit.com/r/haskell/comments/2zqtfk/why_isnt_anyone_talking_about_optimal_lambda/</a></p>
+<p>Venanzio Capretta's partiality monad General recursion via coinductive types <a href="http://www.cs.ru.nl/~venanzio/publications/Recursion_Coinductive_LMCS_2005.pdf">Venanzio Capretta 2005</a> &quot;see the work by Barendregt and Geuvers [5] for a good exposition of technical issues of type-theoretic proof assistants&quot; Coinductive types were first introduced in type theory by Hagino [34]</p>
+<p><a href="https://cs.stackexchange.com/questions/19577/what-can-idris-not-do-by-giving-up-turing-completeness">StackOverflow: What can Idris not do by giving up Turing-completeness?</a>: &quot;Dual to termination: while an inductive definition must terminate (by consuming all of its data) a coinductive definition must be productive - in practice this means, brieflt, that any recursive call must be guarded by a constructor. I've found this explanation to be the clearest (ymmv): adam.chlipala.net/cpdt/html/Coinductive.html&quot; – Edwin Brady Apr 22 '14 at 17:58</p>
+<p>Dependent Types and Multi-monadic Effects in F⋆ <a href="https://www.fstar-lang.org/papers/mumon/paper.pdf">https://www.fstar-lang.org/papers/mumon/paper.pdf</a></p>
+<p>Type Systems, Luca Cardelli <a href="http://lucacardelli.name/Papers/TypeSystems.pdf">http://lucacardelli.name/Papers/TypeSystems.pdf</a></p>
+<p><a href="https://www.cs.rit.edu/~mtf/student-resources/20094_voelker_msthesis.pdf">Karl Voelker master thesis: practical programming with total functions</a></p>
+<p><a href="https://www.cs.york.ac.uk/plasma/wiki/index.php?title=Functional_Programming#Theses">York CS wiki: FP researches</a></p>
+<ul>
+<li><p>Position papers</p>
+<ul>
+<li>[[<a href="https://www.irif.fr/~mellies/mpri/mpri-ens/articles/hyland-power-lawvere-theories-and-monads.pdf">https://www.irif.fr/~mellies/mpri/mpri-ens/articles/hyland-power-lawvere-theories-and-monads.pdf</a>][2007, Hyland &amp; Power: &quot;The Category Theoretic Understanding of Universal Algebra: Lawvere Theories and Monads&quot;]]</li>
+</ul></li>
+<li><p>Should we read these?</p>
+<ul>
+<li>2015 Ralf Hinze, Nicolas Wu, Jeremy Gibbons: <a href="http://www.cs.ox.ac.uk/people/jeremy.gibbons/publications/conjugate-hylos.pdf">Conjugate Hylomorphisms Or: The Mother of All Structured Recursion Schemes</a></li>
+<li>2007 Colin John Morris Kemp PhD thesis <a href="https://pdfs.semanticscholar.org/21da/de9b8e96724265f911c90c0ddd935901a0f0.pdf">Theoretical foundations for practical &quot;totally functional programming&quot;</a></li>
+</ul></li>
+</ul>
+<h3 id="category-theory-and-programming-languages"><span class="section_number">9.3</span><span class="section_title">Category theory and programming languages?</span></h3>
+<p>The section title needs a verb.</p>
+<ul>
+<li>Category-theoretic model of functional programming languages
+<ul>
+<li>Every functional programming language L can be modeled by a category C(L) whose objects are the types of L and arrows are the function expressions of L.</li>
+</ul></li>
+<li>categorical programming (what is this?)
+<ul>
+<li>2000, PhD thesis, &quot;Categorical programming with inductive and coinductive types&quot; <a href="https://kodu.ut.ee/~varmo/papers/thesis.pdf">https://kodu.ut.ee/~varmo/papers/thesis.pdf</a></li>
+<li>categorical programming language
+<ul>
+<li>1993, article, &quot;Comparing Hagino's categorical programming language and typed lambda-calculi&quot; <a href="https://www.sciencedirect.com/science/article/pii/030439759390186W">https://www.sciencedirect.com/science/article/pii/030439759390186W</a></li>
+<li>1987, PhD thesis, &quot;Categorical programming language&quot; <a href="http://web.sfc.keio.ac.jp/~hagino/thesis.pdf">http://web.sfc.keio.ac.jp/~hagino/thesis.pdf</a>
+<ul>
+<li>&quot;An interpreter of Hagino's Categorical Programming Language (CPL).&quot; <a href="https://github.com/msakai/cpl">https://github.com/msakai/cpl</a></li>
+</ul></li>
+<li>aggregators
+<ul>
+<li>2009, <a href="https://mathoverflow.net/questions/3721/programming-languages-based-on-category-theory">https://mathoverflow.net/questions/3721/programming-languages-based-on-category-theory</a></li>
+<li><a href="https://softwareengineering.stackexchange.com/questions/216635/category-theory-based-language">https://softwareengineering.stackexchange.com/questions/216635/category-theory-based-language</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>category theory applied to programming language theory
+<ul>
+<li>2012, &quot;Generic Programming with Adjunctions&quot; <a href="http://www.cs.ox.ac.uk/ralf.hinze/LN.pdf">http://www.cs.ox.ac.uk/ralf.hinze/LN.pdf</a></li>
+</ul></li>
+</ul>
+<h3 id="foundation-of-mathematics-especially-for-programming"><span class="section_number">9.4</span><span class="section_title">Foundation of mathematics especially for programming?</span></h3>
+<ul>
+<li>set theories, such as ZF, ZFC, NBG, etc.
+<ul>
+<li><a href="https://math.stackexchange.com/questions/136215/difference-between-zfc-nbg">https://math.stackexchange.com/questions/136215/difference-between-zfc-nbg</a></li>
+</ul></li>
+<li>type theories, such as Martin-Löf type theory</li>
+<li>logic?</li>
+<li>category theory?</li>
+<li>lambda calculus?</li>
+<li><a href="https://cstheory.stackexchange.com/questions/27217/are-there-presentations-of-set-theory-in-terms-of-lambda-calculus">https://cstheory.stackexchange.com/questions/27217/are-there-presentations-of-set-theory-in-terms-of-lambda-calculus</a>
+<ul>
+<li>Grue's map theory, 1992
+<ul>
+<li><a href="http://hjemmesider.diku.dk/~grue/">http://hjemmesider.diku.dk/~grue/</a>
+<ul>
+<li>1992, Grue, PhD thesis, <a href="http://hjemmesider.diku.dk/~grue/papers/Grue92/Grue92.pdf">&quot;Map theory&quot;</a>
+<ul>
+<li>p. 130: &quot;Equality is better than truth […]&quot; (How do we explain the context?)
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Equational_logic">https://en.wikipedia.org/wiki/Equational_logic</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>related?
+<ul>
+<li>equational programming</li>
+</ul></li>
+<li>2016 reformulation article &quot;A synthetic axiomatization of Map Theory&quot; <a href="https://hal.archives-ouvertes.fr/hal-00678410v3">pdf available</a></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>Can we formalize &quot;a program is an executable formal system&quot; using Grue's map theory?</p>
+<ul>
+<li>How is &quot;false&quot; represented?</li>
+<li>How is &quot;true&quot; represented?</li>
+<li>How is &quot;conjunction&quot; represented?</li>
+</ul>
+<h3 id="haskell-strictness-checker"><span class="section_number">9.5</span><span class="section_title">Haskell strictness checker</span></h3>
+<ul>
+<li>2018 &quot;Keep your laziness in check&quot; <a href="https://dl.acm.org/citation.cfm?doid=3243631.3236797">https://dl.acm.org/citation.cfm?doid=3243631.3236797</a>
+<ul>
+<li>&quot;We introduce StrictCheck: a property-based random testing framework for observing, specifying, and testing the strictness of Haskell functions.&quot;</li>
+</ul></li>
+</ul>
+<h3 id="question-for-abdullah"><span class="section_number">9.6</span><span class="section_title">&lt;2018-09-12&gt; question for Abdullah</span></h3>
+<p>Do you know of anything that computes (generates code for) the products/sums of data-types? Do you know of any libraries that enable us to describe how to transform a data type to a related data type? Do you know of anything resembling template metaprogramming for Haskell that is not Template Haskell? For example:</p>
+<pre class="example"><code>data A = A1 | A2
+data B = B1 | B2
+
+-- &lt;input&gt;
+generate data P = A * B
+generate data S = A + B
+-- &lt;/input&gt;
+
+-- &lt;output&gt;
+data P  = P_A1_B1
+        | P_A1_B2
+        | P_A2_B1
+        | P_A2_B2
+
+data S  = S_A1 | S_A2
+        | S_B1 | S_B2
+-- &lt;/output&gt;
+</code></pre>
+<h3 id="scheme-currying"><span class="section_number">9.7</span><span class="section_title">&lt;2017-09-04&gt; Scheme currying</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.7.1</span><span class="section_title"><a href="#abstract">Abstract</a></span><span class="word_count">(34w~1m)</span></li>
+<li><span class="section_number">9.7.2</span><span class="section_title"><a href="#the-idea">The idea</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">9.7.3</span><span class="section_title"><a href="#the-code">The code</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">9.7.4</span><span class="section_title"><a href="#example">Example</a></span><span class="word_count">(22w~1m)</span></li>
+</ul>
+</div>
+<h4 id="abstract"><span class="section_number">9.7.1</span><span class="section_title">Abstract</span></h4>
+<p>We define the macros <code>lambda/c</code>, <code>apply/c</code>, and <code>define/c</code>, which are curried analogs of <code>lambda</code>, <code>apply</code>, and <code>define</code>, respectively. This way is simple, but it uses macros and it is limited to fixed-arity lambda expressions.</p>
+<h4 id="the-idea"><span class="section_number">9.7.2</span><span class="section_title">The idea</span></h4>
+<p>The idea of <code>lambda/c</code> is this pattern:</p>
+<pre class="example"><code>(lambda/c (a) z) =&gt; (lambda (a) z)
+(lambda/c (a b) z) =&gt; (lambda (a) (lambda (b) z))
+(lambda/c (a b c) z) =&gt; (lambda (a) (lambda (b) (lambda (c) z)))
+...
+</code></pre>
+<p>The idea of <code>apply/c</code> is this pattern:</p>
+<pre class="example"><code>(apply/c a b) =&gt; (a b)
+(apply/c a b c) =&gt; ((a b) c)
+(apply/c a b c d) =&gt; (((a b) c) d)
+...
+</code></pre>
+<p>However, there is a difference: <code>apply</code> is an arity-2 procedure taking a procedure and a list, whereas <code>apply/c</code> is a macro that takes one or more arguments.</p>
+<p>The idea of <code>define/c</code> is this parallel:</p>
+<pre class="example"><code>(define (a b ... y) z) = (define a (lambda (b ... y) z))
+(define/c (a b ... y) z) = (define a (lambda/c (b ... y) z))
+</code></pre>
+<h4 id="the-code"><span class="section_number">9.7.3</span><span class="section_title">The code</span></h4>
+<p>I tried this code on Guile 2.0.9 on Ubuntu 14.04.</p>
+<pre class="example"><code>(define-syntax lambda/c
+    (syntax-rules ()
+        (
+            (_ (x) body ...)
+            (lambda (x) body ...)
+        )
+        (
+            (_ (x y ...) body ...)
+            (lambda (x) (lambda/c (y ...) body ...))
+        )
+    )
+)
+
+(define-syntax apply/c
+    (syntax-rules ()
+        (
+            (_ f)
+            (f)
+        )
+        (
+            (_ f x)
+            (f x)
+        )
+        (
+            (_ f x y ...)
+            (apply/c (f x) y ...)
+        )
+    )
+)
+
+(define-syntax define/c
+    (syntax-rules ()
+        (
+            (_ (f) body ...)
+            (define f (lambda () body ...))
+        )
+        (
+            (_ (f x ...) body ...)
+            (define f (lambda/c (x ...) body ...))
+        )
+    )
+)
+</code></pre>
+<h4 id="example"><span class="section_number">9.7.4</span><span class="section_title">Example</span></h4>
+<p>After the above macros have been defined (by copying them to your REPL, for example), the following fragment should print three threes.</p>
+<pre class="example"><code>(define f (lambda/c (x y) (+ x y)))
+(define g (lambda (x) (lambda (y) (+ x y))))
+(define/c (h x y) (+ x y))
+(apply/c f 1 2)
+(apply/c g 1 2)
+(apply/c h 1 2)
+</code></pre>
+<h3 id="approximating-general-recursion-in-tfp"><span class="section_number">9.8</span><span class="section_title">&lt;2018-04-07&gt; Approximating general recursion in TFP</span></h3>
+<p>Here we are going to show how to approximate general recursive functions in TFP with the help of the following <code>repeat</code> and <code>approx</code>:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb42-1" title="1"><span class="co">-- The expression `repeat n f x` means</span></a>
+<a class="sourceLine" id="cb42-2" title="2"><span class="co">-- `n` times of the application of `f` to `x`.</span></a>
+<a class="sourceLine" id="cb42-3" title="3"><span class="fu">repeat</span> <span class="fu">:</span> <span class="dt">Nat</span> <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a</a>
+<a class="sourceLine" id="cb42-4" title="4"><span class="fu">repeat</span> <span class="dv">0</span> f <span class="fu">=</span> <span class="fu">id</span></a>
+<a class="sourceLine" id="cb42-5" title="5"><span class="fu">repeat</span> (n<span class="fu">+</span><span class="dv">1</span>) f <span class="fu">=</span> <span class="fu">repeat</span> n f <span class="fu">.</span> f</a>
+<a class="sourceLine" id="cb42-6" title="6"></a>
+<a class="sourceLine" id="cb42-7" title="7">approx</a>
+<a class="sourceLine" id="cb42-8" title="8">    <span class="fu">:</span> <span class="dt">Nat</span> <span class="co">-- count</span></a>
+<a class="sourceLine" id="cb42-9" title="9">    <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> s) <span class="co">-- begin</span></a>
+<a class="sourceLine" id="cb42-10" title="10">    <span class="ot">-&gt;</span> (s <span class="ot">-&gt;</span> s) <span class="co">-- step</span></a>
+<a class="sourceLine" id="cb42-11" title="11">    <span class="ot">-&gt;</span> (s <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b) <span class="co">-- end</span></a>
+<a class="sourceLine" id="cb42-12" title="12">    <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b)</a>
+<a class="sourceLine" id="cb42-13" title="13"></a>
+<a class="sourceLine" id="cb42-14" title="14">approx count begin step end <span class="fu">=</span></a>
+<a class="sourceLine" id="cb42-15" title="15">    end <span class="fu">.</span> <span class="fu">repeat</span> count step <span class="fu">.</span> begin</a></code></pre></div>
+<p>To approximate a general recursive function <code>f : a -&gt; b</code>, we write a data type <code>S_f</code> and these three non-recursive total functions:</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb43-1" title="1">begin_f <span class="fu">:</span> a <span class="ot">-&gt;</span> <span class="dt">S_f</span></a>
+<a class="sourceLine" id="cb43-2" title="2">step_f <span class="fu">:</span> <span class="dt">S_f</span> <span class="ot">-&gt;</span> <span class="dt">S_f</span></a>
+<a class="sourceLine" id="cb43-3" title="3">end_f <span class="fu">:</span> <span class="dt">S_f</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b</a>
+<a class="sourceLine" id="cb43-4" title="4"></a>
+<a class="sourceLine" id="cb43-5" title="5"><span class="co">-- A side note:</span></a>
+<a class="sourceLine" id="cb43-6" title="6"><span class="co">-- In PFP, the original `f` can be</span></a>
+<a class="sourceLine" id="cb43-7" title="7"><span class="co">-- recovered from those three functions:</span></a>
+<a class="sourceLine" id="cb43-8" title="8">f input <span class="fu">=</span> loop (begin_f input)</a>
+<a class="sourceLine" id="cb43-9" title="9">    <span class="kw">where</span></a>
+<a class="sourceLine" id="cb43-10" title="10">        loop s <span class="fu">=</span> <span class="kw">case</span> end_f s <span class="kw">of</span></a>
+<a class="sourceLine" id="cb43-11" title="11">            <span class="dt">Just</span> output <span class="ot">-&gt;</span> output</a>
+<a class="sourceLine" id="cb43-12" title="12">            _ <span class="ot">-&gt;</span> loop (step_f s)</a></code></pre></div>
+<p>Then, we can approximate <code>f</code> as <code>f_approx</code>:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb44-1" title="1">f_approx <span class="fu">:</span> <span class="dt">Nat</span> <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b)</a>
+<a class="sourceLine" id="cb44-2" title="2">f_approx count <span class="fu">=</span></a>
+<a class="sourceLine" id="cb44-3" title="3">    approx count begin_f step_f end_f</a></code></pre></div>
+<p>The <code>count</code> parameter can be thought as a time limit or time-out, the number of iterations, the number of steps.</p>
+<p>Here is an example approximation of the factorial function.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb45-1" title="1">fac <span class="dv">0</span> <span class="fu">=</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb45-2" title="2">fac n <span class="fu">=</span> n <span class="fu">*</span> fac (n<span class="fu">-</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb45-3" title="3"></a>
+<a class="sourceLine" id="cb45-4" title="4"><span class="kw">data</span> <span class="dt">State</span> <span class="fu">=</span> <span class="dt">Mk</span> { n <span class="fu">:</span> <span class="dt">Nat</span>, a <span class="fu">:</span> <span class="dt">Nat</span> }</a>
+<a class="sourceLine" id="cb45-5" title="5"></a>
+<a class="sourceLine" id="cb45-6" title="6">fac_approx count <span class="fu">=</span></a>
+<a class="sourceLine" id="cb45-7" title="7">    end <span class="fu">.</span> <span class="fu">repeat</span> count step <span class="fu">.</span> begin</a>
+<a class="sourceLine" id="cb45-8" title="8">    <span class="kw">where</span></a>
+<a class="sourceLine" id="cb45-9" title="9">        begin <span class="fu">:</span> <span class="dt">Nat</span> <span class="ot">-&gt;</span> <span class="dt">State</span></a>
+<a class="sourceLine" id="cb45-10" title="10">        begin n <span class="fu">=</span> <span class="dt">Mk</span> n <span class="dv">1</span></a>
+<a class="sourceLine" id="cb45-11" title="11"></a>
+<a class="sourceLine" id="cb45-12" title="12">        end <span class="fu">:</span> <span class="dt">State</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Nat</span></a>
+<a class="sourceLine" id="cb45-13" title="13">        end (<span class="dt">Mk</span> <span class="dv">0</span> a) <span class="fu">=</span> <span class="dt">Just</span> a</a>
+<a class="sourceLine" id="cb45-14" title="14">        end _ <span class="fu">=</span> <span class="dt">Nothing</span></a>
+<a class="sourceLine" id="cb45-15" title="15"></a>
+<a class="sourceLine" id="cb45-16" title="16">        step <span class="fu">:</span> <span class="dt">State</span> <span class="ot">-&gt;</span> <span class="dt">State</span></a>
+<a class="sourceLine" id="cb45-17" title="17">        step (<span class="dt">Mk</span> <span class="dv">0</span> a) <span class="fu">=</span> <span class="dt">Mk</span> <span class="dv">0</span> a</a>
+<a class="sourceLine" id="cb45-18" title="18">        step (<span class="dt">Mk</span> (n<span class="fu">+</span><span class="dv">1</span>) a) <span class="fu">=</span> <span class="dt">Mk</span> n (a <span class="fu">*</span> (n<span class="fu">+</span><span class="dv">1</span>))</a></code></pre></div>
+<p>Here is an example approximation of bottom.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb46-1" title="1"><span class="co">-- PFP</span></a>
+<a class="sourceLine" id="cb46-2" title="2"></a>
+<a class="sourceLine" id="cb46-3" title="3">hang <span class="fu">:</span> a</a>
+<a class="sourceLine" id="cb46-4" title="4">hang <span class="fu">=</span> hang</a>
+<a class="sourceLine" id="cb46-5" title="5"></a>
+<a class="sourceLine" id="cb46-6" title="6"><span class="co">-- TFP approximation</span></a>
+<a class="sourceLine" id="cb46-7" title="7"></a>
+<a class="sourceLine" id="cb46-8" title="8"><span class="kw">data</span> <span class="dt">State</span> <span class="fu">=</span> <span class="dt">Mk</span></a>
+<a class="sourceLine" id="cb46-9" title="9"></a>
+<a class="sourceLine" id="cb46-10" title="10">hang_begin _ <span class="fu">=</span> <span class="dt">Mk</span></a>
+<a class="sourceLine" id="cb46-11" title="11">hang_step s <span class="fu">=</span> s</a>
+<a class="sourceLine" id="cb46-12" title="12">hang_end _ <span class="fu">=</span> <span class="dt">Nothing</span></a>
+<a class="sourceLine" id="cb46-13" title="13"></a>
+<a class="sourceLine" id="cb46-14" title="14">hang_approx count <span class="fu">=</span></a>
+<a class="sourceLine" id="cb46-15" title="15">    hang_end <span class="fu">.</span> <span class="fu">repeat</span> count hang_step <span class="fu">.</span> hang_begin</a></code></pre></div>
+<p>I conjecture that there is an algorithm that can transform every general recursive function into its begin-step-end form.</p>
+<h3 id="what-2"><span class="section_number">9.9</span><span class="section_title">what</span></h3>
+<ul>
+<li>2002, article collection, &quot;Recent advances in Java technology: theory, application, implementation&quot; <a href="http://www.cs.nuim.ie/~jpower/Research/Papers/2002/power-raijt-toc.pdf">http://www.cs.nuim.ie/~jpower/Research/Papers/2002/power-raijt-toc.pdf</a></li>
+<li>1985, article, &quot;Automatic synthesis of typed Λ-programs on term algebras&quot; <a href="https://www.sciencedirect.com/science/article/pii/0304397585901355">https://www.sciencedirect.com/science/article/pii/0304397585901355</a></li>
+<li>2015, article, &quot;Dynamically Composing Languages in a Modular Way: Supporting C Extensions for Dynamic Languages&quot;, <a href="https://chrisseaton.com/rubytruffle/modularity15/rubyextensions.pdf">pdf</a></li>
+<li><a href="https://github.com/nim-lang/Nim">https://github.com/nim-lang/Nim</a></li>
+<li>2016, article, &quot;Towards Ontology-Based Program Analysis&quot;, <a href="http://drops.dagstuhl.de/opus/volltexte/2016/6120/pdf/LIPIcs-ECOOP-2016-26.pdf">pdf</a>
+<ul>
+<li>Interesting conference title: &quot;Conference on very important topics (CVIT)&quot;
+<ul>
+<li>Is it real? Is it a secret society? Google doesn't seem to know about it.</li>
+</ul></li>
+</ul></li>
+<li>functional languages with explicit memory layout? functional languages for systems programming?
+<ul>
+<li><a href="https://github.com/ollef/sixten">Sixten: Functional programming with fewer indirections</a>
+<ul>
+<li>It also deals with representing algebraic data type inhabitants as bit patterns.</li>
+<li>&quot;Sixten is very related to other functional languages such as Haskell, Agda, and Idris. The biggest difference between other languages and Sixten is the way that Sixten allows us to control the memory layout of data.&quot;</li>
+<li><a href="https://gitter.im/sixten-lang/General?source=orgpage">Sixten, &quot;General&quot;, Gitter, community chat</a></li>
+</ul></li>
+</ul></li>
+<li>2017, article, <a href="https://arxiv.org/abs/1707.00024">A Formalized General Theory of Syntax with Bindings</a></li>
+<li><a href="https://www.cs.cmu.edu/~mleone/language/projects.html">Programming Language and Compiler Research Groups</a></li>
+<li><a href="http://www.pl-enthusiast.net/2014/07/10/ieee-posts-its-top-list-of-languages/">IEEE posts its top list of languages - The PL Enthusiast</a></li>
+<li><a href="http://www.pl-enthusiast.net/2015/05/27/what-is-pl-research-and-how-is-it-useful/">What is PL research and how is it useful? - The PL Enthusiast</a></li>
+<li>2014, article, <a href="https://arxiv.org/abs/1410.1776">Ontology-based Representation and Reasoning on Process Models: A Logic Programming Approach</a></li>
+<li>1994, article, &quot;Formalizing architectural connection&quot;, <a href="http://web.cs.wpi.edu/~cs562/s98/pdf/wright-icse16.pdf">pdf</a></li>
+<li><a href="https://2015.splashcon.org/track/nool2015#event-overview">NOOL 2015 accepted papers - SPLASH 2015</a> (&quot;New Object Oriented Languages&quot;)
+<ul>
+<li>&quot;Classes Considered Harmful&quot;, <a href="http://web.cecs.pdx.edu/~black/publications/ClassesHarmful.pdf">pdf</a></li>
+<li>&quot;Ubiquitous Object Orientation to Foster the Advancement of Programming Languages&quot;, <a href="http://www.cs.cmu.edu/~dkurilov/papers/nool15.pdf">pdf</a></li>
+</ul></li>
+<li>NOOL 2016 articles
+<ul>
+<li>&quot;Nomen: A Dynamically Typed OO Programming Language, Transpiled to Java&quot;, <a href="http://www.it.uu.se/workshop/nool16/nool16-paper9.pdf">pdf</a>
+<ul>
+<li>&quot;Nomen is an experimental, dynamically typed OO programming language which compiles to Java source code.&quot;</li>
+<li>&quot;Nomen is designed as a language for experimenting with IDE support generation using the Rascal language workbench.&quot;</li>
+</ul></li>
+<li>&quot;The essence of subclassing&quot;, <a href="http://www.it.uu.se/workshop/nool16/nool16-paper5.pdf">pdf</a></li>
+<li>&quot;Towards Automatic Decoration&quot;, <a href="http://www.it.uu.se/workshop/nool16/nool16-paper2.pdf">pdf</a></li>
+<li>syntax
+<ul>
+<li>&quot;Polite Programmers, Use Spaces in Identifiers When Needed&quot;, <a href="http://www.it.uu.se/workshop/nool16/nool16-paper10.pdf">pdf</a></li>
+</ul></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Comparison_of_functional_programming_languages">WP:Comparison of functional programming languages</a></li>
+<li>Great Works in Programming Languages, Collected by Benjamin C. Pierce <a href="http://www.cis.upenn.edu/~bcpierce/courses/670Fall04/GreatWorksInPL.shtml">http://www.cis.upenn.edu/~bcpierce/courses/670Fall04/GreatWorksInPL.shtml</a></li>
+<li>to read? &quot;theories of programming languages reynolds&quot;</li>
+<li>2017, book, &quot;Principles of Programming Languages&quot; <a href="https://www.cs.bgu.ac.il/~mira/ppl-book-full.pdf">https://www.cs.bgu.ac.il/~mira/ppl-book-full.pdf</a></li>
+<li>2003, article, &quot;Composing Programming Languages by Combining Action-Semantics Modules&quot; <a href="http://www.brics.dk/RS/03/53/BRICS-RS-03-53.pdf">http://www.brics.dk/RS/03/53/BRICS-RS-03-53.pdf</a></li>
+<li>2001, position paper, &quot;Composition Languages for Black-Box Components&quot; <a href="http://scg.unibe.ch/archive/papers/Wuyt01c.pdf">http://scg.unibe.ch/archive/papers/Wuyt01c.pdf</a></li>
+<li>glue: Make better services. (deprecated) <a href="https://hackage.haskell.org/package/glue">https://hackage.haskell.org/package/glue</a></li>
+<li>yet another music programming language <a href="https://github.com/alda-lang/alda">https://github.com/alda-lang/alda</a></li>
+<li>linearscan: Linear scan register allocator, formally verified in Coq; 2004, master thesis, <a href="https://hackage.haskell.org/package/linearscan">https://hackage.haskell.org/package/linearscan</a></li>
+<li>Lastik: A library for compiling programs in a variety of languages (Java, Scala, C#) <a href="https://hackage.haskell.org/package/Lastik">https://hackage.haskell.org/package/Lastik</a></li>
+<li>risc386: Reduced instruction set i386 simulator <a href="https://hackage.haskell.org/package/risc386">https://hackage.haskell.org/package/risc386</a></li>
+<li>2017, &quot;Theorems for Free for Free&quot;, Wadler <a href="http://homepages.inf.ed.ac.uk/wadler/topics/blame.html">http://homepages.inf.ed.ac.uk/wadler/topics/blame.html</a>
+<ul>
+<li>What is &quot;polymorphic blame calculus&quot;?</li>
+</ul></li>
+<li><a href="https://idris.readthedocs.io/en/v1.3.0/faq/faq.html#what-are-the-differences-between-agda-and-idris">https://idris.readthedocs.io/en/v1.3.0/faq/faq.html#what-are-the-differences-between-agda-and-idris</a>
+<ul>
+<li>&quot;Why does Idris use eager evaluation rather than lazy?&quot;
+<ul>
+<li>&quot;What is the representation of <code>thing</code> at run-time? Is it a bit pattern representing an integer, or is it a pointer to some code which will compute an integer? In Idris, we have decided that we would like to make this distinction precise […]&quot;</li>
+<li>Idris has laziness, but you have to be explicit.</li>
+</ul></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Automatic_programming">https://en.wikipedia.org/wiki/Automatic_programming</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Program_synthesis">https://en.wikipedia.org/wiki/Program_synthesis</a></li>
+<li><a href="https://www.cs.cmu.edu/~mleone/language-research.html">https://www.cs.cmu.edu/~mleone/language-research.html</a></li>
+<li>&quot;Confessions Of A Used Programming Language Salesman: Getting The Masses Hooked On Haskell&quot;, Erik Meijer, <a href="https://pdfs.semanticscholar.org/233a/932b3e94f1f117655e4862995b32f33754be.pdf">pdf</a>
+<ul>
+<li>What are the key points?</li>
+</ul></li>
+<li>1966, article, P. J. Landin, &quot;The next 700 programming languages&quot;, <a href="https://www.cs.cmu.edu/~crary/819-f09/Landin66.pdf">pdf</a>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Off-side_rule">https://en.wikipedia.org/wiki/Off-side_rule</a></li>
+</ul></li>
+<li><a href="http://matt.might.net/articles/best-programming-languages/">http://matt.might.net/articles/best-programming-languages/</a></li>
+<li><a href="http://www.cs.utexas.edu/users/EWD/ewd06xx/EWD641.PDF">EWD641: On the interplay between mathematics and programming</a></li>
+<li><a href="http://hackage.haskell.org/package/Workflow">http://hackage.haskell.org/package/Workflow</a></li>
+<li><a href="https://pchiusano.github.io/2017-01-20/why-not-haskell.html">https://pchiusano.github.io/2017-01-20/why-not-haskell.html</a></li>
+<li><a href="http://unisonweb.org/2015-05-07/about.html#post-start">http://unisonweb.org/2015-05-07/about.html#post-start</a></li>
+<li><a href="https://github.com/facebook/duckling">facebook/duckling: Language, engine, and tooling for expressing, testing, and evaluating composable language rules on input strings.</a></li>
+<li><a href="https://github.com/GaloisInc/crucible">GaloisInc/crucible: Crucible is a library for symbolic simulation of imperative programs</a></li>
+<li>2009, &quot;Domain-Specific Languages for Composable Editor Plugins&quot;
+<ul>
+<li><a href="https://pdfs.semanticscholar.org/presentation/85d8/bc42122ff5175be1ebc3c7b91e4abff55d22.pdf">2009 slides pdf</a></li>
+<li><a href="http://bora.uib.no/bitstream/handle/1956/9721/1-s2.0-S1571066110001179-main.pdf?sequence=1">2010 article pdf</a></li>
+</ul></li>
+<li>why not PEG parsing
+<ul>
+<li><a href="http://jeffreykegler.github.io/Ocean-of-Awareness-blog/individual/2015/03/peg.html">http://jeffreykegler.github.io/Ocean-of-Awareness-blog/individual/2015/03/peg.html</a></li>
+</ul></li>
+<li>answer set programming
+<ul>
+<li><a href="http://cs.aalto.fi/en/current/news/2018-07-18/">News: Speed up solving complex problems: be lazy and only work crucial tasks - Aalto University</a>
+<ul>
+<li>2018, article, &quot;Exploiting Justifications for Lazy Grounding of Answer Set Programs&quot;, <a href="https://www.ijcai.org/proceedings/2018/0240.pdf">pdf</a></li>
+</ul></li>
+</ul></li>
+<li><a href="https://brianmckenna.org/blog/idris_library">Idris as a Library - BAM Weblog</a>
+<ul>
+<li>Idris as compiler backend</li>
+</ul></li>
+<li>Prolog ontology?
+<ul>
+<li>What is the relationship between Prolog, logic programming, ontology, and relational databases?
+<ul>
+<li><a href="https://stackoverflow.com/questions/29062541/what-are-ontology-can-do-but-relational-database-can-not">What are ontology can do, but relational database can not? - Stack Overflow</a>
+<ul>
+<li><a href="https://www.slideshare.net/UscholdM/ontologies-and-db-schema-whats-the-difference">Ontologies and DB Schema: What's the Difference?</a></li>
+<li>2011, article, &quot;Ontologies versus relational databases: Are they so different? A comparison&quot;, <a href="https://www.researchgate.net/publication/251332115_Ontologies_versus_relational_databases_Are_they_so_different_A_comparison">pdf available</a></li>
+<li>2010, article, &quot;Mapping between Relational Databases and OWL Ontologies: an example&quot;, <a href="https://www.lu.lv/materiali/apgads/raksti/756_pp_99-117.pdf">pdf</a></li>
+</ul></li>
+</ul></li>
+<li><a href="http://sujitpal.blogspot.com/2009/06/ontology-rules-with-prolog.html">Salmon Run: Ontology Rules with Prolog</a></li>
+<li><a href="http://www.swi-prolog.org/web/">SWI-Prolog for the (semantic) web</a></li>
+</ul></li>
+<li><a href="https://pchiusano.github.io/2017-01-20/why-not-haskell.html">Paul Chiusano: If Haskell is so great, why hasn't it taken over the world? And the curious case of Go.</a>
+<ul>
+<li>Unison programming language</li>
+</ul></li>
+<li>Elixir has gradual static typing via Erlang Dialyzer.
+<ul>
+<li><a href="https://elixir-lang.org/getting-started/typespecs-and-behaviours.html">Typespecs and behaviours - Elixir</a></li>
+<li><span class="citation" data-cites="codeship">[Understanding Elixir Types - via <span class="citeproc-not-found" data-reference-id="codeship"><strong>???</strong></span>]</span>(<a href="https://blog.codeship.com/understanding-elixir-types/">https://blog.codeship.com/understanding-elixir-types/</a>)
+<ul>
+<li>&quot;Elixir functions are set up so that they can transparently be called across processes, heaps, or even machines in a cluster.&quot;</li>
+<li>Can BEAM/Erlang/Elixir do live process migration?</li>
+</ul></li>
+<li>The catch?
+<ul>
+<li><a href="https://elixirforum.com/t/typed-elixir/1388">Typed Elixir - Elixir Chat - Elixir Forum</a>
+<ul>
+<li>Is Dialyzer slow?
+<ul>
+<li>&quot;My motivation for this is 95% of my bugs in Elixir/Erlang are due to using types wrong, like I may slightly change a tuple format somewhere but do not update it elsewhere and dialyzer does not catch it because the prior library state was in its cache that I then need to rebuild, in addition to dialyzer can take a long time to run.&quot;</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>John Hughes, &quot;Deriving combinator implementations&quot;, lecture 4, &quot;Designing and using combinators&quot; <a href="http://www.cse.chalmers.se/~rjmh/Combinators/DerivingCombinators/sld001.htm">http://www.cse.chalmers.se/~rjmh/Combinators/DerivingCombinators/sld001.htm</a></li>
+<li><a href="http://matt.might.net/articles/best-programming-languages/">http://matt.might.net/articles/best-programming-languages/</a></li>
+<li><a href="http://matt.might.net/articles/compiling-to-java/">http://matt.might.net/articles/compiling-to-java/</a></li>
+<li>other programming languages
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Curry_(programming_language)">https://en.wikipedia.org/wiki/Curry_(programming_language)</a></li>
+<li><a href="http://fsl.cs.illinois.edu/images/5/5e/Cayenne.pdf">http://fsl.cs.illinois.edu/images/5/5e/Cayenne.pdf</a></li>
+</ul></li>
+<li><a href="https://github.com/edom/work/blob/master/meta/doc/extension.md">Extension programming language?</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Higher-order_abstract_syntax">https://en.wikipedia.org/wiki/Higher-order_abstract_syntax</a></li>
+<li><a href="http://www.stephendiehl.com/posts/haskell_2017.html">http://www.stephendiehl.com/posts/haskell_2017.html</a></li>
+<li>Haskell library: yaml vs HsYaml
+<ul>
+<li><a href="https://twitter.com/hvrgnu/status/1004136566984503297">https://twitter.com/hvrgnu/status/1004136566984503297</a>
+<ul>
+<li>HsYaml is pure Haskell (doesn't use external libraries)</li>
+</ul></li>
+</ul></li>
+<li><a href="https://www.cl.cam.ac.uk/~jrh13/slides/manchester-12sep01/slides.pdf">LCF key ideas</a></li>
+<li>closed source?
+<ul>
+<li>given SQL database, generate HTML user interface <a href="http://datanovata.com/">http://datanovata.com/</a></li>
+</ul></li>
+<li><a href="http://libcello.org">http://libcello.org</a></li>
+<li>C HTTP server library?
+<ul>
+<li><a href="https://kore.io">https://kore.io</a></li>
+<li><a href="http://facil.io">http://facil.io</a></li>
+</ul></li>
+<li>Possible user questions
+<ul>
+<li>How do I write software with this?</li>
+<li>What are the important types?</li>
+</ul></li>
+<li>Don't format source code manually.
+<ul>
+<li><a href="https://github.com/google/google-java-format">https://github.com/google/google-java-format</a></li>
+</ul></li>
+<li>related software
+<ul>
+<li>refactoring tools
+<ul>
+<li><a href="https://github.com/RefactoringTools/HaRe">https://github.com/RefactoringTools/HaRe</a></li>
+<li><a href="https://hackage.haskell.org/package/haskell-tools-refactor">https://hackage.haskell.org/package/haskell-tools-refactor</a></li>
+</ul></li>
+<li>parsing without symbol solving
+<ul>
+<li>Haskell and GHC extensions
+<ul>
+<li><a href="http://hackage.haskell.org/package/haskell-src-exts">http://hackage.haskell.org/package/haskell-src-exts</a></li>
+</ul></li>
+<li>Haskell 98 only
+<ul>
+<li><a href="https://hackage.haskell.org/package/haskell-src">https://hackage.haskell.org/package/haskell-src</a></li>
+</ul></li>
+<li>Java
+<ul>
+<li><a href="http://hackage.haskell.org/package/language-java">http://hackage.haskell.org/package/language-java</a></li>
+</ul></li>
+</ul></li>
+<li>unknown
+<ul>
+<li><a href="http://hackage.haskell.org/package/haskell-tools-ast">http://hackage.haskell.org/package/haskell-tools-ast</a></li>
+</ul></li>
+<li>multi-database/cross-database query
+<ul>
+<li><a href="http://www.unityjdbc.com/doc/multiple/multiplequery.php">http://www.unityjdbc.com/doc/multiple/multiplequery.php</a></li>
+<li><a href="https://www.red-gate.com/simple-talk/dotnet/net-tools/a-unified-approach-to-multi-database-query-templates/">https://www.red-gate.com/simple-talk/dotnet/net-tools/a-unified-approach-to-multi-database-query-templates/</a></li>
+</ul></li>
+<li>similar systems
+<ul>
+<li>ERP libraries?
+<ul>
+<li>Meta is similar to Apache Ofbiz.
+<ul>
+<li>Some differences:
+<ul>
+<li>To define entities, Meta uses Haskell, Ofbiz uses XML.</li>
+<li>Meta is written in Haskell, Ofbiz is written in Java.</li>
+</ul></li>
+<li><a href="https://cwiki.apache.org/confluence/display/OFBIZ/OFBiz+Tutorial+-+A+Beginners+Development+Guide">https://cwiki.apache.org/confluence/display/OFBIZ/OFBiz+Tutorial+-+A+Beginners+Development+Guide</a></li>
+</ul></li>
+</ul></li>
+<li>Web frameworks? Scaffolders?
+<ul>
+<li>Meta is similar to Laravel.
+<ul>
+<li><a href="https://www.quora.com/Is-Laravel-a-good-framewok-really">https://www.quora.com/Is-Laravel-a-good-framewok-really</a></li>
+</ul></li>
+<li>Meta is similar to Ruby on Rails.</li>
+</ul></li>
+<li>PhD theses
+<ul>
+<li><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.422.5683&amp;rep=rep1&amp;type=pdf">&quot;Programming Language Features for Web Application Development&quot;, Ezra Cooper</a>
+<ul>
+<li>&quot;Links&quot; programming language</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>For JDBC URL see
+<ul>
+<li><a href="https://jdbc.postgresql.org/documentation/80/connect.html">https://jdbc.postgresql.org/documentation/80/connect.html</a></li>
+</ul></li>
+<li>similar
+<ul>
+<li><a href="https://medium.com/airbnb-engineering/react-native-at-airbnb-f95aa460be1c">https://medium.com/airbnb-engineering/react-native-at-airbnb-f95aa460be1c</a></li>
+</ul></li>
+<li>some requirement?
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Multitenancy">https://en.wikipedia.org/wiki/Multitenancy</a></li>
+</ul></li>
+<li>Name?
+<ul>
+<li>HUMPS Haskell Universal Meta Programming System ?</li>
+<li>Hemps: Haskell Meta Programming System</li>
+<li>EAG: Enterprise Application Generator</li>
+<li>HAG: Haskell Application Generator</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Language-independent_specification">https://en.wikipedia.org/wiki/Language-independent_specification</a></li>
+<li>sublanguages?
+<ul>
+<li>Ontology definition language</li>
+<li>Data definition language</li>
+<li>Web application description language
+<ul>
+<li>View description language</li>
+</ul></li>
+</ul></li>
+<li>software design
+<ul>
+<li>functional programming software design
+<ul>
+<li>designing combinators
+<ul>
+<li>Hughes 1995 doc <a href="http://belle.sourceforge.net/doc/hughes95design.pdf">The design of a pretty-printing library</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="http://lambda-the-ultimate.org/node/5292">LTU:progress on gradual typing</a></li>
+<li><a href="https://en.wikipedia.org/wiki/%CE%9BProlog">WP:lambda-prolog</a></li>
+<li>Should we use Haskell or TypeScript for this project? Both? Neither?
+<ul>
+<li>Killer features
+<ul>
+<li>IDE: TypeScript wins (VS Code).</li>
+<li>custom infix operators: Haskell wins.
+<ul>
+<li>We can go even wilder with Agda, Coq, Idris, Lean, etc.</li>
+</ul></li>
+<li>untagged unions: TypeScript wins.</li>
+<li>software diversity: TypeScript wins.
+<ul>
+<li>TypeScript works with nodejs and npm. Boatloads of software.</li>
+<li>I think TypeScript has more developers.</li>
+</ul></li>
+<li>laziness
+<ul>
+<li>Haskell wins.</li>
+</ul></li>
+</ul></li>
+<li>Both have
+<ul>
+<li>ADTs.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="programming-language-theory"><span class="section_number">9.10</span><span class="section_title">Programming language theory</span></h3>
+<p><a href="https://en.wikipedia.org/wiki/Programming_language_theory">https://en.wikipedia.org/wiki/Programming_language_theory</a></p>
+<h2 id="fix-this-incoherent-java-ramble-dont-read"><span class="section_number">10</span><span class="section_title"><span class="todo TODO">TODO</span> Fix this incoherent Java ramble; don't read</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.1</span><span class="section_title"><a href="#what-3">What</a></span><span class="word_count">(181w~1m)</span></li>
+<li><span class="section_number">10.2</span><span class="section_title"><a href="#candidate-solution-source-to-source-translation">Candidate solution: source-to-source translation</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">10.3</span><span class="section_title"><a href="#candidate-solution-binary-interoperability">Candidate solution: binary interoperability</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">10.4</span><span class="section_title"><a href="#improving-the-java-language">Improving the Java language</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">10.5</span><span class="section_title"><a href="#metaprogramming-1">Metaprogramming</a></span><span class="word_count">(1w~1m)</span></li>
+<li><span class="section_number">10.6</span><span class="section_title"><a href="#old">Old</a></span><span class="word_count">(190w~1m)</span></li>
+<li><span class="section_number">10.7</span><span class="section_title"><a href="#example-of-namespacing">Example of namespacing</a></span><span class="word_count">(43w~1m)</span></li>
+<li><span class="section_number">10.8</span><span class="section_title"><a href="#another-example">Another example</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">10.9</span><span class="section_title"><a href="#mixin">Mixin</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">10.10</span><span class="section_title"><a href="#unrelated">Unrelated</a></span><span class="word_count">(199w~1m)</span></li>
+<li><span class="section_number">10.11</span><span class="section_title"><a href="#can-process-fix-incompetent-people">Can process fix incompetent people?</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">10.12</span><span class="section_title"><a href="#java-haskell-interoperation">Java-Haskell interoperation</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">10.13</span><span class="section_title"><a href="#haskell-to-java">Haskell-to-Java</a></span><span class="word_count">(117w~1m)</span></li>
+<li><span class="section_number">10.14</span><span class="section_title"><a href="#architecture">Architecture</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">10.15</span><span class="section_title"><a href="#understanding-factoring">Understanding factoring</a></span><span class="word_count">(81w~1m)</span></li>
+<li><span class="section_number">10.16</span><span class="section_title"><a href="#oop-as-a-special-case-of-fp">OOP as a special case of FP</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">10.17</span><span class="section_title"><a href="#functional-multimethod">Functional multimethod</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">10.18</span><span class="section_title"><a href="#java">Java</a></span><span class="word_count">(168w~1m)</span></li>
+<li><span class="section_number">10.19</span><span class="section_title"><a href="#extract-covariant-expressions-into-variables">Extract covariant expressions into variables</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">10.20</span><span class="section_title"><a href="#extract-covariant-blocks-into-method">Extract covariant blocks into method</a></span><span class="word_count">(55w~1m)</span></li>
+<li><span class="section_number">10.21</span><span class="section_title"><a href="#implications-of-architecture-on-security">Implications of architecture on security</a></span><span class="word_count">(195w~1m)</span></li>
+<li><span class="section_number">10.22</span><span class="section_title"><a href="#mitigating-the-risk-of-changing-code">Mitigating the risk of changing code</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">10.23</span><span class="section_title"><a href="#maintainable-code">Maintainable code</a></span><span class="word_count">(93w~1m)</span></li>
+<li><span class="section_number">10.24</span><span class="section_title"><a href="#writing-program-backwards">Writing program backwards</a></span><span class="word_count">(324w~2m)</span></li>
+<li><span class="section_number">10.25</span><span class="section_title"><a href="#crucial-question">Crucial question</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">10.26</span><span class="section_title"><a href="#use-snake-case">Use snake case</a></span><span class="word_count">(33w~1m)</span></li>
+<li><span class="section_number">10.27</span><span class="section_title"><a href="#making-a-java-virtual-machine">Making a Java virtual machine</a></span><span class="word_count">(5w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-3"><span class="section_number">10.1</span><span class="section_title">What</span></h3>
+<ul>
+<li>Make it work</li>
+<li>Make it maintainable</li>
+<li>Make it efficient (only if needed)</li>
+<li>Make it reusable (only if there is demand)</li>
+<li>You Are Not Gonna Need It until proven otherwise, but this does not mean you do not need to anticipate.</li>
+<li>There are many ways to write code that do the same thing. Prefer the way that is the easiest to read and change and needs the least maintenance.</li>
+<li>Don't write getters and setters. Move the computation into the class, or use public fields.</li>
+<li>Corollary: Use public fields for your DTOs (or move the computation there). <a href="http://stackoverflow.com/questions/10240372/jackson-field-based-serialization">http://stackoverflow.com/questions/10240372/jackson-field-based-serialization</a></li>
+<li>Make value classes have final fields and a constructor.</li>
+<li>Use Java wisely (&quot;Object-assisted procedural programming&quot;). <a href="https://www.quora.com/In-Object-Oriented-design-are-void-methods-bad">https://www.quora.com/In-Object-Oriented-design-are-void-methods-bad</a></li>
+<li>OBPP (&quot;Object-based procedural programming&quot;), term coined by Peter DiSalvo.</li>
+<li>Java is not OOP; Java is OBPP.</li>
+</ul>
+<p>The Java language is the C language with automatic memory management and without preprocessor.</p>
+<p>C:</p>
+<div class="sourceCode" id="cb47" data-org-language="C"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb47-1" title="1"><span class="co">/* file MyClass.h */</span></a>
+<a class="sourceLine" id="cb47-2" title="2"></a>
+<a class="sourceLine" id="cb47-3" title="3"><span class="pp">#ifdef _MyClass_h_INCLUDED_</span></a>
+<a class="sourceLine" id="cb47-4" title="4"><span class="pp">#define _MyClass_h_INCLUDED_</span></a>
+<a class="sourceLine" id="cb47-5" title="5"></a>
+<a class="sourceLine" id="cb47-6" title="6"><span class="kw">struct</span> _MyClass;</a>
+<a class="sourceLine" id="cb47-7" title="7"><span class="kw">typedef</span> <span class="kw">struct</span> _MyClass MyClass;</a>
+<a class="sourceLine" id="cb47-8" title="8"></a>
+<a class="sourceLine" id="cb47-9" title="9">MyClass* MyClass_new ();</a>
+<a class="sourceLine" id="cb47-10" title="10"></a>
+<a class="sourceLine" id="cb47-11" title="11"><span class="dt">int</span> MyClass_myMethod (MyClass* this, Arg* arg);</a>
+<a class="sourceLine" id="cb47-12" title="12"></a>
+<a class="sourceLine" id="cb47-13" title="13"><span class="pp">#endif</span></a>
+<a class="sourceLine" id="cb47-14" title="14"></a>
+<a class="sourceLine" id="cb47-15" title="15"></a>
+<a class="sourceLine" id="cb47-16" title="16"><span class="co">/* file MyClass.c */</span></a>
+<a class="sourceLine" id="cb47-17" title="17"></a>
+<a class="sourceLine" id="cb47-18" title="18"><span class="pp">#include </span><span class="im">&lt;MyClass.h&gt;</span></a>
+<a class="sourceLine" id="cb47-19" title="19"></a>
+<a class="sourceLine" id="cb47-20" title="20"><span class="dt">static</span> <span class="dt">const</span> <span class="dt">int</span> ONE = <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb47-21" title="21"></a>
+<a class="sourceLine" id="cb47-22" title="22"><span class="kw">struct</span> _MyClass {</a>
+<a class="sourceLine" id="cb47-23" title="23">    <span class="dt">int</span> myField;</a>
+<a class="sourceLine" id="cb47-24" title="24">};</a>
+<a class="sourceLine" id="cb47-25" title="25"></a>
+<a class="sourceLine" id="cb47-26" title="26">MyClass* MyClass_new () {</a>
+<a class="sourceLine" id="cb47-27" title="27">    <span class="dt">const</span> <span class="dt">int</span> size = <span class="kw">sizeof</span>(MyClass);</a>
+<a class="sourceLine" id="cb47-28" title="28">    MyClass* this = malloc(size);</a>
+<a class="sourceLine" id="cb47-29" title="29">    memset(this, <span class="dv">0</span>, size);</a>
+<a class="sourceLine" id="cb47-30" title="30">    <span class="cf">return</span> this;</a>
+<a class="sourceLine" id="cb47-31" title="31">}</a>
+<a class="sourceLine" id="cb47-32" title="32"></a>
+<a class="sourceLine" id="cb47-33" title="33"><span class="dt">int</span> MyClass_myMethod (MyClass* this, Arg* arg) {</a>
+<a class="sourceLine" id="cb47-34" title="34">    this-&gt;myField = ONE + Arg_getField(arg);</a>
+<a class="sourceLine" id="cb47-35" title="35">    <span class="cf">return</span> ONE;</a>
+<a class="sourceLine" id="cb47-36" title="36">}</a></code></pre></div>
+<p>Java:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb48-1" title="1"><span class="co">/* file MyClass.java */</span></a>
+<a class="sourceLine" id="cb48-2" title="2"><span class="kw">class</span> MyClass {</a>
+<a class="sourceLine" id="cb48-3" title="3">    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="dt">int</span> ONE = <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb48-4" title="4">    <span class="kw">private</span> <span class="dt">int</span> <span class="fu">myMethod</span> (Arg arg) {</a>
+<a class="sourceLine" id="cb48-5" title="5">        <span class="kw">this</span>.<span class="fu">myField</span> = ONE + arg.<span class="fu">getField</span>();</a>
+<a class="sourceLine" id="cb48-6" title="6">        <span class="kw">return</span> ONE;</a>
+<a class="sourceLine" id="cb48-7" title="7">    }</a>
+<a class="sourceLine" id="cb48-8" title="8">}</a></code></pre></div>
+<p>The essence is the same, but Java reduces the accidental complexity.</p>
+<p>Method chaining vs fluent Method chaining transforms the dot (method invocation) into semicolon (sequence point).</p>
+<p>Fluent is embedded DSL.</p>
+<ul>
+<li>Don't use TestNG's <strong>???</strong> for SomethingExample? Write a main method in a SomethingExample class instead?</li>
+<li>Other stuffs <a href="https://github.com/jhalterman/failsafe">https://github.com/jhalterman/failsafe</a></li>
+<li><a href="http://blog.ploeh.dk/2014/03/10/solid-the-next-step-is-functional/">http://blog.ploeh.dk/2014/03/10/solid-the-next-step-is-functional/</a></li>
+<li><a href="http://martinfowler.com/bliki/RoleInterface.html">http://martinfowler.com/bliki/RoleInterface.html</a></li>
+<li><a href="http://blog.ploeh.dk/2011/06/07/SOLIDCodeisnt/">http://blog.ploeh.dk/2011/06/07/SOLIDCodeisnt/</a></li>
+<li><a href="https://www.jetbrains.com/help/idea/2016.2/code-inspection.html">https://www.jetbrains.com/help/idea/2016.2/code-inspection.html</a></li>
+<li>object is closure; closure is object</li>
+<li>LLVM is procedural core.</li>
+</ul>
+<h3 id="candidate-solution-source-to-source-translation"><span class="section_number">10.2</span><span class="section_title">Candidate solution: source-to-source translation</span></h3>
+<h3 id="candidate-solution-binary-interoperability"><span class="section_number">10.3</span><span class="section_title">Candidate solution: binary interoperability</span></h3>
+<p>Translate Java class to LLVM IR.</p>
+<p>Translate Haskell to LLVM IR.</p>
+<p>Translate C to LLVM IR.</p>
+<p>Java has JNI.</p>
+<p>Constraints:</p>
+<ul>
+<li>ABI-compatible with JNI: JNI C libraries works without recompilation.</li>
+</ul>
+<p>Foreign.</p>
+<p>What's wrong: I want to edit the syntax tree. I don't care about spacing.</p>
+<p>The name is <em>structural editor</em>. projectional editor.</p>
+<p><a href="https://www.facebook.com/notes/kent-beck/prune-a-code-editor-that-is-not-a-text-editor/1012061842160013/">https://www.facebook.com/notes/kent-beck/prune-a-code-editor-that-is-not-a-text-editor/1012061842160013/</a></p>
+<p><a href="http://www.lamdu.org/">http://www.lamdu.org/</a></p>
+<p><a href="http://projectured.org/">http://projectured.org/</a></p>
+<h3 id="improving-the-java-language"><span class="section_number">10.4</span><span class="section_title">Improving the Java language</span></h3>
+<p>Too much software is written in Java.</p>
+<p>Xtend</p>
+<p>Kotlin</p>
+<p>IDE support</p>
+<p>Top-level methods.</p>
+<h3 id="metaprogramming-1"><span class="section_number">10.5</span><span class="section_title">Metaprogramming</span></h3>
+<pre class="example"><code>{% raw %}
+    msg = &quot;Hello&quot;;
+    c = Class.new;
+    c += {{ int foo; }};
+    c += {{
+        void sayHello ()
+        {
+            System.out.println($msg);
+        }
+    }};
+{% endraw %}
+</code></pre>
+<h3 id="old"><span class="section_number">10.6</span><span class="section_title">Old</span></h3>
+<p>This is my opinion on how to best use Java.</p>
+<p>Java, when used properly, should not be more verbose than C. <strong>Java should be thought as enhanced C</strong>. It adds these features:</p>
+<ul>
+<li>namespacing</li>
+<li>garbage collection</li>
+<li>exception</li>
+<li>limited functional programming</li>
+<li>reflection (should be documented thoroughly when used)</li>
+</ul>
+<p>and it removes these features:</p>
+<ul>
+<li>preprocessor</li>
+<li>separate header files</li>
+</ul>
+<p>Java sucks least when used as a <strong>mainly procedural</strong> programming language.</p>
+<p>Subclassing, public fields, getters, setters, statics, mutability, and big classes are not evil in and of themselves. What is evil is <em>writing code without understanding <strong>why</strong> you write it that way</em>. The key to good programming is understanding why the code is the way it is.</p>
+<p>With documentation, understanding data is easier than understanding control flow.</p>
+<p><strong>A maintenance engineer translates requirement changes to software changes.</strong> Software consists of program code, database schema, documentation, and so on. A software is maintainable iff a reasonable requirement change translates to a reasonable software change.</p>
+<p>For example, an application may now have to handle ten times the traffic it was designed for.</p>
+<p>If, in 10 years, your application will never handle more than 10 requests per second, but you split your application into 10 JVMs communicating with JSON-RPC, you're wasting too many resources.</p>
+<h3 id="example-of-namespacing"><span class="section_number">10.7</span><span class="section_title">Example of namespacing</span></h3>
+<p>This is a module in C. Note that each procedure name is prefixed with <code>point_</code>.</p>
+<div class="sourceCode" id="cb50" data-org-language="C"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb50-1" title="1"><span class="pp">#include </span><span class="im">&lt;math.h&gt;</span></a>
+<a class="sourceLine" id="cb50-2" title="2"></a>
+<a class="sourceLine" id="cb50-3" title="3"><span class="kw">typedef</span> <span class="kw">struct</span></a>
+<a class="sourceLine" id="cb50-4" title="4">{</a>
+<a class="sourceLine" id="cb50-5" title="5">    <span class="dt">double</span> x;</a>
+<a class="sourceLine" id="cb50-6" title="6">    <span class="dt">double</span> y;</a>
+<a class="sourceLine" id="cb50-7" title="7">}</a>
+<a class="sourceLine" id="cb50-8" title="8">Point;</a>
+<a class="sourceLine" id="cb50-9" title="9"></a>
+<a class="sourceLine" id="cb50-10" title="10"><span class="dt">void</span> point_init (Point* self, <span class="dt">double</span> x, <span class="dt">double</span> y)</a>
+<a class="sourceLine" id="cb50-11" title="11">{</a>
+<a class="sourceLine" id="cb50-12" title="12">    self-&gt;x = x;</a>
+<a class="sourceLine" id="cb50-13" title="13">    self-&gt;y = y;</a>
+<a class="sourceLine" id="cb50-14" title="14">}</a>
+<a class="sourceLine" id="cb50-15" title="15"></a>
+<a class="sourceLine" id="cb50-16" title="16"><span class="dt">double</span> point_distance (Point* a, Point* b)</a>
+<a class="sourceLine" id="cb50-17" title="17">{</a>
+<a class="sourceLine" id="cb50-18" title="18">    <span class="cf">return</span> sqrt(square(b-&gt;x - a-&gt;x) + square(b-&gt;y - a-&gt;y));</a>
+<a class="sourceLine" id="cb50-19" title="19">}</a>
+<a class="sourceLine" id="cb50-20" title="20"></a>
+<a class="sourceLine" id="cb50-21" title="21"><span class="dt">static</span> <span class="dt">double</span> square (<span class="dt">double</span> x)</a>
+<a class="sourceLine" id="cb50-22" title="22">{</a>
+<a class="sourceLine" id="cb50-23" title="23">    <span class="cf">return</span> x * x;</a>
+<a class="sourceLine" id="cb50-24" title="24">}</a></code></pre></div>
+<p>This is the module in Java. Note that now you don't have to prefix your method names with <code>point_</code> because it already lives in the class <code>Point</code>.</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb51-1" title="1"><span class="kw">package</span><span class="im"> com.example;</span></a>
+<a class="sourceLine" id="cb51-2" title="2"></a>
+<a class="sourceLine" id="cb51-3" title="3"><span class="dt">final</span> <span class="kw">class</span> <span class="bu">Point</span></a>
+<a class="sourceLine" id="cb51-4" title="4">{</a>
+<a class="sourceLine" id="cb51-5" title="5">    <span class="dt">final</span> <span class="dt">double</span> x;</a>
+<a class="sourceLine" id="cb51-6" title="6">    <span class="dt">final</span> <span class="dt">double</span> y;</a>
+<a class="sourceLine" id="cb51-7" title="7"></a>
+<a class="sourceLine" id="cb51-8" title="8">    <span class="bu">Point</span> (<span class="dt">double</span> x, <span class="dt">double</span> y)</a>
+<a class="sourceLine" id="cb51-9" title="9">    {</a>
+<a class="sourceLine" id="cb51-10" title="10">        <span class="kw">this</span>.<span class="fu">x</span> = x;</a>
+<a class="sourceLine" id="cb51-11" title="11">        <span class="kw">this</span>.<span class="fu">y</span> = y;</a>
+<a class="sourceLine" id="cb51-12" title="12">    }</a>
+<a class="sourceLine" id="cb51-13" title="13"></a>
+<a class="sourceLine" id="cb51-14" title="14">    <span class="dt">double</span> <span class="fu">distance</span> (<span class="bu">Point</span> that)</a>
+<a class="sourceLine" id="cb51-15" title="15">    {</a>
+<a class="sourceLine" id="cb51-16" title="16">        <span class="kw">return</span> <span class="fu">distance</span>(<span class="kw">this</span>, that);</a>
+<a class="sourceLine" id="cb51-17" title="17">    }</a>
+<a class="sourceLine" id="cb51-18" title="18"></a>
+<a class="sourceLine" id="cb51-19" title="19">    <span class="dt">static</span> <span class="dt">double</span> <span class="fu">distance</span> (<span class="bu">Point</span> a, <span class="bu">Point</span> b)</a>
+<a class="sourceLine" id="cb51-20" title="20">    {</a>
+<a class="sourceLine" id="cb51-21" title="21">        <span class="kw">return</span> <span class="bu">Math</span>.<span class="fu">sqrt</span>(<span class="fu">square</span>(b.<span class="fu">x</span> - a.<span class="fu">x</span>) + <span class="fu">square</span>(b.<span class="fu">y</span> - a.<span class="fu">y</span>));</a>
+<a class="sourceLine" id="cb51-22" title="22">    }</a>
+<a class="sourceLine" id="cb51-23" title="23"></a>
+<a class="sourceLine" id="cb51-24" title="24">    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">double</span> <span class="fu">square</span> (<span class="dt">double</span> x)</a>
+<a class="sourceLine" id="cb51-25" title="25">    {</a>
+<a class="sourceLine" id="cb51-26" title="26">        <span class="kw">return</span> x * x;</a>
+<a class="sourceLine" id="cb51-27" title="27">    }</a>
+<a class="sourceLine" id="cb51-28" title="28">}</a></code></pre></div>
+<h3 id="another-example"><span class="section_number">10.8</span><span class="section_title">Another example</span></h3>
+<div class="sourceCode" id="cb52"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb52-1" title="1"><span class="kw">class</span> Exchange</a>
+<a class="sourceLine" id="cb52-2" title="2">{</a>
+<a class="sourceLine" id="cb52-3" title="3">    <span class="dt">final</span> HttpServletRequest request;</a>
+<a class="sourceLine" id="cb52-4" title="4">    <span class="dt">final</span> HttpServletResponse response;</a>
+<a class="sourceLine" id="cb52-5" title="5">}</a></code></pre></div>
+<h3 id="mixin"><span class="section_number">10.9</span><span class="section_title">Mixin</span></h3>
+<p>Use extend or mixin if and only if you want all subclasses to benefit from enhancements of the base class.</p>
+<p>A tradeoff is that <code>unsafeSetHp</code> is public.</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb53-1" title="1"><span class="kw">interface</span> GameObject</a>
+<a class="sourceLine" id="cb53-2" title="2">{</a>
+<a class="sourceLine" id="cb53-3" title="3">    <span class="dt">long</span> <span class="fu">getId</span> ();</a>
+<a class="sourceLine" id="cb53-4" title="4">}</a>
+<a class="sourceLine" id="cb53-5" title="5"></a>
+<a class="sourceLine" id="cb53-6" title="6"><span class="kw">interface</span> Health</a>
+<a class="sourceLine" id="cb53-7" title="7">{</a>
+<a class="sourceLine" id="cb53-8" title="8">    <span class="dt">int</span> <span class="fu">getMaxHp</span> ();</a>
+<a class="sourceLine" id="cb53-9" title="9">    <span class="dt">int</span> <span class="fu">getHp</span> ();</a>
+<a class="sourceLine" id="cb53-10" title="10">    <span class="dt">void</span> <span class="fu">unsafeSetHp</span> (<span class="dt">int</span> x);</a>
+<a class="sourceLine" id="cb53-11" title="11">    <span class="kw">default</span> <span class="dt">void</span> <span class="fu">setHp</span> (<span class="dt">int</span> x)</a>
+<a class="sourceLine" id="cb53-12" title="12">    {</a>
+<a class="sourceLine" id="cb53-13" title="13">        <span class="dt">final</span> <span class="dt">int</span> maxHp = <span class="fu">getMaxHp</span>();</a>
+<a class="sourceLine" id="cb53-14" title="14">        <span class="kw">if</span> (x &lt; <span class="dv">0</span>) { <span class="fu">setHp</span>(<span class="dv">0</span>); <span class="kw">return</span>; }</a>
+<a class="sourceLine" id="cb53-15" title="15">        <span class="kw">if</span> (x &gt;= maxHp) { <span class="fu">setHp</span>(maxHp); <span class="kw">return</span>; }</a>
+<a class="sourceLine" id="cb53-16" title="16">        <span class="fu">setHp</span>(x);</a>
+<a class="sourceLine" id="cb53-17" title="17">    }</a>
+<a class="sourceLine" id="cb53-18" title="18">    <span class="kw">default</span> <span class="dt">boolean</span> <span class="fu">isDead</span> ()</a>
+<a class="sourceLine" id="cb53-19" title="19">    {</a>
+<a class="sourceLine" id="cb53-20" title="20">        <span class="kw">return</span> <span class="fu">getHp</span>() &lt;= <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb53-21" title="21">    }</a>
+<a class="sourceLine" id="cb53-22" title="22">    <span class="kw">default</span> <span class="dt">void</span> <span class="fu">addHp</span> (<span class="dt">int</span> x)</a>
+<a class="sourceLine" id="cb53-23" title="23">    {</a>
+<a class="sourceLine" id="cb53-24" title="24">        <span class="fu">setHp</span>(<span class="fu">getHp</span>() + x);</a>
+<a class="sourceLine" id="cb53-25" title="25">    }</a>
+<a class="sourceLine" id="cb53-26" title="26">}</a>
+<a class="sourceLine" id="cb53-27" title="27"></a>
+<a class="sourceLine" id="cb53-28" title="28"><span class="kw">class</span> Chara <span class="kw">implements</span> GameObject, Health</a>
+<a class="sourceLine" id="cb53-29" title="29">{</a>
+<a class="sourceLine" id="cb53-30" title="30">    <span class="dt">final</span> <span class="dt">long</span> id;</a>
+<a class="sourceLine" id="cb53-31" title="31"></a>
+<a class="sourceLine" id="cb53-32" title="32">    <span class="dt">int</span> maxHp;</a>
+<a class="sourceLine" id="cb53-33" title="33">    <span class="dt">int</span> hp;</a>
+<a class="sourceLine" id="cb53-34" title="34"></a>
+<a class="sourceLine" id="cb53-35" title="35">    <span class="fu">Chara</span> (<span class="dt">long</span> id, <span class="dt">int</span> maxHp)</a>
+<a class="sourceLine" id="cb53-36" title="36">    {</a>
+<a class="sourceLine" id="cb53-37" title="37">        <span class="kw">this</span>.<span class="fu">id</span> = id;</a>
+<a class="sourceLine" id="cb53-38" title="38">        <span class="kw">this</span>.<span class="fu">maxHp</span> = maxHp;</a>
+<a class="sourceLine" id="cb53-39" title="39">        <span class="kw">this</span>.<span class="fu">hp</span> = maxHp;</a>
+<a class="sourceLine" id="cb53-40" title="40">    }</a>
+<a class="sourceLine" id="cb53-41" title="41"></a>
+<a class="sourceLine" id="cb53-42" title="42">    <span class="at">@Override</span> <span class="kw">public</span> <span class="dt">long</span> <span class="fu">getId</span> () { <span class="kw">return</span> id; }</a>
+<a class="sourceLine" id="cb53-43" title="43">    <span class="at">@Override</span> <span class="kw">public</span> <span class="dt">int</span> <span class="fu">getMaxHp</span> () { <span class="kw">return</span> maxHp; }</a>
+<a class="sourceLine" id="cb53-44" title="44">    <span class="at">@Override</span> <span class="kw">public</span> <span class="dt">int</span> <span class="fu">getHp</span> () { <span class="kw">return</span> hp; }</a>
+<a class="sourceLine" id="cb53-45" title="45">    <span class="at">@Override</span> <span class="kw">public</span> <span class="dt">void</span> <span class="fu">unsafeSetHp</span> (<span class="dt">int</span> x) { <span class="kw">this</span>.<span class="fu">hp</span> = x; }</a>
+<a class="sourceLine" id="cb53-46" title="46">}</a></code></pre></div>
+<h3 id="unrelated"><span class="section_number">10.10</span><span class="section_title">Unrelated</span></h3>
+<p>Field stores data. Method does work. Classes groups fields and methods.</p>
+<p><em>A class groups methods that share parameters.</em> The fields are those shared parameters.</p>
+<p>A Java class is equivalent to a C struct and the functions whose first parameter is that struct. In C, those things are usually grouped into one C file, so a Java class is practically equivalent to a C file. Static field in Java is global variable in C, but without the name conflict.</p>
+<p>C <code>#include</code> translates to Java <code>import</code>, <code>extends</code>, and <code>implements</code>. <code>implements X</code> imports X's default methods into this module. <code>extends X</code> imports X's fields and methods into this module. <code>import static</code> imports X's static methods into this module.</p>
+<p>Java 8 interfaces can be used as mixins. Use default methods.</p>
+<p>A mixin is a contract &quot;if you give me X, I'll give you Y.&quot;</p>
+<p>Every method is a contract: If you give me X, I'll give you Y.</p>
+<p>Getters and setters provide &quot;lazy fields&quot; and &quot;computed fields&quot;.</p>
+<p>Java can be used with edit-compile-reload-refresh. Java can hotswap.</p>
+<p>IDE makes navigation easy.</p>
+<p>A class is an instantiable module.</p>
+<p>The aim is to maximize understandability and minimize duplication. Sometimes, reducing duplication makes the code incomprehensible.</p>
+<p><code>a.b(c)</code> is a syntactic sugar for <code>b(a,c)</code>. Implicit first argument.</p>
+<p>Exception is structured goto.</p>
+<p><a href="https://www.reddit.com/r/learnprogramming/comments/1f0g2b/eli5_the_main_differences_between_oop_and/">https://www.reddit.com/r/learnprogramming/comments/1f0g2b/eli5_the_main_differences_between_oop_and/</a></p>
+<p><a href="https://www.reddit.com/r/learnprogramming/comments/tocjf/procedural_programmer_me_needs_help_making_the_oo/">https://www.reddit.com/r/learnprogramming/comments/tocjf/procedural_programmer_me_needs_help_making_the_oo/</a></p>
+<h3 id="can-process-fix-incompetent-people"><span class="section_number">10.11</span><span class="section_title">Can process fix incompetent people?</span></h3>
+<h3 id="java-haskell-interoperation"><span class="section_number">10.12</span><span class="section_title">Java-Haskell interoperation</span></h3>
+<p><a href="https://wiki.haskell.org/GHC/FAQ">https://wiki.haskell.org/GHC/FAQ</a></p>
+<p><a href="https://wiki.haskell.org/HaskellImplementorsWorkshop/2016">https://wiki.haskell.org/HaskellImplementorsWorkshop/2016</a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.12.1</span><span class="section_title"><a href="#state-of-the-art">State of the art</a></span><span class="word_count">(44w~1m)</span></li>
+</ul>
+</div>
+<h4 id="state-of-the-art"><span class="section_number">10.12.1</span><span class="section_title">State of the art</span></h4>
+<p>LLJVM?</p>
+<p><a href="https://github.com/Frege/frege">https://github.com/Frege/frege</a> Haskell-like language</p>
+<p><a href="http://eta-lang.org/">http://eta-lang.org/</a> port GHC primitives to Java?</p>
+<p>Sorted from the most desirable (highest level):</p>
+<ul>
+<li><p>Source-to-source translation.</p>
+<ul>
+<li>Write a Java source interpreter in Haskell.</li>
+<li>Map Haskell code to Java.</li>
+</ul></li>
+</ul>
+<p>Write a JVM in Haskell.</p>
+<p>Translate both Java and Haskell to a common lower-level language such as LLVM.</p>
+<p>Core-to-bytecode.</p>
+<p>JNI-to-FFI.</p>
+<h3 id="haskell-to-java"><span class="section_number">10.13</span><span class="section_title">Haskell-to-Java</span></h3>
+<p><a href="http://mmhelloworld.github.io/blog/2013/07/10/frege-hello-java/">http://mmhelloworld.github.io/blog/2013/07/10/frege-hello-java/</a></p>
+<p>The Frege language. The Eta language.</p>
+<p>Haskell =&gt; Java?</p>
+<p>Core =&gt; Java?</p>
+<p>Module =&gt; Class</p>
+<p>Data type =&gt; Static inner class</p>
+<p>Value <code>&gt; instance of =Thunk</code></p>
+<p>Data constructor =&gt; Class extending the class corresponding to the data type</p>
+<p>A value definition in a module =&gt; a static final Thunk field in the class</p>
+<p>A class =&gt; A class</p>
+<p>A member of a class <code>&gt; An instance field of the Class; the type of the field is =Thunk</code></p>
+<p>A class constraint =&gt; A dictionary argument whose type is the class</p>
+<p>Case match =&gt; if instanceof</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb54-1" title="1"><span class="kw">interface</span> Thunk</a>
+<a class="sourceLine" id="cb54-2" title="2">{</a>
+<a class="sourceLine" id="cb54-3" title="3">    <span class="bu">Object</span> <span class="fu">force</span> ();</a>
+<a class="sourceLine" id="cb54-4" title="4">    Thunk <span class="fu">apply</span> (Thunk x);</a>
+<a class="sourceLine" id="cb54-5" title="5">}</a>
+<a class="sourceLine" id="cb54-6" title="6"></a>
+<a class="sourceLine" id="cb54-7" title="7"><span class="kw">class</span> Atom</a>
+<a class="sourceLine" id="cb54-8" title="8">{</a>
+<a class="sourceLine" id="cb54-9" title="9">    <span class="bu">Object</span> value;</a>
+<a class="sourceLine" id="cb54-10" title="10">    Supplier x;</a>
+<a class="sourceLine" id="cb54-11" title="11">    <span class="fu">Atom</span> (Supplier x) { <span class="kw">this</span>.<span class="fu">x</span> = x; }</a>
+<a class="sourceLine" id="cb54-12" title="12">    <span class="bu">Object</span> <span class="fu">force</span> ()</a>
+<a class="sourceLine" id="cb54-13" title="13">    {</a>
+<a class="sourceLine" id="cb54-14" title="14">        <span class="kw">if</span> (value == <span class="kw">null</span>) { value = x.<span class="fu">get</span>(); }</a>
+<a class="sourceLine" id="cb54-15" title="15">        <span class="kw">return</span> value;</a>
+<a class="sourceLine" id="cb54-16" title="16">    }</a>
+<a class="sourceLine" id="cb54-17" title="17">}</a></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb55-1" title="1"><span class="kw">module</span> <span class="dt">M</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb55-2" title="2"></a>
+<a class="sourceLine" id="cb55-3" title="3"><span class="ot">a ::</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb55-4" title="4">a <span class="fu">=</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb55-5" title="5"></a>
+<a class="sourceLine" id="cb55-6" title="6"><span class="ot">f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb55-7" title="7">f x <span class="fu">=</span> x <span class="fu">+</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb55-8" title="8"></a>
+<a class="sourceLine" id="cb55-9" title="9"><span class="ot">g ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> b</a>
+<a class="sourceLine" id="cb55-10" title="10">g f x <span class="fu">=</span> f x</a></code></pre></div>
+<p>Map <code>Int</code> and <code>Int32</code> to a <code>Thunk</code> producing a <code>java.lang.Integer</code>. A Haskell program assumes that <code>Int</code> is a two's complement signed integer <em>at least</em> 30 bits wide.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb56-1" title="1"><span class="kw">class</span> <span class="dt">M</span></a>
+<a class="sourceLine" id="cb56-2" title="2">{</a>
+<a class="sourceLine" id="cb56-3" title="3">    static final <span class="dt">Thunk</span> a <span class="fu">=</span> new <span class="dt">Atom</span>(() <span class="ot">-&gt;</span> <span class="dv">1</span>);</a>
+<a class="sourceLine" id="cb56-4" title="4">    static final <span class="dt">Thunk</span> f <span class="fu">=</span> new <span class="dt">Lambda</span>(x <span class="ot">-&gt;</span> (<span class="dt">Integer</span>) x <span class="fu">+</span> <span class="dv">1</span>);</a>
+<a class="sourceLine" id="cb56-5" title="5">    static final <span class="dt">Thunk</span> g <span class="fu">=</span> new <span class="dt">Lambda</span>(f <span class="ot">-&gt;</span> new <span class="dt">Lambda</span>(x <span class="ot">-&gt;</span> f<span class="fu">.</span>apply(x)));</a>
+<a class="sourceLine" id="cb56-6" title="6">}</a></code></pre></div>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.13.1</span><span class="section_title"><a href="#java-to-haskell">Java-to-Haskell</a></span><span class="word_count">(9w~1m)</span></li>
+</ul>
+</div>
+<h4 id="java-to-haskell"><span class="section_number">10.13.1</span><span class="section_title">Java-to-Haskell</span></h4>
+<p><a href="https://github.com/Frege/frege/wiki/Calling-Frege-Code-from-Java">https://github.com/Frege/frege/wiki/Calling-Frege-Code-from-Java</a></p>
+<p>Java method -&gt; foreign import</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb57-1" title="1"><span class="co">-- Foreign.Java</span></a>
+<a class="sourceLine" id="cb57-2" title="2"></a>
+<a class="sourceLine" id="cb57-3" title="3"><span class="kw">data</span> <span class="dt">JByte</span></a>
+<a class="sourceLine" id="cb57-4" title="4"><span class="kw">data</span> <span class="dt">JInt</span></a>
+<a class="sourceLine" id="cb57-5" title="5"><span class="kw">data</span> <span class="dt">JShort</span></a>
+<a class="sourceLine" id="cb57-6" title="6"><span class="kw">data</span> <span class="dt">JLong</span></a>
+<a class="sourceLine" id="cb57-7" title="7"><span class="kw">data</span> <span class="dt">JObject</span></a>
+<a class="sourceLine" id="cb57-8" title="8"></a>
+<a class="sourceLine" id="cb57-9" title="9">foreign <span class="kw">import</span> java package.<span class="dt">Class</span> <span class="dt">Method</span> :: <span class="dt">ArgType0</span> <span class="dt">ArgType1</span> ... <span class="kw">as</span> haskellName</a>
+<a class="sourceLine" id="cb57-10" title="10"></a>
+<a class="sourceLine" id="cb57-11" title="11">foreign <span class="kw">import</span> java java.lang.<span class="dt">Integer</span> parseInt :: <span class="dt">String</span> -&gt; <span class="dt">Int32</span> <span class="kw">as</span> jParseInt</a></code></pre></div>
+<p>Message-passing view of Java objects</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb58-1" title="1">s <span class="ot">&lt;-</span> call object <span class="st">&quot;toString&quot;</span> []</a>
+<a class="sourceLine" id="cb58-2" title="2"></a>
+<a class="sourceLine" id="cb58-3" title="3"><span class="fu">...</span></a>
+<a class="sourceLine" id="cb58-4" title="4"></a>
+<a class="sourceLine" id="cb58-5" title="5">jls <span class="ot">&lt;-</span> getClass <span class="st">&quot;java.lang.System&quot;</span></a>
+<a class="sourceLine" id="cb58-6" title="6">out <span class="ot">&lt;-</span> getField jls <span class="st">&quot;out&quot;</span></a>
+<a class="sourceLine" id="cb58-7" title="7">call out <span class="st">&quot;println&quot;</span> [<span class="st">&quot;Hello world&quot;</span>]</a></code></pre></div>
+<h3 id="architecture"><span class="section_number">10.14</span><span class="section_title">Architecture</span></h3>
+<p>Every Java program is a sequence of statements.</p>
+<p>Every Java program is equivalent to one long main class?</p>
+<p>A block is a sequence of statements.</p>
+<pre class="example"><code>class Name
+    int prop
+    // Generates:
+    // int prop
+    // int getProp ()
+    // void setProp (int)
+end
+</code></pre>
+<h3 id="understanding-factoring"><span class="section_number">10.15</span><span class="section_title">Understanding factoring</span></h3>
+<p>Imagine writing your program as one long main method. It is almost certain that you will find duplicate blocks.</p>
+<p>Two duplicate blocks can be factored into a method. Two methods with the same parameters can be factored into a class.</p>
+<p>What is an optimal factoring of that program? The factoring is wrong iff the same change needs to be performed more than once. A program can also suffer from modification anomaly.</p>
+<p>There are prime fragments: fragments that cannot be factored into smaller parts.</p>
+<h3 id="oop-as-a-special-case-of-fp"><span class="section_number">10.16</span><span class="section_title">OOP as a special case of FP</span></h3>
+<p>Object and closure are equivalent.</p>
+<p><code>o.m(a0,a1,...) -&gt; m o a0 a1 ...</code></p>
+<h3 id="functional-multimethod"><span class="section_number">10.17</span><span class="section_title">Functional multimethod</span></h3>
+<p>Statically checked.</p>
+<pre class="example"><code>collide (a : Asteroid) (b : Asteroid) = ...
+collide (a : Asteroid) (s : Spaceship) = ...
+collide (s : Spaceship) (a : Asteroid) = collide a s
+collide (s : Spaceship) (t : Spaceship) = ...
+
+True : Bool.
+
+False : Bool.
+
+Ord Bool.
+
+Bool x, Bool y |-
+    Equal x y =
+        match x y in
+            False False -&gt; True;;
+            True True -&gt; True;;
+            _ _ -&gt; False.
+
+LessThan False False = False.
+LessThan False True = True.
+LessThan True False = False.
+LessThan True True = False.
+
+IfElse False t f = f.
+IfElse True t f = t.
+
+And False x = False.
+And True x = x.
+
+Or False x = x.
+Or True x = True.
+
+Not False = True.
+Not True = False.
+
+Min x y = IfElse (LessThan x y) x y.
+Max x y = IfElse (LessThan x y) y x.
+
+Table Employee.
+
+Column Id Employee |- Bigint Id.
+Column Name Employee |- String Name.
+
+Column name Employee, type name |- Read name From resultSet = Get type name From resultSet.
+
+Column name Employee |-
+    Member
+        (Tuple name (Read name From resultSet))
+        (Read Employee From resultSet).
+
+Main |-
+    source = Connect &quot;jdbc:postgresql://127.0.0.1/test&quot;,
+    resultSet = ExecuteQuery source &quot;SELECT * FROM employee&quot;,
+    Member tuple (Read Employee From resultSet),
+    Print tuple.
+
+?- Main.
+
+Ord a, Ord b |- min a b = if lt a b then a else b
+
+a : Asteroid, b : Asteroid |- collide a b = ...
+IF
+    a, b : Asteroid
+    AND
+    s, t : Spaceship
+THEN
+    collide a b = ...
+    collide a s = ...
+    collide s t = ...
+
+define multimethod collide with parameters
+    a, b : Asteroid
+    s, t : Spaceship
+where case parameters matching
+    a b -&gt; ...
+    a s -&gt; ...
+    s a -&gt; ...
+    s t -&gt; ...
+</code></pre>
+<h3 id="java"><span class="section_number">10.18</span><span class="section_title">Java</span></h3>
+<p><code>a.m(b)</code> and <code>m(a,b)</code> are equivalent. The dot is a syntactic sugar for implicit first argument, plus virtual dispatch.</p>
+<p>The changes that must be made to implement a feature. The program is well-factored if no change is duplicated.</p>
+<p>A maintainable software does not have to be object-oriented, but it has to be well-factored. A well-factored program <em>prevents the same modification from being duplicated.</em></p>
+<p>Factorization reduces information duplication.</p>
+<p>Depending on dependable things simplify your program. I know someone who used a SQL database but didn't want to depend on it, so he wrote application-level joins everywhere.</p>
+<p>A software is maintainable iff it is simple to change. Being able to start, stop, and restart quickly (in just a few seconds) also helps.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.18.1</span><span class="section_title"><a href="#sql">SQL</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">10.18.2</span><span class="section_title"><a href="#annoyances-of-local-variables">Annoyances of local variables</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">10.18.3</span><span class="section_title"><a href="#example-of-under-factored-program">Example of under-factored program</a></span><span class="word_count">(39w~1m)</span></li>
+</ul>
+</div>
+<h4 id="sql"><span class="section_number">10.18.1</span><span class="section_title">SQL</span></h4>
+<p>Mutable fields.</p>
+<pre class="example"><code>Column a
+    name : String
+    read : a -&gt; ResultSet -&gt; ()
+    write : ResultSet -&gt; a -&gt; ()
+
+Table a = [Column a]
+
+read : Table a -&gt; a -&gt; ResultSet -&gt; ()
+write : Table a -&gt; ResultSet -&gt; a -&gt; ()
+
+interface SqlCallable2&lt;A, B&gt;
+{
+    void call (A a, B b) throws SQLException;
+}
+
+class Column&lt;E&gt;
+{
+    String name;
+    SqlCallable2&lt;E, ResultSet&gt; read;
+    SqlCallable2&lt;ResultSet, E&gt; write;
+}
+</code></pre>
+<h4 id="annoyances-of-local-variables"><span class="section_number">10.18.2</span><span class="section_title">Annoyances of local variables</span></h4>
+<ul>
+<li>Java can't infer the type of local variables</li>
+<li>Local variables aren't final by default</li>
+</ul>
+<div class="sourceCode" id="cb62"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb62-1" title="1"><span class="dt">final</span> Something something = <span class="kw">new</span> <span class="fu">Something</span>();</a></code></pre></div>
+<h4 id="example-of-under-factored-program"><span class="section_number">10.18.3</span><span class="section_title">Example of under-factored program</span></h4>
+<div class="sourceCode" id="cb63"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb63-1" title="1"><span class="kw">class</span> Employee</a>
+<a class="sourceLine" id="cb63-2" title="2">{</a>
+<a class="sourceLine" id="cb63-3" title="3">    <span class="bu">List</span>&lt;A&gt; <span class="fu">getById</span> (<span class="dt">long</span> id)</a>
+<a class="sourceLine" id="cb63-4" title="4">    {</a>
+<a class="sourceLine" id="cb63-5" title="5">        <span class="kw">... </span><span class="st">&quot;SELECT * FROM my_schema.employee WHERE id = ?&quot;</span> ...</a>
+<a class="sourceLine" id="cb63-6" title="6">    }</a>
+<a class="sourceLine" id="cb63-7" title="7"></a>
+<a class="sourceLine" id="cb63-8" title="8">    <span class="bu">List</span>&lt;A&gt; <span class="fu">getByName</span> (<span class="bu">String</span> name)</a>
+<a class="sourceLine" id="cb63-9" title="9">    {</a>
+<a class="sourceLine" id="cb63-10" title="10">        <span class="kw">... </span><span class="st">&quot;SELECT * FROM my_schema.employee WHERE name = ?&quot;</span> ...</a>
+<a class="sourceLine" id="cb63-11" title="11">    }</a>
+<a class="sourceLine" id="cb63-12" title="12">}</a></code></pre></div>
+<p>What if <code>my_schema</code> or <code>employee</code> change?</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb64-1" title="1"><span class="kw">class</span> Employee</a>
+<a class="sourceLine" id="cb64-2" title="2">{</a>
+<a class="sourceLine" id="cb64-3" title="3">    <span class="kw">private</span> <span class="dt">static</span> <span class="bu">String</span> TABLE = <span class="st">&quot;my_schema.employee&quot;</span>;</a>
+<a class="sourceLine" id="cb64-4" title="4"></a>
+<a class="sourceLine" id="cb64-5" title="5">    <span class="bu">List</span>&lt;A&gt; <span class="fu">getById</span> (<span class="dt">long</span> id)</a>
+<a class="sourceLine" id="cb64-6" title="6">    {</a>
+<a class="sourceLine" id="cb64-7" title="7">        <span class="kw">... </span><span class="st">&quot;SELECT * FROM &quot;</span> + TABLE + <span class="st">&quot; WHERE id = ?&quot;</span> ...</a>
+<a class="sourceLine" id="cb64-8" title="8">    }</a>
+<a class="sourceLine" id="cb64-9" title="9"></a>
+<a class="sourceLine" id="cb64-10" title="10">    <span class="bu">List</span>&lt;A&gt; <span class="fu">getByName</span> (<span class="bu">String</span> name)</a>
+<a class="sourceLine" id="cb64-11" title="11">    {</a>
+<a class="sourceLine" id="cb64-12" title="12">        <span class="kw">... </span><span class="st">&quot;SELECT * FROM &quot;</span> + TABLE + <span class="st">&quot; WHERE name = ?&quot;</span> ...</a>
+<a class="sourceLine" id="cb64-13" title="13">    }</a>
+<a class="sourceLine" id="cb64-14" title="14">}</a></code></pre></div>
+<p>What if SQL syntax changes; for example, what if a committee decides to change SQL <code>SELECT</code> to <code>CHOOSE</code>? We assume it's unlikely, so we don't design our program to anticipate that.</p>
+<h3 id="extract-covariant-expressions-into-variables"><span class="section_number">10.19</span><span class="section_title">Extract covariant expressions into variables</span></h3>
+<div class="sourceCode" id="cb65"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb65-1" title="1"><span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;John&#39;s salary is &quot;</span> + employee.<span class="fu">computeSalary</span>());</a>
+<a class="sourceLine" id="cb65-2" title="2"><span class="kw">if</span> (employee.<span class="fu">computeSalary</span>() &gt;= <span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb65-3" title="3">{</a>
+<a class="sourceLine" id="cb65-4" title="4">    <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;It&#39;s over one thousand&quot;</span>);</a>
+<a class="sourceLine" id="cb65-5" title="5">}</a></code></pre></div>
+<p>What if <code>employee.computeSalary</code> changes?</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb66-1" title="1"><span class="dt">final</span> <span class="dt">long</span> salary = employee.<span class="fu">computeSalary</span>();</a>
+<a class="sourceLine" id="cb66-2" title="2"><span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;John&#39;s salary is &quot;</span> + salary);</a>
+<a class="sourceLine" id="cb66-3" title="3"><span class="kw">if</span> (salary &gt;= <span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb66-4" title="4">{</a>
+<a class="sourceLine" id="cb66-5" title="5">    <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;It&#39;s over one thousand&quot;</span>);</a>
+<a class="sourceLine" id="cb66-6" title="6">}</a></code></pre></div>
+<p>What if we want to print to <code>aPrintStream</code> instead of <code>System.out</code>?</p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb67-1" title="1"><span class="dt">final</span> <span class="dt">long</span> salary = employee.<span class="fu">computeSalary</span>();</a>
+<a class="sourceLine" id="cb67-2" title="2"><span class="dt">final</span> <span class="bu">StringBuilder</span> message = <span class="kw">new</span> <span class="bu">StringBuilder</span>();</a>
+<a class="sourceLine" id="cb67-3" title="3">message.<span class="fu">append</span>(<span class="st">&quot;John&#39;s salary is &quot;</span>).<span class="fu">append</span>(salary).<span class="fu">append</span>(<span class="ch">&#39;\n&#39;</span>)</a>
+<a class="sourceLine" id="cb67-4" title="4">    .<span class="fu">append</span>(salary &gt;= <span class="dv">1000</span> ? <span class="st">&quot;It&#39;s over one thousand&quot;</span> : <span class="st">&quot;&quot;</span>);</a>
+<a class="sourceLine" id="cb67-5" title="5">aPrintStream.<span class="fu">println</span>(message);</a></code></pre></div>
+<p>What if <code>salary</code> type changes from <code>long</code> to <code>BigInteger</code>? We assume it's unlikely.</p>
+<h3 id="extract-covariant-blocks-into-method"><span class="section_number">10.20</span><span class="section_title">Extract covariant blocks into method</span></h3>
+<p>Two blocks that must change together.</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb68-1" title="1"><span class="dt">static</span> Y <span class="fu">m</span> (A a, B b, ...);</a></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb69-1" title="1"><span class="dt">static</span> Y <span class="fu">m0</span> (X0 x0, X1 x1, ...);</a>
+<a class="sourceLine" id="cb69-2" title="2"><span class="dt">static</span> Y <span class="fu">m1</span> (X0 x0, X2 x2, ...);</a></code></pre></div>
+<p>becomes</p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb70-1" title="1"><span class="kw">class</span> C</a>
+<a class="sourceLine" id="cb70-2" title="2">{</a>
+<a class="sourceLine" id="cb70-3" title="3">    X0 x0;</a>
+<a class="sourceLine" id="cb70-4" title="4">    Y <span class="fu">m0</span> (X1 x1, ...);</a>
+<a class="sourceLine" id="cb70-5" title="5">    Y <span class="fu">m1</span> (X2 x2, ...);</a>
+<a class="sourceLine" id="cb70-6" title="6">}</a></code></pre></div>
+<p>Things that change together should be grouped together.</p>
+<p>Constructors are methods too.</p>
+<p>If two methods share a common parameter, the parameter can be extracted into a field.</p>
+<p>If two classes share a common field, a class can be extracted.</p>
+<p>Static methods are reusable.</p>
+<p>Instance methods force you to instantiate the class.</p>
+<h3 id="implications-of-architecture-on-security"><span class="section_number">10.21</span><span class="section_title">Implications of architecture on security</span></h3>
+<p>A popular trend: split front-end and back-end. Write front-end in NodeJS, write back-end in Java, front-end calls back-end via JSON HTTP API. Front-end runs on visitors' browsers. Back-end is open to public.</p>
+<p>You cannot secure the application. If you cannot secure the hardware running the software, all bets are off.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.21.1</span><span class="section_title"><a href="#foo">Foo</a></span><span class="word_count">(143w~1m)</span></li>
+</ul>
+</div>
+<h4 id="foo"><span class="section_number">10.21.1</span><span class="section_title">Foo</span></h4>
+<p>Java is a procedural programming language.</p>
+<p>The only reason we don't write everything in one big method is maintainability.</p>
+<p>A code is easier to understand if it doesn't mix abstraction levels.</p>
+<p>Names relate to things the reader already knows.</p>
+<p>Java does not have C#'s extension methods.</p>
+<p>Java as procedural programming with implicit first argument.</p>
+<pre class="example"><code>object.method(arg1, ...) = method(object, arg1, ...)
+</code></pre>
+<p>Principles make decision-making easy (not necessarily correct). Principles are heuristics.</p>
+<p><em>Cohesion</em> is the most important characteristic of a class. The purpose of a class is to group a <em>working set</em> (variables that often change together), and the methods that use those variables.</p>
+<p>The risk of modifying code?</p>
+<p>The larger the change, the bigger the risk.</p>
+<p>If you are using object mapper like Jackson, changing a field to final can break your code. (You must annotate.) That's why I avoid reflection.</p>
+<p>Microrefactoring. Small steps.</p>
+<p>Abstraction is not a mere indirection. yegor256??? Abstraction allows you to say a lot with a little code.</p>
+<h3 id="mitigating-the-risk-of-changing-code"><span class="section_number">10.22</span><span class="section_title">Mitigating the risk of changing code</span></h3>
+<p>Don't just change old code.</p>
+<p>Write new code that works with the old code. Deprecate the old code. Delete the old code.</p>
+<div class="sourceCode" id="cb72"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb72-1" title="1"><span class="kw">class</span> CustomList&lt;T&gt;</a>
+<a class="sourceLine" id="cb72-2" title="2">{</a>
+<a class="sourceLine" id="cb72-3" title="3">    <span class="kw">private</span> <span class="dt">final</span> <span class="bu">List</span>&lt;T&gt; inner;</a>
+<a class="sourceLine" id="cb72-4" title="4"></a>
+<a class="sourceLine" id="cb72-5" title="5">    <span class="kw">public</span> <span class="fu">CustomList</span> (<span class="bu">List</span>&lt;T&gt; inner)</a>
+<a class="sourceLine" id="cb72-6" title="6">    {</a>
+<a class="sourceLine" id="cb72-7" title="7">        <span class="kw">this</span>.<span class="fu">inner</span> = inner;</a>
+<a class="sourceLine" id="cb72-8" title="8">    }</a>
+<a class="sourceLine" id="cb72-9" title="9"></a>
+<a class="sourceLine" id="cb72-10" title="10">    <span class="kw">public</span> <span class="dt">static</span> &lt;T&gt; CustomList&lt;T&gt; <span class="fu">fromArray</span> (T[] array)</a>
+<a class="sourceLine" id="cb72-11" title="11">    {</a>
+<a class="sourceLine" id="cb72-12" title="12">        <span class="dt">final</span> <span class="bu">List</span>&lt;T&gt; list = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;&gt;();</a>
+<a class="sourceLine" id="cb72-13" title="13">        list.<span class="fu">addAll</span>(<span class="bu">Arrays</span>.<span class="fu">asList</span>(array));</a>
+<a class="sourceLine" id="cb72-14" title="14">        <span class="kw">return</span> <span class="kw">new</span> CustomList&lt;&gt;(list);</a>
+<a class="sourceLine" id="cb72-15" title="15">    }</a>
+<a class="sourceLine" id="cb72-16" title="16"></a>
+<a class="sourceLine" id="cb72-17" title="17">    <span class="kw">public</span> <span class="bu">List</span>&lt;T&gt; <span class="fu">toList</span> ()</a>
+<a class="sourceLine" id="cb72-18" title="18">    {</a>
+<a class="sourceLine" id="cb72-19" title="19">        <span class="kw">return</span> inner;</a>
+<a class="sourceLine" id="cb72-20" title="20">    }</a>
+<a class="sourceLine" id="cb72-21" title="21"></a>
+<a class="sourceLine" id="cb72-22" title="22">    <span class="co">// Implement your primitives like size, map, whatever.</span></a>
+<a class="sourceLine" id="cb72-23" title="23">}</a></code></pre></div>
+<h3 id="maintainable-code"><span class="section_number">10.23</span><span class="section_title">Maintainable code</span></h3>
+<p>The problem is working with too many details at once.</p>
+<p>Mixing HTTP-handling code (such as the Servlet API 3.0) with your business logic will cause readability problem. If a method contains getCookie and business logic, you're in for maintenance problems.</p>
+<p>Java is more verbose than Haskell, but it doesn't mean that you can't create maintainable Java programs; it doesn't mean that your Haskell programs will automatically be more maintainable. If you suck, your code will be just as bad.</p>
+<p>Java is a <em>procedural</em> language. Problems begin when people try to force object-oriented paradigm to Java.</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb73-1" title="1"><span class="kw">interface</span> Log</a>
+<a class="sourceLine" id="cb73-2" title="2">{</a>
+<a class="sourceLine" id="cb73-3" title="3">    <span class="dt">void</span> <span class="fu">info</span> (<span class="bu">String</span> message);</a>
+<a class="sourceLine" id="cb73-4" title="4">    <span class="dt">void</span> <span class="fu">warn</span> (<span class="bu">String</span> message);</a>
+<a class="sourceLine" id="cb73-5" title="5">    <span class="dt">void</span> <span class="fu">error</span> (<span class="bu">String</span> message);</a>
+<a class="sourceLine" id="cb73-6" title="6">}</a></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb74-1" title="1"><span class="kw">class</span> Log_log4j <span class="kw">implements</span> Log</a>
+<a class="sourceLine" id="cb74-2" title="2">{</a>
+<a class="sourceLine" id="cb74-3" title="3">    <span class="kw">private</span> <span class="dt">final</span> <span class="bu">Logger</span> log;</a>
+<a class="sourceLine" id="cb74-4" title="4">    <span class="kw">public</span> <span class="fu">Log_log4j</span> (<span class="bu">Logger</span> log)</a>
+<a class="sourceLine" id="cb74-5" title="5">    {</a>
+<a class="sourceLine" id="cb74-6" title="6">        <span class="kw">this</span>.<span class="fu">log</span> = log;</a>
+<a class="sourceLine" id="cb74-7" title="7">    }</a>
+<a class="sourceLine" id="cb74-8" title="8">    <span class="at">@Override</span> <span class="kw">public</span> <span class="dt">void</span> <span class="fu">error</span> (<span class="bu">String</span> message) { log.<span class="fu">error</span>(message); }</a>
+<a class="sourceLine" id="cb74-9" title="9">}</a></code></pre></div>
+<h3 id="writing-program-backwards"><span class="section_number">10.24</span><span class="section_title">Writing program backwards</span></h3>
+<p>If you're a shop, you can try putting all your pricing logic into one class:</p>
+<ul>
+<li>Every buyer whose age is 60 years or greater gets a 10% elder discount.</li>
+<li>Every buyer (unique phone number) is a first-time buyer (who has not bought anything) gets 10% newcomer discount.</li>
+<li>For simplicity, discount percentages are added before applied to the original price.</li>
+</ul>
+<div class="sourceCode" id="cb75"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb75-1" title="1"><span class="dt">double</span> <span class="fu">percent_discount</span> ()</a>
+<a class="sourceLine" id="cb75-2" title="2">{</a>
+<a class="sourceLine" id="cb75-3" title="3">    <span class="dt">double</span> percentage = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb75-4" title="4">    <span class="kw">if</span> (buyer_age &gt;= <span class="dv">60</span>) { percentage += <span class="dv">10</span>; }</a>
+<a class="sourceLine" id="cb75-5" title="5">    <span class="kw">if</span> (buyer_is_first_time) { percentage += <span class="dv">10</span>; }</a>
+<a class="sourceLine" id="cb75-6" title="6">    <span class="kw">return</span> percentage;</a>
+<a class="sourceLine" id="cb75-7" title="7">}</a></code></pre></div>
+<p>At this point you don't care about how to compute buyer_age and buyer_is_first_time. You simply want to express the pricing rules as a simple Java code that a programmer can easily understand.</p>
+<p>To compute the buyer's age, we need his/her date of birth and today's date. Use JodaTime.</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb76-1" title="1">buyer_age = today.<span class="fu">subtract</span>(buyer_birth_date);</a></code></pre></div>
+<p>Then we need to figure out how to get today's date, and so on, and then you arrive at this method:</p>
+<p>If you need something in a method, but it's not that method's responsibility to compute it, then it should be a parameter of that method.</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb77-1" title="1"><span class="kw">class</span> Pricing</a>
+<a class="sourceLine" id="cb77-2" title="2">{</a>
+<a class="sourceLine" id="cb77-3" title="3"></a>
+<a class="sourceLine" id="cb77-4" title="4">    <span class="dt">void</span> <span class="fu">rule</span> ()</a>
+<a class="sourceLine" id="cb77-5" title="5">    {</a>
+<a class="sourceLine" id="cb77-6" title="6">        <span class="co">// XXX dont use double for your prices?</span></a>
+<a class="sourceLine" id="cb77-7" title="7"></a>
+<a class="sourceLine" id="cb77-8" title="8">        <span class="fu">entry</span>(item.<span class="fu">name</span>, item.<span class="fu">price</span>);</a>
+<a class="sourceLine" id="cb77-9" title="9"></a>
+<a class="sourceLine" id="cb77-10" title="10">        <span class="kw">if</span> (event.<span class="fu">is_giveaway</span>)</a>
+<a class="sourceLine" id="cb77-11" title="11">        {</a>
+<a class="sourceLine" id="cb77-12" title="12">            <span class="fu">discount</span>(s.<span class="fu">giveaway</span>(), item.<span class="fu">price</span>);</a>
+<a class="sourceLine" id="cb77-13" title="13">            <span class="kw">return</span>;</a>
+<a class="sourceLine" id="cb77-14" title="14">        }</a>
+<a class="sourceLine" id="cb77-15" title="15"></a>
+<a class="sourceLine" id="cb77-16" title="16">        <span class="kw">if</span> (buyer.<span class="fu">age</span> &gt;= <span class="dv">60</span>) { <span class="fu">discount</span>(s.<span class="fu">elder</span>(), <span class="dv">1</span>); }</a>
+<a class="sourceLine" id="cb77-17" title="17">        <span class="kw">if</span> (buyer.<span class="fu">is_first_time</span>) { <span class="fu">discount</span>(s.<span class="fu">first_timer</span>(), <span class="dv">1</span>); }</a>
+<a class="sourceLine" id="cb77-18" title="18">        <span class="kw">if</span> (buyer.<span class="fu">wants_insurance</span>) { <span class="fu">surcharge</span>(s.<span class="fu">insurance</span>(), <span class="dv">1</span>); }</a>
+<a class="sourceLine" id="cb77-19" title="19"></a>
+<a class="sourceLine" id="cb77-20" title="20">        <span class="kw">if</span> (event.<span class="fu">is_new_year</span>) { <span class="fu">discount</span>(s.<span class="fu">new_year</span>(), <span class="dv">1</span>); }</a>
+<a class="sourceLine" id="cb77-21" title="21">        <span class="kw">if</span> (event.<span class="fu">is_christmas</span>) { <span class="fu">discount</span>(s.<span class="fu">christmas</span>(), <span class="dv">2</span>); }</a>
+<a class="sourceLine" id="cb77-22" title="22">        <span class="kw">if</span> (event.<span class="fu">is_online_shopping_day</span>) { <span class="fu">discount</span>(s.<span class="fu">online_shopping_day</span>(), <span class="fl">0.</span><span class="dv">25</span> * item.<span class="fu">price</span>); }</a>
+<a class="sourceLine" id="cb77-23" title="23"></a>
+<a class="sourceLine" id="cb77-24" title="24">        <span class="kw">if</span> (item.<span class="fu">is_rare</span>) { <span class="fu">surcharge</span>(s.<span class="fu">rare</span>(), <span class="dv">10</span>); }</a>
+<a class="sourceLine" id="cb77-25" title="25">        <span class="kw">if</span> (item.<span class="fu">is_luxury</span>) { <span class="fu">surcharge</span>(s.<span class="fu">luxury</span>(), <span class="dv">5</span>); }</a>
+<a class="sourceLine" id="cb77-26" title="26">        <span class="kw">if</span> (item.<span class="fu">is_from_lion_air</span>) { <span class="fu">surcharge</span>(s.<span class="fu">lion_air_admin_fee</span>(), <span class="dv">10</span>); }</a>
+<a class="sourceLine" id="cb77-27" title="27">        <span class="kw">if</span> (item.<span class="fu">is_from_telkomsel</span>) { <span class="fu">surcharge</span>(s.<span class="fu">telkomsel_admin_fee</span>(), <span class="fl">0.</span><span class="dv">15</span>); }</a>
+<a class="sourceLine" id="cb77-28" title="28"></a>
+<a class="sourceLine" id="cb77-29" title="29">        <span class="kw">if</span> (payment.<span class="fu">uses_credit_card</span>) { <span class="fu">surcharge</span>(s.<span class="fu">credit_card_fee</span>(), <span class="fl">0.</span><span class="bn">03</span> * item.<span class="fu">price</span>); }</a>
+<a class="sourceLine" id="cb77-30" title="30"></a>
+<a class="sourceLine" id="cb77-31" title="31">        <span class="fu">surcharge</span>(s.<span class="fu">surcharge_vat</span>(), <span class="fl">0.</span><span class="dv">1</span> * item.<span class="fu">price</span>);</a>
+<a class="sourceLine" id="cb77-32" title="32">    }</a>
+<a class="sourceLine" id="cb77-33" title="33"></a>
+<a class="sourceLine" id="cb77-34" title="34">    <span class="kw">class</span> Buyer</a>
+<a class="sourceLine" id="cb77-35" title="35">    {</a>
+<a class="sourceLine" id="cb77-36" title="36">        <span class="dt">final</span> <span class="dt">int</span> age;</a>
+<a class="sourceLine" id="cb77-37" title="37">        <span class="dt">final</span> <span class="dt">boolean</span> is_first_time;</a>
+<a class="sourceLine" id="cb77-38" title="38">        <span class="dt">final</span> <span class="dt">boolean</span> wants_insurance;</a>
+<a class="sourceLine" id="cb77-39" title="39">    }</a>
+<a class="sourceLine" id="cb77-40" title="40"></a>
+<a class="sourceLine" id="cb77-41" title="41">    <span class="kw">class</span> Entry</a>
+<a class="sourceLine" id="cb77-42" title="42">    {</a>
+<a class="sourceLine" id="cb77-43" title="43">        <span class="dt">final</span> <span class="bu">String</span> label;</a>
+<a class="sourceLine" id="cb77-44" title="44">        <span class="dt">final</span> <span class="dt">double</span> amount;</a>
+<a class="sourceLine" id="cb77-45" title="45">    }</a>
+<a class="sourceLine" id="cb77-46" title="46"></a>
+<a class="sourceLine" id="cb77-47" title="47">    <span class="kw">private</span> <span class="dt">final</span> Strings.<span class="fu">I</span> s;</a>
+<a class="sourceLine" id="cb77-48" title="48">    <span class="kw">private</span> <span class="dt">final</span> <span class="bu">List</span>&lt;Entry&gt; entries = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;&gt;();</a>
+<a class="sourceLine" id="cb77-49" title="49"></a>
+<a class="sourceLine" id="cb77-50" title="50">    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">entry</span> (<span class="bu">String</span> label, <span class="dt">double</span> amount)</a>
+<a class="sourceLine" id="cb77-51" title="51">    {</a>
+<a class="sourceLine" id="cb77-52" title="52">        entries.<span class="fu">add</span>(<span class="kw">new</span> <span class="fu">Entry</span>(label, amount));</a>
+<a class="sourceLine" id="cb77-53" title="53">    }</a>
+<a class="sourceLine" id="cb77-54" title="54"></a>
+<a class="sourceLine" id="cb77-55" title="55">    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">surcharge</span> (<span class="bu">String</span> label, <span class="dt">double</span> amount)</a>
+<a class="sourceLine" id="cb77-56" title="56">    {</a>
+<a class="sourceLine" id="cb77-57" title="57">        <span class="fu">entry</span>(label, amount);</a>
+<a class="sourceLine" id="cb77-58" title="58">    }</a>
+<a class="sourceLine" id="cb77-59" title="59"></a>
+<a class="sourceLine" id="cb77-60" title="60">    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">discount</span> (<span class="bu">String</span> label, <span class="dt">double</span> amount)</a>
+<a class="sourceLine" id="cb77-61" title="61">    {</a>
+<a class="sourceLine" id="cb77-62" title="62">        <span class="fu">entry</span>(label, -amount);</a>
+<a class="sourceLine" id="cb77-63" title="63">    }</a>
+<a class="sourceLine" id="cb77-64" title="64"></a>
+<a class="sourceLine" id="cb77-65" title="65">}</a></code></pre></div>
+<p>There you have it: a straightforward, readable, maintainable, easily changeable pricing rule for your online business. A straightforward translation.</p>
+<p>Filling the fields is someone else's problem.</p>
+<p>Internationalization:</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb78-1" title="1"><span class="kw">class</span> Strings</a>
+<a class="sourceLine" id="cb78-2" title="2">{</a>
+<a class="sourceLine" id="cb78-3" title="3">    <span class="kw">interface</span> I</a>
+<a class="sourceLine" id="cb78-4" title="4">    {</a>
+<a class="sourceLine" id="cb78-5" title="5">        <span class="co">/**</span> Value<span class="co">-</span>added tax<span class="co">. */</span></a>
+<a class="sourceLine" id="cb78-6" title="6">        <span class="bu">String</span> <span class="fu">elder</span> ();</a>
+<a class="sourceLine" id="cb78-7" title="7">        <span class="bu">String</span> <span class="fu">vat</span> ();</a>
+<a class="sourceLine" id="cb78-8" title="8">    }</a>
+<a class="sourceLine" id="cb78-9" title="9">    <span class="kw">class</span> English <span class="kw">implements</span> I</a>
+<a class="sourceLine" id="cb78-10" title="10">    {</a>
+<a class="sourceLine" id="cb78-11" title="11">        <span class="at">@Override</span> <span class="kw">public</span> <span class="bu">String</span> <span class="fu">elder</span> () { <span class="kw">return</span> <span class="st">&quot;elder&quot;</span>; }</a>
+<a class="sourceLine" id="cb78-12" title="12">        <span class="at">@Override</span> <span class="kw">public</span> <span class="bu">String</span> <span class="fu">vat</span> () { <span class="kw">return</span> <span class="st">&quot;VAT&quot;</span>; }</a>
+<a class="sourceLine" id="cb78-13" title="13">    }</a>
+<a class="sourceLine" id="cb78-14" title="14">    <span class="kw">class</span> Indonesia <span class="kw">implements</span> I</a>
+<a class="sourceLine" id="cb78-15" title="15">    {</a>
+<a class="sourceLine" id="cb78-16" title="16">        <span class="at">@Override</span> <span class="kw">public</span> <span class="bu">String</span> <span class="fu">elder</span> () { <span class="kw">return</span> <span class="st">&quot;lansia&quot;</span>; }</a>
+<a class="sourceLine" id="cb78-17" title="17">        <span class="at">@Override</span> <span class="kw">public</span> <span class="bu">String</span> <span class="fu">vat</span> () { <span class="kw">return</span> <span class="st">&quot;PPn&quot;</span>; }</a>
+<a class="sourceLine" id="cb78-18" title="18">    }</a>
+<a class="sourceLine" id="cb78-19" title="19">    <span class="dt">static</span> <span class="fu">load</span> (<span class="bu">String</span> path) <span class="kw">throws</span> <span class="bu">IOException</span></a>
+<a class="sourceLine" id="cb78-20" title="20">    {</a>
+<a class="sourceLine" id="cb78-21" title="21">        <span class="co">// use Proxy to lookup table</span></a>
+<a class="sourceLine" id="cb78-22" title="22">    }</a>
+<a class="sourceLine" id="cb78-23" title="23">}</a></code></pre></div>
+<p>Do you need to be able to change the discounts without recompiling the program? You don't. Instead of making it configurable, make compilation and deployment fast, easy, and automatic, and just recompile. There is less room for mistakes if you keep it in one place that is easy to see: the source code. The compiler will also help catch mistakes.</p>
+<p>Now you figure out how to compute buyer_age.</p>
+<p>The name of a class doesn't have to be a noun.</p>
+<p>A constructor parameter states that the class depends on a feature.</p>
+<p>A class describes a feature.</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb79-1" title="1"><span class="kw">interface</span> Storage</a>
+<a class="sourceLine" id="cb79-2" title="2">{</a>
+<a class="sourceLine" id="cb79-3" title="3">    <span class="dt">void</span> <span class="fu">save_user</span> (???) <span class="kw">throws</span> <span class="bu">IOException</span>;</a>
+<a class="sourceLine" id="cb79-4" title="4">}</a></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb80-1" title="1"><span class="kw">interface</span> <span class="bu">Handler</span>?</a>
+<a class="sourceLine" id="cb80-2" title="2">{</a>
+<a class="sourceLine" id="cb80-3" title="3">    <span class="dt">void</span> <span class="fu">get_cookie</span> ();</a>
+<a class="sourceLine" id="cb80-4" title="4">    <span class="bu">Handler</span> <span class="fu">set_cookie</span> ();</a>
+<a class="sourceLine" id="cb80-5" title="5">    <span class="bu">Handler</span> <span class="fu">set_cookie</span> ();</a>
+<a class="sourceLine" id="cb80-6" title="6">}</a></code></pre></div>
+<p>A Java class corresponds to a C source file. This is as if you could put multiple C source files inside a Java class. And you can put many Java classes inside a Java class. Think of a class like a folder for C source files; it groups things to help programmers understand the code, not as something that corresponds to an object.</p>
+<h3 id="crucial-question"><span class="section_number">10.25</span><span class="section_title">Crucial question</span></h3>
+<p>If there are many ways of writing programs that do the same thing, why choose a particular way?</p>
+<p>More maintainable.</p>
+<h3 id="use-snake-case"><span class="section_number">10.26</span><span class="section_title">Use snake case</span></h3>
+<p>Class name: <code>My_class_name</code></p>
+<p>Field, method, and variable name: <code>my_method_name</code></p>
+<p>Maintainability is done by limiting ugliness inside a class.</p>
+<p>It is possible to write maintainable Java code. It will only be a bit more verbose.</p>
+<h3 id="making-a-java-virtual-machine"><span class="section_number">10.27</span><span class="section_title">Making a Java virtual machine</span></h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Java_Class_Library">https://en.wikipedia.org/wiki/Java_Class_Library</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Java_Native_Interface">https://en.wikipedia.org/wiki/Java_Native_Interface</a>
+<ul>
+<li><a href="https://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/functions.html">https://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/functions.html</a></li>
+</ul></li>
+</ul>
+<h2 id="programming-language-design-mistakes"><span class="section_number">11</span><span class="section_title">Programming language design mistakes?</span></h2>
 <p>What is a design mistake? Does a design mistake exist? Or all that exists is trade-offs/compromises?</p>
 <p>Assembly is not fun to use, but is it a design mistake? How else could it be done in the 20th century, other than wishfully thinking of telepathic machines?</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">9.1</span><span class="section_title"><a href="#justifying-the-creation-of-yet-another-programming-language">Justifying the creation of yet another programming language</a></span><span class="word_count">(80w~1m)</span></li>
-<li><span class="section_number">9.2</span><span class="section_title"><a href="#common-design-mistakes">Common design mistakes</a></span><span class="word_count">(426w~3m)</span></li>
-<li><span class="section_number">9.3</span><span class="section_title"><a href="#java">Java</a></span><span class="word_count">(179w~1m)</span></li>
-<li><span class="section_number">9.4</span><span class="section_title"><a href="#c-and-c">C and C++</a></span><span class="word_count">(85w~1m)</span></li>
-<li><span class="section_number">9.5</span><span class="section_title"><a href="#haskell">Haskell</a></span><span class="word_count">(63w~1m)</span></li>
-<li><span class="section_number">9.6</span><span class="section_title"><a href="#prolog-1">Prolog</a></span><span class="word_count">(38w~1m)</span></li>
-<li><span class="section_number">9.7</span><span class="section_title"><a href="#what-2">what</a></span><span class="word_count">(136w~1m)</span></li>
-<li><span class="section_number">9.8</span><span class="section_title"><a href="#lisp-design-mistake-having-separate-data-and-function-cell">Lisp design mistake: having separate data and function cell</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">11.1</span><span class="section_title"><a href="#justifying-the-creation-of-yet-another-programming-language">Justifying the creation of yet another programming language</a></span><span class="word_count">(80w~1m)</span></li>
+<li><span class="section_number">11.2</span><span class="section_title"><a href="#common-design-mistakes">Common design mistakes</a></span><span class="word_count">(426w~3m)</span></li>
+<li><span class="section_number">11.3</span><span class="section_title"><a href="#java">Java</a></span><span class="word_count">(179w~1m)</span></li>
+<li><span class="section_number">11.4</span><span class="section_title"><a href="#c-and-c">C and C++</a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">11.5</span><span class="section_title"><a href="#haskell">Haskell</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">11.6</span><span class="section_title"><a href="#prolog-1">Prolog</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">11.7</span><span class="section_title"><a href="#what-4">what</a></span><span class="word_count">(136w~1m)</span></li>
+<li><span class="section_number">11.8</span><span class="section_title"><a href="#lisp-design-mistake-having-separate-data-and-function-cell">Lisp design mistake: having separate data and function cell</a></span><span class="word_count">(9w~1m)</span></li>
 </ul>
 </div>
-<h3 id="justifying-the-creation-of-yet-another-programming-language"><span class="section_number">9.1</span><span class="section_title">Justifying the creation of yet another programming language</span></h3>
+<h3 id="justifying-the-creation-of-yet-another-programming-language"><span class="section_number">11.1</span><span class="section_title">Justifying the creation of yet another programming language</span></h3>
 <p>A new programming language should fix unforeseen design mistakes in existing programming languages. It should not repeat their design mistakes. Therefore we should collect the design mistakes so that we can avoid repeating them.</p>
 <p>What is a mistake? How do we know it's a mistake?</p>
 <p>We realize something is a mistake when we find a better way.</p>
 <p>Mistakes are always discovered by hindsight. We don't know it's a mistake until long after we have done it.</p>
-<h3 id="common-design-mistakes"><span class="section_number">9.2</span><span class="section_title">Common design mistakes</span></h3>
+<h3 id="common-design-mistakes"><span class="section_number">11.2</span><span class="section_title">Common design mistakes</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">9.2.1</span><span class="section_title"><a href="#ignoring-programming-language-theory-and-research">Ignoring programming language theory and research</a></span><span class="word_count">(19w~1m)</span></li>
-<li><span class="section_number">9.2.2</span><span class="section_title"><a href="#dynamic-typing">Dynamic typing</a></span><span class="word_count">(101w~1m)</span></li>
-<li><span class="section_number">9.2.3</span><span class="section_title"><a href="#lack-of-metaprogramming-support">Lack of metaprogramming support?</a></span><span class="word_count">(4w~1m)</span></li>
-<li><span class="section_number">9.2.4</span><span class="section_title"><a href="#lack-of-symbol-overloading-ad-hoc-polymorphism">Lack of symbol overloading (ad-hoc polymorphism)</a></span><span class="word_count">(31w~1m)</span></li>
-<li><span class="section_number">9.2.5</span><span class="section_title"><a href="#mutable-by-default">Mutable by default?</a></span><span class="word_count">(3w~1m)</span></li>
-<li><span class="section_number">9.2.6</span><span class="section_title"><a href="#non-first-class-constructs">Non-first-class constructs</a></span><span class="word_count">(189w~1m)</span></li>
-<li><span class="section_number">9.2.7</span><span class="section_title"><a href="#virtual-machines">Virtual machines</a></span><span class="word_count">(28w~1m)</span></li>
-<li><span class="section_number">9.2.8</span><span class="section_title"><a href="#more-than-one-way-to-do-something">More than one way to do something</a></span><span class="word_count">(19w~1m)</span></li>
-<li><span class="section_number">9.2.9</span><span class="section_title"><a href="#disallowing-multi-line-string-literals">Disallowing multi-line string literals</a></span><span class="word_count">(10w~1m)</span></li>
-<li><span class="section_number">9.2.10</span><span class="section_title"><a href="#not-allowing-extra-leading-or-trailing-commas">Not allowing extra leading or trailing commas</a></span><span class="word_count">(14w~1m)</span></li>
-<li><span class="section_number">9.2.11</span><span class="section_title"><a href="#not-separating-names-and-referents">Not separating names and referents</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">11.2.1</span><span class="section_title"><a href="#ignoring-programming-language-theory-and-research">Ignoring programming language theory and research</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">11.2.2</span><span class="section_title"><a href="#dynamic-typing">Dynamic typing</a></span><span class="word_count">(101w~1m)</span></li>
+<li><span class="section_number">11.2.3</span><span class="section_title"><a href="#lack-of-metaprogramming-support">Lack of metaprogramming support?</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">11.2.4</span><span class="section_title"><a href="#lack-of-symbol-overloading-ad-hoc-polymorphism">Lack of symbol overloading (ad-hoc polymorphism)</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">11.2.5</span><span class="section_title"><a href="#mutable-by-default">Mutable by default?</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">11.2.6</span><span class="section_title"><a href="#non-first-class-constructs">Non-first-class constructs</a></span><span class="word_count">(189w~1m)</span></li>
+<li><span class="section_number">11.2.7</span><span class="section_title"><a href="#virtual-machines">Virtual machines</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">11.2.8</span><span class="section_title"><a href="#more-than-one-way-to-do-something">More than one way to do something</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">11.2.9</span><span class="section_title"><a href="#disallowing-multi-line-string-literals">Disallowing multi-line string literals</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">11.2.10</span><span class="section_title"><a href="#not-allowing-extra-leading-or-trailing-commas">Not allowing extra leading or trailing commas</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">11.2.11</span><span class="section_title"><a href="#not-separating-names-and-referents">Not separating names and referents</a></span><span class="word_count">(16w~1m)</span></li>
 </ul>
 </div>
-<h4 id="ignoring-programming-language-theory-and-research"><span class="section_number">9.2.1</span><span class="section_title">Ignoring programming language theory and research</span></h4>
+<h4 id="ignoring-programming-language-theory-and-research"><span class="section_number">11.2.1</span><span class="section_title">Ignoring programming language theory and research</span></h4>
 <p>Some mistakes are because the language designer is ignorant, lazy, or in a hurry.</p>
-<h4 id="dynamic-typing"><span class="section_number">9.2.2</span><span class="section_title">Dynamic typing</span></h4>
+<h4 id="dynamic-typing"><span class="section_number">11.2.2</span><span class="section_title">Dynamic typing</span></h4>
 <p>Dynamic typing speeds up prototyping but precludes translation to code that is as fast as statically-typed codes.</p>
 <p>Static typing is about allowing the compiler to make simplifying assumptions to emit faster code. We can work faster with simplifying assumptions. For example, if we can assume that people don't mind being killed, we can kill all people, but that assumption is like the assumption that user input is always valid.</p>
 <p>Dynamic typing is a design mistake? Type inference goes back to 1958. ML has type inference since 1973. It's 2018. There is no excuse for ignoring 60 years of research. See <a href="https://en.wikipedia.org/wiki/Type_inference#Hindley%E2%80%93Milner_type_inference_algorithm">WP1</a>, <a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system#History_of_type_inference">WP2</a>.</p>
-<h4 id="lack-of-metaprogramming-support"><span class="section_number">9.2.3</span><span class="section_title">Lack of metaprogramming support?</span></h4>
-<h4 id="lack-of-symbol-overloading-ad-hoc-polymorphism"><span class="section_number">9.2.4</span><span class="section_title">Lack of symbol overloading (ad-hoc polymorphism)</span></h4>
+<h4 id="lack-of-metaprogramming-support"><span class="section_number">11.2.3</span><span class="section_title">Lack of metaprogramming support?</span></h4>
+<h4 id="lack-of-symbol-overloading-ad-hoc-polymorphism"><span class="section_number">11.2.4</span><span class="section_title">Lack of symbol overloading (ad-hoc polymorphism)</span></h4>
 <p>Scheme and Haskell lack convenient symbol overloading. Haskell requires you to make a type class for ad-hoc polymorphism.</p>
 <p>Without overloading, clashing names need to be prefixed manually.</p>
-<h4 id="mutable-by-default"><span class="section_number">9.2.5</span><span class="section_title">Mutable by default?</span></h4>
-<h4 id="non-first-class-constructs"><span class="section_number">9.2.6</span><span class="section_title">Non-first-class constructs</span></h4>
+<h4 id="mutable-by-default"><span class="section_number">11.2.5</span><span class="section_title">Mutable by default?</span></h4>
+<h4 id="non-first-class-constructs"><span class="section_number">11.2.6</span><span class="section_title">Non-first-class constructs</span></h4>
 <p>Object-oriented programming is a design mistake?</p>
 <ul>
 <li><code>a.b()</code> should not mean &quot;call method b of object a&quot;</li>
@@ -2154,18 +3765,18 @@ f : a \to b , ~ x : m~a , ~ Functor~m \vdash (f~x \to_\beta fmap~f~x)
 </ul></li>
 </ul>
 <p>Statements are a design mistake. They should not exist. Only expressions should. <a href="https://www.eclipse.org/xtend/documentation/203_xtend_expressions.html">Xtend</a> and <a href="https://code.haxe.org/category/principles/everything-is-an-expression.html">Haxe</a> do this right. - Can we replace statements with expressions in existing imperative languages without breaking backward compatibility? - But C has <a href="https://en.wikipedia.org/wiki/Comma_operator">WP:Comma operator</a>? - We can use lambda calculus for imperative programming. - Treat the statement separator (here we use semicolon <code>;</code>) as an operator (function with infix syntax) that sequences the effects of two expressions. - For example: - Let <code>a</code> be an expression. - Let <code>b</code> be an expression. - Thus <code>a;b</code> is an expression. - The value of <code>a;b</code> is the value of <code>b</code>. - The effect of <code>a;b</code> is the effect of <code>a</code> followed by the effect of <code>b</code>. - Semicolon is associative: <code>(a;b);c = a;(b;c)</code>. This also holds for the effects.</p>
-<h4 id="virtual-machines"><span class="section_number">9.2.7</span><span class="section_title">Virtual machines</span></h4>
+<h4 id="virtual-machines"><span class="section_number">11.2.7</span><span class="section_title">Virtual machines</span></h4>
 <p>Virtual machines are a design mistake. Instead, do semantic mapping: map a program in language A to an equivalent program in language B while preserving the meaning.</p>
-<h4 id="more-than-one-way-to-do-something"><span class="section_number">9.2.8</span><span class="section_title">More than one way to do something</span></h4>
+<h4 id="more-than-one-way-to-do-something"><span class="section_number">11.2.8</span><span class="section_title">More than one way to do something</span></h4>
 <p><a href="https://en.wikipedia.org/wiki/There%27s_more_than_one_way_to_do_it">&quot;There is more than one way to do it&quot;</a> is a design mistake.</p>
-<h4 id="disallowing-multi-line-string-literals"><span class="section_number">9.2.9</span><span class="section_title">Disallowing multi-line string literals</span></h4>
+<h4 id="disallowing-multi-line-string-literals"><span class="section_number">11.2.9</span><span class="section_title">Disallowing multi-line string literals</span></h4>
 <p>Languages should allow CR/LF in string literals.</p>
-<h4 id="not-allowing-extra-leading-or-trailing-commas"><span class="section_number">9.2.10</span><span class="section_title">Not allowing extra leading or trailing commas</span></h4>
+<h4 id="not-allowing-extra-leading-or-trailing-commas"><span class="section_number">11.2.10</span><span class="section_title">Not allowing extra leading or trailing commas</span></h4>
 <p>Allowing extra commas make Git diffs less noisy.</p>
-<h4 id="not-separating-names-and-referents"><span class="section_number">9.2.11</span><span class="section_title">Not separating names and referents</span></h4>
+<h4 id="not-separating-names-and-referents"><span class="section_number">11.2.11</span><span class="section_title">Not separating names and referents</span></h4>
 <p>Example: C functions, Java classes, Haskell modules.</p>
 <p>JavaScript does not make this mistake.</p>
-<h3 id="java"><span class="section_number">9.3</span><span class="section_title">Java</span></h3>
+<h3 id="java"><span class="section_number">11.3</span><span class="section_title">Java</span></h3>
 <ul>
 <li><p>Checked exceptions don't play nice with java.util.Stream. Either checked exception or java.util.Stream is a design mistake.</p>
 <ul>
@@ -2178,15 +3789,15 @@ f : a \to b , ~ x : m~a , ~ Functor~m \vdash (f~x \to_\beta fmap~f~x)
 </ul>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">9.3.1</span><span class="section_title"><a href="#overcomplicated-java-virtual-machine">Overcomplicated Java Virtual Machine</a></span><span class="word_count">(31w~1m)</span></li>
-<li><span class="section_number">9.3.2</span><span class="section_title"><a href="#working-against-programmers">Working against programmers</a></span><span class="word_count">(51w~1m)</span></li>
-<li><span class="section_number">9.3.3</span><span class="section_title"><a href="#throwing-away-the-good-parts-of-c">Throwing away the good parts of C++</a></span><span class="word_count">(68w~1m)</span></li>
-<li><span class="section_number">9.3.4</span><span class="section_title"><a href="#weak-functional-programming-allowing-partial-functions">Weak functional programming (allowing partial functions)</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">11.3.1</span><span class="section_title"><a href="#overcomplicated-java-virtual-machine">Overcomplicated Java Virtual Machine</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">11.3.2</span><span class="section_title"><a href="#working-against-programmers">Working against programmers</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">11.3.3</span><span class="section_title"><a href="#throwing-away-the-good-parts-of-c">Throwing away the good parts of C++</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">11.3.4</span><span class="section_title"><a href="#weak-functional-programming-allowing-partial-functions">Weak functional programming (allowing partial functions)</a></span><span class="word_count">(12w~1m)</span></li>
 </ul>
 </div>
-<h4 id="overcomplicated-java-virtual-machine"><span class="section_number">9.3.1</span><span class="section_title">Overcomplicated Java Virtual Machine</span></h4>
+<h4 id="overcomplicated-java-virtual-machine"><span class="section_number">11.3.1</span><span class="section_title">Overcomplicated Java Virtual Machine</span></h4>
 <p>JVM does too much. JVM bytecode verification is the compiler's job, not the VM's. Does JVM bytecode verification even add any security? Isn't JNI a bigger security hole?</p>
-<h4 id="working-against-programmers"><span class="section_number">9.3.2</span><span class="section_title">Working against programmers</span></h4>
+<h4 id="working-against-programmers"><span class="section_number">11.3.2</span><span class="section_title">Working against programmers</span></h4>
 <p>Java presumes that the programmer is not only untrustworthy but also an idiot.</p>
 <p>Programmers make mistakes, but they aren't idiots.</p>
 <ul>
@@ -2195,7 +3806,7 @@ f : a \to b , ~ x : m~a , ~ Functor~m \vdash (f~x \to_\beta fmap~f~x)
 <li>&quot;Java's solution to the problem of C++ allowing you to blow your foot off was to chop off your legs.&quot;</li>
 </ul></li>
 </ul>
-<h4 id="throwing-away-the-good-parts-of-c"><span class="section_number">9.3.3</span><span class="section_title">Throwing away the good parts of C++</span></h4>
+<h4 id="throwing-away-the-good-parts-of-c"><span class="section_number">11.3.3</span><span class="section_title">Throwing away the good parts of C++</span></h4>
 <ul>
 <li>Forbidding multiple inheritance is a design mistake.</li>
 <li>Java interfaces are a design mistake. See 2015 Robert C. Martin article <a href="http://blog.cleancoder.com/uncle-bob/2015/01/08/InterfaceConsideredHarmful.html">Java interface considered harmful</a>.</li>
@@ -2207,9 +3818,9 @@ f : a \to b , ~ x : m~a , ~ Functor~m \vdash (f~x \to_\beta fmap~f~x)
 </ul></li>
 </ul></li>
 </ul>
-<h4 id="weak-functional-programming-allowing-partial-functions"><span class="section_number">9.3.4</span><span class="section_title">Weak functional programming (allowing partial functions)</span></h4>
+<h4 id="weak-functional-programming-allowing-partial-functions"><span class="section_number">11.3.4</span><span class="section_title">Weak functional programming (allowing partial functions)</span></h4>
 <p>Allowing partial functions is a design mistake.</p>
-<h3 id="c-and-c"><span class="section_number">9.4</span><span class="section_title">C and C++</span></h3>
+<h3 id="c-and-c"><span class="section_number">11.4</span><span class="section_title">C and C++</span></h3>
 <p>In the 1970s these were tolerable: memory was limited, tools didn't exist. In 2018 these aren't tolerable.</p>
 <ul>
 <li>Unattainable standard.
@@ -2226,7 +3837,7 @@ f : a \to b , ~ x : m~a , ~ Functor~m \vdash (f~x \to_\beta fmap~f~x)
 <li>Header files. They should be automatically generated from C files instead.</li>
 <li>Preprocessor works on text, not on C/C++ AST.</li>
 </ul>
-<h3 id="haskell"><span class="section_number">9.5</span><span class="section_title">Haskell</span></h3>
+<h3 id="haskell"><span class="section_number">11.5</span><span class="section_title">Haskell</span></h3>
 <ul>
 <li>Template Haskell is a mistake.
 <ul>
@@ -2239,10 +3850,10 @@ f : a \to b , ~ x : m~a , ~ Functor~m \vdash (f~x \to_\beta fmap~f~x)
 </ul>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">9.5.1</span><span class="section_title"><a href="#not-leveraging-user-defined-isomorphisms">Not leveraging user-defined isomorphisms</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">11.5.1</span><span class="section_title"><a href="#not-leveraging-user-defined-isomorphisms">Not leveraging user-defined isomorphisms</a></span><span class="word_count">(14w~1m)</span></li>
 </ul>
 </div>
-<h4 id="not-leveraging-user-defined-isomorphisms"><span class="section_number">9.5.1</span><span class="section_title">Not leveraging user-defined isomorphisms</span></h4>
+<h4 id="not-leveraging-user-defined-isomorphisms"><span class="section_number">11.5.1</span><span class="section_title">Not leveraging user-defined isomorphisms</span></h4>
 <p>I want this:</p>
 <pre class="example"><code>data A = A0 | A1
 data B = B0 | B1
@@ -2252,27 +3863,27 @@ isomorphism &quot;iso&quot; between A and B is
     A1 ~ B1
 </code></pre>
 <p>instead of this:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb31-1" title="1"><span class="kw">data</span> <span class="dt">Iso</span> a b <span class="fu">=</span> <span class="dt">MkIso</span> {</a>
-<a class="sourceLine" id="cb31-2" title="2"><span class="ot">        fwd ::</span> a <span class="ot">-&gt;</span> b</a>
-<a class="sourceLine" id="cb31-3" title="3">        ,<span class="ot"> rev ::</span> b <span class="ot">-&gt;</span> a</a>
-<a class="sourceLine" id="cb31-4" title="4">    }</a>
-<a class="sourceLine" id="cb31-5" title="5"></a>
-<a class="sourceLine" id="cb31-6" title="6"><span class="ot">iso ::</span> <span class="dt">Iso</span> a b</a>
-<a class="sourceLine" id="cb31-7" title="7">iso <span class="fu">=</span> <span class="dt">MkIso</span> ab ba <span class="kw">where</span></a>
-<a class="sourceLine" id="cb31-8" title="8"></a>
-<a class="sourceLine" id="cb31-9" title="9"><span class="ot">    ab ::</span> <span class="dt">A</span> <span class="ot">-&gt;</span> <span class="dt">B</span></a>
-<a class="sourceLine" id="cb31-10" title="10">    ab <span class="dt">A0</span> <span class="fu">=</span> <span class="dt">B0</span></a>
-<a class="sourceLine" id="cb31-11" title="11">    ab <span class="dt">A1</span> <span class="fu">=</span> <span class="dt">B1</span></a>
-<a class="sourceLine" id="cb31-12" title="12"></a>
-<a class="sourceLine" id="cb31-13" title="13"><span class="ot">    ba ::</span> <span class="dt">B</span> <span class="ot">-&gt;</span> <span class="dt">A</span></a>
-<a class="sourceLine" id="cb31-14" title="14">    ba <span class="dt">B0</span> <span class="fu">=</span> <span class="dt">A0</span></a>
-<a class="sourceLine" id="cb31-15" title="15">    ba <span class="dt">B1</span> <span class="fu">=</span> <span class="dt">A1</span></a></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb82-1" title="1"><span class="kw">data</span> <span class="dt">Iso</span> a b <span class="fu">=</span> <span class="dt">MkIso</span> {</a>
+<a class="sourceLine" id="cb82-2" title="2"><span class="ot">        fwd ::</span> a <span class="ot">-&gt;</span> b</a>
+<a class="sourceLine" id="cb82-3" title="3">        ,<span class="ot"> rev ::</span> b <span class="ot">-&gt;</span> a</a>
+<a class="sourceLine" id="cb82-4" title="4">    }</a>
+<a class="sourceLine" id="cb82-5" title="5"></a>
+<a class="sourceLine" id="cb82-6" title="6"><span class="ot">iso ::</span> <span class="dt">Iso</span> a b</a>
+<a class="sourceLine" id="cb82-7" title="7">iso <span class="fu">=</span> <span class="dt">MkIso</span> ab ba <span class="kw">where</span></a>
+<a class="sourceLine" id="cb82-8" title="8"></a>
+<a class="sourceLine" id="cb82-9" title="9"><span class="ot">    ab ::</span> <span class="dt">A</span> <span class="ot">-&gt;</span> <span class="dt">B</span></a>
+<a class="sourceLine" id="cb82-10" title="10">    ab <span class="dt">A0</span> <span class="fu">=</span> <span class="dt">B0</span></a>
+<a class="sourceLine" id="cb82-11" title="11">    ab <span class="dt">A1</span> <span class="fu">=</span> <span class="dt">B1</span></a>
+<a class="sourceLine" id="cb82-12" title="12"></a>
+<a class="sourceLine" id="cb82-13" title="13"><span class="ot">    ba ::</span> <span class="dt">B</span> <span class="ot">-&gt;</span> <span class="dt">A</span></a>
+<a class="sourceLine" id="cb82-14" title="14">    ba <span class="dt">B0</span> <span class="fu">=</span> <span class="dt">A0</span></a>
+<a class="sourceLine" id="cb82-15" title="15">    ba <span class="dt">B1</span> <span class="fu">=</span> <span class="dt">A1</span></a></code></pre></div>
 <p>Explicit isomorphism may help reduce newtype boilerplate.</p>
-<h3 id="prolog-1"><span class="section_number">9.6</span><span class="section_title">Prolog</span></h3>
+<h3 id="prolog-1"><span class="section_number">11.6</span><span class="section_title">Prolog</span></h3>
 <p>Difference between rules and queries. Files contain rules. Interpreters accept queries. This is a mistake that prevents local contexts.</p>
 <p>Instead of assert and retract, Prolog should have scopes: with(Rules,Query).</p>
 <p>Instead of Prolog modules, Prolog should have dictionaries and JavaScript-like require(Path).</p>
-<h3 id="what-2"><span class="section_number">9.7</span><span class="section_title">what</span></h3>
+<h3 id="what-4"><span class="section_number">11.7</span><span class="section_title">what</span></h3>
 <p>A problem with current programming methodologies is that they don't capture the higher-level properties of software, such as the architecture. For example, how do we write, in a way that the computer can exploit, this statement: &quot;The fields of class C correspond one-to-one with the columns of database table T.&quot;?</p>
 <ul>
 <li><p>Other people's experiences</p>
@@ -2293,29 +3904,29 @@ isomorphism &quot;iso&quot; between A and B is
 <p>for elem in table surprisingly doesn't work, but this is for greater cause; the for syntax is surprisingly consistent (iterators, which are coroutines)</p>
 <p>Distinguishing statements and expressions</p>
 <p>Why do new language designers still repeat design mistakes?</p>
-<h3 id="lisp-design-mistake-having-separate-data-and-function-cell"><span class="section_number">9.8</span><span class="section_title">Lisp design mistake: having separate data and function cell</span></h3>
-<h2 id="total-mess"><span class="section_number">10</span><span class="section_title">Total mess</span></h2>
+<h3 id="lisp-design-mistake-having-separate-data-and-function-cell"><span class="section_number">11.8</span><span class="section_title">Lisp design mistake: having separate data and function cell</span></h3>
+<h2 id="total-mess"><span class="section_number">12</span><span class="section_title">Total mess</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">10.1</span><span class="section_title"><a href="#catching-mistakes-checking-proving-reasoning-type-systems">Catching mistakes; checking; proving; reasoning; type systems</a></span><span class="word_count">(748w~4m)</span></li>
-<li><span class="section_number">10.2</span><span class="section_title"><a href="#what-4">What</a></span><span class="word_count">(2104w~11m)</span></li>
+<li><span class="section_number">12.1</span><span class="section_title"><a href="#catching-mistakes-checking-proving-reasoning-type-systems">Catching mistakes; checking; proving; reasoning; type systems</a></span><span class="word_count">(748w~4m)</span></li>
+<li><span class="section_number">12.2</span><span class="section_title"><a href="#what-6">What</a></span><span class="word_count">(2104w~11m)</span></li>
 </ul>
 </div>
-<h3 id="catching-mistakes-checking-proving-reasoning-type-systems"><span class="section_number">10.1</span><span class="section_title">Catching mistakes; checking; proving; reasoning; type systems</span></h3>
+<h3 id="catching-mistakes-checking-proving-reasoning-type-systems"><span class="section_number">12.1</span><span class="section_title">Catching mistakes; checking; proving; reasoning; type systems</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">10.1.1</span><span class="section_title"><a href="#curry-style-extrinsic-typing-instead-of-church-style-intrinsic-typing">Curry-style extrinsic typing instead of Church-style intrinsic typing</a></span><span class="word_count">(218w~2m)</span></li>
-<li><span class="section_number">10.1.2</span><span class="section_title"><a href="#what-is-a-type-understanding-what-a-type-is-from-how-it-is-used">What is a type? Understanding what a type is from how it is used</a></span><span class="word_count">(199w~1m)</span></li>
-<li><span class="section_number">10.1.3</span><span class="section_title"><a href="#church-types-and-curry-types">Church types and Curry types</a></span><span class="word_count">(35w~1m)</span></li>
-<li><span class="section_number">10.1.4</span><span class="section_title"><a href="#row-polymorphism">Row polymorphism</a></span><span class="word_count">(53w~1m)</span></li>
-<li><span class="section_number">10.1.5</span><span class="section_title"><a href="#what-3">what</a></span><span class="word_count">(54w~1m)</span></li>
-<li><span class="section_number">10.1.6</span><span class="section_title"><a href="#parametricity">Parametricity</a></span><span class="word_count">(62w~1m)</span></li>
-<li><span class="section_number">10.1.7</span><span class="section_title"><a href="#subtyping">Subtyping</a></span><span class="word_count">(29w~1m)</span></li>
-<li><span class="section_number">10.1.8</span><span class="section_title"><a href="#type-checking">Type-checking</a></span><span class="word_count">(42w~1m)</span></li>
-<li><span class="section_number">10.1.9</span><span class="section_title"><a href="#algebraic-subtyping">Algebraic subtyping?</a></span><span class="word_count">(58w~1m)</span></li>
+<li><span class="section_number">12.1.1</span><span class="section_title"><a href="#curry-style-extrinsic-typing-instead-of-church-style-intrinsic-typing">Curry-style extrinsic typing instead of Church-style intrinsic typing</a></span><span class="word_count">(218w~2m)</span></li>
+<li><span class="section_number">12.1.2</span><span class="section_title"><a href="#what-is-a-type-understanding-what-a-type-is-from-how-it-is-used">What is a type? Understanding what a type is from how it is used</a></span><span class="word_count">(199w~1m)</span></li>
+<li><span class="section_number">12.1.3</span><span class="section_title"><a href="#church-types-and-curry-types">Church types and Curry types</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">12.1.4</span><span class="section_title"><a href="#row-polymorphism">Row polymorphism</a></span><span class="word_count">(53w~1m)</span></li>
+<li><span class="section_number">12.1.5</span><span class="section_title"><a href="#what-5">what</a></span><span class="word_count">(54w~1m)</span></li>
+<li><span class="section_number">12.1.6</span><span class="section_title"><a href="#parametricity">Parametricity</a></span><span class="word_count">(62w~1m)</span></li>
+<li><span class="section_number">12.1.7</span><span class="section_title"><a href="#subtyping">Subtyping</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">12.1.8</span><span class="section_title"><a href="#type-checking">Type-checking</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">12.1.9</span><span class="section_title"><a href="#algebraic-subtyping">Algebraic subtyping?</a></span><span class="word_count">(58w~1m)</span></li>
 </ul>
 </div>
-<h4 id="curry-style-extrinsic-typing-instead-of-church-style-intrinsic-typing"><span class="section_number">10.1.1</span><span class="section_title">Curry-style extrinsic typing instead of Church-style intrinsic typing</span></h4>
+<h4 id="curry-style-extrinsic-typing-instead-of-church-style-intrinsic-typing"><span class="section_number">12.1.1</span><span class="section_title">Curry-style extrinsic typing instead of Church-style intrinsic typing</span></h4>
 <p>Types help, but they are not the essence. Types are a means of writing better programs, not an end to be achieved for its own sake. Type should not be a property of an expression. Prefer Curry-style (domain-free) type system to Church-style (domainful) type system.</p>
 <p>&quot;Domain-Free Pure Type Systems&quot; <a href="https://pdfs.semanticscholar.org/e638/74519839d4f2baf27f95078fc50ed0540fed.pdf">https://pdfs.semanticscholar.org/e638/74519839d4f2baf27f95078fc50ed0540fed.pdf</a></p>
 <p>But, if we don't have types, how do we resolve overloading? We can't resolve overloading without context. The only context we have is what variable has what type.</p>
@@ -2326,7 +3937,7 @@ isomorphism &quot;iso&quot; between A and B is
   + (if pregnant P then 10 else 0)
 </code></pre>
 <p>The meaning is as in mathematics: all numbers are real numbers. Realization then produces a restricted subset of that description that works for all numbers whose magnitude is smaller than 2^63. A program is a restricted (realized, finitized) mathematical description. Example: The mathematical description f x = x + 1 works with all real numbers. The program works with all natural numbers from 0 to 2^64-1. The realization of a mathematical function (A,B,F) is simply a finite subset of it: (A',B',F'), where A', B', and F' are finite. Even if you use arbitrary-precision arithmetic, you are still limited to the memory of the machine. For example, if the machine only has 1000 bytes of memory, then it can only realize number smaller than 2<sup>(1000 * 8)</sup>.</p>
-<h4 id="what-is-a-type-understanding-what-a-type-is-from-how-it-is-used"><span class="section_number">10.1.2</span><span class="section_title">What is a type? Understanding what a type is from how it is used</span></h4>
+<h4 id="what-is-a-type-understanding-what-a-type-is-from-how-it-is-used"><span class="section_number">12.1.2</span><span class="section_title">What is a type? Understanding what a type is from how it is used</span></h4>
 <p>Mathematically, A type is a set whose membership is syntactically decidable.</p>
 <p>Engineeringly, A type gives meaning to bit patterns.</p>
 <p>A type encodes meaning into bit patterns.</p>
@@ -2352,7 +3963,7 @@ isomorphism &quot;iso&quot; between A and B is
 <li><a href="https://existentialtype.wordpress.com/2011/03/19/dynamic-languages-are-static-languages/">Dynamic Languages are Static Languages | Existential Type</a></li>
 </ul></li>
 </ul>
-<h4 id="church-types-and-curry-types"><span class="section_number">10.1.3</span><span class="section_title">Church types and Curry types</span></h4>
+<h4 id="church-types-and-curry-types"><span class="section_number">12.1.3</span><span class="section_title">Church types and Curry types</span></h4>
 <p>Things to read:</p>
 <ul>
 <li>2008, article, &quot;Church and Curry: Combining Intrinsic and Extrinsic Typing&quot;, Frank Pfenning <a href="https://www.cs.cmu.edu/~fp/papers/andrews08.pdf">https://www.cs.cmu.edu/~fp/papers/andrews08.pdf</a></li>
@@ -2362,7 +3973,7 @@ isomorphism &quot;iso&quot; between A and B is
 <li><a href="https://www.reddit.com/r/programming/comments/2cavea/church_vs_curry_types_two_conflicting_perspectives/">Church vs Curry Types – Two conflicting perspectives : programming</a></li>
 </ul></li>
 </ul>
-<h4 id="row-polymorphism"><span class="section_number">10.1.4</span><span class="section_title">Row polymorphism</span></h4>
+<h4 id="row-polymorphism"><span class="section_number">12.1.4</span><span class="section_title">Row polymorphism</span></h4>
 <p>Why is it called row polymorphism? Where is the row? See &quot;Objects and Aspects: Row Polymorphism&quot;, Neel Krishnaswami <a href="https://www.cs.cmu.edu/~neelk/rows.pdf">pdf</a></p>
 <p>In the following, the function <code>set_name_r</code> is row-polymorphic. The function <code>set_name_n</code> is not row-polymorphic.</p>
 <pre class="example"><code>type Person = { name : String; age : Int; };
@@ -2393,7 +4004,7 @@ def = set_name_r &quot;DEF&quot; abc;
 <li><p>Row polymorphism vs structural subtyping</p>
 <p><a href="https://news.ycombinator.com/item?id=13047934">https://news.ycombinator.com/item?id=13047934</a></p></li>
 </ol>
-<h4 id="what-3"><span class="section_number">10.1.5</span><span class="section_title">what</span></h4>
+<h4 id="what-5"><span class="section_number">12.1.5</span><span class="section_title">what</span></h4>
 <ul>
 <li>Liquid Haskell <a href="https://ucsd-progsys.github.io/liquidhaskell-blog/">https://ucsd-progsys.github.io/liquidhaskell-blog/</a></li>
 <li><a href="https://brianmckenna.org/blog/row_polymorphism_isnt_subtyping">Row Polymorphism Isn't Subtyping - BAM Weblog</a></li>
@@ -2408,7 +4019,7 @@ def = set_name_r &quot;DEF&quot; abc;
 <li>NOOL 2016 article &quot;Static Typing Without Static Types — Typing Inheritance from the Bottom Up&quot; <a href="http://www.it.uu.se/workshop/nool16/nool16-paper4.pdf">pdf</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Literate_programming">https://en.wikipedia.org/wiki/Literate_programming</a></li>
 </ul>
-<h4 id="parametricity"><span class="section_number">10.1.6</span><span class="section_title">Parametricity</span></h4>
+<h4 id="parametricity"><span class="section_number">12.1.6</span><span class="section_title">Parametricity</span></h4>
 <ul>
 <li>Every recursive type can be written as `mu a. F a` where F is the associated free functor?
 <ul>
@@ -2420,11 +4031,11 @@ def = set_name_r &quot;DEF&quot; abc;
 <li><a href="https://bartoszmilewski.com/2014/09/22/parametricity-money-for-nothing-and-theorems-for-free/">Parametricity: Money for Nothing and Theorems for Free - Bartosz Milewski's Programming Cafe</a></li>
 </ul></li>
 </ul>
-<h4 id="subtyping"><span class="section_number">10.1.7</span><span class="section_title">Subtyping</span></h4>
+<h4 id="subtyping"><span class="section_number">12.1.7</span><span class="section_title">Subtyping</span></h4>
 <p>A subtyping relation is an ordering of types.</p>
 <p>So what? That is technically correct but that doesn't give any insights.</p>
 <p>A subtype is an ordering that follows the Liskov substitution principle?</p>
-<h4 id="type-checking"><span class="section_number">10.1.8</span><span class="section_title">Type-checking</span></h4>
+<h4 id="type-checking"><span class="section_number">12.1.8</span><span class="section_title">Type-checking</span></h4>
 <ul>
 <li>Every type checking algorithm is unification (logic programming).
 <ul>
@@ -2434,7 +4045,7 @@ def = set_name_r &quot;DEF&quot; abc;
 <li>See Algorithm W in <a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system">WP:Hindley–Milner type system</a>.</li>
 </ul></li>
 </ul>
-<h4 id="algebraic-subtyping"><span class="section_number">10.1.9</span><span class="section_title">Algebraic subtyping?</span></h4>
+<h4 id="algebraic-subtyping"><span class="section_number">12.1.9</span><span class="section_title">Algebraic subtyping?</span></h4>
 <ul>
 <li>subtyping
 <ul>
@@ -2462,22 +4073,22 @@ def = set_name_r &quot;DEF&quot; abc;
 <li>What does &quot;X is a Y&quot; mean?</li>
 </ul>
 <p>It means P(X) =&gt; P(Y) for every predicate P. Liskov substitution principle. Does it mean &quot;X is a subclass of Y&quot; or &quot;X is an instance of Y&quot;?</p>
-<h3 id="what-4"><span class="section_number">10.2</span><span class="section_title">What</span></h3>
+<h3 id="what-6"><span class="section_number">12.2</span><span class="section_title">What</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">10.2.1</span><span class="section_title"><a href="#introduction">Introduction</a></span><span class="word_count">(115w~1m)</span></li>
-<li><span class="section_number">10.2.2</span><span class="section_title"><a href="#functional-programming">Functional programming</a></span><span class="word_count">(16w~1m)</span></li>
-<li><span class="section_number">10.2.3</span><span class="section_title"><a href="#what-we-do-when-we-understand-programs">What we do when we understand programs</a></span><span class="word_count">(53w~1m)</span></li>
-<li><span class="section_number">10.2.4</span><span class="section_title"><a href="#modeling">Modeling</a></span><span class="word_count">(218w~2m)</span></li>
-<li><span class="section_number">10.2.5</span><span class="section_title"><a href="#ramble-what-is-programming-language-expressivity">Ramble: What is programming language expressivity?</a></span><span class="word_count">(200w~1m)</span></li>
-<li><span class="section_number">10.2.6</span><span class="section_title"><a href="#present-in-acm-sigplan-conferences">Present in ACM SIGPLAN conferences?</a></span><span class="word_count">(26w~1m)</span></li>
-<li><span class="section_number">10.2.7</span><span class="section_title"><a href="#swi-prolog-stuff">SWI-Prolog stuff?</a></span><span class="word_count">(96w~1m)</span></li>
-<li><span class="section_number">10.2.8</span><span class="section_title"><a href="#ideas">Ideas?</a></span><span class="word_count">(12w~1m)</span></li>
-<li><span class="section_number">10.2.9</span><span class="section_title"><a href="#proglang-mess">Proglang mess</a></span><span class="word_count">(1338w~7m)</span></li>
-<li><span class="section_number">10.2.10</span><span class="section_title"><a href="#how-many-arguments-does-id-have">How many arguments does id have?</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">12.2.1</span><span class="section_title"><a href="#introduction">Introduction</a></span><span class="word_count">(115w~1m)</span></li>
+<li><span class="section_number">12.2.2</span><span class="section_title"><a href="#functional-programming">Functional programming</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">12.2.3</span><span class="section_title"><a href="#what-we-do-when-we-understand-programs">What we do when we understand programs</a></span><span class="word_count">(53w~1m)</span></li>
+<li><span class="section_number">12.2.4</span><span class="section_title"><a href="#modeling">Modeling</a></span><span class="word_count">(218w~2m)</span></li>
+<li><span class="section_number">12.2.5</span><span class="section_title"><a href="#ramble-what-is-programming-language-expressivity">Ramble: What is programming language expressivity?</a></span><span class="word_count">(200w~1m)</span></li>
+<li><span class="section_number">12.2.6</span><span class="section_title"><a href="#present-in-acm-sigplan-conferences">Present in ACM SIGPLAN conferences?</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">12.2.7</span><span class="section_title"><a href="#swi-prolog-stuff">SWI-Prolog stuff?</a></span><span class="word_count">(96w~1m)</span></li>
+<li><span class="section_number">12.2.8</span><span class="section_title"><a href="#ideas">Ideas?</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">12.2.9</span><span class="section_title"><a href="#proglang-mess">Proglang mess</a></span><span class="word_count">(1338w~7m)</span></li>
+<li><span class="section_number">12.2.10</span><span class="section_title"><a href="#how-many-arguments-does-id-have">How many arguments does id have?</a></span><span class="word_count">(39w~1m)</span></li>
 </ul>
 </div>
-<h4 id="introduction"><span class="section_number">10.2.1</span><span class="section_title">Introduction</span></h4>
+<h4 id="introduction"><span class="section_number">12.2.1</span><span class="section_title">Introduction</span></h4>
 <ol>
 <li><p>Goal</p>
 <p>The goal is to build a usable formal language up from lambda calculus.</p>
@@ -2506,12 +4117,12 @@ def = set_name_r &quot;DEF&quot; abc;
 <li><p>Interoperate with existing systems. Improve existing systems. Enable replacement, but don't require it.</p></li>
 </ol></li>
 </ol>
-<h4 id="functional-programming"><span class="section_number">10.2.2</span><span class="section_title">Functional programming</span></h4>
+<h4 id="functional-programming"><span class="section_number">12.2.2</span><span class="section_title">Functional programming</span></h4>
 <p>Every functional programming language is lambda calculus plus plus.</p>
 <p>Functional programming is lambda calculus plus plus.</p>
-<h4 id="what-we-do-when-we-understand-programs"><span class="section_number">10.2.3</span><span class="section_title">What we do when we understand programs</span></h4>
+<h4 id="what-we-do-when-we-understand-programs"><span class="section_number">12.2.3</span><span class="section_title">What we do when we understand programs</span></h4>
 <p>When we are trying to understand a program, what we actually do is we run an <em>abstract interpretation</em> of the program in our head. We <em>model</em> the program in our internal language of thought: logic, most likely first-order logic. &quot;Abstract interpretation&quot; has a specific meaning; see <a href="https://en.wikipedia.org/wiki/Abstract_interpretation">Wikipedia</a>.</p>
-<h4 id="modeling"><span class="section_number">10.2.4</span><span class="section_title">Modeling</span></h4>
+<h4 id="modeling"><span class="section_number">12.2.4</span><span class="section_title">Modeling</span></h4>
 <ol>
 <li><p>Prolog meta-thinking: logic, language, query, and modeling: how many parameters should we use?</p>
 <p>Consider these models:</p>
@@ -2537,7 +4148,7 @@ def = set_name_r &quot;DEF&quot; abc;
 <p>&quot;Show me all databases.&quot; ?- name_property_value(E, type, database). % press semicolon repeatedly</p>
 <p>&quot;X is a database&quot; vs &quot;The type of X is database&quot; (The attribute &quot;type&quot; of X has the value &quot;database&quot;)</p></li>
 </ol>
-<h4 id="ramble-what-is-programming-language-expressivity"><span class="section_number">10.2.5</span><span class="section_title">Ramble: What is programming language expressivity?</span></h4>
+<h4 id="ramble-what-is-programming-language-expressivity"><span class="section_number">12.2.5</span><span class="section_title">Ramble: What is programming language expressivity?</span></h4>
 <ul>
 <li>Hierarchy of programming language semantics?
 <ul>
@@ -2572,9 +4183,9 @@ def = set_name_r &quot;DEF&quot; abc;
 <p>Language A is more complex than language B iff A is more B-expressive than B is A-expressive.</p>
 <p>Prolog is simple to reason but hard to implement? Java is hard to reason but simple to implement? It is easier to write Prolog interpreter in Java than to write Java interpreter in Prolog. But how does Prolog's simplicity enables us to write better programs? If a language is more complex, shouldn't it be more expressive/powerful? What is the relationship between complexity, expressivity, and power? What is expressivity?</p>
 <p>I can make a language more complex without adding expressivity, by adding features that don't fit with the language?</p>
-<h4 id="present-in-acm-sigplan-conferences"><span class="section_number">10.2.6</span><span class="section_title">Present in ACM SIGPLAN conferences?</span></h4>
+<h4 id="present-in-acm-sigplan-conferences"><span class="section_number">12.2.6</span><span class="section_title">Present in ACM SIGPLAN conferences?</span></h4>
 <p>ACM SIGPLAN POPL/PLDI/SLE <a href="https://www.sigplan.org/Conferences/">https://www.sigplan.org/Conferences/</a> seem to be the right conferences to disseminate this idea, but I should clean up this article first.</p>
-<h4 id="swi-prolog-stuff"><span class="section_number">10.2.7</span><span class="section_title">SWI-Prolog stuff?</span></h4>
+<h4 id="swi-prolog-stuff"><span class="section_number">12.2.7</span><span class="section_title">SWI-Prolog stuff?</span></h4>
 <ol>
 <li><p>What should SWI-Prolog modules be?</p>
 <p>We want these to separate names and referents:</p>
@@ -2595,9 +4206,9 @@ def = set_name_r &quot;DEF&quot; abc;
 <li>comparison of the module systems of various Prolog implementations</li>
 </ul></li>
 </ol>
-<h4 id="ideas"><span class="section_number">10.2.8</span><span class="section_title">Ideas?</span></h4>
+<h4 id="ideas"><span class="section_number">12.2.8</span><span class="section_title">Ideas?</span></h4>
 <p>The problem of C++ is that it tries to do too much.</p>
-<h4 id="proglang-mess"><span class="section_number">10.2.9</span><span class="section_title">Proglang mess</span></h4>
+<h4 id="proglang-mess"><span class="section_number">12.2.9</span><span class="section_title">Proglang mess</span></h4>
 <p>A Logic Programming Language with Lambda-Abstraction, Function Variables, and Simple Unification</p>
 <p><a href="https://pdfs.semanticscholar.org/8935/8a00317f9e380abe02b9f0d04536a6cd3121.pdf">https://pdfs.semanticscholar.org/8935/8a00317f9e380abe02b9f0d04536a6cd3121.pdf</a></p>
 <p><a href="https://www.google.co.id/amp/s/amp.reddit.com/r/ProgrammingLanguages/comments/6gsacs/any_info_on_compiling_lambda_calculus_to_other/">https://www.google.co.id/amp/s/amp.reddit.com/r/ProgrammingLanguages/comments/6gsacs/any_info_on_compiling_lambda_calculus_to_other/</a> Compiling without continuations</p>
@@ -2824,12 +4435,12 @@ PageExp ::= Node | { MLNodeExp }
 </ul></li>
 </ul></li>
 </ul>
-<h4 id="how-many-arguments-does-id-have"><span class="section_number">10.2.10</span><span class="section_title">How many arguments does id have?</span></h4>
+<h4 id="how-many-arguments-does-id-have"><span class="section_number">12.2.10</span><span class="section_title">How many arguments does id have?</span></h4>
 <p>Iceland_jack asked: <a href="https://twitter.com/ErikDominikus/status/1074009681553707008">https://twitter.com/ErikDominikus/status/1074009681553707008</a></p>
 <p>0 in SKI combinator calculus</p>
 <p>1 in Haskell / ML / Ocaml / F# / Scheme / JavaScript / untyped lambda-calculus</p>
 <p>2 in Idris / Lean / GHC Core / System F / Coq</p>
-<h2 id="bibliography" class="unnumbered"><span class="section_number">11</span><span class="section_title">Bibliography</span></h2>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">13</span><span class="section_title">Bibliography</span></h2>
 <div id="refs" class="references">
 <div id="ref-cartwright2013inheritance">
 <p>[1] Cartwright, R. and Moez, A.A. 2013. Inheritance is subtyping. <em>The 25th nordic workshop on programming theory (nwpt)</em> (2013).</p>
@@ -2847,6 +4458,7 @@ PageExp ::= Node | { MLNodeExp }
 <li id="fn4"><p><a href="ftp://obaluae.inf.puc-rio.br/pub/docs/Publications/88_AI_Furtado_SINPLAN.Not.pdf">ftp://obaluae.inf.puc-rio.br/pub/docs/Publications/88_AI_Furtado_SINPLAN.Not.pdf</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
 <li id="fn5"><p><a href="http://www.mtome.com/Publications/PNLA/prolog-digital.pdf">http://www.mtome.com/Publications/PNLA/prolog-digital.pdf</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
 <li id="fn6"><p><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.311.3514&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.311.3514&amp;rep=rep1&amp;type=pdf</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://turing100.acm.org/lambda_calculus_timeline.pdf">https://turing100.acm.org/lambda_calculus_timeline.pdf</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
