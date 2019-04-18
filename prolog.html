@@ -178,10 +178,12 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">10</span><span class="section_title"><a href="#theoretical-foundations-of-logic-programming">Theoretical foundations of logic programming</a></span><span class="word_count">(467w~3m)</span></li>
 <li><span class="section_number">11</span><span class="section_title"><a href="#artificial-intelligence">Artificial intelligence?</a></span><span class="word_count">(148w~1m)</span></li>
 <li><span class="section_number">12</span><span class="section_title"><a href="#what-mess">What mess?</a></span><span class="word_count">(1670w~9m)</span></li>
-<li><span class="section_number">13</span><span class="section_title"><a href="#rethinking-module-systems-especially-of-prolog">Rethinking module systems, especially of Prolog</a></span><span class="word_count">(3676w~19m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#rethinking-module-systems-especially-of-prolog">Rethinking module systems, especially of Prolog</a></span><span class="word_count">(3607w~19m)</span></li>
 <li><span class="section_number">14</span><span class="section_title"><a href="#the-problems-with-prolog">The problems with Prolog</a></span><span class="word_count">(1223w~7m)</span></li>
-<li><span class="section_number">15</span><span class="section_title"><a href="#prolog-implementation">Prolog implementation</a></span><span class="word_count">(516w~3m)</span></li>
-<li><span class="section_number">16</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(531w~3m)</span></li>
+<li><span class="section_number">15</span><span class="section_title"><a href="#extending-prolog">Extending Prolog</a></span><span class="word_count">(91w~1m)</span></li>
+<li><span class="section_number">16</span><span class="section_title"><a href="#program-checking">Program checking</a></span><span class="word_count">(214w~2m)</span></li>
+<li><span class="section_number">17</span><span class="section_title"><a href="#prolog-implementation">Prolog implementation</a></span><span class="word_count">(516w~3m)</span></li>
+<li><span class="section_number">18</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(531w~3m)</span></li>
 </ul>
 </div>
 <h2 id="finding-psychological-security-before-going-full-prolog"><span class="section_number">1</span><span class="section_title">Finding psychological security before going full Prolog</span></h2>
@@ -2371,8 +2373,7 @@ car(a_car, car(&#39;Toyota&#39;, 2000)).
 <li><span class="section_number">13.7</span><span class="section_title"><a href="#the-implementation-draft-a-clash-free-module-system">&lt;2019-04-02&gt; The implementation? Draft: A clash-free module system</a></span><span class="word_count">(476w~3m)</span></li>
 <li><span class="section_number">13.8</span><span class="section_title"><a href="#implementing-modules">Implementing modules</a></span><span class="word_count">(259w~2m)</span></li>
 <li><span class="section_number">13.9</span><span class="section_title"><a href="#brain-dumps">Brain dumps</a></span><span class="word_count">(8w~1m)</span></li>
-<li><span class="section_number">13.10</span><span class="section_title"><a href="#logical-implication-is-local-variable-scoping">Logical implication is local variable scoping</a></span><span class="word_count">(70w~1m)</span></li>
-<li><span class="section_number">13.11</span><span class="section_title"><a href="#operators-and-adaptive-grammar">Operators and adaptive grammar</a></span><span class="word_count">(123w~1m)</span></li>
+<li><span class="section_number">13.10</span><span class="section_title"><a href="#operators-and-adaptive-grammar">Operators and adaptive grammar</a></span><span class="word_count">(123w~1m)</span></li>
 </ul>
 </div>
 <h3 id="what-are-the-problems-of-existing-module-systems"><span class="section_number">13.1</span><span class="section_title">What are the problems of existing module systems?</span></h3>
@@ -3002,21 +3003,7 @@ export let y = 2;
 <li>LtU comment thread <a href="http://lambda-the-ultimate.org/node/5079">http://lambda-the-ultimate.org/node/5079</a></li>
 </ul></li>
 </ul>
-<h3 id="logical-implication-is-local-variable-scoping"><span class="section_number">13.10</span><span class="section_title">Logical implication is local variable scoping</span></h3>
-<p>I have an example in <code>scope.pro</code>.</p>
-<pre class="example"><code>fun :- (locvar(1) =&gt; locvar(A), format(&quot;locvar is ~w~n&quot;,[A]), nl).
-</code></pre>
-<p>The logical semantics of <code>A =&gt; B</code> is &quot;B is provable, if A is assumed to be true&quot;.</p>
-<p>The operational semantics of <code>A =&gt; B</code> is:</p>
-<ol>
-<li>Assert A.</li>
-<li>Call B.</li>
-<li>Retract A.</li>
-</ol>
-<p>Problem: How do we &quot;undefine&quot; a local variable?</p>
-<p>For example: In <code>A =&gt; B, (not(A) =&gt; C)</code>, we want A to be defined in B but undefined in C.</p>
-<p>Why should we prefer monotonic logic?</p>
-<h3 id="operators-and-adaptive-grammar"><span class="section_number">13.11</span><span class="section_title">Operators and adaptive grammar</span></h3>
+<h3 id="operators-and-adaptive-grammar"><span class="section_number">13.10</span><span class="section_title">Operators and adaptive grammar</span></h3>
 <p>Should operator be module-scoped or global-scoped?</p>
 <p>An operator declaration modifies the Prolog parser/reader's grammar in a limited manner.</p>
 <p>Is it not confusing if parsing a text can, in the middle of parsing, change the grammar that is used to parse the text itself?</p>
@@ -3240,21 +3227,117 @@ assert(p(A,B) :- f(A), g(A), h(A,B)).
 <h3 id="why-should-we-write-type-systems-as-macros"><span class="section_number">14.12</span><span class="section_title">Why should we write type systems as macros?</span></h3>
 <p>WIP implementation of a Haskell-like Lisp in Racket <a href="https://github.com/lexi-lambda/hackett">https://github.com/lexi-lambda/hackett</a></p>
 <p><a href="http://www.ccs.neu.edu/home/stchang/pubs/ckg-popl2017.pdf">http://www.ccs.neu.edu/home/stchang/pubs/ckg-popl2017.pdf</a></p>
-<h2 id="prolog-implementation"><span class="section_number">15</span><span class="section_title">Prolog implementation</span></h2>
+<h2 id="extending-prolog"><span class="section_number">15</span><span class="section_title">Extending Prolog</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">15.1</span><span class="section_title"><a href="#how-would-we-implement-prolog-in-c">How would we implement Prolog in C?</a></span><span class="word_count">(79w~1m)</span></li>
-<li><span class="section_number">15.2</span><span class="section_title"><a href="#why-does-swi-prolog-use-git-submodules-instead-of-a-mono-repo">Why does SWI-Prolog use Git submodules instead of a mono-repo?</a></span><span class="word_count">(121w~1m)</span></li>
-<li><span class="section_number">15.3</span><span class="section_title"><a href="#how-to-contribute-to-swi-prolog">How to contribute to SWI-Prolog?</a></span><span class="word_count">(33w~1m)</span></li>
-<li><span class="section_number">15.4</span><span class="section_title"><a href="#foreign-language-interface">Foreign language interface</a></span><span class="word_count">(185w~1m)</span></li>
-<li><span class="section_number">15.5</span><span class="section_title"><a href="#what-is-a-unicode-character">What is a Unicode character?</a></span><span class="word_count">(47w~1m)</span></li>
-<li><span class="section_number">15.6</span><span class="section_title"><a href="#the-problem-with-dynamic-database">The problem with dynamic database</a></span><span class="word_count">(48w~1m)</span></li>
-<li><span class="section_number">15.7</span><span class="section_title"><a href="#prolog-parser-in-prolog">Prolog parser in Prolog</a></span><span class="word_count">(4w~1m)</span></li>
-<li><span class="section_number">15.8</span><span class="section_title"><a href="#java">Java</a></span><span class="word_count">(1w~1m)</span></li>
-<li><span class="section_number">15.9</span><span class="section_title"><a href="#p-translates-prolog-to-c.">P# translates Prolog to C#.</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">15.1</span><span class="section_title"><a href="#first-order-logic-already-has-local-variable-scoping-and-local-assertion">First order logic already has local variable scoping and local assertion</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">15.2</span><span class="section_title"><a href="#logical-implication-is-local-variable-scoping">Logical implication is local variable scoping</a></span><span class="word_count">(70w~1m)</span></li>
 </ul>
 </div>
-<h3 id="how-would-we-implement-prolog-in-c"><span class="section_number">15.1</span><span class="section_title">How would we implement Prolog in C?</span></h3>
+<h3 id="first-order-logic-already-has-local-variable-scoping-and-local-assertion"><span class="section_number">15.1</span><span class="section_title">First order logic already has local variable scoping and local assertion</span></h3>
+<p>Scoping existential quantified.</p>
+<p>Local assertion is implication.</p>
+<p>We need more than Horn clauses.</p>
+<h3 id="logical-implication-is-local-variable-scoping"><span class="section_number">15.2</span><span class="section_title">Logical implication is local variable scoping</span></h3>
+<p>I have an example in <code>scope.pro</code>.</p>
+<pre class="example"><code>fun :- (locvar(1) =&gt; locvar(A), format(&quot;locvar is ~w~n&quot;,[A]), nl).
+</code></pre>
+<p>The logical semantics of <code>A =&gt; B</code> is &quot;B is provable, if A is assumed to be true&quot;.</p>
+<p>The operational semantics of <code>A =&gt; B</code> is:</p>
+<ol>
+<li>Assert A.</li>
+<li>Call B.</li>
+<li>Retract A.</li>
+</ol>
+<p>Problem: How do we &quot;undefine&quot; a local variable?</p>
+<p>For example: In <code>A =&gt; B, (not(A) =&gt; C)</code>, we want A to be defined in B but undefined in C.</p>
+<p>Why should we prefer monotonic logic?</p>
+<h2 id="program-checking"><span class="section_number">16</span><span class="section_title">Program checking</span></h2>
+<p>Motivation: We want two avoid stupid runtime mistakes that can be prevented before runtime (at &quot;compile&quot; time).</p>
+<p>The problem: Given a Prolog term T, determine whether <code>call(T)</code> will throw a type error. Note that T may be a conjunction of goals.</p>
+<p>I'm thinking about using abstract interpretation or partial deduction.</p>
+<p>Program checking is partial deduction.</p>
+<p>This program is a mistake.</p>
+<pre class="example"><code>p(0).
+mistake1 :- p(foo).
+mistake2 :- number_string(_,_).
+</code></pre>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">16.1</span><span class="section_title"><a href="#typed-first-order-logic">Typed first-order logic</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">16.2</span><span class="section_title"><a href="#vanilla-prolog-type-checking">Vanilla Prolog type-checking</a></span><span class="word_count">(41w~1m)</span></li>
+<li><span class="section_number">16.3</span><span class="section_title"><a href="#type-checking-interpreter">Type-checking interpreter</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">16.4</span><span class="section_title"><a href="#abstract-interpretation">Abstract interpretation</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">16.5</span><span class="section_title"><a href="#problem-the-type-of-variables">Problem: the type of variables</a></span><span class="word_count">(44w~1m)</span></li>
+<li><span class="section_number">16.6</span><span class="section_title"><a href="#problem-non-terminating-predicates">Problem: non-terminating predicates</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">16.7</span><span class="section_title"><a href="#checking-when-unchecked-code-calls-checked-code">Checking when unchecked code calls checked code</a></span><span class="word_count">(7w~1m)</span></li>
+</ul>
+</div>
+<h3 id="typed-first-order-logic"><span class="section_number">16.1</span><span class="section_title">Typed first-order logic</span></h3>
+<p>Typing relation relates symbol to type (Cartesian product of sets) Example: <span class="math inline">\( T(p^2, Integer \times String) \)</span>.</p>
+<pre class="example"><code>type(p/2, relation([integer,string])).
+</code></pre>
+<h3 id="vanilla-prolog-type-checking"><span class="section_number">16.2</span><span class="section_title">Vanilla Prolog type-checking</span></h3>
+<p>Suppose that we have a predicate <code>p/1</code> that expects an integer or a var. We can type-check it like this:</p>
+<pre class="example"><code>% public
+:- export(cp/1).
+cp(A) :-
+    check_or_throw(p(A),before),
+    p(A),
+    check_or_throw(p(A),after).
+
+% private
+p(0).
+p(1).
+
+check(p(A),before) :- integer(A).
+check(p(A),before) :- var(A).
+
+check(p(A),after) :- integer(A).
+
+check_or_throw(A,T) :- check(A,T), !.
+check_or_throw(A,T) :- throw(error(check_failed(A,T),_)).
+</code></pre>
+<p>The advantage is that it is vanilla Prolog. No domain-specific type-specification languages.</p>
+<p>The disadvantage is that it is often done unnecessarily.</p>
+<h3 id="type-checking-interpreter"><span class="section_number">16.3</span><span class="section_title">Type-checking interpreter</span></h3>
+<p>One step further than that is to make a checking interpreter.</p>
+<pre class="example"><code>cp(A) :- interpret(p(A)).
+
+interpret(G) :- check(G,before), call(G), check(G,after).
+</code></pre>
+<h3 id="abstract-interpretation"><span class="section_number">16.4</span><span class="section_title">Abstract interpretation</span></h3>
+<p>The semantics is: If the check succeeds, then the goal will not fail due to stupid type error.</p>
+<p>Unsatisfiability is not a type error. For example, the following <code>q/1</code> is <em>unsatisfiable</em>, but it does not throw a type error.</p>
+<pre class="example"><code>p(0).
+
+q(A) :- p(A), A = 1.
+</code></pre>
+<h3 id="problem-the-type-of-variables"><span class="section_number">16.5</span><span class="section_title">Problem: the type of variables</span></h3>
+<p>We mean the type of the term bound to the variable. Attributed variables are suitable for this scenario. But not all Prolog implementations have attributed variables. So we use gensym?</p>
+<p>Type-checking variables would be easier if Prolog variables were explicitly quantified.</p>
+<h3 id="problem-non-terminating-predicates"><span class="section_number">16.6</span><span class="section_title">Problem: non-terminating predicates</span></h3>
+<pre class="example"><code>check(p(A,B),before) :- integer(A).
+check(p(A,B),after) :- string(B).
+
+p(A,B) :- p(A,B).
+</code></pre>
+<h3 id="checking-when-unchecked-code-calls-checked-code"><span class="section_number">16.7</span><span class="section_title">Checking when unchecked code calls checked code</span></h3>
+<h2 id="prolog-implementation"><span class="section_number">17</span><span class="section_title">Prolog implementation</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">17.1</span><span class="section_title"><a href="#how-would-we-implement-prolog-in-c">How would we implement Prolog in C?</a></span><span class="word_count">(79w~1m)</span></li>
+<li><span class="section_number">17.2</span><span class="section_title"><a href="#why-does-swi-prolog-use-git-submodules-instead-of-a-mono-repo">Why does SWI-Prolog use Git submodules instead of a mono-repo?</a></span><span class="word_count">(121w~1m)</span></li>
+<li><span class="section_number">17.3</span><span class="section_title"><a href="#how-to-contribute-to-swi-prolog">How to contribute to SWI-Prolog?</a></span><span class="word_count">(33w~1m)</span></li>
+<li><span class="section_number">17.4</span><span class="section_title"><a href="#foreign-language-interface">Foreign language interface</a></span><span class="word_count">(185w~1m)</span></li>
+<li><span class="section_number">17.5</span><span class="section_title"><a href="#what-is-a-unicode-character">What is a Unicode character?</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">17.6</span><span class="section_title"><a href="#the-problem-with-dynamic-database">The problem with dynamic database</a></span><span class="word_count">(48w~1m)</span></li>
+<li><span class="section_number">17.7</span><span class="section_title"><a href="#prolog-parser-in-prolog">Prolog parser in Prolog</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">17.8</span><span class="section_title"><a href="#java">Java</a></span><span class="word_count">(1w~1m)</span></li>
+<li><span class="section_number">17.9</span><span class="section_title"><a href="#p-translates-prolog-to-c.">P# translates Prolog to C#.</a></span><span class="word_count">(5w~1m)</span></li>
+</ul>
+</div>
+<h3 id="how-would-we-implement-prolog-in-c"><span class="section_number">17.1</span><span class="section_title">How would we implement Prolog in C?</span></h3>
 <p>I am thinking of these:</p>
 <ul>
 <li>struct Prolog_interpreter</li>
@@ -3321,7 +3404,7 @@ bool prolog_unify (Prolog_term* a, Prolog_term* b) {
 <p>What a C preprocessor does is explained in GNU CPP Overview<a href="#fn93" class="footnote-ref" id="fnref93"><sup>93</sup></a>.</p>
 <p>How does SWI-Prolog implement Prolog in C?</p>
 <p>SWI-Prolog has the macros <code>PL_succeed</code> and <code>PL_fail</code>.</p>
-<h3 id="why-does-swi-prolog-use-git-submodules-instead-of-a-mono-repo"><span class="section_number">15.2</span><span class="section_title">Why does SWI-Prolog use Git submodules instead of a mono-repo?</span></h3>
+<h3 id="why-does-swi-prolog-use-git-submodules-instead-of-a-mono-repo"><span class="section_number">17.2</span><span class="section_title">Why does SWI-Prolog use Git submodules instead of a mono-repo?</span></h3>
 <p>&lt;2019-04-06&gt; Jan Wielemaker wrote on Discourse<a href="#fn94" class="footnote-ref" id="fnref94"><sup>94</sup></a>:</p>
 <blockquote>
 <p>Submodules have had their value in the past when several of the modules were practically managed by other people. At the moment all package modules are practically in maintenance stage and this doesn’t matter too much, but I still like to be able to do so. Submodules were also intended to be shared with other Prolog systems. That too isn’t active right now, but work is going on between XSB and SWI, so who knows?</p>
@@ -3332,16 +3415,16 @@ bool prolog_unify (Prolog_term* a, Prolog_term* b) {
 <li>Subversion can track an empty directory. Git cannot.</li>
 <li>Both SVN<a href="#fn96" class="footnote-ref" id="fnref96"><sup>96</sup></a><a href="#fn97" class="footnote-ref" id="fnref97"><sup>97</sup></a> and Git have problems with merge conflicts that involve renames.</li>
 </ul>
-<h3 id="how-to-contribute-to-swi-prolog"><span class="section_number">15.3</span><span class="section_title">How to contribute to SWI-Prolog?</span></h3>
+<h3 id="how-to-contribute-to-swi-prolog"><span class="section_number">17.3</span><span class="section_title">How to contribute to SWI-Prolog?</span></h3>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">15.3.1</span><span class="section_title"><a href="#how-to-clone-the-git-repository">How to clone the Git repository?</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">17.3.1</span><span class="section_title"><a href="#how-to-clone-the-git-repository">How to clone the Git repository?</a></span><span class="word_count">(29w~1m)</span></li>
 </ul>
 </div>
-<h4 id="how-to-clone-the-git-repository"><span class="section_number">15.3.1</span><span class="section_title">How to clone the Git repository?</span></h4>
+<h4 id="how-to-clone-the-git-repository"><span class="section_number">17.3.1</span><span class="section_title">How to clone the Git repository?</span></h4>
 <p>&lt;2019-04-06&gt; SubmitPatch.html<a href="#fn98" class="footnote-ref" id="fnref98"><sup>98</sup></a> is a little messy. See unix.html<a href="#fn99" class="footnote-ref" id="fnref99"><sup>99</sup></a> about git submodules. See also Discourse<a href="#fn100" class="footnote-ref" id="fnref100"><sup>100</sup></a>.</p>
 <p>It is not a simple git-clone, because we are using submodules.</p>
-<h3 id="foreign-language-interface"><span class="section_number">15.4</span><span class="section_title">Foreign language interface</span></h3>
+<h3 id="foreign-language-interface"><span class="section_number">17.4</span><span class="section_title">Foreign language interface</span></h3>
 <p>SWI-Prolog has a foreign language interface<a href="#fn101" class="footnote-ref" id="fnref101"><sup>101</sup></a>, but I demand more.</p>
 <p>I want to write low-level code <em>directly in Prolog</em>.</p>
 <p>I want to write C code in Prolog. I want to have C with type inference and other cool features in Prolog.</p>
@@ -3367,7 +3450,7 @@ bool prolog_unify (Prolog_term* a, Prolog_term* b) {
 
 nb_write_address(+Address, -Thing)
 </code></pre>
-<h3 id="what-is-a-unicode-character"><span class="section_number">15.5</span><span class="section_title">What is a Unicode character?</span></h3>
+<h3 id="what-is-a-unicode-character"><span class="section_number">17.5</span><span class="section_title">What is a Unicode character?</span></h3>
 <p>This question is tricky.</p>
 <p>Does a character correspond to a code point?</p>
 <p>What about accents, ligatures, etc.?</p>
@@ -3376,7 +3459,7 @@ nb_write_address(+Address, -Thing)
 <p>Is a hanzi a character?</p>
 <p>How many bytes are in a character?</p>
 <p>What are equivalent characters? What is Unicode normalization?<a href="#fn104" class="footnote-ref" id="fnref104"><sup>104</sup></a></p>
-<h3 id="the-problem-with-dynamic-database"><span class="section_number">15.6</span><span class="section_title">The problem with dynamic database</span></h3>
+<h3 id="the-problem-with-dynamic-database"><span class="section_number">17.6</span><span class="section_title">The problem with dynamic database</span></h3>
 <pre class="example"><code>do_something :-
     assert(a), ...
 </code></pre>
@@ -3397,14 +3480,14 @@ int f (struct global* g) {
     return g-&gt;x;
 }
 </code></pre>
-<h3 id="prolog-parser-in-prolog"><span class="section_number">15.7</span><span class="section_title">Prolog parser in Prolog</span></h3>
+<h3 id="prolog-parser-in-prolog"><span class="section_number">17.7</span><span class="section_title">Prolog parser in Prolog</span></h3>
 <p><a href="https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/grammars/parser.html">https://dtai.cs.kuleuven.be/projects/ALP/newsletter/archive_93_96/net/grammars/parser.html</a></p>
-<h3 id="java"><span class="section_number">15.8</span><span class="section_title">Java</span></h3>
+<h3 id="java"><span class="section_number">17.8</span><span class="section_title">Java</span></h3>
 <p><a href="https://stackoverflow.com/questions/1817010/embedded-prolog-interpreter-compiler-for-java">https://stackoverflow.com/questions/1817010/embedded-prolog-interpreter-compiler-for-java</a></p>
 <p><a href="https://github.com/raydac/java-prolog-parser">https://github.com/raydac/java-prolog-parser</a></p>
-<h3 id="p-translates-prolog-to-c."><span class="section_number">15.9</span><span class="section_title">P# translates Prolog to C#.</span></h3>
+<h3 id="p-translates-prolog-to-c."><span class="section_number">17.9</span><span class="section_title">P# translates Prolog to C#.</span></h3>
 <p><a href="https://pdfs.semanticscholar.org/12ec/568a6583d3d66b6821f28269f06937a9f2eb.pdf">https://pdfs.semanticscholar.org/12ec/568a6583d3d66b6821f28269f06937a9f2eb.pdf</a></p>
-<h2 id="bibliography" class="unnumbered"><span class="section_number">16</span><span class="section_title">Bibliography</span></h2>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">18</span><span class="section_title">Bibliography</span></h2>
 <div id="refs" class="references">
 <div id="ref-afshari2012liberating">
 <p>[1] Afshari, M. et al. 2012. Liberating the programmer with prorogued programming. <em>Proceedings of the acm international symposium on new ideas, new paradigms, and reflections on programming and software</em> (2012), 11–26. url: &lt;<a href="http://earlbarr.com/publications/prorogue.pdf">http://earlbarr.com/publications/prorogue.pdf</a>&gt;.</p>

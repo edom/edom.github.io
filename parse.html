@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <div class="local_table_of_contents">
 <ul>
 <li><span class="section_number">1</span><span class="section_title"><a href="#what-is-parsing">What is parsing?</a></span><span class="word_count">(825w~5m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#left-recursion-elimination">Left-recursion elimination</a></span><span class="word_count">(706w~4m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#left-recursion-elimination">Left-recursion elimination</a></span><span class="word_count">(806w~5m)</span></li>
 <li><span class="section_number">3</span><span class="section_title"><a href="#language-oriented-approach">Language-oriented approach</a></span><span class="word_count">(47w~1m)</span></li>
 <li><span class="section_number">4</span><span class="section_title"><a href="#what-is-the-inverse-of-parsing">What is the inverse of parsing?</a></span><span class="word_count">(150w~1m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#relational-parsing">Relational parsing</a></span><span class="word_count">(273w~2m)</span></li>
@@ -293,7 +293,10 @@ D_a(PQ) = (D_a P) Q + \delta(P) D_a Q
 P(xy) = combine(P(x), P(y))
 \]</span></p>
 <h2 id="left-recursion-elimination"><span class="section_number">2</span><span class="section_title">Left-recursion elimination</span></h2>
-<p>It is possible to manually eliminate left recursion by rewriting all rules of the form <span class="math inline">\(A \to AB | C\)</span> to <span class="math inline">\(A \to C B^*\)</span> where each of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> is an expression that does not begin with <span class="math inline">\(A\)</span>. I have an example in <code>parse_manual.pro</code>.</p>
+<p>It is possible to <em>manually</em> eliminate left recursion by rewriting all rules of the form <span class="math inline">\(A \to AB | C\)</span> to <span class="math inline">\(A \to C B^*\)</span> where each of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> is an expression that does not begin with <span class="math inline">\(A\)</span>. I have an example in <code>parse_manual.pro</code>.</p>
+<p>Are we OK with manual transformations? There are not many left-recursive rules in practice.</p>
+<p>For the computer, our manual transformation is a perfectly fine solution.</p>
+<p>The grammar must not have a nullable left-recursive rule like <span class="math inline">\( A \to A \)</span> or <span class="math inline">\( A \to \epsilon^* \)</span>. Otherwise a computer running a naive top-down left-to-right parsing algorithm is doomed into infinite loop. But we can argue that the only <span class="math inline">\(A\)</span> satisfying <span class="math inline">\(A \to A\)</span> is <span class="math inline">\(epsilon\)</span>, and that <span class="math inline">\( \epsilon^* = \epsilon \)</span>.</p>
 <p>Two problems arise:</p>
 <ul>
 <li>What about the parse tree? We want a parser, not a matcher.</li>
@@ -317,6 +320,7 @@ P(xy) = combine(P(x), P(y))
 <li><span class="section_number">2.6</span><span class="section_title"><a href="#left-recursion-elimination-algorithm">Left-recursion elimination algorithm</a></span><span class="word_count">(129w~1m)</span></li>
 <li><span class="section_number">2.7</span><span class="section_title"><a href="#inlining-the-auxiliary-rules-parse-tree">Inlining the auxiliary rule's parse tree</a></span><span class="word_count">(27w~1m)</span></li>
 <li><span class="section_number">2.8</span><span class="section_title"><a href="#prolog-implementation"><span class="todo TODO">TODO</span> Prolog implementation</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">2.9</span><span class="section_title"><a href="#reverse-parsing">Reverse parsing</a></span><span class="word_count">(26w~1m)</span></li>
 </ul>
 </div>
 <h3 id="what-is-left-recursion"><span class="section_number">2.1</span><span class="section_title">What is left recursion?</span></h3>
@@ -409,6 +413,10 @@ exp0 :- &quot;&quot; ; (&quot;*&quot;, exp ; &quot;+&quot;, exp), exp0
 <h3 id="prolog-implementation"><span class="section_number">2.8</span><span class="section_title"><span class="todo TODO">TODO</span> Prolog implementation</span></h3>
 <p>Write a Prolog program to eliminate left recursion from definite-clause grammars.</p>
 <p>The logical meaning of the Prolog DCG rule <span class="math inline">\(A(x) \to B_1(x), \ldots, B_n(x)\)</span> is the predicate <span class="math inline">\(A\)</span> where <span class="math inline">\(A(x,s_1,s_{n+1}) \leftarrow ( B_1(x,s_1,s_2) \wedge \ldots \wedge B_n(x,s_n,s_{n+1}) )\)</span>.</p>
+<h3 id="reverse-parsing"><span class="section_number">2.9</span><span class="section_title">Reverse parsing</span></h3>
+<p>parse((A,B),C) iff parse(r((A,B)),r(C)).</p>
+<p>where r((A,B)) = r(B),r(A).</p>
+<p>Reversing the parser makes it right-to-left top-down parser. It can now handle left-recursion, but it can now not handle right-recursion.</p>
 <h2 id="language-oriented-approach"><span class="section_number">3</span><span class="section_title">Language-oriented approach</span></h2>
 <p>The language-oriented approach to parsing is to make a language for expressing a relation between strings and trees.</p>
 <p>The structure of the concrete syntax tree reflects the structure of the grammar production rules.</p>
