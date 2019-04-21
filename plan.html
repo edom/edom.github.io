@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Become immortal and ageless</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Become immortal and ageless</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#be-remembered-forever">Be remembered forever</a></span><span class="word_count">(860w~5m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#live-forever">Live forever</a></span><span class="word_count">(185w~1m)</span></li>
+</ul>
+</div>
+<h2 id="be-remembered-forever"><span class="section_number">1</span><span class="section_title">Be remembered forever</span></h2>
+<p>If we cannot live forever, we can still be immortal by being remembered forever, leaving our legacy in history, for big impacts, whether good or bad.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#get-the-resources-required-to-make-some-impacts">Get the resources required to make some impacts</a></span><span class="word_count">(185w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#make-some-impacts">Make some impacts</a></span><span class="word_count">(649w~4m)</span></li>
+</ul>
+</div>
+<h3 id="get-the-resources-required-to-make-some-impacts"><span class="section_number">1.1</span><span class="section_title">Get the resources required to make some impacts</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1.1</span><span class="section_title"><a href="#get-more-power">Get more power</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">1.1.2</span><span class="section_title"><a href="#increase-the-efficiency-of-research-and-thinking">Increase the efficiency of research and thinking</a></span><span class="word_count">(143w~1m)</span></li>
+</ul>
+</div>
+<h4 id="get-more-power"><span class="section_number">1.1.1</span><span class="section_title">Get more power</span></h4>
+<p>Power gives us ideas for making impact. With power, some actions that were unthinkable are now obvious.</p>
+<p>If you want to change the world but you don't know how, the answer is <em>power</em>.</p>
+<p><a href="power.html">Get more power</a>.</p>
+<h4 id="increase-the-efficiency-of-research-and-thinking"><span class="section_number">1.1.2</span><span class="section_title">Increase the efficiency of research and thinking</span></h4>
+<ul>
+<li><a href="meta.html">Meta-research</a>: meta-thinking
+<ul>
+<li><a href="language.html">Language Research Group</a></li>
+<li><a href="writing.html">Writing</a></li>
+</ul></li>
+<li><a href="publish.html">Make a system for publishing this website</a>
+<ul>
+<li><a href="parse.html">Find an elegant parsing method</a>
+<ul>
+<li>I am looking for the best technique for specifying formal grammars, parsing formal languages, and unparsing formal languages. Parsing is the common thing between programming language and publishing system, and I want both.</li>
+<li><a href="division.html">Generalizing division</a>: Brzozowski quotient and set division</li>
+</ul></li>
+<li>Write a Prolog DCG for a declarative subset of LaTeX</li>
+<li>Write a Prolog DCG for Org Mode</li>
+<li>Write a Prolog program for generating sitemap.xml</li>
+</ul></li>
+<li>Speed up human research
+<ul>
+<li>Kill all people who do not believe in science?</li>
+<li>Kill all people who are against eugenics?</li>
+<li>The only necessary ethics for a scientist is to be honest and to avoid harming others. All others &quot;ethics&quot; is irrational feelings.
+<ul>
+<li>&quot;Patients died unnecessarily while we waited for this trial to be approved.&quot;<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></li>
+</ul></li>
+<li>Make everyone understand English, or eliminate all human languages but English (this is pragmatism, not imperialism)</li>
+</ul></li>
+</ul>
+<h3 id="make-some-impacts"><span class="section_number">1.2</span><span class="section_title">Make some impacts</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.2.1</span><span class="section_title"><a href="#make-society-more-fair-and-just">Make society more fair and just</a></span><span class="word_count">(264w~2m)</span></li>
+<li><span class="section_number">1.2.2</span><span class="section_title"><a href="#create-a-timeless-piece-of-art">Create a timeless piece of art</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">1.2.3</span><span class="section_title"><a href="#solve-the-p-vs-np-problem">Solve the P vs NP problem?</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">1.2.4</span><span class="section_title"><a href="#counterproductive-countercurrent-desires-morbid-curiosities-destruction-escapism-boredom-avoidance-and-the-dark-side">Counterproductive countercurrent desires, morbid curiosities, destruction, escapism, boredom avoidance, and the dark side?</a></span><span class="word_count">(347w~2m)</span></li>
+</ul>
+</div>
+<h4 id="make-society-more-fair-and-just"><span class="section_number">1.2.1</span><span class="section_title">Make society more fair and just</span></h4>
+<p>The problem with trying to change the world is that <em>it resists</em>. To overcome that resistance, we need <em>power</em>. But how are we going to distribute power, if doing so requires us to first accumulate power to wrest power from where they are centralized now? That means war, that is a great power's challenging a hegemony. But we don't want war. It is like &quot;To feel better, we must first feel worse.&quot; But this makes sense.</p>
+<p>Thus there is this dilemma: Power corrupts, but power distribution promotes war; what about power distribution without government in a global anarcho-syndicalist society? Why does a great power challenge a hegemony? Is it like two dogs fighting for territory? It is the same as dog fights, only with much bigger scale. Are we territorial? But all dog fights eventually end, all wars eventually end, and peace is eventually reached?</p>
+<ul>
+<li><a href="social.html">Decentralize political power</a>
+<ul>
+<li>We may not want to decentralize power because war is more likely to happen without power imbalance<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. That is, power imbalance is a necessary evil to keep peace. But would we rather live in a mostly peaceful state of subjugation, or would we rather live in a free but unfamiliar state of anarchy?</li>
+<li><a href="moral.html">Morality</a>: codify our natural morality, that is, the implicit moral system that we have evolved; but I doubt that people have the same natural morality, in the same way dogs have different aggression tendencies.</li>
+<li><a href="tech.html">Techno-Anarchy Research Group</a></li>
+<li>Replace retributive justice with restorative justice</li>
+</ul></li>
+<li>Educate refugees and temporarily employ them; change the law
+<ul>
+<li>But this may incentivize war to increase the number of refugees and cheap labor?</li>
+</ul></li>
+</ul>
+<h4 id="create-a-timeless-piece-of-art"><span class="section_number">1.2.2</span><span class="section_title">Create a timeless piece of art</span></h4>
+<p>Create music like Bach, Mozart, Beethoven, or what?</p>
+<h4 id="solve-the-p-vs-np-problem"><span class="section_number">1.2.3</span><span class="section_title">Solve the P vs NP problem?</span></h4>
+<ul>
+<li><a href="pnptry.html">Solve the P vs NP problem</a>: a dream
+<ul>
+<li><a href="compute.html">Computing Research Group</a>: define computation
+<ul>
+<li><a href="logic.html">Logic</a>? Should we rewrite this article from theory-oriented to programming-oriented?</li>
+</ul></li>
+</ul></li>
+</ul>
+<h4 id="counterproductive-countercurrent-desires-morbid-curiosities-destruction-escapism-boredom-avoidance-and-the-dark-side"><span class="section_number">1.2.4</span><span class="section_title">Counterproductive countercurrent desires, morbid curiosities, destruction, escapism, boredom avoidance, and the dark side?</span></h4>
+<ol>
+<li><p>Avoid getting bored?</p>
+<ul>
+<li><a href="game.html">Gaming</a>: play games, make games
+<ul>
+<li><a href="ps1.html">Reverse-engineering PlayStation 1 3D games to control the camera</a></li>
+</ul></li>
+<li><a href="art.html">Art Research Group</a></li>
+<li><a href="music.html">Music Research Group</a></li>
+</ul></li>
+<li><p>Think about insane things</p>
+<ol>
+<li><p>Use Prolog for low-level programming</p>
+<ul>
+<li>Write an operating system in Prolog
+<ul>
+<li>Reuse Linux kernel</li>
+<li>Reuse the House operating system<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>?</li>
+<li>Write applications in Prolog plus program checking like Singularity OS<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> that uses software type safety instead of hardware memory protection; but there are lots of similar projects already?</li>
+<li>Dynamic and inspectable like Temple OS Holy C</li>
+</ul></li>
+<li>Make a C compiler in Prolog</li>
+<li>Make something like LLVM IR in Prolog</li>
+<li>Make an x86-64 assembler in Prolog</li>
+<li>Make an ELF linker in Prolog</li>
+</ul></li>
+<li><p>Giants pet naked humans like humans pet cats</p>
+<p>Head stroking, belly tickling, obsessive cuddling, and all the annoyances, abuses, intrusions, and privacy violations.</p></li>
+<li><p>There have been robotic animals; where are the robotic humans?</p>
+<p>In 2019 it seems to be a trend for humans to place robotic animals in the middle of real animals. Robotic spy African wild dog. Robotic spy tortoise. Robotic squirrel. Robotic spy penguin.</p>
+<p>What if super-intelligent aliens have been placing robotic humans in the middle of real humans? Maybe strange people are just philosophical zombies dropped into the middle of us by aliens, for research, or for shits and giggles, as we sometimes cruelly do to animals.</p></li>
+<li><p>Destroy things; but this urge conflicts with the desire to preserve ourselves?</p>
+<ul>
+<li>Establish global hive mind, monoculture homogenous cooperative anarchist/liberal society in a post-scarcity economy; but perhaps we should stop trying to change the world?
+<ul>
+<li>Kill all humans, or massively reduce world population, quickly<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>
+<ul>
+<li>Nanobot, anthrax, ebola, mass sterilization, a mechanical-biological agent that passes through the pores or holes in the human body, or viruses delivered by drones</li>
+<li>Reversibly sterilize every newborn, and make them earn their right to procreate when they are adults</li>
+<li>Require license for procreation; establish minimum standard for parents</li>
+<li>Ban the teaching of religion to minors</li>
+</ul></li>
+<li>Gather everyone who agrees; kill everyone who disagrees</li>
+<li>But wouldn't we be just as barbaric as terrorists like ISIS if we did those?</li>
+<li>Bring about a catastrophic disaster obliterating unplannedly-grown cities like Jakarta so that they can be rebuilt from scratch with proper urban planning</li>
+<li><a href="other.html">Unimportant content</a>: utter mess</li>
+</ul></li>
+</ul></li>
+</ol></li>
+</ol>
+<h2 id="live-forever"><span class="section_number">2</span><span class="section_title">Live forever</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#understand-the-causal-chain-of-death">Understand the causal chain of death</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#find-promising-ways-to-live-forever">Find promising ways to live forever</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#live-longer">Live longer</a></span><span class="word_count">(88w~1m)</span></li>
+</ul>
+</div>
+<h3 id="understand-the-causal-chain-of-death"><span class="section_number">2.1</span><span class="section_title">Understand the causal chain of death</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1.1</span><span class="section_title"><a href="#why-does-a-human-die">Why does a human die?</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">2.1.2</span><span class="section_title"><a href="#why-and-how-are-immortal-organisms-immortal">Why and how are immortal organisms immortal?</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">2.1.3</span><span class="section_title"><a href="#is-it-enough-to-sustain-the-brain-in-order-to-live-forever">Is it enough to sustain the brain in order to live forever?</a></span><span class="word_count">(12w~1m)</span></li>
+</ul>
+</div>
+<h4 id="why-does-a-human-die"><span class="section_number">2.1.1</span><span class="section_title">Why does a human die?</span></h4>
+<ul>
+<li>Because his brain dies.
+<ul>
+<li>Because the blood that flows into the brain does not satisfy the brain's operating conditions.
+<ul>
+<li>Because other organs fail.
+<ul>
+<li>Because of Hayflick limit<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>? Telomere shortening?
+<ul>
+<li>Why does the Hayflick limit exist?<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></li>
+<li>Do stem cells also have Hayflick limit?</li>
+</ul></li>
+<li>Because of irreversible cell damage?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Reading list?
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Longevity_escape_velocity">https://en.wikipedia.org/wiki/Longevity_escape_velocity</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Anti-aging_movement">https://en.wikipedia.org/wiki/Anti-aging_movement</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Gerontology">https://en.wikipedia.org/wiki/Gerontology</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Indefinite_lifespan">https://en.wikipedia.org/wiki/Indefinite_lifespan</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Life_extension">https://en.wikipedia.org/wiki/Life_extension</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Immortality">https://en.wikipedia.org/wiki/Immortality</a></li>
+</ul></li>
+</ul>
+<h4 id="why-and-how-are-immortal-organisms-immortal"><span class="section_number">2.1.2</span><span class="section_title">Why and how are immortal organisms immortal?</span></h4>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Biological_immortality">https://en.wikipedia.org/wiki/Biological_immortality</a></li>
+</ul>
+<h4 id="is-it-enough-to-sustain-the-brain-in-order-to-live-forever"><span class="section_number">2.1.3</span><span class="section_title">Is it enough to sustain the brain in order to live forever?</span></h4>
+<h3 id="find-promising-ways-to-live-forever"><span class="section_number">2.2</span><span class="section_title">Find promising ways to live forever</span></h3>
+<p>What is the most feasible way to live forever?</p>
+<ul>
+<li>Mind upload?</li>
+<li>Cryopreservation?</li>
+<li>Cyborg?</li>
+<li>Biological advances?</li>
+<li>Reverse aging?</li>
+<li>Cure death?</li>
+</ul>
+<p>Biohacking?<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<p>Genetics is the biggest factor in how far we can build our body.<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
+<h3 id="live-longer"><span class="section_number">2.3</span><span class="section_title">Live longer</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.3.1</span><span class="section_title"><a href="#optimize-biological-aspects-of-self">Optimize biological aspects of self</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">2.3.2</span><span class="section_title"><a href="#avoid-untimely-death">Avoid untimely death</a></span><span class="word_count">(64w~1m)</span></li>
+</ul>
+</div>
+<h4 id="optimize-biological-aspects-of-self"><span class="section_number">2.3.1</span><span class="section_title">Optimize biological aspects of self</span></h4>
+<ul>
+<li><a href="groom.html">Grooming</a>: aesthetics</li>
+<li><a href="subsist.html">Subsisting</a>: urban farming; but I put it on hold because I felt that the opportunity cost was too high</li>
+</ul>
+<h4 id="avoid-untimely-death"><span class="section_number">2.3.2</span><span class="section_title">Avoid untimely death</span></h4>
+<p>Don't swallow slugs.<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a></p>
+<p>Don't swim in a warm lake.<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a></p>
+<p>Read ingredient labels. Try to understand what is in the food. If you don't understand it, you probably shouldn't eat it.</p>
+<p>Avoid food that has been processed too much.</p>
+<p>Don't eat spoiled food. Don't eat food that smells off. Don't eat unrefrigerated food that has been left over for more than 8 hours since it was cooked.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.badscience.net/2011/03/when-ethics-committees-kill/">https://www.badscience.net/2011/03/when-ethics-committees-kill/</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Power_transition_theory">https://en.wikipedia.org/wiki/Power_transition_theory</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/House_(operating_system)">https://en.wikipedia.org/wiki/House_(operating_system)</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Singularity_(operating_system)">https://en.wikipedia.org/wiki/Singularity_(operating_system)</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://www.psychologytoday.com/us/blog/the-new-brain/201610/humans-are-genetically-predisposed-kill-each-other">https://www.psychologytoday.com/us/blog/the-new-brain/201610/humans-are-genetically-predisposed-kill-each-other</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Hayflick_limit">https://en.wikipedia.org/wiki/Hayflick_limit</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>1994 <a href="https://www.ncbi.nlm.nih.gov/pubmed/7845054">https://www.ncbi.nlm.nih.gov/pubmed/7845054</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://www.theguardian.com/science/2018/sep/21/extreme-biohacking-tech-guru-who-spent-250000-trying-to-live-for-ever-serge-faguet">https://www.theguardian.com/science/2018/sep/21/extreme-biohacking-tech-guru-who-spent-250000-trying-to-live-for-ever-serge-faguet</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://www.quora.com/Is-it-possible-for-a-skinny-guy-who-eats-trains-and-does-everything-right-to-get-Chris-Evans%E2%80%99-large-pecs-and-overall-muscular-look-If-so-how-long-Im-just-starting">https://www.quora.com/Is-it-possible-for-a-skinny-guy-who-eats-trains-and-does-everything-right-to-get-Chris-Evans%E2%80%99-large-pecs-and-overall-muscular-look-If-so-how-long-Im-just-starting</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://www.dailymail.co.uk/news/article-6352629/amp/Sam-Ballard-dies-eight-years-swallowing-slug.html">https://www.dailymail.co.uk/news/article-6352629/amp/Sam-Ballard-dies-eight-years-swallowing-slug.html</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://en.wikipedia.org/wiki/Naegleria_fowleri">https://en.wikipedia.org/wiki/Naegleria_fowleri</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/plan.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/plan.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-04-22 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

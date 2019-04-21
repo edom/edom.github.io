@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Get more power</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Get more power</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#understand-power">Understand power</a></span><span class="word_count">(3208w~17m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#get-rich-quickly-without-going-to-jail">Get rich quickly without going to jail</a></span><span class="word_count">(642w~4m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#getting-rich-old-content-to-be-reorganized">Getting rich (old content, to be reorganized)</a></span><span class="word_count">(4355w~22m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#get-more-physical-power">Get more physical power</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#make-our-own-web-browser-that-gives-us-full-programmable-control-of-what-we-see">Make our own Web browser that gives us full programmable control of what we see</a></span><span class="word_count">(553w~3m)</span></li>
+</ul>
+</div>
+<h2 id="understand-power"><span class="section_number">1</span><span class="section_title">Understand power</span></h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Power_(international_relations)">https://en.wikipedia.org/wiki/Power_(international_relations)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Power_(social_and_political)">https://en.wikipedia.org/wiki/Power_(social_and_political)</a></li>
+</ul>
+<p>Nietzsche: &quot;What is happiness? The feeling that power increases—that a resistance is overcome.&quot;<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#understand-money">Understand money</a></span><span class="word_count">(72w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#what-is-power-security-trust-risk-and-vulnerability">What is power, security, trust, risk, and vulnerability?</a></span><span class="word_count">(1076w~6m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#how-does-power-get-centralized">How does power get centralized?</a></span><span class="word_count">(1439w~8m)</span></li>
+<li><span class="section_number">1.4</span><span class="section_title"><a href="#weapon">Weapon</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">1.5</span><span class="section_title"><a href="#law">Law</a></span><span class="word_count">(601w~4m)</span></li>
+</ul>
+</div>
+<h3 id="understand-money"><span class="section_number">1.1</span><span class="section_title">Understand money</span></h3>
+<p>We can think of money as seed and human as soil. Some humans are fertile soils for money to grow. A poor person who wins a lottery soon loses all of it. A rich person who wins a lottery keeps getting richer. A fool and his money are soon parted. However, this way of thinking puts money first and human second.</p>
+<p>We can think of how fast money flows through a person.</p>
+<h3 id="what-is-power-security-trust-risk-and-vulnerability"><span class="section_number">1.2</span><span class="section_title">What is power, security, trust, risk, and vulnerability?</span></h3>
+<p>&quot;To exploit someone is to take unfair advantage of them.&quot;<span class="citation" data-cites="sep-exploitation">[<a href="#ref-sep-exploitation">4</a>]</span></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.2.1</span><span class="section_title"><a href="#what-is-security">What is security?</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">1.2.2</span><span class="section_title"><a href="#what-is-vulnerability">What is vulnerability?</a></span><span class="word_count">(78w~1m)</span></li>
+<li><span class="section_number">1.2.3</span><span class="section_title"><a href="#power">Power</a></span><span class="word_count">(630w~4m)</span></li>
+<li><span class="section_number">1.2.4</span><span class="section_title"><a href="#risk">Risk</a></span><span class="word_count">(203w~2m)</span></li>
+<li><span class="section_number">1.2.5</span><span class="section_title"><a href="#trust">Trust</a></span><span class="word_count">(52w~1m)</span></li>
+<li><span class="section_number">1.2.6</span><span class="section_title"><a href="#contract-is-trustdistrust">Contract is trust/distrust?</a></span><span class="word_count">(99w~1m)</span></li>
+</ul>
+</div>
+<h4 id="what-is-security"><span class="section_number">1.2.1</span><span class="section_title">What is security?</span></h4>
+<h4 id="what-is-vulnerability"><span class="section_number">1.2.2</span><span class="section_title">What is vulnerability?</span></h4>
+<p>Trust is the assumption that others will not exploit our vulnerabilities.</p>
+<p>Everything is vulnerable. Vulnerabilities differ in their probability and the severity, and thus their expected damages. We protect our houses with gates to deter thieves. But we don't protect our houses against meteors. Meteors do more damage than thieves, but meteors are so rare that the expected damage of thieves exceeds the expected damage of meteors. We probabilistically reason that thieves are more risky than meteors.</p>
+<h4 id="power"><span class="section_number">1.2.3</span><span class="section_title">Power</span></h4>
+<p>We assume these primitive concepts: harm, violence.</p>
+<ol>
+<li><p>How do we design a power literacy course?</p>
+<p>If I ask you to wave your hand, will you do that? By following what I tell you, you have given me some power over you. Why do you give me power? Why do you let me control?</p>
+<p>If I ask you to bark like a dog for $10, will you do that?</p>
+<p>If I ask you to dig coal for $50,000 a year, will you do that? If I ask you to drill the Earth for oil for $50,000 a year, will you do that? What if I give you more money?</p>
+<p>If I ask you to cut down a forest for $50,000 a year, will you do that? Somebody out there will do that.</p>
+<p>You see, there is a common theme: you <em>let</em> others tell you what to do.</p>
+<p>Rich people can only give you money. They don't cut down the trees themselves.</p>
+<p>Why do we let others tell us what to do? Because they pay?</p>
+<p>Why do we let money bend our will?</p></li>
+<li><p>What is power?</p>
+<p>Power is control.</p>
+<p>The amount of power X has over Y is the amount of control X has over Y.</p>
+<p>Power is the ability to harm.</p>
+<p>Power is the potential to do violence.</p>
+<p>To have power is to control. We say that <em>X has power over Y</em> to mean <em>X controls Y</em>.</p></li>
+<li><p>Why distribute power?</p>
+<p>Keltner's paradox of power is a strong scientific reason for distributing power.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>Feeling powerful reduces morality and inhibition.</p>
+<p>Feeling powerless causes chronic stress.</p></li>
+<li><p>Power and control?</p></li>
+<li><p>Power is the flip side of trust?</p></li>
+<li><p>How does one gain power?</p>
+<p>By gaining trust.</p>
+<p>X can have power over Y if and only if Y <em>lets</em> X have power over Y.</p>
+<p>Employers control employees because employees <em>let</em> employers.</p>
+<p>Government controls the governed because the governed <em>let</em> the government.</p>
+<p>Gain power by sharing it?<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>Now we understand where power comes from. Evil people have power because we <em>let</em> them. How do we let them?</p>
+<p>By being employed by them to perpetuate their evil. Rich people are not destroying the environment. <em>We</em>, their employees, are destroying the environment, by doing what they want us to do. We, the coal miners. We, the power plant operators. We, the car sellers. <em>We are complicit</em>. We <em>let</em> them control us. It is our hands, the workers' hands, not the rich people's hands, who murder the kids, who launches the missiles.</p>
+<p><em>All rich people can do is give us money.</em> If we accept that money and we do evil, then we ourselves are at fault.</p>
+<p>Companies and rich people are not to blame. We the complicit majority are to be blame. We are sleepwalking. We are not aware of our own power. We have power but we are afraid to use it.</p>
+<p>But even if we are not complicit, those rich people will just buy machines and destroy the environment anyway? Therefore they are truly immoral? Why do they take pride in short-term profit maximization? Who taught them?</p>
+<p>Government must come from the people. US government is for the rich only, not for the people. The candidates are rich people. The government listens only to rich people. The government does what is good for rich people. There is never a grassroot candidate.</p>
+<p>But we have to feed our families. Where do we get money? This is the wrong question. The question is: How do we feed our families? <em>We</em> can farm ourselves. We feed them directly from our own labor. Nature always gives to those who work, to those who hunt, gather, or farm. Nature does not discriminate. Only in nature, those who do not work do not eat. A seed does not care about the color of the hand that sows it.</p></li>
+<li><p>Where does one get power?</p>
+<p>From nature. Some of us grow to be strong and healthy people, by virtue of good genetics, good habit, and good nourishment.</p></li>
+<li><p>How does one lose power?</p>
+<p>By losing trust.</p></li>
+</ol>
+<h4 id="risk"><span class="section_number">1.2.4</span><span class="section_title">Risk</span></h4>
+<p>Related words: danger, hazard, chance, gamble, probability, uncertainty, contingency.</p>
+<p>(We are resisting the temptation of digressing to probability theory and statistics.)</p>
+<ol>
+<li><p>What is risk?</p>
+<p>Did Warren Buffett say that risk comes from not understanding what we are doing?</p>
+<p>Risk comes from Italian &quot;riscare&quot; which means &quot;to run into danger&quot;.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>Risk is danger.</p>
+<p>Danger is something that may harm.</p>
+<p>Risk has negative connotation.</p></li>
+<li><p>What is hazard?</p>
+<p>&quot;Hazard&quot; was the name of a game of chance played with dice<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. In 2019, &quot;hazard&quot; means danger.</p></li>
+<li><p>What is chance?</p></li>
+<li><p>Is it absurd to buy or build things that we hope to never have to use?</p>
+<p>Insurance buyers hope to never have to use it, because having to use it means shit has happened. We hope that shit doesn't happen. When you buy a scissor, you expect to use it. Insurance is the only thing that you buy but hope to never have to use it.</p>
+<p>If I buy a gun, I hope to never have to use it.</p>
+<p>If I buy a fire extinguisher, I hope to never have to use it. Is it absurd for me to buy a fire extinguisher?</p>
+<p>We hope that we never have to use atomic bombs.</p>
+<p>Having to use an insurance or a gun means that something bad has happened. We don't want bad things to happen.</p>
+<p><a href="https://www.reddit.com/r/AskReddit/comments/3uc06v/what_is_something_youd_buy_but_hope_to_never_use/">https://www.reddit.com/r/AskReddit/comments/3uc06v/what_is_something_youd_buy_but_hope_to_never_use/</a></p></li>
+</ol>
+<h4 id="trust"><span class="section_number">1.2.5</span><span class="section_title">Trust</span></h4>
+<ol>
+<li><p>Measuring trust between countries</p>
+<ol>
+<li><p>The power of a country's passport tells how great that country is</p>
+<p><a href="https://www.passportindex.org/byRank.php">https://www.passportindex.org/byRank.php</a></p>
+<p>Your passport's power is proportional to how much the world trusts your country.</p></li>
+</ol></li>
+<li><p>What is trust?</p></li>
+<li><p>How little trust can we live with?</p>
+<p>When I walk around the town, I tacitly assume that nobody will suddenly stab me with a knife.</p></li>
+</ol>
+<h4 id="contract-is-trustdistrust"><span class="section_number">1.2.6</span><span class="section_title">Contract is trust/distrust?</span></h4>
+<p>Signing a contract that obliges you is trusting.</p>
+<p>Signing a contract that gives you a right is distrusting.</p>
+<p>We make a contract because we want the state to help us when the other party breaches the contract. Thus we make a contract because we distrust the other party.</p>
+<p>Contracts reduces the amount of trust required for trade.</p>
+<p>If the state did not exist, would we still make contracts? We would rely on honor, and not the state.</p>
+<p>But underlying every contract is the assumption that the state is honorable.</p>
+<p>Contract assumes a third-party enforcer that is powerful and honorable (just, fair, neutral, reliable).</p>
+<h3 id="how-does-power-get-centralized"><span class="section_number">1.3</span><span class="section_title">How does power get centralized?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.3.1</span><span class="section_title"><a href="#weapons-and-oppression">Weapons and oppression</a></span><span class="word_count">(200w~1m)</span></li>
+<li><span class="section_number">1.3.2</span><span class="section_title"><a href="#ownership-property">Ownership, property</a></span><span class="word_count">(609w~4m)</span></li>
+<li><span class="section_number">1.3.3</span><span class="section_title"><a href="#work-employment">Work, employment</a></span><span class="word_count">(412w~3m)</span></li>
+<li><span class="section_number">1.3.4</span><span class="section_title"><a href="#how-did-we-get-into-this-unholy-combination-of-statism-and-capitalism-and-what-is-so-bad-about-it">How did we get into this unholy combination of statism and capitalism, and what is so bad about it?</a></span><span class="word_count">(217w~2m)</span></li>
+</ul>
+</div>
+<h4 id="weapons-and-oppression"><span class="section_number">1.3.1</span><span class="section_title">Weapons and oppression</span></h4>
+<ul>
+<li>Weapons enhance our ability to kill.
+<ul>
+<li>Weapons enhance our ability to scare.</li>
+<li>Thus weapons enables better-armed people to oppress worse-armed people.</li>
+</ul></li>
+<li>Order of magnitude of weapon effectiveness
+<ul>
+<li>With a blade, one person can subdue 1 unarmed person.</li>
+<li>With a pistol, one person can subdue 10 unarmed people.</li>
+<li>With a machine gun, one person can subdue 100 unarmed people.</li>
+<li>With a bomb such as that in Oklahoma city bombing, one person can subdue 1,000 unarmed people.</li>
+<li>With a nuclear bomb such as those dropped by the USA on Hiroshima and Nagasaki during World War 2, one person can subdue 1,000,000 unarmed people.</li>
+</ul></li>
+<li>Order of magnitude of media deception effectiveness?
+<ul>
+<li>This is totally baseless. How do we estimate this?</li>
+<li>With hearsay, one person can deceive ten people?</li>
+<li>With paper, one person can deceive a hundred people?</li>
+<li>With newspaper or WhatsApp, one person can deceive a million people?</li>
+<li>With television or Facebook or Google, one person can deceive a hundred million people?</li>
+</ul></li>
+<li>The only way for the oppressed to fight back is:
+<ul>
+<li>total guerrilla warfare</li>
+<li>living near to the oppressor (so that he can't nuke)</li>
+<li>terrorism
+<ul>
+<li>Is there really no other way? Dialogs? Referendums?</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>What prevents violence is the ability to retaliate with comparable violence. What prevents oppression is the ability to retaliate for that oppression.</p>
+<p>NUKEMAP: nuclear explosion damage calculator <a href="https://nuclearsecrecy.com/nukemap/">https://nuclearsecrecy.com/nukemap/</a></p>
+<h4 id="ownership-property"><span class="section_number">1.3.2</span><span class="section_title">Ownership, property</span></h4>
+<ol>
+<li><p>Why do people give up their power so easily?</p></li>
+<li><p>How do we live in a society whose morality goes against ours?</p>
+<p>How do we live in a society whose morality clashes with our morality, without demeaning the people that we think are immoral? How do we live morally but without self-righteousness?</p></li>
+<li><p>If we need to be evil to change something evil, should we be evil?</p></li>
+<li><p>Should we do the necessary evil?</p>
+<p>If we believe that power should be distributed, but we need power to change the world, should we temporarily (~ 100 years) centralize power on us? Can we trust ourselves, as power tends to corrupt?</p></li>
+<li><p>Legal fictions?</p>
+<p>Philosophically-unsound legal fictions such as corporate personhood create unnecessary misery.</p>
+<p>Litigation is part of the problem, not part of the solution. Justice should at least be restorative.</p>
+<p>Problem: &quot;That’s why if your toaster explodes, you have to sue the company that makes the toaster. You can’t sue the company’s shareholders. The company and its shareholders are distinct legal persons, with different legal rights and duties.&quot;<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<p>How would the combination of restorative justice and no-corporation handle exploding toasters? What is the anarchist approach to litigating one who makes an exploding toaster that hurts someone else?</p>
+<p>&quot;If Corporations Are People, They Should Act Like It&quot;<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<p>Both governments and corporations are part of the problem.</p>
+<p>Anarchy is a <em>privilege</em>. Freedom is expensive.</p></li>
+<li><p>Capitalism does not benefit us; free trade does?</p></li>
+<li><p>Legal system is part of the problem.</p>
+<p>Nobody knows all laws that are in effect. Not the legislators. Not the judges.</p></li>
+<li><p>Parallels between master-slave and lessor-lessee</p>
+<p>&quot;Slaves could not own property, but their masters often let them save up to purchase their freedom,[97] and records survive of slaves operating businesses by themselves, making only a fixed tax-payment to their masters.&quot;<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<p>That sounds very much like the relationship between a lessee (tenant/renter) and a lessor (landlord). A lessee practically will never have enough money to buy the lessor's property; the economic system guarantees that. For example, in 2019, my neighbor is asking IDR 3 billion for his 72-m2 land and house on it. A typical frugal man who saves IDR 3 million monthly salary will need to save for 83 years, assuming over-optimistically zero inflation. He would have died 20 years before he had saved enough to buy the house!</p>
+<p>In principle slavery has been abolished, but in practice the economic system guarantees that most people will forever live mediocre lives, although in much better condition than that of ancient Roman slaves. But we can do better.</p></li>
+<li><p>What is ownership?</p></li>
+<li><p>What is property?</p></li>
+<li><p>What is slavery?</p>
+<p>Slavery is the treatment of human as non-human property. Slavery is humans' owning humans.</p>
+<p>Slavery violates the silver rule (do not do unto others what you do not want to be done unto yourself).</p></li>
+<li><p>If everybody needs to eat, why aren't farmers the richest people on Earth?</p>
+<p>Food has been the best-selling thing for 40,000 years, but why aren't farmers the richest people on Earth?</p>
+<p>Here's a thought experiment that leads me to that question.</p>
+<p>Imagine an economy that consists of 1 extremely frugal farmer and 1 doctor. After some time, money accumulates at the farmer, because the doctor always needs to eat, but the farmer doesn't always have a health problem.</p>
+<p>A government has these options, from the least coercive to the most coercive:</p>
+<ul>
+<li>Do nothing, and hope that the farmer donates his money to the doctor.</li>
+<li>Create more money and give it to the doctor. But the farmer may think that this is unfair.</li>
+<li>Tax the farmer and give that tax money to the doctor.</li>
+<li>Force the farmer to spend his money on the doctor.</li>
+</ul>
+<p>The current economic system suffers from money accumulation.</p>
+<p>Is accumulation of money bad? Is inequality bad?</p></li>
+<li><p>What is ownership?</p>
+<p>What does owning something mean?</p></li>
+<li><p>What is property?</p>
+<p>Is property theft?</p></li>
+<li><p>If everyone owned a piece of fertile land, poverty should not exist?</p></li>
+</ol>
+<h4 id="work-employment"><span class="section_number">1.3.3</span><span class="section_title">Work, employment</span></h4>
+<ol>
+<li><p>We should not conflate work and employment</p>
+<p>Work gives life meaning.</p>
+<p>Employment is subjugation. X employs Y because X has a better idea about what Y should do with Y's time in order to make more profits for X.</p>
+<p>Some people are lucky enough to have their work coincide with their employment. They are lucky enough to be enslaved to do what they want to do anyway.</p></li>
+<li><p>Dangerous freedom vs comfortable slavery?</p>
+<p>Would we rather live free but hard, or would we rather be comfortable in an enslavement by a good master who can give us more than we could get in a free life? <em>But how could this master have so much money to pay everybody in the first place?</em></p></li>
+<li><p>What is work without employment?</p>
+<p>Work without subjugation. Work without power asymmetry.</p>
+<p>Work gives life meaning. We like work and dislike employment. We want a world in which we work because we want to, not because we have to.</p>
+<p>What is work? Work is purposeful deed/action. The difference between work and leisure is teleological. What is employment?</p>
+<p>Life <em>is</em> work. Your work defines you. You are only as good as your contribution to the world. Your work defines the meaning of your life.</p>
+<p>Don't confuse working with employment. Work is everything that creates value. Employment is subjugation.</p>
+<ul>
+<li><p>How does employment and slavery compare?</p>
+<ul>
+<li>Slavery is the ownership of humans.</li>
+<li>Employment is the rental of humans.</li>
+<li><p>How has slavery changed?</p>
+<ul>
+<li><p>Humans used to buy humans. Now humans rent other humans.</p>
+<ul>
+<li>2018: we can even rent a friend.</li>
+</ul></li>
+<li><a href="https://www.reddit.com/r/LateStageCapitalism/comments/68fkek/in_slavery_you_are_boughtin_capitalism_you_are/">r/LateStageCapitalism: In slavery, you are bought–in capitalism, you are rented</a></li>
+<li><p>&quot;Hiring&quot; <em>is</em> &quot;renting&quot;.</p>
+<ul>
+<li>You rent a car. The contract includes an insurance. You use the car for anything; just don't break it.</li>
+<li>You hire an employee. The contract includes an insurance. You use the employee for anything; just don't break it.</li>
+</ul></li>
+<li><a href="http://www.differencebetween.net/business/difference-between-labor-and-human-capital/">differencebetween.net: labor and human capital</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>Work</p>
+<ol>
+<li><p>Work vs employment</p>
+<p>Work is purposeful deed.</p>
+<p>Employment is subjugation.</p></li>
+<li><p>Raising kids while working?</p>
+<p>It is impractical to raise kids while working, but not while being employed.</p>
+<p>My guess of division of labor in stone age: Able men and childless women find food. Women and old men raise children.</p>
+<p>In stone age there are no 8-hour work days. Men work only as much as needed to live that day. The rest is free time: sleep, play, art, sex, rough-and-tumble, musing, thinking</p></li>
+</ol></li>
+<li><p>Labor without hiring?</p>
+<p>By hiring I mean employment/wage/salary.</p>
+<p>I'm thinking about anarchistic labor, a form of voluntary labor that is not subject to labor laws. Get paid by result not by time. Work anywhere. Resign anytime. No non-competes, no non-disclosures, no grace periods. Work on something ethical and meaningful.</p></li>
+</ol>
+<h4 id="how-did-we-get-into-this-unholy-combination-of-statism-and-capitalism-and-what-is-so-bad-about-it"><span class="section_number">1.3.4</span><span class="section_title">How did we get into this unholy combination of statism and capitalism, and what is so bad about it?</span></h4>
+<ol>
+<li><p>States make wars somewhat less often but much more severe</p>
+<p>A war between two tribes kills about 100 people. A war between two 11th-century kingdoms<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> kills about 100,000 people. A war between two 20th-century states kills about 1,000,000 people. A war between two 20th-century state-alliances kills about 70,000,000 people. A war between two planetary governments may kill billions of people. This does not yet count the people hurt but not killed by the war.</p>
+<p>Hypothesis: the expected damage of wars is constant. A war between two kingdoms is 1,000 times less likely but 1,000 times more destructive than a war between two tribes. For example, if a tribe went to war every day, then a kingdom would go to war every 3 years. But Harrison and Wolf 2012 <span class="citation" data-cites="harrison2012frequency">[<a href="#ref-harrison2012frequency">3</a>]</span> falsifies that hypothesis.</p>
+<p>States enable long-term peace with the risk of occasional catastrophic wars.</p>
+<p>A catastrophe is too high a price to pay.</p>
+<p><a href="https://en.wikipedia.org/wiki/List_of_wars_by_death_toll">https://en.wikipedia.org/wiki/List_of_wars_by_death_toll</a></p>
+<p>The frequency reduction is not because have become more peace-loving, but because each war destroys more, so we take more time to recover for the next war.</p></li>
+<li><p>A society with too many rights cannot progress</p>
+<p>Copyright, patent, intellectual property.</p>
+<p>We don't need copyright, patent, etc. Inventors will still invent without patents. They are intrinsically motivated.</p></li>
+</ol>
+<h3 id="weapon"><span class="section_number">1.4</span><span class="section_title">Weapon</span></h3>
+<p>There are several points of view:</p>
+<ul>
+<li>weapon as deterrent</li>
+<li>weapon as power multiplier</li>
+</ul>
+<h3 id="law"><span class="section_number">1.5</span><span class="section_title">Law</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.5.1</span><span class="section_title"><a href="#the-ideal-law-enforcement">The ideal law enforcement</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">1.5.2</span><span class="section_title"><a href="#what">what</a></span><span class="word_count">(435w~3m)</span></li>
+<li><span class="section_number">1.5.3</span><span class="section_title"><a href="#handling-lawyers">Handling lawyers</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">1.5.4</span><span class="section_title"><a href="#making-good-laws">Making good laws</a></span><span class="word_count">(112w~1m)</span></li>
+</ul>
+</div>
+<h4 id="the-ideal-law-enforcement"><span class="section_number">1.5.1</span><span class="section_title">The ideal law enforcement</span></h4>
+<ul>
+<li>Describe the case to a computer (such as a Prolog program).</li>
+<li>The computer suggests relevant laws. The judge still makes the final decision though. The judge uses restorative justice.</li>
+</ul>
+<h4 id="what"><span class="section_number">1.5.2</span><span class="section_title">what</span></h4>
+<ul>
+<li>There is something above the law: violence, that is, power, that is, human nature.
+<ul>
+<li>Law is whatever people fear.</li>
+<li>Power is the ability to do violence (bodily harm).</li>
+<li>Weapon is power multiplier. Weapon multiplies the ability to do violence.</li>
+<li>People who are above the law are above the law because they have more power than the police. Example of those people are extremely rich people, including big corruptors. Such powerful people have enough money to do more violence than the police can do.</li>
+<li>Religious demonstrators are above the law because they can do more violence than the police can do.
+<ul>
+<li>The police must develop non-lethal crowd-control weapons.</li>
+</ul></li>
+</ul></li>
+<li>Law requires the ability to do violence.</li>
+<li>Law isn't about truth. Law has never been about truth. Philosophy is about truth.</li>
+<li>Modern law is about <em>provability</em>.
+<ul>
+<li>Since when? Since &quot;habeas corpus&quot;?
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Habeas_corpus">WP:Habeas corpus</a></li>
+</ul></li>
+<li>Is law a formal system that can do arithmetic?
+<ul>
+<li>What are the consequences of Gödel's incompleteness theorems to law?
+<ul>
+<li>There are true but unprovable things?</li>
+</ul></li>
+</ul></li>
+<li>Is testimony acceptable?</li>
+<li><a href="https://en.wikipedia.org/wiki/Prima_facie">WP:Prima facie</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Burden_of_proof_(law)">WP:Legal burden of proof</a>, onus probandi
+<ul>
+<li>&quot;In a legal dispute, one party is initially presumed to be correct and gets the benefit of the doubt, while the other side bears the burden of proof.&quot;</li>
+<li>&quot;When a party bearing the burden of proof meets its burden, the burden of proof switches to the other side.&quot;</li>
+</ul></li>
+<li>It is better to wrongly acquit than to wrongly convict?
+<ul>
+<li><a href="https://www.independent.co.uk/news/uk/home-news/its-better-that-10-guilty-men-go-free-than-one-innocent-man-be-wrongly-convicted-944059.html">It's better that 10 guilty men go free than one innocent man be wrongly convicted</a></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Truth">WP:Truth</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Proof_theory">WP:Proof theory</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Provability_logic">WP:Provability logic</a></li>
+</ul></li>
+<li>Enforceability is important. An unenforceable law practically doesn't exist.
+<ul>
+<li>This is why government requires the employer to withhold employee income tax. This is why the employee doesn't pay the income tax directly.
+<ul>
+<li>There are much fewer employees than employees.</li>
+<li>It's easier to arrest employers than employees.</li>
+</ul></li>
+</ul></li>
+<li>Ontology
+<ul>
+<li>complain, complainant, plaintiff</li>
+<li>defend, defendant, suspect, convict, felon, recidivist</li>
+<li>litigation, litigant, legal battle</li>
+<li>injunction</li>
+<li>advocate, attorney, barrister, lawyer</li>
+<li>judge, jury</li>
+<li>precedent</li>
+<li>penalty</li>
+<li>crime</li>
+<li>justice
+<ul>
+<li>retributive vs restorative justice</li>
+<li><a href="https://assets.justice.vic.gov.au/njc/resources/c4518c8a-c200-4623-afd1-42e255b62cf9/01+an+overview+of+restorative+justice.pdf">2005, Daniel W. Van Ness, &quot;An overview of restorative justice around the world&quot;</a></li>
+</ul></li>
+<li>witness, testimony</li>
+<li>slightly meta-legal concepts
+<ul>
+<li>obstruction of justice</li>
+<li>contempt of court</li>
+</ul></li>
+</ul></li>
+<li>Computerization of law
+<ul>
+<li>Law is first-order logic? It should be computerizable?</li>
+<li>Legal ontology?</li>
+<li>Legal information system?</li>
+<li>Legal search engine?</li>
+<li><a href="https://en.wikipedia.org/wiki/Computer-assisted_legal_research">WP:Computer-assisted legal research</a></li>
+<li><a href="https://www.legalrobot.com/blog/2016/05/25/Ontologies/">How Legal Robot works: Legal Ontologies</a>, 3-minute reading
+<ul>
+<li>LKIF (Legal Knowledge Interchange Format)</li>
+</ul></li>
+</ul></li>
+<li>Overview
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Law">WP:Law</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Crime">WP:Crime</a></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Counterclaim">WP:Counterclaim</a></li>
+<li>Legal abuse
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Legal_abuse">WP:Legal abuse</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Frivolous_litigation">WP:Frivolous litigation</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Vexatious_litigation">WP:Vexatious litigation</a>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Patent_troll">WP:Patent troll</a></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Strategic_lawsuit_against_public_participation">WP:Strategic lawsuit against public participation</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Chilling_effect">WP:Chilling effect</a></li>
+</ul></li>
+<li><a href="http://www.tht.org.uk/myhiv/Telling-people/Law/How-do-you-prove-it_qm_">How do you prove HIV transmission?</a>
+<ul>
+<li>&quot;Sometimes, the person who complains to the police after recently testing as HIV positive turns out to have infected the person they are accusing.&quot;</li>
+</ul></li>
+<li>Who pay the cost of litigation?</li>
+<li>classifications
+<ul>
+<li>criminal acts
+<ul>
+<li>offense, wrongdoing</li>
+<li>misdemeanor</li>
+<li>felony</li>
+</ul></li>
+<li>legal systems
+<ul>
+<li>common law system, case law</li>
+<li>civil law system, statutory law</li>
+</ul></li>
+<li>parts of law
+<ul>
+<li>civil law</li>
+<li>criminal law</li>
+</ul></li>
+<li>crimes
+<ul>
+<li>assault</li>
+<li>battery</li>
+<li>perjury</li>
+<li>theft</li>
+<li>murder</li>
+<li>rape</li>
+<li>etc.</li>
+</ul></li>
+</ul></li>
+<li>Can the defendant also be a witness?</li>
+<li>Can't we simply ask the defendant &quot;Did you do it?&quot;?</li>
+<li><a href="https://en.wikipedia.org/wiki/Hitchens%27s_razor">WP:Hitchens's razor</a>
+<ul>
+<li>&quot;What can be asserted without evidence can be dismissed without evidence&quot;</li>
+</ul></li>
+<li>Maritime law
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/General_average">WP:General average</a></li>
+</ul></li>
+<li>legal loopholes, programming errors
+<ul>
+<li><a href="https://mentalfloss.com/article/83439/perfect-crime-may-be-possible-yellowstone-park">The Perfect Crime May Be Possible in Yellowstone Park | Mental Floss</a></li>
+</ul></li>
+</ul>
+<h4 id="handling-lawyers"><span class="section_number">1.5.3</span><span class="section_title">Handling lawyers</span></h4>
+<p>If you don't know, don't act like you know.</p>
+<p>Watch out for baits. Don't be greedy.</p>
+<ul>
+<li>Risky stuffs
+<ul>
+<li><a href="https://www.reddit.com/r/IAmA/comments/ajsih/i_am_the_guy_who_owned_mikerowesoftcom_ama/c0hy3d8/">I am the guy who owned MikeRoweSoft.com. AMA : IAmA</a></li>
+</ul></li>
+</ul>
+<h4 id="making-good-laws"><span class="section_number">1.5.4</span><span class="section_title">Making good laws</span></h4>
+<p>Good laws satisfactorily answers:</p>
+<ul>
+<li>How are we going to enforce it?</li>
+<li>What is the worst that haters can do?</li>
+<li>What questions might arise?</li>
+<li>What undefined cases?</li>
+</ul>
+<p>Good laws:</p>
+<ul>
+<li>Can be enforced practically (sane effort and cost)</li>
+<li>Addresses the root cause of the problem</li>
+<li>Minimizes unintended effects (is well-targeted)</li>
+<li>Is complete (handle all cases) and Leaves no questions</li>
+<li>Is timeless/future-proof (doesn't depend on time) (is this even possible?)</li>
+</ul>
+<p>People are creative. They will find ways around laws.</p>
+<p>Questionable example: even-odd car license plate rule. If cars are cheap, then people will just buy two cars. The root cause of the problem is bad/expensive/unintegrated public transport.</p>
+<p>Bad example: legislating morality. Are you going to visit each of the 100 million homes and install a camera?</p>
+<h2 id="get-rich-quickly-without-going-to-jail"><span class="section_number">2</span><span class="section_title">Get rich quickly without going to jail</span></h2>
+<ul>
+<li>Make capitalism work for us instead of making us work for capitalism</li>
+<li>Is evil a necessity or a consequence?<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a></li>
+<li>Power corrupts, but with more power we can do more good?</li>
+</ul>
+<p>Maximize long-term profit: maximize income, minimize expenses.</p>
+<p>I am already very frugal by nature, so I have to combat my tendency to be fixated at minimizing expenses.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#maximize-income">Maximize income</a></span><span class="word_count">(317w~2m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#make-more-things-doable-without-going-to-jail">Make more things doable without going to jail</a></span><span class="word_count">(34w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#get-rich-quickly-by-creating-wealth">Get rich quickly by creating wealth?</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#minimize-expenses">Minimize expenses</a></span><span class="word_count">(198w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#build-human-resource">Build human resource</a></span><span class="word_count">(33w~1m)</span></li>
+</ul>
+</div>
+<h3 id="maximize-income"><span class="section_number">2.1</span><span class="section_title">Maximize income</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1.1</span><span class="section_title"><a href="#find-better-use-for-the-idly-deposited-moneys">Find better use for the idly deposited moneys</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">2.1.2</span><span class="section_title"><a href="#establish-a-monarchy-a-corporation-start-a-business">Establish a monarchy, a corporation, start a business</a></span><span class="word_count">(126w~1m)</span></li>
+<li><span class="section_number">2.1.3</span><span class="section_title"><a href="#extract-wealth-from-society-by-seeking-rent">Extract wealth from society by seeking rent</a></span><span class="word_count">(184w~1m)</span></li>
+</ul>
+</div>
+<h4 id="find-better-use-for-the-idly-deposited-moneys"><span class="section_number">2.1.1</span><span class="section_title">Find better use for the idly deposited moneys</span></h4>
+<h4 id="establish-a-monarchy-a-corporation-start-a-business"><span class="section_number">2.1.2</span><span class="section_title">Establish a monarchy, a corporation, start a business</span></h4>
+<p>Because: socialism for the rich and capitalism for the poor<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>.</p>
+<ol>
+<li><p>Other people's business ideas</p>
+<ul>
+<li>Tech company that sells to engineers; companies like JetBrains (Mufid)</li>
+<li>Machine transcription of interviews in Bahasa Indonesia using speech-to-text (Mufid)
+<ul>
+<li>&lt;2019-04-22&gt; He tried GCP text-to-speech for Bahasa Indonesia but he found the result unacceptable.</li>
+</ul></li>
+<li>&lt;2018-09-24&gt; Undertaker, mortician, funeral home, mortuary (Willy)</li>
+<li>&lt;2018-09-24&gt; Dropshipping, buying from someone in Tokopedia and selling to someone else also in Tokopedia (Nigel)</li>
+<li>&lt;2019-04-22&gt; Catering at Karawang (Mr. Handoko)<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></li>
+<li>Dyson: 6-billion-dollar 7000-employee company owned by one person<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>
+<ul>
+<li>These people have one seemingly simple business and they can reach billion-dollar net-worth.</li>
+</ul></li>
+</ul></li>
+<li><p>Flip companies; active investing</p>
+<ul>
+<li>Buy a company that is in shambles, fix it, refurbish it, clean it up, and sell it, hopefully for a profit.</li>
+<li>Help dying companies in exchange for partial ownership.</li>
+</ul></li>
+</ol>
+<h4 id="extract-wealth-from-society-by-seeking-rent"><span class="section_number">2.1.3</span><span class="section_title">Extract wealth from society by seeking rent</span></h4>
+<p>Seek rent<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>; use the law to get paid for simply owning something and doing nothing.</p>
+<ol>
+<li><p>Own a property</p>
+<ul>
+<li>Buy a property, contract a management agency, and lease the property
+<ul>
+<li>Find good properties; determine what is good
+<ul>
+<li>Why do people stay at hotels? Attending events. Meetings. Inspections. A combination of closeness to the actual location of interest and the hotel's reputation. People stay at a hotel not because they admire the hotel building, but because they care about the location.</li>
+<li>Unmarried white-collar workers choose the cheaper between renting and commuting.</li>
+<li>Nomads who change work location every a few years, and people without enough money to buy houses</li>
+</ul></li>
+</ul></li>
+<li>Determine why people pay
+<ul>
+<li>The only reason people pay you is that they believe you will give them what they want.</li>
+</ul></li>
+<li>Start a gambling or insurance company
+<ul>
+<li>Kelly criterion</li>
+</ul></li>
+<li>Start a hype-laden &quot;startup&quot; and sell it to &quot;investors&quot;</li>
+<li>Get rich quickly from financial markets
+<ul>
+<li>Practice usury, lend money with interest</li>
+<li>vestifarm</li>
+<li>Trade financial assets: stocks, derivatives, currencies
+<ul>
+<li>For a beginner, merely not losing money is already a splendid start!</li>
+<li>Calculate the fair price of a financial asset</li>
+<li><a href="reveng.html">Reverse software engineering</a>
+<ul>
+<li><a href="rejava.html">Reverse engineering the network protocol used by a Java desktop application</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ol>
+<h3 id="make-more-things-doable-without-going-to-jail"><span class="section_number">2.2</span><span class="section_title">Make more things doable without going to jail</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.2.1</span><span class="section_title"><a href="#reduce-the-ability-of-government-to-jail-people">Reduce the ability of government to jail people</a></span><span class="word_count">(27w~1m)</span></li>
+</ul>
+</div>
+<h4 id="reduce-the-ability-of-government-to-jail-people"><span class="section_number">2.2.1</span><span class="section_title">Reduce the ability of government to jail people</span></h4>
+<ul>
+<li>Piggyback, weaken, dismantle governments
+<ul>
+<li>Plant anti-government people in the government; laissez-faire liberals; anarcho-capitalists; unwitting opinionated idealistic hard-liners; &quot;confused and misguided sympathizers&quot;<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a></li>
+</ul></li>
+</ul>
+<h3 id="get-rich-quickly-by-creating-wealth"><span class="section_number">2.3</span><span class="section_title">Get rich quickly by creating wealth?</span></h3>
+<h3 id="minimize-expenses"><span class="section_number">2.4</span><span class="section_title">Minimize expenses</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.4.1</span><span class="section_title"><a href="#minimize-operationaladministrativebureaucraticred-tape-hassle">Minimize operational/administrative/bureaucratic/red-tape hassle</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">2.4.2</span><span class="section_title"><a href="#minimize-tax">Minimize tax</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">2.4.3</span><span class="section_title"><a href="#write-an-enterprise-operation-system-in-prolog">Write an enterprise operation system in Prolog</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">2.4.4</span><span class="section_title"><a href="#make-machine-work-more">Make machine work more</a></span><span class="word_count">(161w~1m)</span></li>
+</ul>
+</div>
+<h4 id="minimize-operationaladministrativebureaucraticred-tape-hassle"><span class="section_number">2.4.1</span><span class="section_title">Minimize operational/administrative/bureaucratic/red-tape hassle</span></h4>
+<ul>
+<li>Avoid dealing with labor laws; use contractors, freelancers, etc.</li>
+</ul>
+<h4 id="minimize-tax"><span class="section_number">2.4.2</span><span class="section_title">Minimize tax</span></h4>
+<ol>
+<li><p>Maximize non-taxable income</p></li>
+<li><p>Minimize taxable income</p>
+<ul>
+<li>Maximize asset without mark-to-market</li>
+<li>Minimize profit</li>
+</ul></li>
+<li><p>Maximize tax deductions</p></li>
+<li><p>Plant anti-taxation people in the government</p></li>
+</ol>
+<h4 id="write-an-enterprise-operation-system-in-prolog"><span class="section_number">2.4.3</span><span class="section_title">Write an enterprise operation system in Prolog</span></h4>
+<ul>
+<li>Write an accountant in Prolog</li>
+</ul>
+<h4 id="make-machine-work-more"><span class="section_number">2.4.4</span><span class="section_title">Make machine work more</span></h4>
+<ol>
+<li><p>Improve machine intelligence</p>
+<ul>
+<li><a href="intelligence.html">Making intelligence</a></li>
+<li><a href="endo.html">The endofunction model of worlds and agents, and its philosophical implications</a></li>
+<li>Find how to make machine understand causation, in principle; find the theory
+<ul>
+<li>How do we make a machine that understands causation?
+<ul>
+<li>&quot;Causal Cognition in Human and Nonhuman Animals: A Comparative, Critical Review&quot;, 2007<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a></li>
+<li>&quot;Causal Reasoning in Rats&quot;, 2006<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a></li>
+<li>&quot;Causal knowledge in animals&quot;, 1995</li>
+<li>Understand reality, the world, the Universe
+<ul>
+<li><a href="philo.html">Philosophy</a>: armchair philosophy; should be rewritten to focus on causation
+<ul>
+<li><a href="mind.html">Mind</a>: philosophy of mind</li>
+</ul></li>
+<li><a href="nature.html">Nature Research Group</a>: physics and its philosophy</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Demonstrate that a machine understands causation
+<ul>
+<li>How do we know whether X understands causation?</li>
+</ul></li>
+</ul></li>
+<li><p>Multiply software engineer productivity by 20?</p>
+<ul>
+<li><a href="softeng.html">Software engineering</a>: come up with a science to underlie software engineering
+<ul>
+<li>Measure programmer productivity</li>
+</ul></li>
+<li><a href="prolog.html">Use the Prolog programming language</a>
+<ul>
+<li>Make Prolog more suitable for programming in the large
+<ul>
+<li>Make a module system for Prolog</li>
+</ul></li>
+<li><a href="enterprise.html">Use Prolog for model-driven software engineering</a></li>
+<li>Make an untyped Haskell/ML-like language in Prolog</li>
+<li>Seamlessly interoperate programming languages<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>
+<ul>
+<li>1996 <span class="citation" data-cites="barrett1996automated">[<a href="#ref-barrett1996automated">1</a>]</span></li>
+<li><a href="program.html">Programming Research Group</a>: these should be merged?
+<ul>
+<li><a href="proglang.html">programming language design</a></li>
+<li><a href="program-sketch.html">sketching a declarative programming language</a></li>
+<li><a href="semantics.html">Semantics Research Group</a> (of programming languages)</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="opensrc.html">Making contributable open-source projects</a>
+<ul>
+<li><a href="community.html">Building online communities</a></li>
+</ul></li>
+</ul></li>
+</ol>
+<h3 id="build-human-resource"><span class="section_number">2.5</span><span class="section_title">Build human resource</span></h3>
+<ul>
+<li>Educate software engineers to a comparable quality but faster than the 16 years of formal education
+<ul>
+<li>Make all Indonesian people understand English, because most relevant resources on the Internet are in English</li>
+</ul></li>
+</ul>
+<h2 id="getting-rich-old-content-to-be-reorganized"><span class="section_number">3</span><span class="section_title">Getting rich (old content, to be reorganized)</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#how-do-we-get-rich">How do we get rich?</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#what-1">What?</a></span><span class="word_count">(1010w~6m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#capitalism">Capitalism</a></span><span class="word_count">(188w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#investing">Investing</a></span><span class="word_count">(464w~3m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#justifying-my-value">Justifying my value</a></span><span class="word_count">(97w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#economics">Economics</a></span><span class="word_count">(1304w~7m)</span></li>
+<li><span class="section_number">3.7</span><span class="section_title"><a href="#finance">Finance</a></span><span class="word_count">(391w~2m)</span></li>
+<li><span class="section_number">3.8</span><span class="section_title"><a href="#defining-investing-trading-gambling-betting-wagering-insurance">Defining investing, trading, gambling, betting, wagering, insurance</a></span><span class="word_count">(321w~2m)</span></li>
+<li><span class="section_number">3.9</span><span class="section_title"><a href="#if-you-win-a-lottery">If you win a lottery</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">3.10</span><span class="section_title"><a href="#investing-1">&quot;Investing&quot;</a></span><span class="word_count">(100w~1m)</span></li>
+<li><span class="section_number">3.11</span><span class="section_title"><a href="#economics-price-quality">Economics, price, quality</a></span><span class="word_count">(88w~1m)</span></li>
+<li><span class="section_number">3.12</span><span class="section_title"><a href="#economics-1">Economics?</a></span><span class="word_count">(251w~2m)</span></li>
+<li><span class="section_number">3.13</span><span class="section_title"><a href="#dan-lok">Dan Lok</a></span><span class="word_count">(67w~1m)</span></li>
+</ul>
+</div>
+<h3 id="how-do-we-get-rich"><span class="section_number">3.1</span><span class="section_title">How do we get rich?</span></h3>
+<p>There are only two ways to get rich: <em>earn</em> wealth or <em>steal</em> wealth.</p>
+<p>Earn wealth: convince people to give you money, by selling them things that improve their lives. Use the money to develop your wealth even more.</p>
+<p>Or steal wealth: An investor steals a little wealth from each person who does not invest.</p>
+<p>After you obtain enough wealth, develop it, but don't lose all of them.</p>
+<h3 id="what-1"><span class="section_number">3.2</span><span class="section_title">What?</span></h3>
+<ul>
+<li><p>Which is more fundamental, economics or finance? Which is built on which?</p></li>
+<li><p>Why get rich?</p>
+<ul>
+<li>Get more power.</li>
+<li>Change the world. Bend the world to your will. Impose your ideals onto the world.</li>
+<li>Actualize your dreams.</li>
+</ul></li>
+<li><p>The problem with opening a business is too many choices.</p>
+<ul>
+<li>Almost all businesses make money.</li>
+<li>Every obvious business idea is already taken.</li>
+</ul></li>
+<li><p>2017, 1 hour, <a href="https://www.youtube.com/watch?v=vsMydMDi3rI">Frank Abagnale: &quot;Catch Me If You Can&quot; - Talks at Google</a></p>
+<ul>
+<li><p>Use credit card, not debit card.</p>
+<ul>
+<li>Use credit card, but don't fall into debt. Treat credit card as means of payment, not loan.</li>
+<li>Never use debit card outside trusted ATMs.</li>
+<li>But what about cash withdrawals from ATMs? Credit cards have higher fees.</li>
+<li><a href="https://www.nerdwallet.com/blog/credit-cards/credit-card-vs-debit-card-safer-online-purchases/">https://www.nerdwallet.com/blog/credit-cards/credit-card-vs-debit-card-safer-online-purchases/</a></li>
+<li><a href="https://www.quora.com/Are-credit-cards-safer-than-debit-cards">https://www.quora.com/Are-credit-cards-safer-than-debit-cards</a></li>
+<li><p>FUD (fear, uncertainty, and doubt)</p>
+<ul>
+<li><p><a href="https://www.chimebank.com/2017/08/08/are-credit-cards-really-safer-than-debit-cards/">https://www.chimebank.com/2017/08/08/are-credit-cards-really-safer-than-debit-cards/</a></p>
+<ul>
+<li>Of course banks want you to use the debit card. It reduces their liability.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>Passwordless authentication</p>
+<ul>
+<li>Authentication with a phone, without username, without password: <a href="https://www.trusona.com/">Trusona</a>, from the Frank Abagnale 2017 Google talk above.</li>
+<li><a href="https://hacks.mozilla.org/2014/10/passwordless-authentication-secure-simple-and-fast-to-deploy/">https://hacks.mozilla.org/2014/10/passwordless-authentication-secure-simple-and-fast-to-deploy/</a></li>
+<li>2014, Justin Balthrop, &quot;The basic idea is that instead of using a password to authenticate each user, a temporary secret code is sent to them over a secure channel.&quot; (<a href="https://medium.com/@ninjudd/passwords-are-obsolete-9ed56d483eb">source</a>)</li>
+</ul></li>
+</ul></li>
+<li><p>What is money?</p>
+<ul>
+<li><p>Money is a way for people to decide what is important (vote for what is important).</p>
+<ul>
+<li>People vote with their money.</li>
+</ul></li>
+</ul></li>
+<li><p>The job of a company (a company director?) is to find what to do and find who should do it.</p>
+<ul>
+<li>Everyone has different tendencies, strengths, weaknesses, desires, preferences, habits, upbringings, backgrounds.</li>
+<li><p>Some people are more suited for some jobs.</p>
+<ul>
+<li>Some jobs require high IQ; otherwise the employee will take too long to learn.</li>
+<li><p>Some jobs require low IQ; otherwise the employee will get bored too soon.</p>
+<ul>
+<li>Yes, low IQ can be a strength.</li>
+</ul></li>
+</ul></li>
+<li>The company has goals.</li>
+<li>The director breaks down the goals into jobs.</li>
+<li>The director matches employees and jobs.</li>
+<li><p>Which comes first: the job or the employee?</p>
+<ul>
+<li>Do you formulate a job description first, and then find people to do that?</li>
+<li>Do you hire people first, and then formulate jobs suitable for them?</li>
+</ul></li>
+<li><p>A good company accomplishes more than each employee can accomplish individually.</p></li>
+</ul></li>
+<li><p><a href="https://www.youtube.com/watch?v=cWVk8Cdvmgs">Who controls the world? - James B. Glattfelder</a></p>
+<ul>
+<li>physical modeling/explanation of financial inequality</li>
+</ul></li>
+<li><p><a href="https://www.youtube.com/watch?v=QX3M8Ka9vUA">The Third Industrial Revolution: A Radical New Sharing Economy</a></p>
+<ul>
+<li><p>Jeremy Rifkin, Third Industrial Revolution, sharing economy, Germany, Digital Europe, China Internet Plus, aggregate efficiency, distributed system</p>
+<ul>
+<li>The Second Industrial Revolution peaked at 20% aggregate efficiency.</li>
+<li><p>Difference between post-Westphalian worldview and Millenial worldview.</p>
+<ul>
+<li><p>The 21st century way of living is radically different. Different ideas of freedom.</p>
+<ul>
+<li>In the post-Westphalian worldview, freedom means sovereignty, being autonomous, being an island.</li>
+</ul></li>
+</ul></li>
+<li><p>Second Industrial Revolution teaches kids to be factory workers. Obedient. Unquestioning. Hardworking.</p></li>
+</ul></li>
+<li><p><a href="https://www.youtube.com/watch?v=3xOK2aJ-0Js">Jeremy Rifkin on the Fall of Capitalism and the Internet of Things - YouTube</a></p></li>
+</ul></li>
+<li><p><a href="https://www.youtube.com/watch?v=mAOyOULWKUo">Corporate Greed Isn't New. The Internet Is Just the New Playing Field, says Douglas Rushkoff - YouTube</a></p>
+<ul>
+<li>Corporates were invented by aristocrats to make sure peasants stay peasants?</li>
+<li><p><a href="https://bigthink.com/videos/douglas-rushkoff-on-the-internet-and-the-future-of-business">transcript</a></p>
+<ul>
+<li><p>We should verify and distill these texts. These are some bold claims.</p>
+<ul>
+<li>&quot;As the peasants became wealthy the aristocracy got scared, who are these people? They're not going to be dependent on us any more. So they came up with two main financial innovations to prevent the rise of this peer to peer economy. The first one was the chartered monopoly, really the parent to the modern corporation. All the chartered monopoly was was a way to say all of you small businesses are now illegal. If you want to be in the shoe business you have to work for his majesty's royal shoe company. You want to be in the grain business you have to work for his majesty's royal grain company. So people who were small business people now became employees. Instead of selling the value they created, now they sold their time as servants, as wage laborers.&quot;</li>
+<li>&quot;The second invention they came up with was central currency. Not such a terrible thing in itself. It's great to have a long distance currency that lots of people can use and value, but the problem was they made all of the local currencies illegal. So the only way people could trade with each other, the candlestick maker could trade with the chicken farmer was by borrowing central currency from the treasury. So now you had to borrow money at interest just in order to transact. And that set in motion really a growth cascade. If you have a currency that has to be paid back with interest, in order to just make end meet you need an economy that's growing. You need more money next year than there was this year.&quot;</li>
+<li>&quot;So that worked well for colonial powers, as long as we could extend into Africa and South America and North America, find slaves, find new resources, we could grow. But what happens when you reach the end of the planet's growth as we did really at the end of World War II?&quot;</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="https://www.youtube.com/watch?v=6_n1Dro0Uec">Online Companies Like Facebook Have Created a Meaningless Economy, says Douglas Rushkoff - YouTube</a></li>
+<li><p>Work-life balance?</p>
+<ul>
+<li><p>Don't confuse being busy and working.</p>
+<ul>
+<li>Work should create value.</li>
+<li>You can feel busy while not producing anything.</li>
+<li>Work has goals. Being busy doesn't have goals.</li>
+</ul></li>
+<li>People don't care about processes. They only care about results.</li>
+<li>If you are not working in all your waking hours, then it's not the work you want.</li>
+<li><p>If I could work in my sleep, I would!</p></li>
+</ul></li>
+<li>Transport is waste. Hence travel is waste.</li>
+<li><p>Why can't people stay at home on holidays?</p>
+<ul>
+<li>If you don't like staying at home on holidays, that means something is wrong with your home. Fix it. Make it the best place on Earth. Face reality. Don't escape.</li>
+</ul></li>
+<li><a href="https://www.quora.com/What-are-possible-warning-signs-of-an-imminent-economic-collapse">https://www.quora.com/What-are-possible-warning-signs-of-an-imminent-economic-collapse</a></li>
+<li><p>Communism</p>
+<ul>
+<li>The USSR was beyond communism; it was Stalinism.</li>
+<li><p>Stalinism failed because it overcentralizes power.</p>
+<ul>
+<li>Power corrupts.</li>
+<li>Oppression isn't a good long-term strategy.</li>
+<li><p>People are like gas.</p>
+<ul>
+<li>Increasing pressure (oppression, stress, overcrowding) increases temperature (collisions, friction, conflicts, clashes).</li>
+</ul></li>
+</ul></li>
+<li><p>People would still work even if they couldn't get rich.</p>
+<ul>
+<li><p>People work to give their life meaning, not to get rich.</p>
+<ul>
+<li>Getting rich is a side-effect.</li>
+</ul></li>
+<li><p>Would they work better if they could get rich?</p></li>
+</ul></li>
+</ul></li>
+<li><p>If you buy land and let it idle, only to sell it higher in the future, then you're <em>seeking rent</em>.</p>
+<ul>
+<li>You are not creating any value. You burden society. You get rich by burdening others, making them poorer. The world is better without you. You contribute to city sprawl, which causes winding roads, more fuel consumption, more traffic, more pollution, and more heat. You should be heavily taxed for the huge negative externality you cause.</li>
+</ul></li>
+<li>Is all speculation rent-seeking?</li>
+</ul>
+<h3 id="capitalism"><span class="section_number">3.3</span><span class="section_title">Capitalism</span></h3>
+<ul>
+<li><p>What is capitalism?</p>
+<ul>
+<li><p>Capitalism is:</p>
+<ol>
+<li>the <em>private ownership</em> of means of production,</li>
+<li>the operation of such means <em>for profit</em>.</li>
+</ol></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Capitalism">WP: Capitalism</a>.</p></li>
+</ul></li>
+<li><p>How is it good?</p>
+<ul>
+<li>Capitalism enables selfish people to better everyone else.</li>
+<li><p>Voluntary exchange betters everyone.</p>
+<ul>
+<li>People don't agree to a deal they think bad for them.</li>
+</ul></li>
+</ul></li>
+<li><p>How is it bad?</p>
+<ul>
+<li>Wealth gap? Social gap?</li>
+<li>Capitalism places capital above labor?</li>
+<li>Short-term profit-seeking and rent-seeking destroys environment and humanity?</li>
+</ul></li>
+<li><p>How can it be improved?</p>
+<ul>
+<li><p>Regulation</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=YOaJe68C-bU">How to Improve Capitalism</a></li>
+</ul></li>
+<li><p>Capitalism can be environmentally friendly if the polluters pay the environmental costs.</p>
+<ul>
+<li><p>2018: other people are still paying the cost. (Negative externality)</p>
+<ul>
+<li><p>Can sustainability be made profitable?</p>
+<ul>
+<li><p>Pessimistic sources</p>
+<ul>
+<li><a href="https://grist.org/business-technology/none-of-the-worlds-top-industries-would-be-profitable-if-they-paid-for-the-natural-capital-they-use/">https://grist.org/business-technology/none-of-the-worlds-top-industries-would-be-profitable-if-they-paid-for-the-natural-capital-they-use/</a></li>
+<li><a href="https://www.theguardian.com/sustainable-business/blog/sustainability-business-sense-profit-purpose">https://www.theguardian.com/sustainable-business/blog/sustainability-business-sense-profit-purpose</a></li>
+<li><a href="https://www.theguardian.com/environment/2010/feb/18/worlds-top-firms-environmental-damage">https://www.theguardian.com/environment/2010/feb/18/worlds-top-firms-environmental-damage</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>Ramble</p>
+<ul>
+<li><p>Companies must extract value to survive.</p>
+<ul>
+<li><p>A profitable company must extract more value from its employees than it pays its employees.</p>
+<ul>
+<li>People create value. People in a company create value. Human labor creates value. Companies aren't human. Companies can't work. It's the employees who work.</li>
+<li>But if the employees weren't in the company, they might create less value. The company might be a place where the employees can create more value for society.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="http://www.visualcapitalist.com/">http://www.visualcapitalist.com/</a></li>
+<li>Capital is everything that is not labor?</li>
+<li>Capitalism is capital above labor? Communism is labor above capital?</li>
+<li><p>Example of low-capital high-labor:</p>
+<ul>
+<li><p>small and medium enterprises (SMEs)</p>
+<ul>
+<li>food stalls</li>
+<li>home bakeries</li>
+<li>art freelancing</li>
+</ul></li>
+<li><p>research in pure mathematics</p></li>
+</ul></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Criticism_of_capitalism">WP:Criticism of capitalism</a></p></li>
+</ul>
+<h3 id="investing"><span class="section_number">3.4</span><span class="section_title">Investing</span></h3>
+<ul>
+<li><p>Wealth Extraction Efficiency = Dividend / Equity</p>
+<ul>
+<li>Dividend is shareholder's dividend</li>
+<li>Equity is book value</li>
+<li>If reading consolidated report, use the one attributable to parent entity</li>
+</ul></li>
+<li><p>Time to buy? Mungkin beberapa bulan setelah lebaran.</p>
+<ul>
+<li>2018, <a href="https://www.reddit.com/r/indonesia/comments/8l9yc7/indonesias_stock_rout_claims_another_victim_the/">https://www.reddit.com/r/indonesia/comments/8l9yc7/indonesias_stock_rout_claims_another_victim_the/</a></li>
+<li><p><a href="https://www.reddit.com/r/indonesia/comments/8l4ykk/why_an_emerging_market_rout_has_hit_indonesia_so/">https://www.reddit.com/r/indonesia/comments/8l4ykk/why_an_emerging_market_rout_has_hit_indonesia_so/</a></p>
+<ul>
+<li><a href="https://www.bloomberg.com/news/articles/2018-05-09/why-an-emerging-market-rout-has-hit-indonesia-so-hard-quicktake">https://www.bloomberg.com/news/articles/2018-05-09/why-an-emerging-market-rout-has-hit-indonesia-so-hard-quicktake</a></li>
+<li>Why do they disapprove of Sri Mulyani?</li>
+</ul></li>
+</ul></li>
+<li><p>Everyday there are stocks that rise by 20% and there are stocks that fall by 20%.</p>
+<ul>
+<li>If we can predict which will rise, we can get rich quickly.</li>
+<li><p>Why do prices rise? Because buyers concede to sellers.</p>
+<ul>
+<li>Because there is more buying pressure than selling pressure.</li>
+<li>Because there is more buy orders than sell orders.</li>
+<li>Because more people buy.</li>
+<li>Because less people sell.</li>
+<li>Because more people buy.</li>
+</ul></li>
+<li><p>Why do people buy a stock?</p>
+<ul>
+<li><p>Because they believe it will rise.</p>
+<ul>
+<li><p>Why do they believe so?</p>
+<ul>
+<li>Fallacious reasoning. Psychological bias. Appeal to authority. Hearsay. Fear of missing out. Irrational exuberance?</li>
+</ul></li>
+</ul></li>
+<li>Because they believe it will give them dividends.</li>
+<li><p><a href="https://money.stackexchange.com/questions/82057/what-factors-make-someone-buy-or-sell-a-stock">https://money.stackexchange.com/questions/82057/what-factors-make-someone-buy-or-sell-a-stock</a></p></li>
+</ul></li>
+<li><p>How do we persuade/encourage people to buy a stock? How do you market a stock?</p>
+<ul>
+<li>This is gray area. Is it even legal?</li>
+</ul></li>
+<li><p>How do we prevent sellers from selling?</p></li>
+</ul></li>
+<li><p>Hypothesis: Some companies' financial statements predict economic/financial crises.</p>
+<ul>
+<li><p>How are economic crises even possible if there is enough money for everybody?</p>
+<ul>
+<li>Uneven distribution of money?</li>
+<li><p>Hypothesis: The solution to an economic crisis is a forced redistribution of money, an economic reboot/restart, however unpleasant.</p>
+<ul>
+<li>In an economic crisis, tax the wealthy and pay the poor.</li>
+<li>I think that is an optimal solution (if not the only solution), but that is politically incorrect, so we'll never see that.</li>
+</ul></li>
+<li><p>If ignored, economic crisis will escalate to sociopolitical crisis.</p></li>
+</ul></li>
+</ul></li>
+<li>Banks lend money with interest. Thus, paying back the loans reduce circulating money.</li>
+<li><p><a href="https://iextrading.com/">https://iextrading.com/</a></p>
+<ul>
+<li>the only independent stock exchange in the USA</li>
+<li><a href="http://hackage.haskell.org/package/stocks">http://hackage.haskell.org/package/stocks</a></li>
+</ul></li>
+<li>daftar (list) reksadana <a href="https://www.indopremier.com/ipotfund/listreksadana.php">https://www.indopremier.com/ipotfund/listreksadana.php</a></li>
+<li><p>2018-10-10: GarudaFood mau IPO!</p>
+<ul>
+<li><a href="http://investasi.kontan.co.id/news/bersiap-masuk-bursa-garudafood-akan-melepas-10-saham">http://investasi.kontan.co.id/news/bersiap-masuk-bursa-garudafood-akan-melepas-10-saham</a></li>
+<li><a href="https://investasi.kontan.co.id/news/menanti-ipo-jumbo-dari-garudafood">https://investasi.kontan.co.id/news/menanti-ipo-jumbo-dari-garudafood</a></li>
+</ul></li>
+<li>Read Benjamin Graham value investing?</li>
+<li><p>Mana yang mujarab? Belum ada yang saya coba.</p>
+<ul>
+<li><p>Teguh Hidayat</p>
+<ul>
+<li><a href="https://www.teguhhidayat.com/p/ebook-analisis-kuartal-i-2014.html">Indonesia Value Investing: Ebook Analisis Kuartal II 2018</a></li>
+<li><a href="https://www.thpartner.com/">Indonesia Value Investing</a></li>
+</ul></li>
+<li><p><a href="http://galerisaham.com/">galerisaham.com</a>: rekomendasi saham harian; GS Pro</p></li>
+</ul></li>
+<li><a href="https://deep-throat-ipo.blogspot.com/">deep-throat-ipo.blogspot.com</a></li>
+<li><a href="http://www.sahamok.com/tentang/">http://www.sahamok.com/tentang/</a></li>
+<li><a href="https://www.kemenkeu.go.id/single-page/savings-bond-ritel/">https://www.kemenkeu.go.id/single-page/savings-bond-ritel/</a></li>
+<li><a href="https://sbn.investree.id/">https://sbn.investree.id/</a></li>
+<li><p>List of traded things</p>
+<ul>
+<li><a href="http://www.idx.co.id/id-id/beranda/informasipasar/saham/ringkasansaham.aspx">Stocks</a> sortable by price, &quot;value&quot; (I thought it was market capitalization), volume, frequency</li>
+<li><a href="http://www.idx.co.id/id-id/beranda/informasipasar/daftarefek/saham.aspx">Stocks</a> sortable by category (&quot;board&quot;), IPO date, number of shares</li>
+<li><a href="https://id.wikipedia.org/wiki/Daftar_perusahaan_yang_tercatat_di_Bursa_Efek_Indonesia">Stocks</a>, from Wikipedia Indonesia, linking to IDX pages</li>
+<li><a href="http://www.idx.co.id/id-id/beranda/informasipasar/daftarefek/etf.aspx">ETFs</a></li>
+<li><a href="http://www.idx.co.id/id-id/beranda/perusahaantercatat/aktivitaspencatatan.aspx">IPOs, delistings, and relistings</a></li>
+<li>forex = foreign exchange</li>
+<li>CFD = contract for difference</li>
+<li>IndoCDS? credit default swap? apa ini? apakah traded?</li>
+</ul></li>
+<li><p>Announcements about the securities being traded</p>
+<ul>
+<li>In practice, you get these news from your broker's application, not from IDX website.</li>
+<li><a href="http://www.idx.co.id/id-id/beranda/beritadanpengumuman/pengumuman.aspx">Announcements</a> (delistings, mergers, shareholder meeting invitations, etc.)</li>
+<li><a href="http://www.idx.co.id/id-id/beranda/beritadanpengumuman/unusualmarketactivity.aspx">Unusual market activities</a></li>
+<li><a href="http://www.idx.co.id/id-id/beranda/beritadanpengumuman/suspensi.aspx">Temporary trading suspensions</a></li>
+</ul></li>
+<li><p>Brokers</p>
+<ul>
+<li><a href="http://www.idx.co.id/id-id/beranda/anggotabursaamppartisipan/anggotabursadikotaanda.aspx">Find a broker near you</a></li>
+</ul></li>
+<li><p>Regulations</p>
+<ul>
+<li><p><a href="http://www.idx.co.id/id-id/beranda/tentangbei/mekanismeperdagangan/jamperdagangan.aspx">Trading hours</a>:</p>
+<ul>
+<li>practically 09:00–11:30 and 14:00–15:50 UTC+7, except Fridays</li>
+</ul></li>
+<li><p><a href="http://www.idx.co.id/id-id/beranda/tentangbei/mekanismeperdagangan/saham.aspx">Settlement</a>:</p>
+<ul>
+<li>practically T+3, where T+0 is the transaction date</li>
+</ul></li>
+<li><a href="http://www.idx.co.id/id-id/beranda/beritadanpengumuman/jadwalliburbursa.aspx">Holiday schedule</a></li>
+<li><p><a href="http://www.idx.co.id/id-id/beranda/tentangbei/strukturpasarmodalindonesia.aspx">Struktur pasar modal Indonesia menurut UU 8/1995</a></p></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Industry_classification">Industry classification</a></li>
+<li><p>Indonesia company types</p>
+<ul>
+<li><a href="https://id.wikipedia.org/wiki/Badan_usaha#Persero">What is BUMN/BUMD Persero?</a> (Wikipedia Indonesia)</li>
+</ul></li>
+<li><p>Financial reports</p>
+<ul>
+<li><a href="https://www.abdainsurance.co.id/index.php?option=com_content&amp;view=category&amp;layout=blog&amp;id=41&amp;Itemid=136&amp;lang=id">ABDA</a> (PT Asuransi Bina Dana Arta Tbk)</li>
+<li><a href="http://www.bca.co.id/Tentang-BCA/Hubungan-Investor/Laporan-Keuangan/Laporan-Finansial-Per-Kuartal">BBCA</a> (PT Bank Central Asia Tbk)</li>
+<li><a href="http://phx.corporate-ir.net/phoenix.zhtml?c=148820&amp;p=irol-reportsOther">BBRI</a> (PT Bank Rakyat Indonesia (Persero) Tbk)</li>
+<li><a href="http://ir.bankmandiri.co.id/phoenix.zhtml?c=146157&amp;p=irol-finStatement">BMRI</a> (PT Bank Mandiri (Persero) Tbk)</li>
+<li><a href="http://ir.matahari.co.id/phoenix.zhtml?c=171562&amp;p=irol-reportsother">LPPF</a> (PT Matahari Department Store Tbk)</li>
+<li><a href="http://corporate.ramayana.co.id/index.php/en/investor-relation-2/financial-information/financialreports">RALS</a> (PT Ramayana Lestari Sentosa Tbk)</li>
+</ul></li>
+<li><p>Banks</p>
+<ul>
+<li><a href="http://media.corporate-ir.net/media_files/IROL/14/148820/BRI_ENG_31%20Dec_2016_Released_Password_Removed.pdf">BBRI 2016</a></li>
+<li><a href="http://media.corporate-ir.net/media_files/IROL/14/146157/Bank-Mandiri-Tbk_Ind_31_Desember_2016_Released-.pdf">BMRI 2016</a></li>
+</ul></li>
+<li><p>Insurance</p>
+<ul>
+<li><a href="https://www.allianz.co.id/tentang-kami/finansial#keuangan">Allianz ID</a> (PT Asuransi Allianz Life Indonesia)</li>
+<li><a href="https://www.prudential.co.id/corp/prudential_in_id/header/aboutus/financialstatement/index.html">Prudential Indonesia</a></li>
+<li><p>2016 annual reports:</p>
+<ul>
+<li><a href="https://www.abdainsurance.co.id/abdanew/lap_keu_thn/Final%20Report%20ABDA%2031%20Des%202016%20with%20opini.pdf">ABDA</a></li>
+<li><a href="https://www.prudential.co.id/export/sites/default/prudential_in_id/resources/downloads/financialstatement/2017/FS_Audited_2016.PDF">Pru</a></li>
+</ul></li>
+</ul></li>
+<li><p>Things that make me sad</p>
+<ul>
+<li>Back button doesn't work on the IDX website.</li>
+</ul></li>
+<li><p>Thanks but no thanks. I'll stick to stocks for now.</p>
+<ul>
+<li><a href="http://www.brokerforexindo.com/">http://www.brokerforexindo.com/</a></li>
+<li><a href="http://www.nfa.futures.org/basicnet/SearchResults.aspx?type=firm&amp;firm=FXCM">http://www.nfa.futures.org/basicnet/SearchResults.aspx?type=firm&amp;firm=FXCM</a></li>
+<li>national futures association <a href="http://www.nfa.futures.org/">http://www.nfa.futures.org/</a></li>
+<li><a href="http://www.bappebti.go.id/id/api/pialang_dicabut.html">http://www.bappebti.go.id/id/api/pialang_dicabut.html</a></li>
+<li><a href="http://www.e-bursa.com/">http://www.e-bursa.com/</a></li>
+<li><a href="http://www.bloomberg.com/quote/LMAS:IJ">http://www.bloomberg.com/quote/LMAS:IJ</a></li>
+<li><a href="http://topbrokerforex.blog.com/2012/08/02/daftar-badan-regulasi-untuk-broker-forex/">http://topbrokerforex.blog.com/2012/08/02/daftar-badan-regulasi-untuk-broker-forex/</a></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Outline_of_finance#Post-modern_portfolio_theory">https://en.wikipedia.org/wiki/Outline_of_finance#Post-modern_portfolio_theory</a></li>
+<li><p>Measuring investment performance</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Sharpe_ratio">https://en.wikipedia.org/wiki/Sharpe_ratio</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Sortino_ratio">https://en.wikipedia.org/wiki/Sortino_ratio</a></li>
+</ul></li>
+</ul>
+<h3 id="justifying-my-value"><span class="section_number">3.5</span><span class="section_title">Justifying my value</span></h3>
+<ul>
+<li><p>2018-08-18</p>
+<ul>
+<li><p>Today, in an hour, I advised my friend. My advice, if implemented, would save him Rp 450 million / year. His cost is Rp 3000 million / year. He makes 300 sales per year.</p>
+<ul>
+<li>Talking with me for an hour could cut your business unit economic costs by 15%.</li>
+<li>Should I be a SME (Small and Medium Enterprises) consultant?</li>
+<li>Is Rp 450 million / year big?</li>
+<li>Is 15% unit economics improvement big?</li>
+</ul></li>
+<li>Inefficiency kills a company. A competitor finds a more efficient way to do the same thing. Either slowly/incrementally from an ordinary competitor, or radically/disruptively by an unexpected competitor.</li>
+</ul></li>
+</ul>
+<h3 id="economics"><span class="section_number">3.6</span><span class="section_title">Economics</span></h3>
+<ul>
+<li><p>ontology</p>
+<ul>
+<li><p>wealth</p>
+<ul>
+<li><em>Wealth</em> is the sum of satisfied wants.</li>
+</ul></li>
+<li><p>price, pay, ownership, exchange, transaction</p>
+<ul>
+<li>To <em>own</em> something is to have exclusive access to that thing.</li>
+<li><em>Exchange</em> and <em>transaction</em> are synonyms.</li>
+<li><p>An <em>exchange</em> is an agreement</p>
+<ul>
+<li><p>between two parties A and B where</p>
+<ul>
+<li>A gives X to B,</li>
+<li>B gives Y to A.</li>
+</ul></li>
+</ul></li>
+<li><p>If X is money and Y is not money, then:</p>
+<ul>
+<li><p>X is the price.</p>
+<ul>
+<li><em>Price</em> is the amount agreed for exchange.</li>
+<li><em>Price</em> is something sacrificed to get something else.</li>
+</ul></li>
+<li>A is the buyer.</li>
+<li>B is the seller.</li>
+<li><p>The buyer <em>pays</em> the price to the seller.</p></li>
+</ul></li>
+</ul></li>
+<li><p>negotiation, price-taker, price-maker</p>
+<ul>
+<li>Negotiating parties often have asymmetrical bargaining power.</li>
+<li>The price-taker is the weaker one.</li>
+<li>The price-maker is the stronger one.</li>
+</ul></li>
+<li><p>money and currency</p>
+<ul>
+<li>Money has <em>currency</em> and <em>amount</em> (<em>magnitude</em>).</li>
+<li>Money can be <em>exchanged</em> with many other things.</li>
+</ul></li>
+<li><p>debt, interest, and price</p>
+<ul>
+<li><p>The price of debt is the <em>interest</em> (the amount of money that will be exchanged for obtaining the loan now).</p>
+<ul>
+<li><p>An X market is a market where X is traded.</p>
+<ul>
+<li><p>A money market is a market where money is traded.</p>
+<ul>
+<li>How do you buy money with money?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>Assumptions</p>
+<ul>
+<li><p>Every human:</p>
+<ul>
+<li>Has wants.</li>
+<li><p>Has priorities? Utility function?</p>
+<ul>
+<li>Non-constructive? It exists, but we don't know what it is?</li>
+</ul></li>
+<li><p>Acts to satisfy those wants.</p></li>
+</ul></li>
+</ul></li>
+<li><p>Counterexamples? Where the theory breaks down?</p>
+<ul>
+<li><p>Thiefs want something more than freedom?</p>
+<ul>
+<li>But both of the stolen thing and the freedom will be taken away?</li>
+</ul></li>
+<li><p>Smokers and junk food eaters don't want health?</p>
+<ul>
+<li><p>Everybody wants health?</p>
+<ul>
+<li><p>But doesn't behave consistent with wants?</p>
+<ul>
+<li><p>Cognitive dissonance?</p>
+<ul>
+<li>Want health later or health now?</li>
+<li><p>Addiction?</p>
+<ul>
+<li>Physical changes to the brain?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>Fundamentals of economics</p>
+<ul>
+<li>Everybody wants something.</li>
+<li>How do we satisfy more people using less resources?</li>
+</ul></li>
+<li><p>decision theory?</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Von_Neumann%E2%80%93Morgenstern_utility_theorem">WP:von Neumann–Morgenstern utility theorem</a></li>
+</ul></li>
+<li><p>Higher-order belief</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Keynesian_beauty_contest">WP:Keynesian beauty contest</a></li>
+<li><p>Examples of higher-order beliefs:</p>
+<ul>
+<li>People believe that money is valuable because they believe that others also believe that money is valuable.</li>
+</ul></li>
+</ul></li>
+<li><p>How do we give more than we take?</p>
+<ul>
+<li>How do we produce more than we consume?</li>
+</ul></li>
+<li><p>Land &gt; Labor &gt; Capital</p>
+<ul>
+<li><p>The <a href="https://en.wikipedia.org/wiki/Factors_of_production">factors of production</a> in classical economics are:</p>
+<ul>
+<li>land (all other things that exist in nature),</li>
+<li>labor (human),</li>
+<li>capital (tools).</li>
+</ul></li>
+<li>Land creates labor.</li>
+<li>Labor creates capital.</li>
+<li>If capital is destroyed, labor can rebuild it.</li>
+<li>If labor is destroyed, capital cannot rebuild it.</li>
+<li>Labor without capital is inefficient.</li>
+<li>Capital without labor is <em>nothing</em>.</li>
+<li>However, without land, nothing would exist at all.</li>
+<li><p>Therefore, land is more important than labor, and labor is more important than capital,</p>
+<ul>
+<li>but it seems here that capital is revered, labor is disdained, and land is forgotten.</li>
+</ul></li>
+<li><p>Money is not capital, but it can be used to buy capital, but this quote is related: &gt; When the last tree is cut, the last fish is caught, and the last river is polluted; &gt; when to breathe the air is sickening, you will realize, too late, &gt; that wealth is not in bank accounts and that you can't eat money. &gt; &gt; Alanis Obomsawin (b. 1932) (<a href="http://quoteinvestigator.com/2011/10/20/last-tree-cut/">source</a>)</p></li>
+</ul></li>
+<li><p>Is Indonesia basic income feasible?</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Basic_income">WP:Basic income</a></li>
+<li><a href="https://www.kemenkeu.go.id/apbn2016">APBN 2016</a> income Rp 1,822.5 trillion (in one year).</li>
+<li>2016 population 258 million people. (source?)</li>
+<li><p>Thus about Rp 7 million per man-year.</p>
+<ul>
+<li>This isn't even enough to buy food for one man-year.</li>
+</ul></li>
+</ul></li>
+<li><a href="https://www.numbeo.com/cost-of-living/">https://www.numbeo.com/cost-of-living/</a></li>
+<li><p>Undigested</p>
+<ul>
+<li><a href="https://www.opendemocracy.net/transformation/andrew-sayer/is-unearned-income-acceptable">https://www.opendemocracy.net/transformation/andrew-sayer/is-unearned-income-acceptable</a></li>
+<li><a href="http://www.resilience.org/stories/2016-03-15/money-is-not-a-store-of-value/">http://www.resilience.org/stories/2016-03-15/money-is-not-a-store-of-value/</a></li>
+<li><p>Write about inflation</p>
+<ul>
+<li>Supply-caused inflation</li>
+<li>Demand-caused inflation</li>
+</ul></li>
+<li><p><a href="https://www.washingtonpost.com/news/wonk/wp/2013/09/09/how-the-cult-of-shareholder-value-wrecked-american-business/">https://www.washingtonpost.com/news/wonk/wp/2013/09/09/how-the-cult-of-shareholder-value-wrecked-american-business/</a></p></li>
+</ul></li>
+<li><p>philosophy</p>
+<ul>
+<li>Increasing the wealth of the human race conflicts with antinatalism?</li>
+<li>Increasing the minimum/average wealth of the human race doesn't conflict with antinatalism?</li>
+</ul></li>
+<li><p>Some economists</p>
+<ul>
+<li>David Ricardo</li>
+<li>Henry George</li>
+<li>Adam Smith</li>
+<li>John Maynard Keynes</li>
+</ul></li>
+<li><p>Initial money supply</p>
+<ul>
+<li>How is money distributed for the first time (when there is not yet any money)?</li>
+<li><p>How do we transition from barter to cash?</p>
+<ul>
+<li>How do we set prices?</li>
+</ul></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Modern_Monetary_Theory">WP:Modern monetary theory</a>?</li>
+<li><p>Tax</p>
+<ul>
+<li>Tax enables government to redistribute money (and therefore some wealth).</li>
+<li>Tax enables government to discourage the consumption of certain goods.</li>
+<li><p>Taxation is legalized robbery.</p>
+<ul>
+<li>The government forcibly takes some of the people's money.</li>
+<li><p>The people doesn't get to decide what the tax money is used for.</p>
+<ul>
+<li>The government is assumed to use that money for the people's good.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Trickle-down_economics">WP:Trickle-down economics</a></p>
+<ul>
+<li>How does one arrive at this? How does one think? What is the argument?</li>
+</ul></li>
+<li><p>If the total amount of money is constant, then the only way for you to have more money is to make someone else has less money.</p>
+<ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Mercantilism">WP:Mercantilism</a> assumes that the total wealth in the world is constant?</p>
+<ul>
+<li>&quot;Mercantilists viewed the economic system as a zero-sum game, in which any gain by one party required a loss by another.[16]&quot;</li>
+</ul></li>
+</ul></li>
+<li><p>Questions I haven't been able to answer</p>
+<ul>
+<li><p>If everybody needs to buy food, then why aren't farmers the richest people on Earth?</p>
+<ul>
+<li><p>What if the farmers don't spend?</p>
+<ul>
+<li>Will money collect at the farmers?</li>
+<li>Will they be the richest people on Earth?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>Money circulation</p>
+<ul>
+<li>Circulating money amount should be proportional to amount of goods/services exchanged?</li>
+<li>The amount of money in circulation can be reduced by tax or destruction.</li>
+<li><p>Why do governments sell bonds?</p>
+<ul>
+<li><p>To reduce the amount of money in circulation now?</p>
+<ul>
+<li>At the cost of increasing a bigger amount of money circulating in the future?</li>
+</ul></li>
+</ul></li>
+<li>Money moves faster in certain areas?</li>
+<li><p>How does the government increases the amount of money in circulation?</p>
+<ul>
+<li><p>How I think it might be done:</p>
+<ul>
+<li>Create new money.</li>
+<li><p>Spend that money by buying things from a few elites,</p>
+<ul>
+<li><p>with the hope that the elites will quickly spend that money to the lesser elites.</p>
+<ul>
+<li><p>Thus that money will circulate to more people.</p>
+<ul>
+<li>But isn't this trickle-down economics?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>But does it even do this? Isn't it the banks?</p></li>
+</ul></li>
+<li><p>What is the effect of people's borrowing from banks?</p>
+<ul>
+<li>Increase circulating money now (boom part of boom-bust cycle).</li>
+<li><p>Reduce <em>more</em> circulating money later (bust part of boom-bust cycle, when the loan is paid back with interest).</p>
+<ul>
+<li><p>Principal plus interest (money retired) is greater than principal (money created), so the net effect of lending money now is a delayed reduction of a greater amount of money in circulation.</p>
+<ul>
+<li><p>Where does the money to pay the interest come from?</p>
+<ul>
+<li><p>If left alone, eventually the money collects at the banks?</p>
+<ul>
+<li><p>But banks have expenses too.</p>
+<ul>
+<li>Banks need to pay taxes, pay their utility bills, pay their staffs.</li>
+</ul></li>
+<li><p>But shouldn't the money collect at the farmers?</p></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>The ideal inflation rate is zero?</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Nominal_rigidity">WP:Nominal rigidity</a> a.k.a. price-stickiness or wage-stickiness</li>
+</ul></li>
+</ul></li>
+<li><a href="https://makewealthhistory.org/2018/01/31/wealth-creation-and-wealth-extraction/">The difference between wealth creation and wealth extraction</a></li>
+<li><a href="https://medium.com/@joe_brewer/the-global-architecture-of-wealth-extraction-4c0a6b954a14">The Global Architecture of Wealth Extraction</a></li>
+<li><a href="https://www.aljazeera.com/indepth/opinion/2017/05/africa-poor-stealing-wealth-170524063731884.html">Africa is not poor, we are stealing its wealth</a></li>
+<li><p>rent seeking, wealth extraction</p>
+<ul>
+<li><p>unread</p>
+<ul>
+<li><a href="https://boffyblog.blogspot.com/2017/04/general-election-who-are-wealth.html">Who are the wealth extractors?</a></li>
+<li><a href="http://www.rossgittins.com/2018/01/whos-doing-best-in-rent-seeking-business.html">Who's doing best in the rent-seeking business</a></li>
+</ul></li>
+</ul></li>
+<li><p>Infer: People buy something because they want it.</p>
+<ul>
+<li>False assumption: People buy something because it makes them better off.</li>
+<li>False assumption: People buy something because <em>they believe</em> it makes them better off.</li>
+<li>False assumption: Voluntary exchange makes both parties better off.</li>
+<li>Counterexample: Cigarette smoking, addictive substances.</li>
+<li><p>Why do people want things? Some possible reasons:</p>
+<ul>
+<li>To sustain life.</li>
+<li>To avoid pain.</li>
+<li>To increase happiness.</li>
+<li>To satisfy curiosity.</li>
+<li>…</li>
+<li><p>Their brains are hijacked.</p>
+<ul>
+<li>Isn't it generally immoral to harm people?</li>
+<li>Is it moral to make people harm themselves (e.g. selling them cigarettes)?</li>
+</ul></li>
+</ul></li>
+<li><p>Murphy's law applied to capitalism?</p>
+<ul>
+<li>If something is profitable, someone will do it.</li>
+<li>Some evil is profitable.</li>
+<li>Therefore someone will do some evil and get rich from doing that evil.</li>
+</ul></li>
+</ul></li>
+<li><p>Unread</p>
+<ul>
+<li><p>False assumptions</p>
+<ul>
+<li><a href="https://caspertk.wordpress.com/2012/12/08/top-ten-false-assumptions-taught-in-my-economics-classroom/">&quot;Top Ten False Assumptions Taught In My Economics Classroom&quot;</a></li>
+<li><p><a href="http://www.binaryeconomics.net/wordpress/fifty-nine-false-assumptions-of-mainstream-neo-classical-economics/">Fifty Nine False Assumptions of Mainstream Neo-classical Economics</a></p>
+<ul>
+<li>questionable source</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>economics-biology analogy</p>
+<ul>
+<li><p>pioneer species?</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Pioneer_species">https://en.wikipedia.org/wiki/Pioneer_species</a></li>
+<li>pioneer species in biology ~ pioneer species in economics ?</li>
+<li>ecosystem recovery after wildfire ~ economy recovery after war/disaster ?</li>
+<li>fire ecology ~ war/disaster ecology ?</li>
+<li>How does a community rebuild itself?</li>
+</ul></li>
+</ul></li>
+<li><p>Company theory</p>
+<ul>
+<li><p>Avoiding personification of companies</p>
+<ul>
+<li>A company is a group of people.</li>
+<li>Group is concept. Person is reality.</li>
+<li>Groups can't think. People think.</li>
+<li>Groups can't react. People react.</li>
+<li>Groups can't live. People live.</li>
+<li>Groups can't work. People work.</li>
+<li>Groups can't create value. People create value.</li>
+<li>Groups can't decide. People decide.</li>
+<li>Groups can't be responsible. People are responsible.</li>
+<li>Groups can't commit crime. People commit crime.</li>
+<li>Groups can't damage environment. People damage environment.</li>
+<li>Groups can't exploit. People exploit.</li>
+<li>What do we mean when we say &quot;a group of people are walking&quot;? We mean &quot;those people are walking&quot;. A group is a concept. We invent it in our language. A group can't walk.</li>
+</ul></li>
+<li><p>The whole is greater than the parts?</p>
+<ul>
+<li>The value that someone produce alone is less than the value he produces with his coworkers?</li>
+<li>But social loafing? Bigger team mean less work per person?</li>
+<li><p>Companies exist.</p>
+<ul>
+<li>It shows that owning a company can be profitable.</li>
+</ul></li>
+</ul></li>
+<li>Define: To <em>employ</em> someone is to find/give him things to do.</li>
+<li>A profitable-company owner employs its employees better than those employees employ themselves.</li>
+<li>If employees could find great things to do, they will own a company, not work for a company.</li>
+<li><p>To employ is to exploit.</p>
+<ul>
+<li>A company owner who doesn't exploit his employees enough will run out of money.</li>
+<li>A company owner who exploits his employees too much will run out of employees.</li>
+<li><p>&quot;Exploit&quot; there is the same &quot;exploit&quot; in &quot;exploiting natural resources&quot;.</p>
+<ul>
+<li><a href="https://en.wiktionary.org/wiki/exploit#Verb">Wiktionary:exploit</a>: &quot;to use for one's own advantage&quot;</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>Does Patreon work?</p>
+<ul>
+<li>For investors?</li>
+<li>For creators?</li>
+<li>For patrons?</li>
+<li><a href="https://theoutline.com/post/2571/no-one-makes-a-living-on-patreon">https://theoutline.com/post/2571/no-one-makes-a-living-on-patreon</a></li>
+</ul></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Laffer_curve">https://en.wikipedia.org/wiki/Laffer_curve</a></p></li>
+</ul>
+<h3 id="finance"><span class="section_number">3.7</span><span class="section_title">Finance</span></h3>
+<ul>
+<li><p>What is finance?</p>
+<ul>
+<li><a href="https://en.wiktionary.org/wiki/finance">Wiktionary: finance</a></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Finance">WP: Finance</a></p>
+<ul>
+<li>&quot;Finance is a field that deals with the study of investments.&quot;</li>
+</ul></li>
+</ul></li>
+<li><p>Loan-related jargon</p>
+<ul>
+<li>A lender lends (gives) a loan to a borrower.</li>
+<li>A borrower borrows (takes) a loan from a lender.</li>
+<li>Loan is the amount.</li>
+<li>Borrower (one who borrows) is the debtor (one who has debt).</li>
+<li>Lender (one who lends) is the creditor (one who gives credit).</li>
+<li><p>Lease vs rent?</p>
+<ul>
+<li><p>Lease is more formal and long-term than rent.</p>
+<ul>
+<li><a href="http://www.businessdictionary.com/article/1063/lease-vs-rent-d1412/">businessdictionary.com</a></li>
+<li><a href="https://www.nolo.com/legal-encyclopedia/leases-rental-agreements-faq.html">nolo.com</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>Currency-related jargon</p>
+<ul>
+<li>The <em>price</em> is the amount paid by the buyer to the seller.</li>
+<li>What is currency?</li>
+<li>What is money?</li>
+<li><p>What is the difference between currency and money?</p>
+<ul>
+<li><p><a href="https://www.weusecoins.com/hidden-secrets-of-money-currency-versus-money/">https://www.weusecoins.com/hidden-secrets-of-money-currency-versus-money/</a></p>
+<ul>
+<li>&quot;Currency is a medium of exchange, a unit of account.&quot;</li>
+<li>&quot;Money is [currency] plus a store of value over a long period of time.&quot;</li>
+</ul></li>
+</ul></li>
+<li>What is legal tender?</li>
+<li>What is cryptocurrency?</li>
+<li><p>Is there such thing as &quot;cryptomoney&quot;?</p></li>
+</ul></li>
+<li><p>Securities</p>
+<ul>
+<li>A <a href="https://en.wikipedia.org/wiki/Security_(finance)">security</a> is a <em>claim</em> to something.</li>
+<li><p>An <em>exchange</em> was a place (is a computer system) where things are traded (bought and sold).</p>
+<ul>
+<li><p>The exchange requires <em>brokers</em> because it was invented before computers.</p>
+<ul>
+<li><p>Impractical: 1 million people on the trading floor shouting for a match.</p>
+<ul>
+<li>But a computer can match 1 million trades in a second.</li>
+</ul></li>
+<li><p>Nobody bothers making a new stock exchange.</p>
+<ul>
+<li>Because of <a href="https://en.wikipedia.org/wiki/Network_effect#Financial_exchanges">network effect</a>.</li>
+<li><p>But <a href="https://robinhood.com/">Robinhood</a> is doing that,</p>
+<ul>
+<li><p>but it's a broker, not a stock exchange,</p>
+<ul>
+<li><p>but I hope they make buying stock as easy as ordering pizza online,</p>
+<ul>
+<li>because if everyone uses the same broker, then the broker <em>is</em> the exchange.</li>
+</ul></li>
+</ul></li>
+<li><p><a href="https://support.robinhood.com/hc/en-us/articles/202853769-How-Robinhood-Makes-Money">How Robinhood makes money</a></p>
+<ul>
+<li>No trading fee.</li>
+<li>$6 per month per person who uses Robinhood Gold; otherwise none.</li>
+<li><p>In 2017, Robinhood had 2 million users (<a href="https://techcrunch.com/2017/04/26/robincorn/">techcrunch.com</a>).</p>
+<ul>
+<li><p>How many of them use Robinhood Gold?</p>
+<ul>
+<li><p>How many people have margin account compared to regular account?</p>
+<ul>
+<li>I guess 1:100.</li>
+</ul></li>
+</ul></li>
+<li><p>How many employees do Robinhood have?</p>
+<ul>
+<li>30 (<a href="https://www.owler.com/company/robinhood">owler.com</a>)</li>
+</ul></li>
+<li><p>Does that make sense?</p>
+<ul>
+<li><p>My estimate:</p>
+<ul>
+<li><p>Their revenue:</p>
+<ul>
+<li>$60,000 per month = $720,000 per year.</li>
+</ul></li>
+<li><p>Their expenses:</p>
+<ul>
+<li>$300,000 per year for employees.</li>
+<li>? for stock exchange chairs.</li>
+<li>? for building leases.</li>
+</ul></li>
+</ul></li>
+<li>Yes, it makes sense.</li>
+<li><p>Are customers &quot;mercy-buying&quot; because they think Robinhood is too cheap (compared to old-school brokerages)?</p>
+<ul>
+<li><a href="https://www.stockbrokers.com/guides/features-fees">stockbrokers.com: 21 Most Common Online Broker Features &amp; Fees</a></li>
+<li>Comparison: In Indonesia, stock trading cost is about 0.02% of trade value.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>A stock exchange starts out trading stocks, but after some time it begins trading other securities, but the name has stuck.</p></li>
+</ul></li>
+<li>A <em>bond</em> is a securitized loan?</li>
+<li>Every asset can be securitized?</li>
+<li><p>Stock</p>
+<ul>
+<li><em>Stock</em> is company ownership.</li>
+<li>A <em>share</em> is a fraction of stock.</li>
+<li>Buying share means buying partial company ownership.</li>
+</ul></li>
+</ul></li>
+<li><p>Undigested information</p>
+<ul>
+<li><a href="http://noahpinionblog.blogspot.co.id/2013/01/how-much-value-does-finance-industry.html">Noahpinion: How much value does the finance industry create?</a></li>
+<li><p>Investing, speculating, or gambling?</p>
+<ul>
+<li>Slap some &quot;math&quot; on gambling masquerading as &quot;investing&quot;, and suddenly it looks legit.</li>
+<li>&quot;Modern investing: gambling in disguise&quot;, David Schneider</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="defining-investing-trading-gambling-betting-wagering-insurance"><span class="section_number">3.8</span><span class="section_title">Defining investing, trading, gambling, betting, wagering, insurance</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.8.1</span><span class="section_title"><a href="#defining-gambling">Defining gambling</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">3.8.2</span><span class="section_title"><a href="#how-do-we-know-something-is-not-gambling">How do we know something is not gambling?</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">3.8.3</span><span class="section_title"><a href="#what-2">What</a></span><span class="word_count">(254w~2m)</span></li>
+</ul>
+</div>
+<h4 id="defining-gambling"><span class="section_number">3.8.1</span><span class="section_title">Defining gambling</span></h4>
+<p>We say that a person <em>gambles</em> iff he bets on an outcome that he doesn't know how to control at all.</p>
+<p>Thus, there are two necessary conditions for something to be a gamble:</p>
+<ul>
+<li>There exists a bet.</li>
+<li>There does not exist control.</li>
+</ul>
+<p>Other definitions of gambling:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Gambling">https://en.wikipedia.org/wiki/Gambling</a></li>
+<li>US legal definition <a href="https://definitions.uslegal.com/g/gambling/">https://definitions.uslegal.com/g/gambling/</a></li>
+</ul>
+<h4 id="how-do-we-know-something-is-not-gambling"><span class="section_number">3.8.2</span><span class="section_title">How do we know something is not gambling?</span></h4>
+<ol>
+<li><p>If it's possible to be skillful, then it's not gambling.</p></li>
+</ol>
+<h4 id="what-2"><span class="section_number">3.8.3</span><span class="section_title">What</span></h4>
+<ul>
+<li>Investing</li>
+<li>Trading</li>
+<li>Betting</li>
+<li>Random/uncontrollable</li>
+<li>Individual outcome is unpredictable</li>
+</ul>
+<p>Can two unskilled people playing chess control the outcome?</p>
+<p>Wager and bet are synonyms.</p>
+<p>The gambler doesn't have <em>any</em> control over the outcome of a gamble. How do we know if someone has some control? The ability to affect outcome. By how much? By physical explanation? Too hard to predict?</p>
+<p>The gamblers are gambling, but the casino isn't. The casino can control the outcome.</p>
+<p>Although the individual outcomes are unpredictable, the trend is predictable.</p>
+<p>Insurance is reverse gambling, which is also gambling. It is absurd to buy something that you avoid using.</p>
+<ul>
+<li>&quot;What makes gambling wrong but insurance right?&quot; <a href="https://www.bbc.com/news/business-38905963">https://www.bbc.com/news/business-38905963</a></li>
+<li><a href="https://seekingalpha.com/article/4080260-insurance-gambling-seriously">https://seekingalpha.com/article/4080260-insurance-gambling-seriously</a>
+<ul>
+<li>&quot;Insurance is a very specific type of gambling.&quot;</li>
+<li>&quot;Two parties agree on the consideration (by calling that wager a premium instead), the type of chance (by using expectations of when the insured might die, for example), and a prize (by referring to the winnings as a death benefit).&quot;</li>
+</ul></li>
+</ul>
+<p>Can you insure yourself against loss at the casino?</p>
+<p>Is professional poker gambling? If a skilled player can consistently beat an unskilled player, than the skilled player can control the outcome, and thus the skilled player is not gambling.</p>
+<p>If skill (improvement) is possible, then it isn't gambling.</p>
+<p>Can you be skilled in throwing dice so that you can consistently beat unskilled people? Slot machines? Guessing computer-generated numbers? What is a possible physical explanation?</p>
+<p>How do we argue that binary option is gambling?</p>
+<p>I saw binary options marketed with fake Facebook comments. I know those Facebook comments are fake because all of them have perfect grammar, capitalization, and punctuation. Real Facebook comment threads are full of shit.</p>
+<h3 id="if-you-win-a-lottery"><span class="section_number">3.9</span><span class="section_title">If you win a lottery</span></h3>
+<p>Don't tell anyone. Even families, friends, and lovers.</p>
+<h3 id="investing-1"><span class="section_number">3.10</span><span class="section_title">&quot;Investing&quot;</span></h3>
+<p>What Bitcoin &quot;investing&quot; is:</p>
+<ul>
+<li>You buy a certificate of environmental destruction from someone, probably a &quot;miner&quot;.</li>
+<li>You expect a greater fool to buy that certificate from you at a higher price. There are millions of other people who are looking for someone else more stupid than them.</li>
+</ul>
+<p>Bitcoin is massive wealth transfer from late buyers to early buyers. All financial investing is massive &quot;realistic-return&quot; Ponzi scheme. Exactly fits the definition. Newcomers pay oldtimers. Late buyers pay early buyers.</p>
+<p>Bitcoin is not necessary at all. It is pure want. Inflation target disincentivizes currency hoarding. A deflating currency encourages currency hoarding and discourages real spending. <a href="https://www.cmegroup.com/education/featured-reports/an-in-depth-look-at-the-economics-of-bitcoin.html">https://www.cmegroup.com/education/featured-reports/an-in-depth-look-at-the-economics-of-bitcoin.html</a></p>
+<p><a href="https://www.theguardian.com/technology/2018/nov/05/energy-cost-of-mining-bitcoin-more-than-twice-that-of-copper-or-gold">https://www.theguardian.com/technology/2018/nov/05/energy-cost-of-mining-bitcoin-more-than-twice-that-of-copper-or-gold</a></p>
+<h3 id="economics-price-quality"><span class="section_number">3.11</span><span class="section_title">Economics, price, quality</span></h3>
+<p>Price is not important in itself. It is the quality-price trade-off that is important. People don't buy shit even if it's cheap, even if you pay them to buy it.</p>
+<p>For an increment of quality, people are willing to pay an increment of price. But there is a &quot;good enough&quot; point where people are satisfied and they just look at the lowest price.</p>
+<p>Negative price means willingness to pay to get rid of something. Example: rotten vegetables has negative price to most people, but positive price to farmers.</p>
+<h3 id="economics-1"><span class="section_number">3.12</span><span class="section_title">Economics?</span></h3>
+<p>We should measure debt-to-income ratio instead of debt-to-GDP ratio?</p>
+<p>Consumptive debt sacrifices future for the present.</p>
+<p>Productive debt is good.</p>
+<p>Example of productive debt:</p>
+<p>Suppose that you want to buy a land to farm on it. These are the scenarios:</p>
+<ul>
+<li>You work for 20 years. Then you buy the land with cash. But the land price has risen.</li>
+<li>You take a loan, buy the land now, and repay the loan over 10 years. In the second year, your land starts producing.</li>
+</ul>
+<p>If a person takes too much consumptive debt, he goes bankrupt.</p>
+<p>If a government takes too much consumptive debt nominated in its own currency, it can print money to repay the debt, but such printing devalues the currency.</p>
+<p>If the US continues to take loans mindlessly, it will have to choose:</p>
+<ul>
+<li>Default (refuse to repay).</li>
+<li>Suffer severe inflation (rising prices), if the creditors spend the printed money.</li>
+</ul>
+<p>Does the USA think it can get away by refusing to repay its debts? It will trigger a huge power shift, maybe to China. Will China sacrifice itself to clean up America's mess? Will China buy up all US debts, and use the default as a reason to start a war?</p>
+<p><a href="https://deviantinvestor.com/9778/sacrificing-future-spending/">https://deviantinvestor.com/9778/sacrificing-future-spending/</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Unearned_income">https://en.wikipedia.org/wiki/Unearned_income</a></p>
+<p>Everything comes from nature. We are not creating or destroying anything. We are merely transforming things. At least as seen from physics.</p>
+<p>The number of atoms in Earth doesn't change. (But what about solar wind? It does change a bit?)</p>
+<p>Urban toilet harms humans and the Earth.</p>
+<ul>
+<li>We should poo squatting, not sitting.</li>
+<li>Urine and feces should be composted, not flushed down the drain.</li>
+<li>Compost bins should replace septic tanks.</li>
+</ul>
+<p><a href="https://www.vice.com/amp/en_us/article/zm95ka/republicans-are-outraged-about-the-deficit-they-caused">https://www.vice.com/amp/en_us/article/zm95ka/republicans-are-outraged-about-the-deficit-they-caused</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Unrestricted_Warfare">https://en.wikipedia.org/wiki/Unrestricted_Warfare</a></p>
+<h3 id="dan-lok"><span class="section_number">3.13</span><span class="section_title">Dan Lok</span></h3>
+<p>3 Types Of Employees (grunt, mercenary, and patriot) - How To Hire <a href="https://www.youtube.com/watch?v=kILJN6eu1P8">https://www.youtube.com/watch?v=kILJN6eu1P8</a></p>
+<p>How To Build Systems In Your Business - Systemize Your Business Ep. 7 <a href="https://www.youtube.com/watch?v=2g6sTH8FiFY">https://www.youtube.com/watch?v=2g6sTH8FiFY</a></p>
+<p>Kingpin strategy: Sell to the person who matters, who can bestow you authority, everyone else follows; &quot;The One Thing You Can Do To Grow Your Business And Sales Faster&quot; <a href="https://www.youtube.com/watch?v=M33aMYxuY60">https://www.youtube.com/watch?v=M33aMYxuY60</a></p>
+<p>How To Get What You Want - 3 Proven Persuasion Tactics <a href="https://www.youtube.com/watch?v=nLA_T1AXd6o">https://www.youtube.com/watch?v=nLA_T1AXd6o</a></p>
+<h2 id="get-more-physical-power"><span class="section_number">4</span><span class="section_title">Get more physical power</span></h2>
+<ul>
+<li>Exercise</li>
+</ul>
+<h2 id="make-our-own-web-browser-that-gives-us-full-programmable-control-of-what-we-see"><span class="section_number">5</span><span class="section_title">Make our own Web browser that gives us full programmable control of what we see</span></h2>
+<ul>
+<li>Fix the Internet from the user side
+<ul>
+<li>Block cookies from Medium, New York Times, Harvard Business Review, etc.</li>
+<li>Fix Pinterest and Quora</li>
+<li>Block all third-party ads</li>
+<li>Try HTTPS first when the user enters a URL without a protocol scheme</li>
+</ul></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#designing-a-web-browser">Designing a web browser</a></span><span class="word_count">(505w~3m)</span></li>
+</ul>
+</div>
+<h3 id="designing-a-web-browser"><span class="section_number">5.1</span><span class="section_title">Designing a web browser</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1.1</span><span class="section_title"><a href="#why-stop-at-web-browser">Why stop at web browser?</a></span><span class="word_count">(81w~1m)</span></li>
+<li><span class="section_number">5.1.2</span><span class="section_title"><a href="#what-is-the-most-important-thing-of-a-web-browser">What is the most important thing of a web browser?</a></span><span class="word_count">(60w~1m)</span></li>
+<li><span class="section_number">5.1.3</span><span class="section_title"><a href="#why-do-browsers-have-history">Why do browsers have history?</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">5.1.4</span><span class="section_title"><a href="#how-hard-is-it-to-secure-a-browser">How hard is it to secure a browser?</a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">5.1.5</span><span class="section_title"><a href="#parts-of-a-browser">Parts of a browser</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">5.1.6</span><span class="section_title"><a href="#search-engine">Search engine?</a></span><span class="word_count">(65w~1m)</span></li>
+<li><span class="section_number">5.1.7</span><span class="section_title"><a href="#why-dont-users-use-distributed-systems">Why don't users use distributed systems?</a></span><span class="word_count">(151w~1m)</span></li>
+</ul>
+</div>
+<h4 id="why-stop-at-web-browser"><span class="section_number">5.1.1</span><span class="section_title">Why stop at web browser?</span></h4>
+<p>What we want is not a web browser. What we want is a user interface for the Internet.</p>
+<p>We should dream more about the browser. We should have an Information Agent instead of a browser. But this risks scope creep; we'll end up making an operating system. Indeed Firefox and Chrome has already done that with Firefox OS and Chrome OS.<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a></p>
+<p>The browser should also be a crowd-sourced search engine and a peer-to-peer web hosting?</p>
+<p>Opennic <a href="https://mastodon.ar.al/@aral/101714998469668580">https://mastodon.ar.al/@aral/101714998469668580</a></p>
+<p>Rethinking the web browser</p>
+<p><a href="https://refresh.study">https://refresh.study</a></p>
+<h4 id="what-is-the-most-important-thing-of-a-web-browser"><span class="section_number">5.1.2</span><span class="section_title">What is the most important thing of a web browser?</span></h4>
+<p>The user is in full control of everything, including the content displayed to him. The user can program the browser to transform badly-designed websites. The user should not need to install a plugin such as Greasemonkey, Tampermonkey, or any other &quot;user script manager&quot; to have full control of what is displayed.</p>
+<h4 id="why-do-browsers-have-history"><span class="section_number">5.1.3</span><span class="section_title">Why do browsers have history?</span></h4>
+<p>What is the chance that the user asks one of these:</p>
+<ul>
+<li>What did I just browse?</li>
+<li>What did I browse yesterday?</li>
+</ul>
+<p>What is the chance that the user wants to revisit something?</p>
+<p>I myself often need that.</p>
+<p><a href="https://www.computerhope.com/issues/ch001871.htm">https://www.computerhope.com/issues/ch001871.htm</a></p>
+<h4 id="how-hard-is-it-to-secure-a-browser"><span class="section_number">5.1.4</span><span class="section_title">How hard is it to secure a browser?</span></h4>
+<p>Very hard.</p>
+<p>We may think that API A is secure and API B is secure, but when we use them together, A+B may not be secure.<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a></p>
+<p>How do we make systems whose security is composable?</p>
+<p>How do we prove that a system is secure? How should we model security?</p>
+<p><span class="citation" data-cites="barthe2017provably">[<a href="#ref-barthe2017provably">2</a>]</span> is a possibility. But what if new unforeseen side-channel attacks appear in the future?</p>
+<p>We must model the time and energy usage of each CPU instruction. But the CPU is not open source?</p>
+<h4 id="parts-of-a-browser"><span class="section_number">5.1.5</span><span class="section_title">Parts of a browser</span></h4>
+<ul>
+<li>cache and history</li>
+<li>HTTP</li>
+<li>HTML parsing</li>
+<li>rendering HTML DOM to GUI widgets</li>
+</ul>
+<p>What we choose <em>not</em> to do:</p>
+<ul>
+<li>plug-ins, extensions</li>
+<li>themes, customizations</li>
+</ul>
+<p>Who are going to maintain the plugins?</p>
+<p>Should we just embed WebKit?</p>
+<p><a href="https://www.paulirish.com/2013/webkit-for-developers/">https://www.paulirish.com/2013/webkit-for-developers/</a></p>
+<h4 id="search-engine"><span class="section_number">5.1.6</span><span class="section_title">Search engine?</span></h4>
+<p>Is AntRank<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a> usable?</p>
+<p>I find YaCy<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> unusable: its search result relevance is too far behind Google. YaCy-related things<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a><a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a> seem to also suffer from usability issues.</p>
+<p>Unfortunately, it's 2019, NAT is still common, and I don't see IPv6 anywhere near my computer.</p>
+<p>Perhaps it is a bad idea to allow <em>every</em> device to be connected to the Internet. Weakly-passworded IP cameras were hijacked and put into a botnet.</p>
+<h4 id="why-dont-users-use-distributed-systems"><span class="section_number">5.1.7</span><span class="section_title">Why don't users use distributed systems?</span></h4>
+<p>Users don't care; they want software to just work.<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a></p>
+<p>We should make a &quot;freedom pack&quot;: an installer of essential free/libre open-source distributed-web applications. The pack might contain things like matrix.org, riot.im. But why stop there? Why not make free/libre distributed operating system<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a> with all those goodies preinstalled?</p>
+<p>Example of federated/decentralized social networks: Kari Nordmann's comment<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a>: &quot;Explore federated (decentralized) social networks (Mastodon, diaspora*, Friendica, Hubzilla, GNU Social, Socialhome, Pleroma, GangGo)&quot;</p>
+<div id="refs" class="references">
+<div id="ref-barrett1996automated">
+<p>[1] Barrett, D.J. et al. 1996. <em>Automated support for seamless interoperability in polylingual software systems</em>. ACM. url: &lt;<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.3924&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.3924&amp;rep=rep1&amp;type=pdf</a>&gt;.</p>
+</div>
+<div id="ref-barthe2017provably">
+<p>[2] Barthe, G. et al. 2017. Provably secure compilation of side-channel countermeasures. <em>IACR Cryptology ePrint Archive</em>. 2017, (2017), 1233. url: &lt;<a href="https://eprint.iacr.org/2017/1233.pdf">https://eprint.iacr.org/2017/1233.pdf</a>&gt;.</p>
+</div>
+<div id="ref-harrison2012frequency">
+<p>[3] Harrison, M. and Wolf, N. 2012. The frequency of wars 1. <em>The Economic History Review</em>. 65, 3 (2012), 1055–1076. url: &lt;<a href="https://warwick.ac.uk/fac/soc/economics/staff/mharrison/public/ehr2011postprint.pdf">https://warwick.ac.uk/fac/soc/economics/staff/mharrison/public/ehr2011postprint.pdf</a>&gt;.</p>
+</div>
+<div id="ref-sep-exploitation">
+<p>[4] Zwolinski, M. and Wertheimer, A. 2017. Exploitation. <em>The stanford encyclopedia of philosophy</em>. E.N. Zalta, ed. <a href="https://plato.stanford.edu/archives/sum2017/entries/exploitation/">https://plato.stanford.edu/archives/sum2017/entries/exploitation/</a>; Metaphysics Research Lab, Stanford University.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Paradox_of_hedonism">https://en.wikipedia.org/wiki/Paradox_of_hedonism</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Dacher Keltner, Ph.D. - &quot;The Power Paradox: How We Gain and Lose Influence&quot; (05/19/16) <a href="https://www.youtube.com/watch?v=HS9VHBlYklc">https://www.youtube.com/watch?v=HS9VHBlYklc</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&quot;How do humans gain power? By sharing it&quot; <a href="https://www.youtube.com/watch?v=j2XpiVrUWog">https://www.youtube.com/watch?v=j2XpiVrUWog</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.etymonline.com/word/risk">https://www.etymonline.com/word/risk</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://www.etymonline.com/word/hazard">https://www.etymonline.com/word/hazard</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://www.sfchronicle.com/opinion/article/Corporate-personhood-actually-limits-12721448.php">https://www.sfchronicle.com/opinion/article/Corporate-personhood-actually-limits-12721448.php</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://www.theatlantic.com/politics/archive/2015/02/if-corporations-are-people-they-should-act-like-it/385034/">https://www.theatlantic.com/politics/archive/2015/02/if-corporations-are-people-they-should-act-like-it/385034/</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://en.wikipedia.org/w/index.php?title=Slavery_in_ancient_Greece&amp;oldid=881609681">https://en.wikipedia.org/w/index.php?title=Slavery_in_ancient_Greece&amp;oldid=881609681</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://en.wikipedia.org/wiki/List_of_countries_by_population_in_1000">https://en.wikipedia.org/wiki/List_of_countries_by_population_in_1000</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://tvtropes.org/pmwiki/pmwiki.php/Main/SlowlySlippingIntoEvil">https://tvtropes.org/pmwiki/pmwiki.php/Main/SlowlySlippingIntoEvil</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://en.wikipedia.org/wiki/Socialism_for_the_rich_and_capitalism_for_the_poor">https://en.wikipedia.org/wiki/Socialism_for_the_rich_and_capitalism_for_the_poor</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://www.facebook.com/Dapur-Rempah-267685393886789/">https://www.facebook.com/Dapur-Rempah-267685393886789/</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p><a href="https://www.quora.com/What-is-the-largest-company-owned-entirely-by-one-person">https://www.quora.com/What-is-the-largest-company-owned-entirely-by-one-person</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://en.wikipedia.org/wiki/Rent-seeking">https://en.wikipedia.org/wiki/Rent-seeking</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p><a href="https://en.wikipedia.org/wiki/Useful_idiot">https://en.wikipedia.org/wiki/Useful_idiot</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p><a href="http://derekcpenn.com/Penn_2007-Causal_Cognition_in_Human_and_Nonhuman_Animals.pdf">http://derekcpenn.com/Penn_2007-Causal_Cognition_in_Human_and_Nonhuman_Animals.pdf</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p><a href="https://www.psych.uni-goettingen.de/de/cognition/publikationen-dateien-waldmann/2006_science.pdf">https://www.psych.uni-goettingen.de/de/cognition/publikationen-dateien-waldmann/2006_science.pdf</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p>I desire more than Will Crichton; I do not want to add annotations to the original code <a href="http://willcrichton.net/notes/the-coming-age-of-the-polyglot-programmer/">http://willcrichton.net/notes/the-coming-age-of-the-polyglot-programmer/</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p><a href="https://www.quora.com/Why-did-the-Chrome-OS-succeed-but-the-Firefox-OS-failed">https://www.quora.com/Why-did-the-Chrome-OS-succeed-but-the-Firefox-OS-failed</a><a href="#fnref19" class="footnote-back">↩</a></p></li>
+<li id="fn20"><p><a href="https://www.ghacks.net/2018/11/04/browser-history-sniffing-is-still-a-thing/">https://www.ghacks.net/2018/11/04/browser-history-sniffing-is-still-a-thing/</a><a href="#fnref20" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p><a href="http://www.ijettcs.org/Volume3Issue2/IJETTCS-2014-04-23-113.pdf">http://www.ijettcs.org/Volume3Issue2/IJETTCS-2014-04-23-113.pdf</a><a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p><a href="https://www.pcworld.com/article/245414/yacy_its_about_freedom_not_beating_google.html">https://www.pcworld.com/article/245414/yacy_its_about_freedom_not_beating_google.html</a><a href="#fnref22" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p><a href="https://loklak.org/">https://loklak.org/</a> Loklak Search - Distributed Open Source Search for Twitter and Social Media with Peer to Peer Technology<a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn24"><p><a href="https://chat.susi.ai/">https://chat.susi.ai/</a> SUSI.AI Chat - Open Source Artificial Intelligence<a href="#fnref24" class="footnote-back">↩</a></p></li>
+<li id="fn25"><p>&quot;Decentralized systems will continue to lose to centralized systems until there's a driver requiring decentralization to deliver a clearly superior consumer experience.&quot; <a href="http://highscalability.com/blog/2018/8/13/what-do-you-believe-now-that-you-didnt-five-years-ago.html">http://highscalability.com/blog/2018/8/13/what-do-you-believe-now-that-you-didnt-five-years-ago.html</a><a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn26"><p><a href="https://en.wikipedia.org/wiki/Distributed_operating_system">https://en.wikipedia.org/wiki/Distributed_operating_system</a><a href="#fnref26" class="footnote-back">↩</a></p></li>
+<li id="fn27"><p><a href="https://medium.com/@rxpvh2000/where-are-the-programmers-who-give-a-shit-d27ad2ef24fc">https://medium.com/@rxpvh2000/where-are-the-programmers-who-give-a-shit-d27ad2ef24fc</a><a href="#fnref27" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/power.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/power.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2016-01-01 00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
