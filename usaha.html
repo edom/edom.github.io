@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Jalankan usaha</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Jalankan usaha</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#memahami-dasar-hukum">Memahami dasar hukum</a></span><span class="word_count">(276w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#mendirikan-pt">Mendirikan PT</a></span><span class="word_count">(71w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#kewajiban-rutin">Kewajiban rutin</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#perencanaan-pajak-bentuk-usaha-paling-efisien-pajak">Perencanaan pajak: bentuk usaha paling efisien pajak?</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#tanggung-jawab-sosial-dan-lingkungan-tjsl-corporate-social-responsibility-csr">Tanggung jawab sosial dan lingkungan (TJSL) / corporate social responsibility (CSR)</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#mempekerjakan-orang-lain">Mempekerjakan orang lain</a></span><span class="word_count">(409w~3m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#perluas-bidang-usaha">Perluas bidang usaha</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#hukum-acara">Hukum acara</a></span><span class="word_count">(75w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#anggaran-dasar-1">Anggaran Dasar</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#aturan-tambahan">Aturan Tambahan</a></span><span class="word_count">(90w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#benefiting-from-the-state-for-indonesians">Benefiting from the state, for Indonesians</a></span><span class="word_count">(16w~1m)</span></li>
+</ul>
+</div>
+<h2 id="memahami-dasar-hukum"><span class="section_number">1</span><span class="section_title">Memahami dasar hukum</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#peraturan-yang-berkaitan">Peraturan yang berkaitan</a></span><span class="word_count">(88w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#badan-hukum-dan-badan-usaha">Badan hukum dan badan usaha</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#mendirikan-perusahaan">Mendirikan perusahaan?</a></span><span class="word_count">(165w~1m)</span></li>
+</ul>
+</div>
+<h3 id="peraturan-yang-berkaitan"><span class="section_number">1.1</span><span class="section_title">Peraturan yang berkaitan</span></h3>
+<ul>
+<li>UUPT adalah UU 40/2007 tentang perseroan terbatas (<a href="http://peraturan.go.id/uu/nomor-40-tahun-2007.html">html</a>).</li>
+<li>UUTK adalah UU 13/2003 tentang ketenagakerjaan.
+<ul>
+<li>&lt;2018-01-24&gt; <a href="https://www.hukumonline.com/berita/baca/hol7529/uu-ketenagakerjaan-baru">https://www.hukumonline.com/berita/baca/hol7529/uu-ketenagakerjaan-baru</a> Beberapa pasal ada yang dicabut.</li>
+</ul></li>
+<li>UUHC adalah UU 28/2014 tentang hak cipta (<a href="http://www.dgip.go.id/images/ki-images/pdf-files/hak_cipta/uu_pp/uu_hc_%2028_2014.pdf">pdf</a>).</li>
+<li>KUHPer adalah Kitab Undang-undang Hukum Perdata.</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1.1</span><span class="section_title"><a href="#notasi-singkatan-untuk-rujukan">Notasi singkatan untuk rujukan</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">1.1.2</span><span class="section_title"><a href="#lain-lain">Lain-lain?</a></span><span class="word_count">(39w~1m)</span></li>
+</ul>
+</div>
+<h4 id="notasi-singkatan-untuk-rujukan"><span class="section_number">1.1.1</span><span class="section_title">Notasi singkatan untuk rujukan</span></h4>
+<p>&quot;UU 40/2007&quot; berarti UU no 40 tahun 2007.</p>
+<p>&quot;UUPT 3:2&quot; berarti UUPT pasal 3 ayat 2.</p>
+<h4 id="lain-lain"><span class="section_number">1.1.2</span><span class="section_title">Lain-lain?</span></h4>
+<p>UU pasar modal</p>
+<p>UUPT 36:1: Ownership graph must be acyclic.</p>
+<p><a href="http://m.hukumonline.com/index.php/klinik/detail/lt4ee1cdcb3b9fc/status-direksi-perusahaan--pengusaha-atau-pekerja-revisi">http://m.hukumonline.com/index.php/klinik/detail/lt4ee1cdcb3b9fc/status-direksi-perusahaan--pengusaha-atau-pekerja-revisi</a></p>
+<p><a href="https://www.hukumonline.com/klinik/detail/lt51b0380e6b9f8/bolehkah-menggeser-hari-libur-karyawan-tanpa-memberi-upah-lembur">https://www.hukumonline.com/klinik/detail/lt51b0380e6b9f8/bolehkah-menggeser-hari-libur-karyawan-tanpa-memberi-upah-lembur</a> Tidak boleh.</p>
+<p><a href="http://www.hukumperseroanterbatas.com/anggaran-dasar/anggaran-dasar-perseroan-terbatas/">http://www.hukumperseroanterbatas.com/anggaran-dasar/anggaran-dasar-perseroan-terbatas/</a></p>
+<p><a href="https://www.hukumonline.com/klinik/detail/lt4cd0bd0284a71/perbedaan-modal-dasar--modal-ditempatkan--dan-modal-disetor-pt">https://www.hukumonline.com/klinik/detail/lt4cd0bd0284a71/perbedaan-modal-dasar--modal-ditempatkan--dan-modal-disetor-pt</a></p>
+<p><a href="https://media.neliti.com/media/publications/14073-ID-aspek-hukum-kelalaian-menyetorkan-modal-dalam-prosespendirian-perseroan-terbatas.pdf">https://media.neliti.com/media/publications/14073-ID-aspek-hukum-kelalaian-menyetorkan-modal-dalam-prosespendirian-perseroan-terbatas.pdf</a></p>
+<p>UU Yayasan<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<ul>
+<li>UU 16/2001</li>
+<li>diubah dengan UU 28/2004</li>
+<li>PP 63/2008</li>
+</ul>
+<p>UU Pajak<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<ul>
+<li>Susunan dalam satu naskah undang-undang perpajakan 2011<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></li>
+<li>UUPPh tentang pajak penghasilan</li>
+<li>UUDP adalah UU 11/1992 tentang dana pensiun.</li>
+</ul>
+<p>UUPPh 4:3L Beberapa beasiswa bukan objek pajak?</p>
+<h3 id="badan-hukum-dan-badan-usaha"><span class="section_number">1.2</span><span class="section_title">Badan hukum dan badan usaha</span></h3>
+<ul>
+<li><a href="https://id.wikipedia.org/wiki/Badan_hukum">https://id.wikipedia.org/wiki/Badan_hukum</a></li>
+<li><a href="https://id.wikipedia.org/wiki/Badan_usaha#BUMS">https://id.wikipedia.org/wiki/Badan_usaha#BUMS</a></li>
+<li><a href="https://id.wikipedia.org/wiki/Perseroan_terbatas">https://id.wikipedia.org/wiki/Perseroan_terbatas</a></li>
+<li><a href="http://www.gresnews.com/berita/tips/82855-peraturan-badan-hukum-usaha-perseorangan/">http://www.gresnews.com/berita/tips/82855-peraturan-badan-hukum-usaha-perseorangan/</a></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.2.1</span><span class="section_title"><a href="#a-company-is-a-virtual-person.-can-it-be-imprisoned">A company is a virtual person. Can it be imprisoned?</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">1.2.2</span><span class="section_title"><a href="#the-corporate-veil-can-be-lifted-according-to-uupt-32.">The corporate veil can be lifted according to UUPT 3:2.</a></span><span class="word_count">(10w~1m)</span></li>
+</ul>
+</div>
+<h4 id="a-company-is-a-virtual-person.-can-it-be-imprisoned"><span class="section_number">1.2.1</span><span class="section_title">A company is a virtual person. Can it be imprisoned?</span></h4>
+<p><a href="https://slate.com/news-and-politics/2002/04/can-a-company-be-charged-with-a-crime.html">https://slate.com/news-and-politics/2002/04/can-a-company-be-charged-with-a-crime.html</a></p>
+<h4 id="the-corporate-veil-can-be-lifted-according-to-uupt-32."><span class="section_number">1.2.2</span><span class="section_title">The corporate veil can be lifted according to UUPT 3:2.</span></h4>
+<h3 id="mendirikan-perusahaan"><span class="section_number">1.3</span><span class="section_title">Mendirikan perusahaan?</span></h3>
+<ul>
+<li>Bagaimana?</li>
+<li>Bayar berapa?</li>
+<li>Berapa lama?</li>
+<li>Apa keuntungan pajak?</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.3.1</span><span class="section_title"><a href="#permudah-pembuatan-badan-usaha">Permudah pembuatan badan usaha?</a></span><span class="word_count">(160w~1m)</span></li>
+</ul>
+</div>
+<h4 id="permudah-pembuatan-badan-usaha"><span class="section_number">1.3.1</span><span class="section_title">Permudah pembuatan badan usaha?</span></h4>
+<p>Bikin lebih mudah daripada Singapura, Hong Kong, USA, Estonia.</p>
+<p>Tahun 2018, bikin PT di Indonesia masih terlalu sulit. Mungkin harus tunggu sampai tahun 2025.</p>
+<p>Cabut batasan nama PT tiga suku kata tanpa mengandung bahasa atau serapan asing.</p>
+<ul>
+<li>Cabut batasan PT harus punya alamat? Cukup alamat email?
+<ul>
+<li>Tidak bisa. PT harus punya alamat karena ada kebutuhan birokrasi surat menyurat.</li>
+</ul></li>
+<li>Indonesia
+<ul>
+<li><a href="https://easybiz.id/prosedur-dan-syarat-pendirian-pt-terbaru-yang-wajib-anda-ketahui/">https://easybiz.id/prosedur-dan-syarat-pendirian-pt-terbaru-yang-wajib-anda-ketahui/</a></li>
+<li><a href="https://prolegal.id/2018/04/11/prosedur-syarat-pendirian-pt-2018/">https://prolegal.id/2018/04/11/prosedur-syarat-pendirian-pt-2018/</a></li>
+</ul></li>
+<li><a href="https://www.quora.com/Which-country-has-the-easiest-procedure-for-a-foreigner-to-start-a-business">https://www.quora.com/Which-country-has-the-easiest-procedure-for-a-foreigner-to-start-a-business</a></li>
+<li>ga jelas, agak shady
+<ul>
+<li><a href="https://flagtheory.com/the-best-place-for-an-internet-entrepreneur-to-incorporate/">https://flagtheory.com/the-best-place-for-an-internet-entrepreneur-to-incorporate/</a></li>
+<li><a href="http://nomadcapitalist.com/2016/05/25/best-country-online-company-incorporation/">http://nomadcapitalist.com/2016/05/25/best-country-online-company-incorporation/</a></li>
+</ul></li>
+</ul>
+<p>Prosedur yang ideal?</p>
+<ul>
+<li>Applicant obtains approval of target neighborhood if necessary (if company operation is disturbing).</li>
+<li>Applicant registers company data.</li>
+<li>Government issues a legal certificate and a tax subject number.</li>
+<li>Done.</li>
+</ul>
+<p><a href="https://www.bps.go.id/website/fileMenu/Perka-KBLI-2015.pdf">KBLI 2015</a> untuk PT yang bergerak di bidang software engineering dan programming language research:</p>
+<ul>
+<li>J.62, hlm. 402</li>
+<li>M.72, hlm. 439</li>
+</ul>
+<ol>
+<li><p>&lt;2018-10-05&gt; Birokrasi Jakarta tidak bagus-bagus amat, tapi di luar Jakarta lebih parah lagi?</p>
+<ul>
+<li><a href="https://medium.com/asepbagja/pengalaman-mengagumkan-mendaftarkan-perusahaan-di-estonia-33e2c10d7028">https://medium.com/asepbagja/pengalaman-mengagumkan-mendaftarkan-perusahaan-di-estonia-33e2c10d7028</a>:
+<ul>
+<li>'Waktu itu notaris saya cuma bilang, &quot;kalau mengurus di Tangerang akan sedikit lebih lama loh birokrasinya, Mas, dibanding Jakarta. Bisa beda sekitar 2 bulan.&quot; Saya pun setuju. Perkiraan saya paling juga Mei 2017 udah beres. Ternyata meleset hingga 6 bulan!'</li>
+<li>&quot;Update terbaru: Akhirnya beres setelah <strong>9 bulan</strong>!&quot;</li>
+</ul></li>
+</ul></li>
+</ol>
+<h2 id="mendirikan-pt"><span class="section_number">2</span><span class="section_title">Mendirikan PT</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#modal-disetor-disetor-ke-mana">Modal Disetor disetor ke mana?</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#anggaran-dasar">Anggaran Dasar</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#mengangkat-direksi-dan-dewan-komisaris">Mengangkat Direksi dan Dewan Komisaris</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#system-for-operating-companiesenterprises-accounting-payroll-legal-tax-reporting-erp-scm-recruiting-ats-etc.">System for operating companies/enterprises: accounting, payroll, legal, tax, reporting, ERP, SCM, recruiting, ATS, etc.</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#virtual-office-jakarta-barat-selatan">Virtual office Jakarta? Barat? Selatan?</a></span><span class="word_count">(5w~1m)</span></li>
+</ul>
+</div>
+<h3 id="modal-disetor-disetor-ke-mana"><span class="section_number">2.1</span><span class="section_title">Modal Disetor disetor ke mana?</span></h3>
+<h3 id="anggaran-dasar"><span class="section_number">2.2</span><span class="section_title">Anggaran Dasar</span></h3>
+<p>Di sini &quot;anggaran&quot; berarti &quot;aturan&quot;.</p>
+<h3 id="mengangkat-direksi-dan-dewan-komisaris"><span class="section_number">2.3</span><span class="section_title">Mengangkat Direksi dan Dewan Komisaris</span></h3>
+<p>Direksi minimal 1 orang.</p>
+<p>Dewan Komisaris minimal 1 orang.</p>
+<p>Satu orang tidak boleh sekaligus menjabat sebagai Direksi dan Komisaris.</p>
+<h3 id="system-for-operating-companiesenterprises-accounting-payroll-legal-tax-reporting-erp-scm-recruiting-ats-etc."><span class="section_number">2.4</span><span class="section_title">System for operating companies/enterprises: accounting, payroll, legal, tax, reporting, ERP, SCM, recruiting, ATS, etc.</span></h3>
+<p>openbravo, odoo <a href="https://blog.capterra.com/top-8-freeopen-source-applicant-tracking-software-solutions/">https://blog.capterra.com/top-8-freeopen-source-applicant-tracking-software-solutions/</a></p>
+<p>Accounting system</p>
+<p>Rekening bank pt</p>
+<p>&lt;2018-10-08&gt; experimental:</p>
+<ul>
+<li>AISCO &quot;Adaptive Information System for Charity Organization&quot; from 2017 article &quot;Feature Model-to-Ontology for SPL Application Realisation&quot; <a href="https://arxiv.org/pdf/1707.02511.pdf">https://arxiv.org/pdf/1707.02511.pdf</a> <a href="http://www.aiscoweb.org/">http://www.aiscoweb.org/</a></li>
+</ul>
+<h3 id="virtual-office-jakarta-barat-selatan"><span class="section_number">2.5</span><span class="section_title">Virtual office Jakarta? Barat? Selatan?</span></h3>
+<h2 id="kewajiban-rutin"><span class="section_number">3</span><span class="section_title">Kewajiban rutin</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#laporan-tahunan">Laporan tahunan</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#laporan-pajak-tiap-bulan">Laporan pajak tiap bulan?</a></span><span class="word_count">(4w~1m)</span></li>
+</ul>
+</div>
+<h3 id="laporan-tahunan"><span class="section_number">3.1</span><span class="section_title">Laporan tahunan</span></h3>
+<h3 id="laporan-pajak-tiap-bulan"><span class="section_number">3.2</span><span class="section_title">Laporan pajak tiap bulan?</span></h3>
+<h2 id="perencanaan-pajak-bentuk-usaha-paling-efisien-pajak"><span class="section_number">4</span><span class="section_title">Perencanaan pajak: bentuk usaha paling efisien pajak?</span></h2>
+<ul>
+<li><a href="http://ortax.org/ortax/?mod=issue&amp;page=show&amp;id=85&amp;list=1&amp;q=&amp;hlm=2">ortax.org: Memilih Bentuk Usaha Yang Tepat Bagi Perencanaan Pajak</a></li>
+</ul>
+<h2 id="tanggung-jawab-sosial-dan-lingkungan-tjsl-corporate-social-responsibility-csr"><span class="section_number">5</span><span class="section_title">Tanggung jawab sosial dan lingkungan (TJSL) / corporate social responsibility (CSR)</span></h2>
+<ul>
+<li><a href="https://kliklegal.com/mengenal-sejumlah-regulasi-yang-mengatur-csr-di-indonesia/">https://kliklegal.com/mengenal-sejumlah-regulasi-yang-mengatur-csr-di-indonesia/</a></li>
+</ul>
+<h2 id="mempekerjakan-orang-lain"><span class="section_number">6</span><span class="section_title">Mempekerjakan orang lain</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#partnership-vs-employment-bagaimana-membedakan-kontrak-kerja-sama-dan-kontrak-ketenagakerjaan-kontrak-kemitraan-vs-kontrak-kerja-kontrak-biasa-vs-kontrak-kerja">partnership vs employment: Bagaimana membedakan kontrak kerja sama dan kontrak ketenagakerjaan? Kontrak kemitraan vs kontrak kerja? Kontrak biasa vs kontrak kerja?</a></span><span class="word_count">(67w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#hak-cipta-work-for-hire-ip-intellectual-property-rights-hakihki-hak-kekayaan-intelektual">Hak cipta, work-for-hire, IP (intellectual property) rights, HAKI/HKI (hak kekayaan intelektual)</a></span><span class="word_count">(284w~2m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#can-employer-employee-relations-be-replaced-with-buyer-seller-relations">Can employer-employee relations be replaced with buyer-seller relations?</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#direktur-bukan-karyawan-kecuali-memang-sebelumnya-sudah-karyawan">Direktur bukan karyawan, kecuali memang sebelumnya sudah karyawan</a></span><span class="word_count">(20w~1m)</span></li>
+</ul>
+</div>
+<h3 id="partnership-vs-employment-bagaimana-membedakan-kontrak-kerja-sama-dan-kontrak-ketenagakerjaan-kontrak-kemitraan-vs-kontrak-kerja-kontrak-biasa-vs-kontrak-kerja"><span class="section_number">6.1</span><span class="section_title">partnership vs employment: Bagaimana membedakan kontrak kerja sama dan kontrak ketenagakerjaan? Kontrak kemitraan vs kontrak kerja? Kontrak biasa vs kontrak kerja?</span></h3>
+<ul>
+<li><a href="https://www.hukumonline.com/berita/baca/hol20668/saat-hubungan-kemitraan-menjadi-hubungan-kerja">https://www.hukumonline.com/berita/baca/hol20668/saat-hubungan-kemitraan-menjadi-hubungan-kerja</a></li>
+<li><a href="https://www.hukum-hukum.com/2017/06/modus-menjadikan-pekerja-sebagai-mitra.html">https://www.hukum-hukum.com/2017/06/modus-menjadikan-pekerja-sebagai-mitra.html</a></li>
+</ul>
+<p>To simplify operations, always partner, never employ. Employment is heavily regulated because employment breeds inequality.</p>
+<p>How do you partner with an accountant? How do you partner with a supervisor? How do you partner with a customer service officer? How do you partner with operational staffs?</p>
+<p>Is partnership always possible?</p>
+<p><a href="https://gajimu.com/pekerjaan-yanglayak/kompensasi/jam-kerja">https://gajimu.com/pekerjaan-yanglayak/kompensasi/jam-kerja</a></p>
+<h3 id="hak-cipta-work-for-hire-ip-intellectual-property-rights-hakihki-hak-kekayaan-intelektual"><span class="section_number">6.2</span><span class="section_title">Hak cipta, work-for-hire, IP (intellectual property) rights, HAKI/HKI (hak kekayaan intelektual)</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.2.1</span><span class="section_title"><a href="#cek-uuhc-apa-bisa-lisensi-hak-bebas-royalti-non-eksklusif-yang-tidak-bisa-ditarik-kembali"><span class="todo TODO">TODO</span> Cek UUHC: apa bisa lisensi: hak bebas royalti non-eksklusif yang tidak bisa ditarik kembali</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">6.2.2</span><span class="section_title"><a href="#employee-ip-intellectual-property-assignment-is-unfair">Employee IP (intellectual property) assignment is unfair</a></span><span class="word_count">(58w~1m)</span></li>
+<li><span class="section_number">6.2.3</span><span class="section_title"><a href="#tentang-uuhc.">&lt;2018-10-04&gt; Tentang UUHC.</a></span><span class="word_count">(203w~2m)</span></li>
+</ul>
+</div>
+<h4 id="cek-uuhc-apa-bisa-lisensi-hak-bebas-royalti-non-eksklusif-yang-tidak-bisa-ditarik-kembali"><span class="section_number">6.2.1</span><span class="section_title"><span class="todo TODO">TODO</span> Cek UUHC: apa bisa lisensi: hak bebas royalti non-eksklusif yang tidak bisa ditarik kembali</span></h4>
+<h4 id="employee-ip-intellectual-property-assignment-is-unfair"><span class="section_number">6.2.2</span><span class="section_title">Employee IP (intellectual property) assignment is unfair</span></h4>
+<p>Employee IP assignment is the practice where a company owns whatever its employees make.</p>
+<p>Employee IP assignment is unfair and should be replaced with, at most, an irrevocable non-exclusive royalty-free license.</p>
+<p>Employee IP assignment gives the company too much power over its employees.</p>
+<p>Employee IP assignment contributes to inequality / social gap / wealth gap.</p>
+<h4 id="tentang-uuhc."><span class="section_number">6.2.3</span><span class="section_title">&lt;2018-10-04&gt; Tentang UUHC.</span></h4>
+<p><em>Berikut interpretasi saya, bukan teks resmi. Saya mungkin salah. Ini bukan pendapat hukum yang sah.</em></p>
+<p>Pasal 18: Hak Cipta tidak bisa dialihkan selamanya; ada batas waktu 25 tahun. (Bagaimana jika Pemegang Hak Cipta meninggal sebelum 25 tahun berlalu sejak pengalihan?)</p>
+<p>Pasal 36: &quot;Kecuali diperjanjikan lain, Pencipta dan Pemegang Hak Cipta atas Ciptaan yang dibuat dalam hubungan kerja atau berdasarkan pesanan yaitu pihak yang membuat Ciptaan.&quot; Ini berarti &quot;Pencipta&quot; dan &quot;Pemegang Hak Cipta&quot; bisa didefinisikan ulang oleh perjanjian kerja.</p>
+<p>Bagian ketiga (&quot;Hasil Karya yang Tidak Dilindungi Hak Cipta&quot;)</p>
+<p>Pasal 41: &quot;Hasil karya yang tidak dilindungi Hak Cipta meliputi: […] b. setiap ide, prosedur, sistem, metode, konsep, prinsip, temuan atau data walaupun telah diungkapkan, dinyatakan, digambarkan, dijelaskan, atau digabungkan dalam sebuah Ciptaan; dan […]&quot;</p>
+<p>Pasal 41 huruf b sangat rancu. Penjelasannya berkata &quot;cukup jelas&quot;.</p>
+<p>Pasal 50: &quot;Orang dilarang melakukan Pengumuman, Pendistribusian, atau Komunikasi Ciptaan yang bertentangan dengan moral, agama, kesusilaan, ketertiban umum, atau pertahanan dan keamanan negara.&quot; Bahaya. Pasal karet. Bagaimana menentukan sesuatu itu bertentangan dengan moral/agama atau tidak?</p>
+<p>Pasal 57: Beberapa hak moral berlaku selamanya.</p>
+<p>Pasal 58 ayat 3: &quot;Pelindungan Hak Cipta atas Ciptaan sebagaimana dimaksud pada ayat (1) dan ayat (2) yang dimiliki atau dipegang oleh badan hukum berlaku selama 50 (lima puluh) tahun sejak pertama kali dilakukan Pengumuman.&quot;</p>
+<h3 id="can-employer-employee-relations-be-replaced-with-buyer-seller-relations"><span class="section_number">6.3</span><span class="section_title">Can employer-employee relations be replaced with buyer-seller relations?</span></h3>
+<p>Can a factory worker be allowed to work at any time he wants, at any duration he wants, and be paid by the amount of things he sold to his direct buyer?</p>
+<h3 id="direktur-bukan-karyawan-kecuali-memang-sebelumnya-sudah-karyawan"><span class="section_number">6.4</span><span class="section_title">Direktur bukan karyawan, kecuali memang sebelumnya sudah karyawan</span></h3>
+<p>Bolehkah direktur bekerja tanpa digaji? Boleh asal direkturnya bukan karyawan/pekerja/employee (hubungan kerja). <a href="http://strategihukum.net/strategi-hukum-mengangkat-karyawan-menjadi-direktur">http://strategihukum.net/strategi-hukum-mengangkat-karyawan-menjadi-direktur</a></p>
+<h2 id="perluas-bidang-usaha"><span class="section_number">7</span><span class="section_title">Perluas bidang usaha</span></h2>
+<p>There are 26.71 million non-agricultural businesses in Indonesia, but most are small businesses.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#diversifikasi-buat-pt-baru-vs-ubah-akta-pendirian">Diversifikasi: Buat PT baru vs ubah akta pendirian</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#ownership-graph-must-be-acyclic">Ownership graph must be acyclic</a></span><span class="word_count">(5w~1m)</span></li>
+</ul>
+</div>
+<h3 id="diversifikasi-buat-pt-baru-vs-ubah-akta-pendirian"><span class="section_number">7.1</span><span class="section_title">Diversifikasi: Buat PT baru vs ubah akta pendirian</span></h3>
+<h3 id="ownership-graph-must-be-acyclic"><span class="section_number">7.2</span><span class="section_title">Ownership graph must be acyclic</span></h3>
+<h2 id="hukum-acara"><span class="section_number">8</span><span class="section_title">Hukum acara</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">8.1</span><span class="section_title"><a href="#meterai">Meterai</a></span><span class="word_count">(74w~1m)</span></li>
+</ul>
+</div>
+<h3 id="meterai"><span class="section_number">8.1</span><span class="section_title">Meterai</span></h3>
+<ul>
+<li>Meterai adalah syarat supaya pengadilan menerima suatu dokumen sebagai alat bukti.</li>
+<li>Ketiadaan meterai tidak mengubah keabsahan suatu perjanjian, tapi surat perjanjian tanpa meterai tidak bisa dijadikan alat bukti di pengadilan.</li>
+<li>Surat perjanjian tanpa meterai dapat dijadikan alat bukti di pengadilan dengan pemeteraian kemudian, tapi tata caranya tidak jelas, jadi lebih baik <em>setiap surat yang mungkin dijadikan alat bukti di pengadilan dimeteraikan sejak awal</em>.</li>
+<li>Apa gunanya surat perjanjian kalau tidak bisa digunakan sebagai alat bukti oleh pengadilan?</li>
+<li>Lihat juga<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></li>
+</ul>
+<h2 id="anggaran-dasar-1"><span class="section_number">9</span><span class="section_title">Anggaran Dasar</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#definisi">Definisi</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">9.2</span><span class="section_title"><a href="#maksud-dan-tujuan">Maksud dan tujuan</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">9.3</span><span class="section_title"><a href="#jangka-waktu">Jangka waktu</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">9.4</span><span class="section_title"><a href="#modal">Modal</a></span><span class="word_count">(9w~1m)</span></li>
+</ul>
+</div>
+<h3 id="definisi"><span class="section_number">9.1</span><span class="section_title">Definisi</span></h3>
+<p>Perusahaan adalah PT … yang beralamat di …</p>
+<h3 id="maksud-dan-tujuan"><span class="section_number">9.2</span><span class="section_title">Maksud dan tujuan</span></h3>
+<ol>
+<li>Bertahan hidup.</li>
+</ol>
+<h3 id="jangka-waktu"><span class="section_number">9.3</span><span class="section_title">Jangka waktu</span></h3>
+<ol>
+<li>Perusahaan mulai berdiri pada tanggal …</li>
+</ol>
+<h3 id="modal"><span class="section_number">9.4</span><span class="section_title">Modal</span></h3>
+<ol>
+<li>Modal Dasar Perusahaan berjumlah Rp 100.000.000 (seratus juta rupiah).</li>
+</ol>
+<h2 id="aturan-tambahan"><span class="section_number">10</span><span class="section_title">Aturan Tambahan</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.1</span><span class="section_title"><a href="#tentang-aturan-tambahan">Tentang Aturan Tambahan</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">10.2</span><span class="section_title"><a href="#saham">Saham</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">10.3</span><span class="section_title"><a href="#direksi">Direksi</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">10.4</span><span class="section_title"><a href="#daftar-hitam">Daftar Hitam</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">10.5</span><span class="section_title"><a href="#principles">Principles</a></span><span class="word_count">(10w~1m)</span></li>
+</ul>
+</div>
+<h3 id="tentang-aturan-tambahan"><span class="section_number">10.1</span><span class="section_title">Tentang Aturan Tambahan</span></h3>
+<ol>
+<li>Direksi berwenang mengubah Aturan Tambahan.</li>
+<li>Aturan Tambahan bukan bagian Anggaran Dasar.</li>
+</ol>
+<h3 id="saham"><span class="section_number">10.2</span><span class="section_title">Saham</span></h3>
+<ol>
+<li>Perusahaan tidak mengeluarkan surat saham.</li>
+<li>Bukti kepemilikan adalah Anggaran Dasar.</li>
+</ol>
+<h3 id="direksi"><span class="section_number">10.3</span><span class="section_title">Direksi</span></h3>
+<ol>
+<li>Direksi tidak membuat rencana kerja tahunan.</li>
+<li>Direksi menentukan atau mengubah cita-cita perusahaan.</li>
+</ol>
+<h3 id="daftar-hitam"><span class="section_number">10.4</span><span class="section_title">Daftar Hitam</span></h3>
+<ol>
+<li>Perusahaan menyimpan Daftar Hitam.</li>
+<li>Direksi berwenang mengubah isi Daftar Hitam.</li>
+<li>Daftar Hitam berisi orang-orang yang pernah merugikan, menipu, atau mengkhianati Perusahaan.</li>
+<li>Daftar Hitam mengandung nomor KTP, nama, alamat, foto KTP, deskripsi kerugian.</li>
+<li>Daftar Hitam dipublikasikan di Internet.</li>
+<li>Perusahaan secepatnya memutuskan semua perjanjian dengan orang dalam Daftar Hitam.</li>
+<li>Perusahaan tidak membuat perjanjian dengan orang dalam Daftar Hitam.</li>
+</ol>
+<h3 id="principles"><span class="section_number">10.5</span><span class="section_title">Principles</span></h3>
+<ol>
+<li>There should be at most one way to do something.</li>
+</ol>
+<h2 id="benefiting-from-the-state-for-indonesians"><span class="section_number">11</span><span class="section_title">Benefiting from the state, for Indonesians</span></h2>
+<p>lelang barang sitaan KPK, BRI, dll. (tanah murah, mobil murah) <a href="https://lelang.go.id/">https://lelang.go.id/</a></p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.putra-putri-indonesia.com/undang-undang-yayasan.html">https://www.putra-putri-indonesia.com/undang-undang-yayasan.html</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://id.wikipedia.org/wiki/Perpajakan_di_Indonesia">https://id.wikipedia.org/wiki/Perpajakan_di_Indonesia</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="http://www.pajak.go.id/sites/default/files/PersandinganUUPerpajakan.pdf">http://www.pajak.go.id/sites/default/files/PersandinganUUPerpajakan.pdf</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://tirto.id/indonesia-kini-punya-2671-juta-perusahaan-cnz4">https://tirto.id/indonesia-kini-punya-2671-juta-perusahaan-cnz4</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="http://www.hukum123.com/mengapa-kita-harus-menggunakan-materai-2/">http://www.hukum123.com/mengapa-kita-harus-menggunakan-materai-2/</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://www.hukumonline.com/klinik/detail/lt51426f0a4f0ee/fungsi-meterai-">https://www.hukumonline.com/klinik/detail/lt51426f0a4f0ee/fungsi-meterai-</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/usaha.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/usaha.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2016-01-01 00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
