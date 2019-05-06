@@ -168,7 +168,8 @@ document.addEventListener("DOMContentLoaded", function () {
 <ul>
 <li><span class="section_number">1</span><span class="section_title"><a href="#abdullah">Subtyping in Haskell with canonical injections</a></span><span class="word_count">(1203w~7m)</span></li>
 <li><span class="section_number">2</span><span class="section_title"><a href="#interpreting-haskell-without-types-a-strong-temptation">Interpreting Haskell without types: a strong temptation</a></span><span class="word_count">(282w~2m)</span></li>
-<li><span class="section_number">3</span><span class="section_title"><a href="#a-mess-do-not-see">A mess; do not see</a></span><span class="word_count">(611w~4m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#what-i-learn-from-teaching-haskell-to-a-beginner">What I learn from teaching Haskell to a beginner</a></span><span class="word_count">(155w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#a-mess-do-not-see">A mess; do not see</a></span><span class="word_count">(611w~4m)</span></li>
 </ul>
 </div>
 <h2 id="abdullah"><span class="section_number">1</span><span class="section_title">Subtyping in Haskell with canonical injections</span></h2>
@@ -437,17 +438,52 @@ eval (MkLoc _ _ _ e) = eval e
 <li>???</li>
 <li>PROFIT</li>
 </ol>
-<h2 id="a-mess-do-not-see"><span class="section_number">3</span><span class="section_title">A mess; do not see</span></h2>
+<h2 id="what-i-learn-from-teaching-haskell-to-a-beginner"><span class="section_number">3</span><span class="section_title">What I learn from teaching Haskell to a beginner</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">3.1</span><span class="section_title"><a href="#open-adts-algebraic-data-types">Open ADTs (algebraic data types)</a></span><span class="word_count">(46w~1m)</span></li>
-<li><span class="section_number">3.2</span><span class="section_title"><a href="#can-we-extend-haskell-to-auto-fmap">Can we extend Haskell to &quot;auto-fmap&quot;?</a></span><span class="word_count">(269w~2m)</span></li>
-<li><span class="section_number">3.3</span><span class="section_title"><a href="#auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">Auto-lifting (and therefore sequencing) of function application involving Monad instances</a></span><span class="word_count">(176w~1m)</span></li>
-<li><span class="section_number">3.4</span><span class="section_title"><a href="#equirecursive-types">Equirecursive types?</a></span><span class="word_count">(35w~1m)</span></li>
-<li><span class="section_number">3.5</span><span class="section_title"><a href="#bootstrap-ghc">&lt;2018-12-15&gt; Bootstrap GHC?</a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#three-levels">Three levels</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#substitution-equality-rules-pattern-matching">Substitution, equality, rules, pattern-matching</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#gadt-syntax-is-more-intuitive-than-haskell-98-data-syntax">GADT syntax is more intuitive than Haskell 98 data syntax</a></span><span class="word_count">(56w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#functor-applicative-monad-extension-of-spaces">Functor, Applicative, Monad, extension of spaces</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#monad-is-for-do-notation">Monad is for do-notation</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#haskells-type-system-leaves-some-things-to-be-desired">Haskell's type system leaves some things to be desired</a></span><span class="word_count">(51w~1m)</span></li>
 </ul>
 </div>
-<h3 id="open-adts-algebraic-data-types"><span class="section_number">3.1</span><span class="section_title">Open ADTs (algebraic data types)</span></h3>
+<h3 id="three-levels"><span class="section_number">3.1</span><span class="section_title">Three levels</span></h3>
+<p>Level 0 is value-level.</p>
+<p>Level 1 is type-level.</p>
+<p>Level 2 is kind-level.</p>
+<h3 id="substitution-equality-rules-pattern-matching"><span class="section_number">3.2</span><span class="section_title">Substitution, equality, rules, pattern-matching</span></h3>
+<h3 id="gadt-syntax-is-more-intuitive-than-haskell-98-data-syntax"><span class="section_number">3.3</span><span class="section_title">GADT syntax is more intuitive than Haskell 98 data syntax</span></h3>
+<p>GADT syntax makes it obvious that <code>Just</code> is a function and that <code>Just 1</code> is a value.</p>
+<pre class="example"><code>data Maybe a where
+    Nothing :: Maybe a
+    Just :: a -&gt; Maybe a
+</code></pre>
+<p>With Haskell 98 data syntax, I have to explain to the beginner, why the equal sign does not mean equality, that is, substitutability.</p>
+<p>Syntax should represent semantics and be consistent with semantics.</p>
+<h3 id="functor-applicative-monad-extension-of-spaces"><span class="section_number">3.4</span><span class="section_title">Functor, Applicative, Monad, extension of spaces</span></h3>
+<p>Extension of spaces (a la Abdullah):</p>
+<pre class="example"><code>fmap  ::   (a -&gt; b) -&gt; (f a -&gt; f b)
+(&lt;*&gt;) :: f (a -&gt; b) -&gt; (f a -&gt; f b)
+(=&lt;&lt;) :: (a -&gt; f b) -&gt; (f a -&gt; f b)
+</code></pre>
+<p>And then explain (&gt;&gt;=) as swapped (=&lt;&lt;).</p>
+<h3 id="monad-is-for-do-notation"><span class="section_number">3.5</span><span class="section_title">Monad is for do-notation</span></h3>
+<p>No need to turn off a beginner with category theory.</p>
+<h3 id="haskells-type-system-leaves-some-things-to-be-desired"><span class="section_number">3.6</span><span class="section_title">Haskell's type system leaves some things to be desired</span></h3>
+<p>Why can't I have a type that is inhabited by {Nothing, 0, 1, 2, …}? Why do I have to write the Just in {Nothing, Just 0, Just 1, Just 2, …}? Are Abdullah and I the only people who think this way?</p>
+<h2 id="a-mess-do-not-see"><span class="section_number">4</span><span class="section_title">A mess; do not see</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#open-adts-algebraic-data-types">Open ADTs (algebraic data types)</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#can-we-extend-haskell-to-auto-fmap">Can we extend Haskell to &quot;auto-fmap&quot;?</a></span><span class="word_count">(269w~2m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances">Auto-lifting (and therefore sequencing) of function application involving Monad instances</a></span><span class="word_count">(176w~1m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#equirecursive-types">Equirecursive types?</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">4.5</span><span class="section_title"><a href="#bootstrap-ghc">&lt;2018-12-15&gt; Bootstrap GHC?</a></span><span class="word_count">(85w~1m)</span></li>
+</ul>
+</div>
+<h3 id="open-adts-algebraic-data-types"><span class="section_number">4.1</span><span class="section_title">Open ADTs (algebraic data types)</span></h3>
 <ul>
 <li>&quot;Closed&quot; means &quot;defined in one place&quot;.</li>
 <li><p>Open ADTs don't mix with exhaustive case analysis (function totality).</p>
@@ -460,7 +496,7 @@ eval (MkLoc _ _ _ e) = eval e
 </ul></li>
 <li><p>If <code>f : a -&gt; b</code>, then the compiler should infer <code>lift f : (Monad m) =&gt; m a -&gt; m b</code>.</p></li>
 </ul>
-<h3 id="can-we-extend-haskell-to-auto-fmap"><span class="section_number">3.2</span><span class="section_title">Can we extend Haskell to &quot;auto-fmap&quot;?</span></h3>
+<h3 id="can-we-extend-haskell-to-auto-fmap"><span class="section_number">4.2</span><span class="section_title">Can we extend Haskell to &quot;auto-fmap&quot;?</span></h3>
 <ul>
 <li><p>Possibilities:</p>
 <ul>
@@ -522,7 +558,7 @@ eval (MkLoc _ _ _ e) = eval e
 <li><a href="https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf">https://www.cis.upenn.edu/~bcpierce/papers/lenses-etapsslides.pdf</a></li>
 </ul></li>
 </ul>
-<h3 id="auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances"><span class="section_number">3.3</span><span class="section_title">Auto-lifting (and therefore sequencing) of function application involving Monad instances</span></h3>
+<h3 id="auto-lifting-and-therefore-sequencing-of-function-application-involving-monad-instances"><span class="section_number">4.3</span><span class="section_title">Auto-lifting (and therefore sequencing) of function application involving Monad instances</span></h3>
 <ul>
 <li><p>The standard rule is:</p>
 <ul>
@@ -575,7 +611,7 @@ eval (MkLoc _ _ _ e) = eval e
 </ul></li>
 </ul></li>
 </ul>
-<h3 id="equirecursive-types"><span class="section_number">3.4</span><span class="section_title">Equirecursive types?</span></h3>
+<h3 id="equirecursive-types"><span class="section_number">4.4</span><span class="section_title">Equirecursive types?</span></h3>
 <p>Haskell has isorecursive types. Can we make it use equirecursive types?</p>
 <ul>
 <li>Can we make it automatically insert roll-unroll/fold-unfold/In-out?</li>
@@ -586,7 +622,7 @@ eval (MkLoc _ _ _ e) = eval e
 </ul></li>
 <li>&quot;System F-omega with Equirecursive Types for Datatype-Generic Programming&quot;?</li>
 </ul>
-<h3 id="bootstrap-ghc"><span class="section_number">3.5</span><span class="section_title">&lt;2018-12-15&gt; Bootstrap GHC?</span></h3>
+<h3 id="bootstrap-ghc"><span class="section_number">4.5</span><span class="section_title">&lt;2018-12-15&gt; Bootstrap GHC?</span></h3>
 <p><a href="https://twitter.com/ErikDominikus/status/1073726987338842112">https://twitter.com/ErikDominikus/status/1073726987338842112</a></p>
 <p>How about writing a Haskell interpreter with Prolog? I guess Haskell type checker takes ~100 lines of Prolog, and parser takes ~200 lines. It may be doable in a month. I have ~20 lines of Prolog type-checking Haskell AST but without type classes.</p>
 <p>Add ~500 more lines of Prolog metaprogram for translating lists to arrays, ~2000 more lines for translating Prolog to optimized x86_64 native code (if not reinventing LLVM), 1 more month, and … we may beat GHC at its own game? :)</p>
