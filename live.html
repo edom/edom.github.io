@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Live forever</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Live forever</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#understand-the-causal-chain-of-death">Understand the causal chain of death</a></span><span class="word_count">(69w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#find-promising-ways-to-live-forever">Find promising ways to live forever</a></span><span class="word_count">(74w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#avoid-untimely-death">Avoid untimely death</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#avoid-risky-places-to-live">Avoid risky places to live</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(369w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#what-is-wrong-with-our-education">What is wrong with our education?</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#what-things-are-dangerous">What things are dangerous?</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(27w~1m)</span></li>
+</ul>
+</div>
+<h2 id="understand-the-causal-chain-of-death"><span class="section_number">1</span><span class="section_title">Understand the causal chain of death</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#why-does-a-human-die">Why does a human die?</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#why-and-how-are-immortal-organisms-immortal">Why and how are immortal organisms immortal?</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#is-it-enough-to-sustain-the-brain-in-order-to-live-forever">Is it enough to sustain the brain in order to live forever?</a></span><span class="word_count">(12w~1m)</span></li>
+</ul>
+</div>
+<h3 id="why-does-a-human-die"><span class="section_number">1.1</span><span class="section_title">Why does a human die?</span></h3>
+<ul>
+<li>Because his brain dies.
+<ul>
+<li>Because the blood that flows into the brain does not satisfy the brain's operating conditions.
+<ul>
+<li>Because other organs fail.
+<ul>
+<li>Because of Hayflick limit<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>? Telomere shortening?
+<ul>
+<li>Why does the Hayflick limit exist?<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></li>
+<li>Do stem cells also have Hayflick limit?</li>
+</ul></li>
+<li>Because of irreversible cell damage?</li>
+<li>Homeostatic failure?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Reading list?
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Longevity_escape_velocity">https://en.wikipedia.org/wiki/Longevity_escape_velocity</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Anti-aging_movement">https://en.wikipedia.org/wiki/Anti-aging_movement</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Gerontology">https://en.wikipedia.org/wiki/Gerontology</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Indefinite_lifespan">https://en.wikipedia.org/wiki/Indefinite_lifespan</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Life_extension">https://en.wikipedia.org/wiki/Life_extension</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Immortality">https://en.wikipedia.org/wiki/Immortality</a></li>
+</ul></li>
+</ul>
+<h3 id="why-and-how-are-immortal-organisms-immortal"><span class="section_number">1.2</span><span class="section_title">Why and how are immortal organisms immortal?</span></h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Biological_immortality">https://en.wikipedia.org/wiki/Biological_immortality</a></li>
+</ul>
+<h3 id="is-it-enough-to-sustain-the-brain-in-order-to-live-forever"><span class="section_number">1.3</span><span class="section_title">Is it enough to sustain the brain in order to live forever?</span></h3>
+<h2 id="find-promising-ways-to-live-forever"><span class="section_number">2</span><span class="section_title">Find promising ways to live forever</span></h2>
+<p>What is the most feasible way to live forever?</p>
+<ul>
+<li>Mind upload?</li>
+<li>Cryopreservation?</li>
+<li>Cyborg?</li>
+<li>Biological advances?</li>
+<li>Reverse aging?</li>
+<li>Cure death?</li>
+</ul>
+<p>Biohacking?<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>Genetics is the biggest factor in how far we can build our body.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>AI-vs-biology immortality dilemma:</p>
+<p>If we want to achieve immortality, which should we prioritize: AI or biology?</p>
+<ul>
+<li>If we understand enough AI, we can make an AI to research immortality faster.</li>
+<li>If we understand enough biology, we can live long enough to research immortality.</li>
+</ul>
+<p>Why not both AI and biology?</p>
+<h2 id="avoid-untimely-death"><span class="section_number">3</span><span class="section_title">Avoid untimely death</span></h2>
+<p>Don't swallow slugs.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>Don't swim in a warm lake.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<p>Read ingredient labels. Try to understand what is in the food. If you don't understand it, you probably shouldn't eat it.</p>
+<p>Avoid food that has been processed too much.</p>
+<p>Don't eat spoiled food. Don't eat food that smells off.</p>
+<h2 id="avoid-risky-places-to-live"><span class="section_number">4</span><span class="section_title">Avoid risky places to live</span></h2>
+<p>Avoid places with natural disasters, social disasters, economic disasters, incompetent governments, backward people.</p>
+<p>Move if necessary.</p>
+<h2 id="what"><span class="section_number">5</span><span class="section_title">What?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#thyroid">Thyroid?</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#what-causes-gastritis">What causes gastritis?</a></span><span class="word_count">(301w~2m)</span></li>
+<li><span class="section_number">5.3</span><span class="section_title"><a href="#sleeping-too-tired-to-dream">Sleeping? Too tired to dream?</a></span><span class="word_count">(32w~1m)</span></li>
+</ul>
+</div>
+<h3 id="thyroid"><span class="section_number">5.1</span><span class="section_title">Thyroid?</span></h3>
+<p>&quot;The two major causes of thyroid disorders are nutrient deficiency and autoimmune disease.&quot;<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<ul>
+<li>Thyroid hormone synthesis requires these metals: iodine, zinc, selenium.</li>
+<li>Raw vegetables may contain goitrogens that prevent the body from using iodine.</li>
+<li>Very low-carb diets can decrease thyroid function.</li>
+</ul>
+<h3 id="what-causes-gastritis"><span class="section_number">5.2</span><span class="section_title">What causes gastritis?</span></h3>
+<ul>
+<li>Does skipping a meal cause gastritis?</li>
+<li>Is Helicobacter pylori a normal part of the stomach flora?</li>
+<li>Does empty stomach secrete acid?</li>
+<li>How does the body dispose of excess stomach acid? Is it reabsorbed? Is it drained down the intestines as diarrhea?</li>
+<li>Why does keto diet cause loss of salts?</li>
+</ul>
+<p>My hypothesis of the causal chain:</p>
+<ul>
+<li>gastritis
+<ul>
+<li>H. pylori <em>overgrowth</em>
+<ul>
+<li><em>insufficient mucus</em> in the lining of the gastric wall
+<ul>
+<li>malnutrition</li>
+</ul></li>
+<li>insufficient acid
+<ul>
+<li>reduced acid due to no food passing through</li>
+<li>hypochloremia due to keto diet</li>
+<li>kalium is required to transport hydrogen ions in stomach acid production<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></li>
+</ul></li>
+<li>overproduction of stomach acid the stomach's inflammatory response to H. pylori overgrowth</li>
+<li>disturbed stomach acid pathways
+<ul>
+<li>insufficient materials to create hormones in those pathways</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>Why? Because most H. pylori colonization is asymptomatic. Is it true that half of the population have H. pylori but only some develop gastritis?</p>
+<p>Bacteria don't kill the host just by being present. It's the byproducts, toxins, interactions, infections, and sepses that kill the host.</p>
+<p>Thus, my hypothesis is that gastritis happens when the stomach digests itself.</p>
+<p>Svestka et al. 2003 <span class="citation" data-cites="svestka2003effect">[<a href="#ref-svestka2003effect">1</a>]</span>:</p>
+<ul>
+<li>&quot;It has been proven that damage to the gastric mucosa is the result of the combined effects of acidopeptic agents including infection with Helicobacter pylori and insufficient protective mechanisms of the mucosa. Thickness of gastric mucus is very important protective factor.&quot;</li>
+<li>&quot;The thickness of gastric mucus is reduced after 24 hours' fasting in laboratory rats.&quot;</li>
+</ul>
+<p>Unread but related:</p>
+<ul>
+<li>Role of mucus layers in gut infection and inflammation<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></li>
+<li>The gastrointestinal mucus system in health and disease<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a></li>
+<li>Why do we still have Helicobacter Pylori in our Stomachs<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a></li>
+</ul>
+<p>&quot;Inhibiting Acid Production Could Make Gastritis Worse&quot;<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>:</p>
+<ul>
+<li>'&quot;These animal studies indicate that it is the inflammatory response - triggering the overproduction of hydrochloric acid - which is the stomach's primary response to bacterial colonization,&quot; says Juanita L. Merchant, M.D., Ph.D.'</li>
+<li>&quot;Merchant cautions that […] a type of bacteria called Helicobacter pylori, the most common cause of gastritis, was excluded from these studies.&quot;</li>
+</ul>
+<h3 id="sleeping-too-tired-to-dream"><span class="section_number">5.3</span><span class="section_title">Sleeping? Too tired to dream?</span></h3>
+<p><a href="https://www.quora.com/Can-you-be-too-tired-to-dream">https://www.quora.com/Can-you-be-too-tired-to-dream</a></p>
+<p>Sleeping requires that we release conscious control of all voluntary muscles.</p>
+<p>Why can't we sleep with running thoughts?</p>
+<p>Example of mindless thinking: the racing thoughts when I'm going to bed.</p>
+<h2 id="what-is-wrong-with-our-education"><span class="section_number">6</span><span class="section_title">What is wrong with our education?</span></h2>
+<p>How come schools teach kids about sponge reproduction, but they don't teach them <em>what to eat</em> and <em>how to eat</em>?</p>
+<h2 id="what-things-are-dangerous"><span class="section_number">7</span><span class="section_title">What things are dangerous?</span></h2>
+<p>Do armed toddlers kill more people than terrorists do?<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> But terrorism is rising?<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">8</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-svestka2003effect">
+<p>[1] Svestka, T. et al. 2003. Effect of fasting on gastric mucosa thickness: Experimental study in laboratory rats. <em>Casopis lekaru ceskych</em>. 142, 12 (2003), 751–754. url: &lt;<a href="https://www.ncbi.nlm.nih.gov/pubmed/14746225">https://www.ncbi.nlm.nih.gov/pubmed/14746225</a>&gt;.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Hayflick_limit">https://en.wikipedia.org/wiki/Hayflick_limit</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>1994 <a href="https://www.ncbi.nlm.nih.gov/pubmed/7845054">https://www.ncbi.nlm.nih.gov/pubmed/7845054</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://www.theguardian.com/science/2018/sep/21/extreme-biohacking-tech-guru-who-spent-250000-trying-to-live-for-ever-serge-faguet">https://www.theguardian.com/science/2018/sep/21/extreme-biohacking-tech-guru-who-spent-250000-trying-to-live-for-ever-serge-faguet</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.quora.com/Is-it-possible-for-a-skinny-guy-who-eats-trains-and-does-everything-right-to-get-Chris-Evans%E2%80%99-large-pecs-and-overall-muscular-look-If-so-how-long-Im-just-starting">https://www.quora.com/Is-it-possible-for-a-skinny-guy-who-eats-trains-and-does-everything-right-to-get-Chris-Evans%E2%80%99-large-pecs-and-overall-muscular-look-If-so-how-long-Im-just-starting</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://www.dailymail.co.uk/news/article-6352629/amp/Sam-Ballard-dies-eight-years-swallowing-slug.html">https://www.dailymail.co.uk/news/article-6352629/amp/Sam-Ballard-dies-eight-years-swallowing-slug.html</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Naegleria_fowleri">https://en.wikipedia.org/wiki/Naegleria_fowleri</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://kresserinstitute.com/underlying-causes-thyroid-disease/">https://kresserinstitute.com/underlying-causes-thyroid-disease/</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="http://www.pathwaymedicine.org/stomach-acid-secretion">http://www.pathwaymedicine.org/stomach-acid-secretion</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3716454/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3716454/</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3758667/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3758667/</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5295741/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5295741/</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://www.sciencedaily.com/releases/2002/01/020115074441.htm">https://www.sciencedaily.com/releases/2002/01/020115074441.htm</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p><a href="https://hackernoon.com/the-sandnigger-programmer-from-mississippi-73f131da2c69">https://hackernoon.com/the-sandnigger-programmer-from-mississippi-73f131da2c69</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://www.newamerica.org/in-depth/terrorism-in-america/what-threat-united-states-today/">https://www.newamerica.org/in-depth/terrorism-in-america/what-threat-united-states-today/</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/live.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/live.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-04-22 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
