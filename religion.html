@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Understand religion</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Understand religion</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#plans">Plans?</a></span><span class="word_count">(88w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#religiosity-causal-chain">Religiosity causal chain?</a></span><span class="word_count">(143w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#religion-from-evolution-perspective">Religion from evolution perspective</a></span><span class="word_count">(159w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#hard-websites">Hard websites</a></span><span class="word_count">(1187w~6m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#which-religion-has-the-best-benefit-to-cost-ratio">Which religion has the best benefit-to-cost ratio?</a></span><span class="word_count">(288w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#does-it-matter-when-a-religion-was-created">Does it matter when a religion was created?</a></span><span class="word_count">(84w~1m)</span></li>
+</ul>
+</div>
+<h2 id="plans"><span class="section_number">1</span><span class="section_title">Plans?</span></h2>
+<ul>
+<li>Understand religions historically and sociologically
+<ul>
+<li>Write a short article and share it on social media?</li>
+<li>Give a lecture/seminar?</li>
+<li>Answer these questions:
+<ul>
+<li>Who threw the first stone in the war between Israel and Palestine?</li>
+<li>Why did the Crusades happen?</li>
+<li>Who threw the first stone in the first Crusade?</li>
+<li>How do Catholics rationalize their cognitive dissonance between papal infallibility and the unexemplary 10th century popes?
+<ul>
+<li>Protestantism as a reaction to corrupt 10th century Catholicism</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Understand the psychology of terrorism
+<ul>
+<li>Why does someone become a terrorist?</li>
+<li>Why does someone become an ex-terrorist?</li>
+<li>Are there non-religious terrorists?</li>
+</ul></li>
+<li>Measure religious fanaticism</li>
+<li>Eliminate religious extremism, fanaticism, and narrow-mindedness</li>
+</ul>
+<h2 id="religiosity-causal-chain"><span class="section_number">2</span><span class="section_title">Religiosity causal chain?</span></h2>
+<ul>
+<li>A child has a religion because its parents teach it that religion.
+<ul>
+<li>Parents may revolt if we forbid them from teaching religion to their children.</li>
+</ul></li>
+<li>A person leaves religion because he disagrees with the religion or how others practice it.</li>
+<li>A person wants to apply religion because he sees it as an ideal.</li>
+<li>Can we send subliminal messages on TV to make religions look bad?</li>
+<li>People are more religious in bad times because religion numbs the pain somewhat. Religion is a psychological painkiller. Religion is addictive.
+<ul>
+<li>If we give them real-pain killing drugs, will they replace their addiction?</li>
+</ul></li>
+<li>People are religious because they are afraid to think for themselves. They are afraid of the unknown?</li>
+<li>People are religious because they fear becoming irreligious.</li>
+<li>How do we passivate religious people?</li>
+</ul>
+<p>Poor people are more religious?</p>
+<p>But what about the middle-class/upper-class bombers, such as in 2019 Sri Lanka bombing, 2018 JAD Surabaya church bombing?</p>
+<h2 id="religion-from-evolution-perspective"><span class="section_number">3</span><span class="section_title">Religion from evolution perspective</span></h2>
+<p>Why did we evolve to be religious? What are the evolutionary advantages of religion?</p>
+<p>Religion might have helped humans survive.</p>
+<p>Religion, superstition, and folk tales had evolutionary benefit.</p>
+<p>Before science, religion was humankind's best attempt at understanding reality.</p>
+<p>Understanding reality helps survival.</p>
+<p>The paranoid is more likely to survive.</p>
+<p>Religion can be thought of as proto-science<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>Hypothesis about the origin of religions and the evolutionary benefit of religions?</p>
+<ul>
+<li>Religion evolved from folk tales.</li>
+<li>Religion evolved from our ability to personify things.</li>
+<li>Religion, superstition, and folk tales were the best tool for survival before modern healthcare.</li>
+<li>Superstition and religion helped people survive. Superstitious people are more paranoid and less likely to die for stupid reasons.</li>
+<li>Religion is learned paranoia and culturally-spread paranoia.</li>
+<li><a href="https://en.wikipedia.org/wiki/Hundredth_monkey_effect">https://en.wikipedia.org/wiki/Hundredth_monkey_effect</a>
+<ul>
+<li>&quot;The <strong>hundredth monkey effect</strong> is a hypothetical phenomenon in which a new behaviour or idea is claimed to spread rapidly by unexplained means from one group to all related groups once a critical number of members of one group exhibit the new behaviour or acknowledge the new idea.&quot;</li>
+</ul></li>
+</ul>
+<h2 id="hard-websites"><span class="section_number">4</span><span class="section_title">Hard websites</span></h2>
+<ul>
+<li>Websites
+<ul>
+<li><a href="https://www.biblegateway.com/">biblegateway.com: online Christian bible</a>
+<ul>
+<li><a href="http://www.evilbible.com/">Evil Bible .com – Fighting Against Immorality in Religion</a></li>
+</ul></li>
+<li><a href="https://quran.com/">quran.com: online Islamic bible</a>
+<ul>
+<li><a href="http://wikiislam.net/wiki/Main_Page">wikiislam.net</a></li>
+</ul></li>
+<li><a href="http://whywontgodhealamputees.com/">Why Won't God Heal Amputees?</a></li>
+</ul></li>
+<li>Concepts
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Supersessionism">WP:Supersessionism</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Manifest_destiny">WP:Manifest destiny</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Crusades">WP:Crusades</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Simony">WP:Simony</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Parody_religion">WP:Parody religion</a></li>
+</ul></li>
+<li>Lists
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/The_Bad_Popes">WP:The bad popes</a></li>
+<li><a href="https://www.quora.com/Who-was-the-most-corrupt-pope-in-the-history-of-Catholicism">Quora: Who was the most corrupt pope in the history of Catholicism?</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Historicity_of_Jesus">WP:Historicity of Jesus</a></li>
+</ul></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#about-this-post">About this post</a></span><span class="word_count">(183w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#the-questions">The questions</a></span><span class="word_count">(172w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#closing">Closing</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#undigested">Undigested</a></span><span class="word_count">(116w~1m)</span></li>
+<li><span class="section_number">4.5</span><span class="section_title"><a href="#history-of-islam">History of Islam?</a></span><span class="word_count">(234w~2m)</span></li>
+<li><span class="section_number">4.6</span><span class="section_title"><a href="#a-fiction-of-ali-and-bob">A fiction of Ali and Bob</a></span><span class="word_count">(216w~2m)</span></li>
+<li><span class="section_number">4.7</span><span class="section_title"><a href="#religions-in-2018">Religions in 2018</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">4.8</span><span class="section_title"><a href="#is-there-an-advanced-islamic-country">Is there an advanced Islamic country?</a></span><span class="word_count">(222w~2m)</span></li>
+</ul>
+</div>
+<h3 id="about-this-post"><span class="section_number">4.1</span><span class="section_title">About this post</span></h3>
+<p>This post contains serious questions but no answers. The questions were made with complete respect to all religions.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1.1</span><span class="section_title"><a href="#how-to-benefit-from-the-questions">How to benefit from the questions</a></span><span class="word_count">(164w~1m)</span></li>
+</ul>
+</div>
+<h4 id="how-to-benefit-from-the-questions"><span class="section_number">4.1.1</span><span class="section_title">How to benefit from the questions</span></h4>
+<p>Answer them honestly in your mind. You can choose to keep your answers to yourself, so please be completely honest to yourself.</p>
+<p>Please do not feel stupid. Honesty is not stupidity. Not being able to answer a question does not imply stupidity.</p>
+<p>If you are a religious person and you answer the questions seriously, then these are some possible outcomes:</p>
+<ol>
+<li>You ignore these questions or refuse to answer them. If you think I'm just trying to confuse you, please know that I respect your time, and I'm trying to help you. The questions are hard because they are serious questions, not riddles. I'm sorry if what I thought would be good turns out to be bad for you.</li>
+<li>You invent new rationalizations ( e.g. the author is committing a logical fallacy, all good people can go to heaven regardless of their religion, all religions basically teach good things, my religion might not be the best but it's the one I'm most familiar with, etc.).</li>
+</ol>
+<h3 id="the-questions"><span class="section_number">4.2</span><span class="section_title">The questions</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.2.1</span><span class="section_title"><a href="#conversion">Conversion</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">4.2.2</span><span class="section_title"><a href="#correctness">Correctness</a></span><span class="word_count">(134w~1m)</span></li>
+<li><span class="section_number">4.2.3</span><span class="section_title"><a href="#experiments">Experiments</a></span><span class="word_count">(17w~1m)</span></li>
+</ul>
+</div>
+<h4 id="conversion"><span class="section_number">4.2.1</span><span class="section_title">Conversion</span></h4>
+<p>If a person leaves Islam and joins Christianity, then Allah will punish him, but Jesus will save him, so what will happen?</p>
+<h4 id="correctness"><span class="section_number">4.2.2</span><span class="section_title">Correctness</span></h4>
+<ul>
+<li><p>Is your religion <em>the</em> correct religion?</p>
+<ul>
+<li><p>If yes, are people with other religions unable to go to heaven?</p>
+<ul>
+<li>If no, why don't you try their religions? Aren't you going to heaven regardless of which one yours is?</li>
+</ul></li>
+<li><p>If no, why do you still believe in something you know is wrong instead of looking for the correct one?</p>
+<ul>
+<li>If you think all religions are correct, why don't you try other religions? Aren't you going to heaven regardless of which one yours is?</li>
+<li>If you think there's no such thing as <em>the</em> correct religion, why do you have any religion at all? Why would you believe in something you know is not correct? Why would you gamble your afterlife?</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>If all people with religion can go to heaven, why not choose the religion that requires the least effort to go to heaven?</p>
+<h4 id="experiments"><span class="section_number">4.2.3</span><span class="section_title">Experiments</span></h4>
+<p>If parents did not teach their children any religion, what would the religion of those children be?</p>
+<h3 id="closing"><span class="section_number">4.3</span><span class="section_title">Closing</span></h3>
+<p>Thank you for answering the questions. I wish you all the best.</p>
+<h3 id="undigested"><span class="section_number">4.4</span><span class="section_title">Undigested</span></h3>
+<ul>
+<li><p>How do we measure religion?</p>
+<ul>
+<li>By number of believers over time?</li>
+</ul></li>
+<li>How do religion spread?</li>
+<li><p>Why do family members tend to have the same religion?</p>
+<ul>
+<li>If children choose their own religions, will they believe it more?</li>
+</ul></li>
+<li><p>Classification of people by religiosity</p>
+<ul>
+<li><p>internal (can't be seen by others)</p>
+<ul>
+<li><p>by degree of belief</p>
+<ul>
+<li>non-believer</li>
+<li>believer</li>
+</ul></li>
+</ul></li>
+<li><p>external (can be seen by others)</p>
+<ul>
+<li><p>by level of practice</p>
+<ul>
+<li>non-practicing</li>
+<li>practicing</li>
+</ul></li>
+<li><p>by spreading</p>
+<ul>
+<li>non-spreading</li>
+<li><p>spreading</p>
+<ul>
+<li>by forcing their children to the same religion</li>
+<li>by proselytizing</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5602559/">Measuring Five Dimensions of Religiosity across Adolescence</a></li>
+<li>Attacking people's beliefs will activate their amygdala, resulting in fight-or-flight response?</li>
+<li><p>Every religion started out as something good. It civilized its community. However, after 1000 years, people got too attached to religion, and religion loses its benefits.</p></li>
+<li><p>To everyone, especially religious people:</p>
+<ul>
+<li>Why do you let someone else decide what/how you should think?</li>
+</ul></li>
+</ul>
+<h3 id="history-of-islam"><span class="section_number">4.5</span><span class="section_title">History of Islam?</span></h3>
+<p>Sayyid Ali Ashgar Razwy has written a free online book<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> about the history of Islam. I need not write another one. Some examples of his contents:</p>
+<ul>
+<li>&quot;Contrary to popular notions, Arabia is not all a wilderness of sand.&quot;</li>
+<li>&quot;One moment [the desert] may be deceptively benign and tranquil but the very next moment, it may become vicious, temperamental, menacing and treacherous like a turbulent ocean. &quot;</li>
+<li>&quot;Then came oil and everything changed. Saudi Arabia sold her first concession in 1923, and the first producing well was drilled in 1938. Within a few years, annual revenues from petroleum exceeded $1 million. The kingdom passed the $1 billion mark in 1970; the $100 billion mark in 1980.&quot;</li>
+<li>&quot;Economically, the Jews were the leaders of Arabia. They were the owners of the best arable lands in Hijaz, and they were the best farmers in the country. They were also the entrepreneurs of such industries as existed in Arabia in those days, and they enjoyed a monopoly of the armaments industry.&quot;</li>
+</ul>
+<p><em>Islam civilized Arabia.</em> Before Islam, Arabia was a dangerous place to live.</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=BvkBlpfbFJM">Islam destroyed its own &quot;Golden Age&quot; - Neil deGrasse Tyson &amp; Steven Weinberg - YouTube</a>
+<ul>
+<li>There was Islamic Golden Age, but it ended tragically.
+<ul>
+<li>Are the Gulf Nations allergic to science?</li>
+<li>What is the Muslim Brotherhood's idea of education?</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Al-Ghazali">WP:Al-Ghazali</a> has a role in the downfall.</li>
+<li><a href="https://en.wikipedia.org/wiki/Islamic_Golden_Age">Islamic Golden Age - Wikipedia</a></li>
+</ul></li>
+<li><a href="https://www.meforum.org/articles/other/why-does-the-muslim-world-lag-in-science">Why Does the Muslim World Lag in Science? | Middle East Forum</a>, too long</li>
+</ul>
+<h3 id="a-fiction-of-ali-and-bob"><span class="section_number">4.6</span><span class="section_title">A fiction of Ali and Bob</span></h3>
+<p>Ali is a good Muslim. Bob is a good Christian. They are good friends.</p>
+<p>But then Ali reads <a href="http://quran.com/74/42-47">Quran 74:42-47</a>, and Bob reads <a href="https://www.biblegateway.com/passage/?search=John+3%3A16-20&amp;version=NIV">John 3:16-20</a>.</p>
+<p>Each of them wants to go to their respective heaven, and as good friends, each of them also wants the best for the other, which is for the other to go to heaven, but they aren't sure whose heaven: Ali's holy book implies that Bob is going to the Islamic hell, and Bob's holy book implies that Ali is going to the Christian hell.</p>
+<p>They can't bear the dissonance, but don't want to live as enemies either, and they don't want to assume that their friend is wrong, for such assumption would justify their converting their friend, and they think the other won't like any proselytizing, because they don't like being proselytized themselves, and they won't do unto others what they don't want others to do unto them. They don't want to reduce their friendship into mere tolerance; thus they throw away their holy books and religions, and they stay good friends until their death, while still believing in a higher power.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.6.1</span><span class="section_title"><a href="#postscript">Postscript</a></span><span class="word_count">(28w~1m)</span></li>
+</ul>
+</div>
+<h4 id="postscript"><span class="section_number">4.6.1</span><span class="section_title">Postscript</span></h4>
+<p>This is not the argument from inconsistent revelations (also known as the aptly named 'the problem of avoiding the wrong hell'). This story is about humanity, not gods.</p>
+<h3 id="religions-in-2018"><span class="section_number">4.7</span><span class="section_title">Religions in 2018</span></h3>
+<ul>
+<li><a href="https://www.theverge.com/2018/10/24/18018446/follow-jc-go-pokemon-go-clone-vatican">https://www.theverge.com/2018/10/24/18018446/follow-jc-go-pokemon-go-clone-vatican</a></li>
+</ul>
+<h3 id="is-there-an-advanced-islamic-country"><span class="section_number">4.8</span><span class="section_title">Is there an advanced Islamic country?</span></h3>
+<p><a href="https://www.google.co.id/amp/s/www.forbes.com/sites/quora/2013/01/08/why-have-the-islamic-countries-failed-to-develop-even-with-resources-like-oil-while-countries-with-no-resources-like-switzerland-have-flourished/amp/">https://www.google.co.id/amp/s/www.forbes.com/sites/quora/2013/01/08/why-have-the-islamic-countries-failed-to-develop-even-with-resources-like-oil-while-countries-with-no-resources-like-switzerland-have-flourished/amp/</a></p>
+<p>Iran has nukes. Nukes are advanced. Is Iran not an advanced Islamic country?</p>
+<p>TLDR: I don't have an answer.</p>
+<p>What is an Islamic country?</p>
+<p>We can classify countries into four categories:</p>
+<ul>
+<li>non-Islamic non-advanced country</li>
+<li>Islamic non-advanced country</li>
+<li>non-Islamic advanced country</li>
+<li>Islamic advanced country</li>
+</ul>
+<p>What is an advanced country?</p>
+<p>The problem is: If there are enough religious extremists in a country, then the whole country goes down. The smart people die or move out, leaving only stupid people behind. Stupid people beget more stupid people, deteriorating the country even faster. People segregate themselves.</p>
+<p>Forced democratization of a developing country only creates corrupt government. For a government to be beneficial, the governed people must think critically. The people of a developing country does not think critically.</p>
+<p>Example of a developing country corrupted by forced democratization: Indonesia (and pretty much all developing countries).</p>
+<p>Anyone who criticizes Islam risks death. But one who rejects criticism is condemned to eternal backwardness. If you are backward, you reject criticism. If you reject criticism, you stay backward. It's a vicious circle. The only way out is waiting for backward people to die and be replaced with their children, hopefully more open-minded and capable of critical thinking and introspection. But the apple doesn't fall far from the tree. The situation is extremely bleak. We have billions of such people.</p>
+<p>Immigrants tend to create parallel societies and don't integrate.</p>
+<p><a href="https://moralarc.org/why-islam-of-the-three-great-monotheistic-religions-one-did-not-go-through-enlightenment/">https://moralarc.org/why-islam-of-the-three-great-monotheistic-religions-one-did-not-go-through-enlightenment/</a></p>
+<h2 id="which-religion-has-the-best-benefit-to-cost-ratio"><span class="section_number">5</span><span class="section_title">Which religion has the best benefit-to-cost ratio?</span></h2>
+<p>I do not have the answer.</p>
+<ul>
+<li><p>There are 4200 religions.</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/List_of_religions_and_spiritual_traditions">WP:List</a></li>
+</ul></li>
+<li><p>2018-05-26</p>
+<ul>
+<li><p>We should choose the one with the highest return of investment.</p>
+<ul>
+<li>The one with the least obligations but the most rewards.</li>
+<li>Thus we should also make afterlife easier.</li>
+<li>We should seek the one with the minimal rules, beliefs, rituals, commitments.</li>
+<li><p>We have always been making life easier (by technology).</p>
+<ul>
+<li>We should make afterlife easier too.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p><a href="https://www.quora.com/How-do-I-decide-which-religion-to-follow">Quora: How do I decide which religion to follow?</a></p></li>
+</ul>
+<p>Here are some religions, ordered by personal benefit-obligation ratio, from the highest?</p>
+<p>(Part of this was posted on <a href="https://www.reddit.com/r/indonesia/comments/6y5yvc/atheistagnostic_komodos_whatwhen_was_your/dmlscxr/">https://www.reddit.com/r/indonesia/comments/6y5yvc/atheistagnostic_komodos_whatwhen_was_your/dmlscxr/</a>)</p>
+<p>For every pair of religions R1 and R2, there is always a sentence S such that S is true in R1 but S is not true in R2. Therefore, it cannot be the case that both R1 and R2 are true. Sometimes a religion is not even consistent. A religion R is inconsistent iff there is a sentence S such that both S and the negation of S is in R. <a href="https://www.google.com/search?source=hp&amp;q=how+many+religions">There are 4200 religions.</a> They cannot all be true. At most only one of them can be true. It can also be the case that all of them are not true.</p>
+<ul>
+<li>(Feel free to contribute other religions.)</li>
+<li>Discordianism</li>
+<li>Zoroastrianism?</li>
+<li><a href="https://en.wikipedia.org/wiki/Bah%C3%A1%27%C3%AD_Faith">WP: Bahá'í Faith</a></li>
+<li>Hinduism</li>
+<li>Buddhism (is Buddhism a religion?)</li>
+<li>Christianity:
+<ul>
+<li>believe in Jesus</li>
+<li>Protestantism:</li>
+<li>Lutheranism:
+<ul>
+<li>sola scriptura</li>
+<li>sola fide</li>
+<li>sola gratia</li>
+</ul></li>
+<li>Catholicism:
+<ul>
+<li>believe in the Holy Trinity (Father, Son, and Holy Spirit)</li>
+<li>Roman Catholicism:</li>
+<li>Orthodox Catholicism:</li>
+</ul></li>
+</ul></li>
+<li>Islam (Sunni)
+<ul>
+<li>believe in Allah</li>
+<li>believe in Muhammad</li>
+<li>5 prayers a day, with specific gestures</li>
+<li>on Friday, the 2nd prayer is in a congregation in a mosque</li>
+<li>dietary laws
+<ul>
+<li>can't eat pork</li>
+<li>can't drink alcohol</li>
+</ul></li>
+</ul></li>
+<li>Judaism
+<ul>
+<li>dietary laws
+<ul>
+<li>can't eat pork</li>
+<li>can't drink alcohol</li>
+<li>can't eat meat and dairy in one meal</li>
+</ul></li>
+</ul></li>
+<li>Scientology
+<ul>
+<li>costs a lot of money?</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Heaven">WP: Heaven</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Religion">WP: Religion</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Comparative_religion">WP: Comparative religion</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Major_religious_groups">WP: Major religious groups</a></li>
+<li><a href="https://sites.fas.harvard.edu/~pluralsm/affiliates/jainism/workshop/Worldrlgn.PDF">Pravin K. Shah: Comparison of Religions, Eastern and Western</a></li>
+</ul>
+<p>Tal Peretz's &quot;A Cost/Benefit Analysis of Religion's Effects in Society&quot;<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>Quora has an unanswered question.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<h2 id="does-it-matter-when-a-religion-was-created"><span class="section_number">6</span><span class="section_title">Does it matter when a religion was created?</span></h2>
+<p>Christianity was created in the 1st century. Islam was created in the 7th century. Discordianism was created in the 20th century. Does it matter when a religion was created? Does a religion take time to be a religion? Why must a religion's founder die before the religion becomes widespread?</p>
+<p>The second generation does not directly experience the creation of the religion. They only have the stories told by the first generation. The third generation is even further removed.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Protoscience">https://en.wikipedia.org/wiki/Protoscience</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://www.quora.com/To-what-extent-is-religion-proto-science-and-science-neo-religion">https://www.quora.com/To-what-extent-is-religion-proto-science-and-science-neo-religion</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://www.al-islam.org/restatement-history-islam-and-muslims-sayyid-ali-ashgar-razwy/">https://www.al-islam.org/restatement-history-islam-and-muslims-sayyid-ali-ashgar-razwy/</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.academia.edu/31439019/A_Cost_Benefit_Analysis_of_Religions_Effects_in_Society">https://www.academia.edu/31439019/A_Cost_Benefit_Analysis_of_Religions_Effects_in_Society</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://www.quora.com/If-all-religions-allow-us-to-reach-heaven-what-is-the-easiest-religion-to-practice-to-get-into-heaven">https://www.quora.com/If-all-religions-allow-us-to-reach-heaven-what-is-the-easiest-religion-to-practice-to-get-into-heaven</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+                        <div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+var disqus_config = function () {
+    this.page.url = "https://edom.github.io/religion.html";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "https://edom.github.io/religion.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://edom-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-05-18 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
