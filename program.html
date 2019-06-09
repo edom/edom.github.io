@@ -178,7 +178,9 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">10</span><span class="section_title"><a href="#enterprise-application-programming">Enterprise application programming</a></span><span class="word_count">(383w~2m)</span></li>
 <li><span class="section_number">11</span><span class="section_title"><a href="#gui-programming">GUI programming?</a></span><span class="word_count">(76w~1m)</span></li>
 <li><span class="section_number">12</span><span class="section_title"><a href="#human-and-social-aspects-of-computer-programming">Human and social aspects of computer programming</a></span><span class="word_count">(551w~3m)</span></li>
-<li><span class="section_number">13</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(193w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#memory-management">Memory management</a></span><span class="word_count">(313w~2m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#static-vs-dynamic-bad-terminology">Static vs dynamic: bad terminology?</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">15</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(193w~1m)</span></li>
 </ul>
 </div>
 <h2 id="programming-language-research"><span class="section_number">1</span><span class="section_title">Programming language research</span></h2>
@@ -1506,7 +1508,86 @@ Object eval (Exp x) {
 <ul>
 <li>2012 article &quot;Socio-PLT: Principles for Programming Language Adoption&quot; <a href="https://lmeyerov.github.io/projects/socioplt/paper0413.pdf">pdf</a></li>
 </ul>
-<h2 id="bibliography" class="unnumbered"><span class="section_number">13</span><span class="section_title">Bibliography</span></h2>
+<h2 id="memory-management"><span class="section_number">13</span><span class="section_title">Memory management</span></h2>
+<p>Is there a lambda-calculus interpreter without garbage collection? Is that PreScheme<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>? PreScheme is limited Scheme with manual memory management.</p>
+<p>Stack allocation is simple and nice.</p>
+<p>Is dynamic memory allocation really necessary?</p>
+<p>Suppose we are writing a program that asks the user for a line of strings.</p>
+<pre class="example"><code>int read_line (char*, size_t);
+</code></pre>
+<p>What if the buffer not big enough? Return ENOMEM or EAGAIN?</p>
+<p>How do we make a console to-do list application without dynamic memory management?</p>
+<p>How do we make an in-memory database without dynamic memory management?</p>
+<p>That is only one function. What if there are several functions?</p>
+<p>If every function is restartable/continuable, then it simplifies memory allocation?</p>
+<p>How can we manage memory in programming?</p>
+<ul>
+<li>manual and static, like in embedded programming</li>
+<li>manual and dynamic, C malloc and free</li>
+<li>Rust borrow</li>
+<li>garbage collection</li>
+<li>allocate and never free, useful in programs that run for a short time</li>
+</ul>
+<p>What are the consequences of not wanting manual memory management?</p>
+<ul>
+<li>garbage collection</li>
+<li>Rust-style management?</li>
+</ul>
+<p>If a process lives short enough, then it can allocate memory without freeing, and all the memory it uses can be freed when it ends.</p>
+<p>We can write a program that sorts an array of 100 integers. But what if there are more than 100 integers?</p>
+<p>How can we manage memory sanely?</p>
+<ul>
+<li>one-more-indirection principle: pass an allocator to every class/subroutine that needs to allocate memory</li>
+<li>restartable architecture; a subroutine never allocates memory; a subroutine throws an exception when the memory allocated by the parent is insufficient; the root method allocates memory, and re-calls everything in the call tree; use dependency injection</li>
+</ul>
+<p>Why is there no memory management in lambda calculus? Is it possible to implement lambda calculus without garbage collection?</p>
+<p>Simplifying C style:</p>
+<ul>
+<li>Every function must free everything that it mallocs.</li>
+<li>Everything else must be passed pre-allocated by a caller in the call stack.</li>
+<li>If there is no enough memory, a function must return ENOMEM.</li>
+<li>Reify the state into a struct.</li>
+</ul>
+<p>Example of state reification:</p>
+<pre class="example"><code>// The function
+
+int indexof (char* s, char* c) {
+    for (int i = 0; s[i] != 0; ++i) {
+        if (s[i] == c) { return i; }
+    }
+    return -1;
+}
+
+// becomes the class
+
+struct indexof {
+    char* s;
+    char c;
+    int i;
+    indexof (char* s_, char c_) : s(s_), c(c_), i(0) {}
+
+    int step () {
+        if (s[i] == 0) { i = -1; return 0; }
+        if (s[i] == c) { return 0; }
+        ++i;
+        return EAGAIN;
+    }
+};
+</code></pre>
+<p>Allocating memory is easy. The hard thing is deciding when to free it. We have several choices:</p>
+<ul>
+<li>Never free.</li>
+<li>Who allocates always frees.</li>
+<li>Caller always frees?</li>
+</ul>
+<h2 id="static-vs-dynamic-bad-terminology"><span class="section_number">14</span><span class="section_title">Static vs dynamic: bad terminology?</span></h2>
+<p>We should ask these questions instead:</p>
+<ul>
+<li>Is type information available at runtime?</li>
+<li>How far can types be manipulated at compile-time?</li>
+<li>Is there a distinction between compile-time and run-time?</li>
+</ul>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">15</span><span class="section_title">Bibliography</span></h2>
 <div id="refs" class="references">
 <div id="ref-apt1993declarative">
 <p>[1] Apt, K.R. 1993. <em>Declarative programming in prolog</em>. Centrum voor Wiskunde en Informatica. url: &lt;<a href="https://ir.cwi.nl/pub/10456/10456D.pdf">https://ir.cwi.nl/pub/10456/10456D.pdf</a>&gt;.</p>
@@ -1577,6 +1658,7 @@ Object eval (Exp x) {
 <li id="fn27"><p><a href="https://github.com/grin-tech/grin">https://github.com/grin-tech/grin</a><a href="#fnref27" class="footnote-back">↩</a></p></li>
 <li id="fn28"><p><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.158.4524&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.158.4524&amp;rep=rep1&amp;type=pdf</a><a href="#fnref28" class="footnote-back">↩</a></p></li>
 <li id="fn29"><p><a href="http://www.dinf.ne.jp/doc/english/Us_Eu/conf/csun_98/csun98_069.html">http://www.dinf.ne.jp/doc/english/Us_Eu/conf/csun_98/csun98_069.html</a><a href="#fnref29" class="footnote-back">↩</a></p></li>
+<li id="fn30"><p><a href="https://thintz.com/resources/prescheme-documentation">https://thintz.com/resources/prescheme-documentation</a><a href="#fnref30" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
