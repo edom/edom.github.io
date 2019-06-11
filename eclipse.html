@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Using Eclipse</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Using Eclipse</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what-is-eclipse">What is Eclipse?</a></span><span class="word_count">(57w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#how-to-use-eclipse">How to use Eclipse?</a></span><span class="word_count">(49w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#keyboard-shortcuts">Keyboard shortcuts</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#unanswered-questions">Unanswered questions</a></span><span class="word_count">(126w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#development">Development</a></span><span class="word_count">(17w~1m)</span></li>
+</ul>
+</div>
+<h2 id="what-is-eclipse"><span class="section_number">1</span><span class="section_title">What is Eclipse?</span></h2>
+<p>Not to be confused:</p>
+<ul>
+<li>Eclipse Foundation</li>
+<li>Eclipse Platform</li>
+<li>Eclipse SDK (Platform + JDT + PDE)</li>
+<li>Eclipse IDEs (Platform + plugins such as JDT)</li>
+<li>Eclipse p2 is used to &quot;Install New Software&quot;.</li>
+</ul>
+<p>Wikipedia explains Eclipse better than Eclipse explains itself?<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>&lt;2019-06-11&gt; No Eclipse events in Asia. Eclipse events seem to be mostly in Europe.</p>
+<p>Eclipse is like Emacs but in Java instead of Elisp.</p>
+<h2 id="how-to-use-eclipse"><span class="section_number">2</span><span class="section_title">How to use Eclipse?</span></h2>
+<p>Download Eclipse SDK (not to be confused with Eclipse Platform).</p>
+<p>&lt;2019-06-11&gt; Eclipse 4.11 does not work on Ubuntu 14.04, due to Eclipse bug 544498<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>, which is fixed in Eclipse 4.12.</p>
+<p>Switch View / Editor / Window / Tab ? What's it called? What are the things/ontologies? Workbench? Workspace?</p>
+<h2 id="keyboard-shortcuts"><span class="section_number">3</span><span class="section_title">Keyboard shortcuts</span></h2>
+<p>The mother of all shortcuts:</p>
+<ul>
+<li>Shift+Ctrl+L: Show Keyboard Shortcuts</li>
+<li>Ctrl+3: Quick Access</li>
+<li>Alt+Shift+Q: Show View</li>
+</ul>
+<p>Perspectives:</p>
+<ul>
+<li>Ctrl+F8: Next Perspective</li>
+<li>Ctrl+Shift+F8: Previous Perspective</li>
+<li>Ctrl+O: Quick Outline, like IntelliJ IDEA Ctrl+F12</li>
+</ul>
+<p>Mylyn<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<ul>
+<li>Ctrl+F9: &quot;Activate Task&quot; dialog</li>
+<li>Ctrl+F12: &quot;Open Task&quot; dialog</li>
+<li>Shift+Alt+Q K: Open &quot;Task List&quot; View</li>
+<li>Shift+Ctrl+F9: Deactivate Task</li>
+</ul>
+<p>Are there shortcuts for these?</p>
+<ul>
+<li>Open a Perspective</li>
+</ul>
+<h2 id="unanswered-questions"><span class="section_number">4</span><span class="section_title">Unanswered questions</span></h2>
+<ul>
+<li>How to make Eclipse feel more like IntelliJ IDEA?</li>
+<li>What is the best way to navigate?</li>
+<li>How do I see the summary of all Eclipse projects? Where is the data source?</li>
+</ul>
+<p>How do I ensure that all Eclipse installations at different machines use the same coding style for my project?</p>
+<ul>
+<li>Export my Eclipse preferences?</li>
+<li>Are per-project settings carried to different machines?</li>
+<li>Write a plugin to enforce that?</li>
+</ul>
+<p>How do I import a Maven project (one with pom.xml)?</p>
+<p>Who is the target audience of the eclipse.org website? &quot;Eclipse.org always seemed more interested in promoting the Eclipse Foundation than the IDE. The website feels like a collection of independent projects which are not maintained.&quot;<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> Some counter-arguments?<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a><a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<p>Why does Eclipse &quot;Toggle Comment&quot; have three shortcuts: Ctrl+/, Ctrl+7, Shift+Ctrl+C? Who is in charge of designing the user experience?</p>
+<h2 id="development"><span class="section_number">5</span><span class="section_title">Development</span></h2>
+<p>Use Plugin Spy (Shift+Alt+F1) to find where to insert menus, modify Eclipse Platform UI, etc.</p>
+<p>Menu Spy (Shift+Alt+F2)</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Eclipse_Foundation">https://en.wikipedia.org/wiki/Eclipse_Foundation</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/List_of_Eclipse_projects">https://en.wikipedia.org/wiki/List_of_Eclipse_projects</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544498">https://bugs.eclipse.org/bugs/show_bug.cgi?id=544498</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://wiki.eclipse.org/Mylyn/User_Guide#Shortcuts">https://wiki.eclipse.org/Mylyn/User_Guide#Shortcuts</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://movingfulcrum.com/the-fall-of-eclipse/">https://movingfulcrum.com/the-fall-of-eclipse/</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://www.reddit.com/r/programming/comments/52mcf3/the_fall_of_eclipse/">https://www.reddit.com/r/programming/comments/52mcf3/the_fall_of_eclipse/</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://news.ycombinator.com/item?id=10273849">https://news.ycombinator.com/item?id=10273849</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>'this started with a simple but brilliant idea JetBrains developers had: &quot;disk space is dirt cheap, let's use 1-2 GB of it to store index, so that autocompletion could work lightining fast&quot;' <a href="https://news.ycombinator.com/item?id=10273849">https://news.ycombinator.com/item?id=10273849</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-06-11 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
