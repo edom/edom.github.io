@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Towards a philosophy of software</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Towards a philosophy of software</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#introduction">Introduction</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#the-word-software">The word &quot;software&quot;</a></span><span class="word_count">(217w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#software-from-platonism-perspective">Software from Platonism perspective</a></span><span class="word_count">(363w~2m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#the-teleology-of-software">The teleology of software</a></span><span class="word_count">(77w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#the-mereology-of-computers-hardware-and-software">The mereology of computers: hardware and software</a></span><span class="word_count">(228w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#what-cancannot-be-done-to-software">What can/cannot be done to software?</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#what-is-software">What is software?</a></span><span class="word_count">(69w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#the-dualistic-nature-of-machines-the-machine-program-dualism-the-hardware-software-dualism">The dualistic nature of machines; the machine-program dualism; the hardware-software dualism</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#programs-and-programmability">Programs and programmability</a></span><span class="word_count">(251w~2m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#computer-vs-running-computer">Computer vs running computer</a></span><span class="word_count">(57w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#philosophy">Philosophy?</a></span><span class="word_count">(1w~1m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#hardness-pure-hardware-pure-software-and-mixtures">Hardness: pure hardware, pure software, and mixtures</a></span><span class="word_count">(142w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#computer-science-terms">Computer science terms?</a></span><span class="word_count">(874w~5m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#language-issues-in-philosophy">Language issues in philosophy</a></span><span class="word_count">(290w~2m)</span></li>
+<li><span class="section_number">15</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(23w~1m)</span></li>
+</ul>
+</div>
+<h2 id="introduction"><span class="section_number">1</span><span class="section_title">Introduction</span></h2>
+<p>What do we mean by &quot;software&quot;?</p>
+<p>What is the essence of &quot;software&quot;?</p>
+<p>The dictionary definitions of &quot;software&quot;<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> are too narrow and do not capture the essence of software.</p>
+<p>We need an ontology; we need to define and relate these terms: hardware, software, computer, machine, calculator, program, code, language, programmable, error, mistake, bug, fault, malfunction.</p>
+<h2 id="the-word-software"><span class="section_number">2</span><span class="section_title">The word &quot;software&quot;</span></h2>
+<p>What can we infer from the etymology and syntax of &quot;software&quot;?</p>
+<p>The word &quot;software&quot; appeared no later than Tukey 1958,<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> and by it he meant the same thing that most people mean by &quot;software&quot; in 2019, that is, the intangible-but-vital part of computers. Thus, in order for a computer to be useful, both its hardware and its software must be useful.</p>
+<p>What is the difference between a softwareless computer and an empty box?</p>
+<p>The word &quot;hardware&quot; appeared no later than the 15th century in which it meant &quot;small metal goods&quot;. The phrase &quot;hardware store&quot; appeared no later than 1789.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>The word &quot;software&quot; is a mass noun, which is uncountable.</p>
+<p>When a non-native speaker writes &quot;a software&quot;, he usually means to write &quot;a program&quot; instead.</p>
+<p>Uncountable nouns do not have to be abstract nouns. If we can list something, then it is described by a countable noun. There are abstract countable nouns, such as &quot;invitation&quot;, &quot;friend&quot;, &quot;failure&quot;, and &quot;achievement&quot;. There are concrete uncountable nouns, such as &quot;water&quot;.</p>
+<p>Some abstract things are countable, and some concrete things are uncountable. By &quot;uncountable&quot;, we mean &quot;impractical to count&quot;.</p>
+<p>What can we infer from how &quot;software&quot; is used in English?</p>
+<p>Semantics of mass nouns <span class="citation" data-cites="sep-logic-massexpress">[<a href="#ref-sep-logic-massexpress">1</a>]</span>.</p>
+<p>English sometimes hampers thought. We simply accept this syntactic idiosyncrasy as the cost of using English. Let us move on to more important semantic issues.</p>
+<h2 id="software-from-platonism-perspective"><span class="section_number">3</span><span class="section_title">Software from Platonism perspective</span></h2>
+<p>Software is to hardware as choreography is to dancers. Indeed choreographies <em>are</em> software. Choreographies without dancers are dead ideas. Dancers without choreographies are useless matter.</p>
+<p>The dancers are the hardware, the choreography is the software, and the entire performance is the running computer.</p>
+<p>I'll be a Platonist here.</p>
+<p>A drawing in dance notation<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> on a sheet of paper is a <em>representation</em> of several closely-related choreographies. The drawing is not itself a choreography. The choreographies described by that notation are abstract objects with eternal existence in idea space. If the sheet is destroyed, the choreographies persist; for example, the choreographies may be represented in the memories of dancers. Even if there are no people to discover them, the choreographies still exists in idea space.</p>
+<p>A drawing cannot practically describe exactly one choreography, because there will always be a slightly different choreography in which the practical means of drawing does not have sufficient fidelity/resolution to describe the difference. For example, suppose that choreography Y is the same as choreography X but with the hand shifted 1 micrometer to the right. It is practically impossible to distinguish X and Y, because it is practically impossible to perceptibly move the hand with micrometer precision.</p>
+<p>Thus there be the question: Are ideas discovered or invented? If I invent a word to mean something new, the concept that I mean with that word already exists in idea space. Thus, a Platonist would say that words are invented and concepts are discovered. Thus, for example, when Newton invented calculus, he invented words and notations for concepts that have always existed but not yet known by many people. The concept of derivatives has always existed, but the word &quot;derivative&quot; did not exist before humans existed.</p>
+<p><em>How do we test Platonism?</em> Is it even falsifiable?</p>
+<p>(old content)</p>
+<p>The choreography is the software. The dancer is the hardware.</p>
+<p>The recipe is the software. The paper is a representation of the recipe, but not the recipe itself. You can tell the recipe to your friend, without paper. The cook is the hardware.</p>
+<p>The music score is the software. The performers are the hardware.</p>
+<p>The law is the software. People in government is the hardware.</p>
+<p>Software is choreography of hardware. Software is an arrangement.</p>
+<h2 id="the-teleology-of-software"><span class="section_number">4</span><span class="section_title">The teleology of software</span></h2>
+<p>What is software for? What is the purpose of software?</p>
+<p>The definition of &quot;chair&quot; is a mixture of ontology and teleology: Ontologically, a chair is something with a back rest. Teleologically, a chair is for humans to sit. Thus, a chair is something that has a back rest and can be used by humans to sit. All those aspects are essential: If any of those aspects is missing, then the object is not a chair.</p>
+<h2 id="the-mereology-of-computers-hardware-and-software"><span class="section_number">5</span><span class="section_title">The mereology of computers: hardware and software</span></h2>
+<p>&quot;Software&quot; and &quot;hardware&quot; are <em>disjoint</em> categories: If something is software, it is not hardware; if something is hardware, it is not software.</p>
+<p>A computer is the sum of its hardware and its software. A computer consists of its hardware, its software, and nothing else.</p>
+<p>Thus, by the lone unqualified word &quot;software&quot; on its own, we actually mean &quot;the <em>software part</em> of all computers&quot;. Thus &quot;software&quot; is like &quot;water&quot;: By saying &quot;water exists&quot;, we actually mean &quot;there exists an object that has the properties of water&quot;.</p>
+<p>But software is not purely abstract: It is stored in hardware as an arrangement of materials. But is that software or a <em>representation</em> of software?</p>
+<p>What other things can be analyzed as a sum of hardware and software? Laws, choreographies, recipes.</p>
+<p>A <em>software house</em> is a company that makes software.</p>
+<p>Why &quot;hardware <em>store</em>&quot; but &quot;software <em>house</em>&quot;? A software house is more like a blacksmith's workshop than a hardware store: Things can be <em>made-to-order</em> in a blacksmith's workshop but not in a hardware store. Like &quot;production house&quot; for movies.</p>
+<p><em>Hardware bridges software and reality.</em></p>
+<p>A piece of hardware is a concrete object that can be controlled by an abstract object (a piece of software).</p>
+<p>Software is an arrangement of matter (hardware) that makes the hardware useful. But must software have any purpose?</p>
+<p>Examples of programming: Designing mechanical linkages. We arrange matter so that it does something we want.</p>
+<h2 id="what-cancannot-be-done-to-software"><span class="section_number">6</span><span class="section_title">What can/cannot be done to software?</span></h2>
+<p>Software can be copied, but not moved like a concrete object such as a car.</p>
+<h2 id="what-is-software"><span class="section_number">7</span><span class="section_title">What is software?</span></h2>
+<p>Software is an arrangement of matter (hardware).</p>
+<p>Software is executable abstract object?</p>
+<p>Software is program, documents, configuration, and so on.</p>
+<p>Software is abstract object.</p>
+<p>Software is executable mathematics.</p>
+<p>Software is an idea.</p>
+<ul>
+<li>Which ICSE paper said this?
+<ul>
+<li>Law is software.</li>
+<li>Process is software.</li>
+<li>Recipe is software.</li>
+</ul></li>
+<li>What is software?</li>
+</ul>
+<p>The source code is not the software. Don't commit reification fallacy.</p>
+<p>Examples of software?</p>
+<p>Programs, laws, choreographies, and recipes are software.</p>
+<p>Minds are software?</p>
+<p>Software has existed for millenniums, although not called &quot;software&quot;.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<h2 id="the-dualistic-nature-of-machines-the-machine-program-dualism-the-hardware-software-dualism"><span class="section_number">8</span><span class="section_title">The dualistic nature of machines; the machine-program dualism; the hardware-software dualism</span></h2>
+<p>The hardware is the body. The software is the mind.</p>
+<p>Are bits software <em>itself</em>, or are bits a <em>representation</em> (embodiment) of software?</p>
+<p>A running machine embodies the software it is running?</p>
+<h2 id="programs-and-programmability"><span class="section_number">9</span><span class="section_title">Programs and programmability</span></h2>
+<p>Programs used to mean &quot;public notice&quot;.<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> Authorities wrote programs to inform the public so that people behave accordingly.</p>
+<p>From:<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<blockquote>
+<p>General sense of &quot;a definite plan or scheme&quot; is recorded from 1837. Meaning &quot;list of pieces at a concert, playbill&quot; first recorded 1805 and retains the original sense. That of &quot;objects or events suggested by music&quot; is from 1854. Sense of &quot;broadcasting presentation&quot; is from 1923. Computer sense (noun and verb) is from 1945.</p>
+</blockquote>
+<p>There is a confusion. Program can mean both an individual show<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> and the entire plan for a television station<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
+<p>To program something is to write a plan to be executed by that thing.</p>
+<p>To run a program is to execute the plan.</p>
+<p>What is programming? Programming is forcing. X programs Y to do Z iff X forces Y to do Z.</p>
+<p>What can be programmed? People are programmable to some extent. We program people when we ask them to do something. Software development process itself is also programmable to some extent.</p>
+<p>What do we mean by &quot;programmable&quot;?</p>
+<p>An unprogrammable machine computes only one mathematical function. A programmable machine computes many functions. However, we can see a programmable machine as computing one function, that is a higher function from programs to functions.</p>
+<p>Combine several mechanical calculators, and add a mechanism to select which calculator to use.</p>
+<p>Calculator vs programmable calculator.</p>
+<p>Software does not have to be changeable. An example of practically unchangeable software is a program stored in a read-only memory (ROM) chip.</p>
+<p>Is training a dog programming? I say yes. I'd even say that teaching a person is programming.</p>
+<h2 id="computer-vs-running-computer"><span class="section_number">10</span><span class="section_title">Computer vs running computer</span></h2>
+<p>A computer has software, but is the computer running?</p>
+<p>Software and electricity; running computers vs non-running computers</p>
+<p>The operation of a computer requires an energy source.</p>
+<p>A computer that is not turned has the <em>potential</em> to compute, in the same way a seed has the potential to grow.</p>
+<p>An <em>assignment statement</em> can be modeled by a <em>state endofunction</em>.</p>
+<h2 id="philosophy"><span class="section_number">11</span><span class="section_title">Philosophy?</span></h2>
+<p><a href="https://www.perforce.com/blog/modern-software-engineering-meets-philosophy">https://www.perforce.com/blog/modern-software-engineering-meets-philosophy</a></p>
+<p><a href="https://mystudentvoices.com/is-the-programmer-the-new-philosopher-or-software-the-new-philosophy-6c0cbea5b8d2">https://mystudentvoices.com/is-the-programmer-the-new-philosopher-or-software-the-new-philosophy-6c0cbea5b8d2</a></p>
+<p><a href="https://conferences.oreilly.com/software-architecture/sa-ny-2016/public/schedule/detail/50859">https://conferences.oreilly.com/software-architecture/sa-ny-2016/public/schedule/detail/50859</a></p>
+<p><a href="https://www.sws.cs.ru.nl/">https://www.sws.cs.ru.nl/</a></p>
+<h2 id="hardness-pure-hardware-pure-software-and-mixtures"><span class="section_number">12</span><span class="section_title">Hardness: pure hardware, pure software, and mixtures</span></h2>
+<p>If a computer is a mixture of hardware and software, then it makes sense to ask next: <em>How much</em> of it is hardware, and how much of it is software?</p>
+<p>We define the <em>hardness</em> of a system as the proportion of it that is hardware.</p>
+<p>An example of a pure-hardware system is a mechanical linkage or a salt crystal.</p>
+<p>An example of a pure-software system is a mathematical equation or an algorithm.</p>
+<p>An example of a mixed hardware-software system is a computer running a program.</p>
+<p>If 2 unit of pure hardware is mixed with 8 unit of pure software, then the result should be a 10-unit 20%-hardness system.</p>
+<p>The question is: What is that <em>unit</em>?</p>
+<p>Does upgrading the hardware of a computer increase its hardness, because upgrading hardware implies adding hardware mass?</p>
+<p>Mass is a unit of hardware.</p>
+<p>Formula length is a unit of software.</p>
+<h2 id="computer-science-terms"><span class="section_number">13</span><span class="section_title">Computer science terms?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">13.1</span><span class="section_title"><a href="#tools-and-machines">Tools and machines</a></span><span class="word_count">(52w~1m)</span></li>
+<li><span class="section_number">13.2</span><span class="section_title"><a href="#what-does-it-mean-for-a-machine-to-compute-a-real-number">What does it mean for a machine to compute a real number?</a></span><span class="word_count">(252w~2m)</span></li>
+<li><span class="section_number">13.3</span><span class="section_title"><a href="#algorithm-machine-describability-computability">Algorithm, machine, describability, computability</a></span><span class="word_count">(302w~2m)</span></li>
+<li><span class="section_number">13.4</span><span class="section_title"><a href="#what-it-means-for-an-algorithm-to-compute-a-function">What it means for an algorithm to compute a function</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">13.5</span><span class="section_title"><a href="#machine-algorithm-embodiment-computation">Machine, algorithm, embodiment, computation</a></span><span class="word_count">(48w~1m)</span></li>
+<li><span class="section_number">13.6</span><span class="section_title"><a href="#move-this-somewhere-else-hierarchy-of-machines"><span class="todo TODO">TODO</span> Move this somewhere else: Hierarchy of machines</a></span><span class="word_count">(91w~1m)</span></li>
+<li><span class="section_number">13.7</span><span class="section_title"><a href="#what-is-a-tool">What is a tool?</a></span><span class="word_count">(66w~1m)</span></li>
+<li><span class="section_number">13.8</span><span class="section_title"><a href="#should-we-define-ones-self-as-the-set-of-all-things-he-can-control">Should we define one's &quot;self&quot; as the set of all things he can control?</a></span><span class="word_count">(37w~1m)</span></li>
+</ul>
+</div>
+<h3 id="tools-and-machines"><span class="section_number">13.1</span><span class="section_title">Tools and machines</span></h3>
+<p>(I need to find the words to say this, and rewrite this more clearly.)</p>
+<p>A <em>machine</em> is an <em>automatic tool</em>: it is a tool that runs by itself; it has its own behavior.</p>
+<p>A hammer doesn't have its own behaviors. A car has its own behaviors. A computer has its own behaviors.</p>
+<h3 id="what-does-it-mean-for-a-machine-to-compute-a-real-number"><span class="section_number">13.2</span><span class="section_title">What does it mean for a machine to compute a real number?</span></h3>
+<p>Computation is approximate expression normalization. To <em>compute</em> a real number is to calculate some of its digits. To <em>compute</em> an arithmetic <em>expression</em> is to <em>evaluate</em> it (to reduce it into a <em>value</em>), often approximately. For example: 1/7 is an <em>expression</em>, and .142 is a <em>value</em> that is the 3 most significant digits of the result of <em>evaluating</em> that expression.</p>
+<p>Why do we feel that 1.412 is <em>more evaluated</em> than <span class="math inline">\(\sqrt{2}\)</span>? Why do we feel that 1.412 is a <em>normal form</em>? Because it is <em>physically easier</em> for us to locate 1.412 on the real number line than to locate <span class="math inline">\(\sqrt{2}\)</span>. Thus to compute a real number is to <em>locate it</em> on the real number line. This justifies the geometric interpretation of real numbers.</p>
+<p>We can <em>partially evaluate</em> an expression, such as from 1+2-1 to 3-1.</p>
+<p>See also:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Human_computer">https://en.wikipedia.org/wiki/Human_computer</a></li>
+</ul>
+<p>Don't conflate a <em>real-number expression</em> and a <em>real number</em>. A real-number expression <em>evaluates</em> to a real number. A real-number expression <em>is not</em> a real number.</p>
+<p>Let <span class="math inline">\(E(\Real)\)</span> be the set of all real-number expressions.</p>
+<p>Let <span class="math inline">\(f:E(\Real)\to\Real\)</span> be the evaluation function.</p>
+<p>Questions:</p>
+<ul>
+<li>What is the machine computing when I'm typing this document?</li>
+<li>There are several ways of defining the real numbers. Which one should we use for the philosophy of mind and computation, and why?</li>
+</ul>
+<p>Algebraic-geometric definition: A <em>real number</em> is a <em>point</em> in the <em>totally-ordered</em> set of points in <em>one-dimensional</em> Euclidean geometry; the real numbers form a <em>field</em>.</p>
+<p>Addition also has a geometric meaning: it is the set of points on the plane <span class="math inline">\(\{(x,y,z) ~\vert~ x+y=z\}\)</span>.</p>
+<h3 id="algorithm-machine-describability-computability"><span class="section_number">13.3</span><span class="section_title">Algorithm, machine, describability, computability</span></h3>
+<p>We assume that these are primitive concepts: algorithm, machine. By &quot;machine&quot;, we mean a computing machine.</p>
+<p>An algorithm <em>describes</em> what a machine <em>computes</em>.</p>
+<p>An <em>algorithm</em> is an <em>executable description</em>: a string in a formal language in a formal system. A description has <em>finite</em> length. By &quot;executable&quot;, we mean that an algorithm has a <em>machine model</em>. We always define an algorithm with respect to a machine.</p>
+<p>Thus not every real number is <em>describable</em>, because there are fewer strings in that formal language than there are real numbers.</p>
+<p>Thus not every real number is <em>computable</em>, because computability requires describability.</p>
+<p>Remember that a <em>formal system</em> is a <em>formal language</em> and a set of <em>inference rules</em>.</p>
+<ul>
+<li><a href="https://cs.stackexchange.com/questions/42443/relationship-between-formal-system-and-formal-languages">https://cs.stackexchange.com/questions/42443/relationship-between-formal-system-and-formal-languages</a></li>
+</ul>
+<p>An algorithm is a string in a formal language <span class="math inline">\(L\)</span>. We <em>model</em> a <em>machine</em> as a <em>formal system</em> whose language is <span class="math inline">\(L\)</span>. The machine is not the formal system. The thing is not the model.</p>
+<p><strong>What does it mean for a machine to <em>compute</em> a real number?</strong></p>
+<p>Suppose that <span class="math inline">\(Y(T) \in \Real\)</span> is the <em>output</em> of the algorithm <span class="math inline">\(A\)</span> if we let the algorithm run for duration <span class="math inline">\(T \in \Nat\)</span>.</p>
+<p>The algorithm <span class="math inline">\(A\)</span> <em>computes</em> the <em>limit</em> of the approximation sequence <span class="math inline">\( \langle Y(t) \rangle_{t \in \Nat} \)</span>. Thus &quot;<span class="math inline">\(A\)</span> computes real number <span class="math inline">\(R\)</span>&quot; means that the limit of that sequence is <span class="math inline">\(R\)</span>.</p>
+<p>More explicitly, we say &quot;the algorithm <span class="math inline">\(A\)</span> <em>computes</em> the real number <span class="math inline">\(R\)</span>&quot; to mean: for every approximation error <span class="math inline">\(E &gt; 0\)</span> that we are willing to have, there exists a duration <span class="math inline">\(T \in \Nat\)</span> such that <span class="math inline">\(\abs{Y(T) - R} &lt; E\)</span>. Informally, the algorithm can always take more time to satisfy ever-diminishing (but still positive) approximation error.</p>
+<p>A real number <span class="math inline">\(R\)</span> is <em>computable</em> iff there is an algorithm that computes <span class="math inline">\(R\)</span>.</p>
+<p>There are as many natural numbers as there are algorithms. Therefore <em>not every real number is computable</em>, because there are fewer natural numbers than real numbers.</p>
+<p>See also:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Limit_of_a_sequence">https://en.wikipedia.org/wiki/Limit_of_a_sequence</a></li>
+</ul>
+<h3 id="what-it-means-for-an-algorithm-to-compute-a-function"><span class="section_number">13.4</span><span class="section_title">What it means for an algorithm to compute a function</span></h3>
+<p>The algorithm <span class="math inline">\(A\)</span> <em>computes</em> the function <span class="math inline">\(f : A \to B\)</span> iff for every input <span class="math inline">\(x \in A\)</span>, the algorithm outputs <span class="math inline">\(f(x)\)</span>.</p>
+<h3 id="machine-algorithm-embodiment-computation"><span class="section_number">13.5</span><span class="section_title">Machine, algorithm, embodiment, computation</span></h3>
+<p>A machine <em>embodies</em> an algorithm. A machine <em>computes</em> what the algorithm computes.</p>
+<p>&quot;To <em>program</em> a machine to compute X&quot; is to <em>arrange</em> the machine to compute X, for example: rewire the machine, load another set of punch cards, write a program in a text editor, etc.</p>
+<h3 id="move-this-somewhere-else-hierarchy-of-machines"><span class="section_number">13.6</span><span class="section_title"><span class="todo TODO">TODO</span> Move this somewhere else: Hierarchy of machines</span></h3>
+<ul>
+<li>An FA (<em>finite automaton</em>) is …</li>
+<li>An FSM (<em>finite-state machine</em>) is …</li>
+<li>A <em>Turing-machine</em> is an FSM with infinite memory.
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Turing_machine#Formal_definition">WP:Turing machine, formal definition</a></li>
+<li>Turing-completeness
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Turing_completeness">WP:Turing-completeness</a></li>
+<li>A formal system is <em>Turing-complete</em> iff it can simulate every TM (Turing machine).
+<ul>
+<li>What does it mean to <em>simulate</em> a TM?</li>
+</ul></li>
+<li><a href="https://cstheory.stackexchange.com/questions/36863/formal-definition-of-turing-completeness">StackExchange CS theory 36863 formal definition of Turing-completeness</a>:
+<ul>
+<li>Kaveh suggested:
+<ul>
+<li><a href="https://www.sciencedirect.com/science/article/pii/S0049237X08712576">Robin Gandy: Church's Thesis and Principles for Mechanisms</a></li>
+<li>Classical recursion theory volume 1</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Partial Turing machine, total Turing machine
+<ul>
+<li>What is the significance of the theorem in <a href="https://en.wikipedia.org/wiki/Total_Turing_machine">WP:Total Turing machine</a>?</li>
+<li>What is the relationship between total function and total Turing machine?</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="what-is-a-tool"><span class="section_number">13.7</span><span class="section_title">What is a tool?</span></h3>
+<p>Philosophically, a tool is something that extends the user's self (the set of all things that the user can control). But this raises the question: Where is the boundary between two selves?</p>
+<p>Economically, a tool is something that increases productivity (output per input).</p>
+<p>Teleologically, a tool is something made by man for a specific purpose: A tool makes something easier (or even possible at all).</p>
+<h3 id="should-we-define-ones-self-as-the-set-of-all-things-he-can-control"><span class="section_number">13.8</span><span class="section_title">Should we define one's &quot;self&quot; as the set of all things he can control?</span></h3>
+<p>There are lots of parts of one's own body that one cannot fully control, such as his heart, his breathing muscles, his reflexes, etc.</p>
+<h2 id="language-issues-in-philosophy"><span class="section_number">14</span><span class="section_title">Language issues in philosophy</span></h2>
+<p>Language is more about communication/utility than truth.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">14.1</span><span class="section_title"><a href="#the-common-conflation-of-something-and-its-representation">The common conflation of something and its representation</a></span><span class="word_count">(110w~1m)</span></li>
+<li><span class="section_number">14.2</span><span class="section_title"><a href="#words-invented-or-discovered">Words: Invented or discovered?</a></span><span class="word_count">(172w~1m)</span></li>
+</ul>
+</div>
+<h3 id="the-common-conflation-of-something-and-its-representation"><span class="section_number">14.1</span><span class="section_title">The common conflation of something and its representation</span></h3>
+<p>Draw a car, and ask someone what it is, and he will probably answer &quot;a car&quot;, although, pedantically, it is incorrect, and the correct answer is &quot;the drawing of a car&quot;. However, we communicate not to be correct, but to be useful. Thus, in everyday communication, we <em>conflate</em> things and their <em>representations</em>: we often say &quot;X&quot; to mean &quot;a representation of X&quot;.</p>
+<p>The positions of levers and switches are not software, but a <em>representation</em> of software. The magnetic fields in a hard disk is not data, but a <em>representation</em> of data. Changing the concrete representation of an abstract object affects the represented abstract object.</p>
+<h3 id="words-invented-or-discovered"><span class="section_number">14.2</span><span class="section_title">Words: Invented or discovered?</span></h3>
+<p><em>Neologisms</em><a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> prove that words can be <em>invented</em>, such as &quot;grok&quot;, &quot;quark&quot;, &quot;bromance&quot;, and &quot;brexit&quot;. But words can also be <em>discovered</em>. For example, Heinlein invented &quot;grok&quot;<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>, but I discovered it through someone who has read his writing.</p>
+<p>But what do we mean by saying that <em>a word exists</em>? If we say that words are invented, then words are not abstract objects in idea space? But a word is not a concrete object, and thus it must be an abstract object. But must it? What if we declare three categories of being instead: concrete objects, abstract objects, and names? Or, can abstract objects be invented?</p>
+<p>Plato's Forms are abstract objects, but they are eternal.</p>
+<p>Can abstract objects be non-eternal?</p>
+<p>Does an idea exist if there is no one to think of it?</p>
+<p>But a concept has to be named before it can be thought about and communicated. The name is invented, but the concept is discovered. Thus one job of philosophers is to <em>pick names</em> for concepts that may be important but cannot yet be communicated.</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">15</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-sep-logic-massexpress">
+<p>[1] Nicolas, D. 2018. The logic of mass expressions. <em>The stanford encyclopedia of philosophy</em>. E.N. Zalta, ed. <a href="https://plato.stanford.edu/archives/win2018/entries/logic-massexpress/">https://plato.stanford.edu/archives/win2018/entries/logic-massexpress/</a>; Metaphysics Research Lab, Stanford University.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wiktionary.org/wiki/software">https://en.wiktionary.org/wiki/software</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://www.dictionary.com/browse/software">https://www.dictionary.com/browse/software</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="http://www.historyofinformation.com/detail.php?entryid=936">http://www.historyofinformation.com/detail.php?entryid=936</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.etymonline.com/word/hardware?ref=etymonline_crossreference">https://www.etymonline.com/word/hardware?ref=etymonline_crossreference</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Dance_notation">https://en.wikipedia.org/wiki/Dance_notation</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/History_of_software">https://en.wikipedia.org/wiki/History_of_software</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://www.etymonline.com/search?q=program">https://www.etymonline.com/search?q=program</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://www.etymonline.com/search?q=program">https://www.etymonline.com/search?q=program</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://simple.wikipedia.org/wiki/Television_program">https://simple.wikipedia.org/wiki/Television_program</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://en.wikipedia.org/wiki/Broadcast_programming">https://en.wikipedia.org/wiki/Broadcast_programming</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://en.wikipedia.org/wiki/Neologism">https://en.wikipedia.org/wiki/Neologism</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://www.etymonline.com/search?q=grok">https://www.etymonline.com/search?q=grok</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-08-14 00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
