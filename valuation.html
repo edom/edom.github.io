@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On financial valuation</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On financial valuation</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#notes">Notes</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#primitive-valuables">Primitive valuables</a></span><span class="word_count">(41w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#basic-combinators-of-valuables">Basic combinators of valuables</a></span><span class="word_count">(157w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#the-value-of-a-delayed-valuable">The value of a delayed valuable</a></span><span class="word_count">(61w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#the-value-of-a-chance-to-own-a-valuable">The value of a chance to own a valuable</a></span><span class="word_count">(140w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#laws-of-valuables">Laws of valuables</a></span><span class="word_count">(105w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#the-value-of-annuities-and-perpetuities">The value of annuities and perpetuities</a></span><span class="word_count">(165w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#the-value-of-actions">The value of actions</a></span><span class="word_count">(75w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#the-value-of-forward-contracts">The value of forward contracts?</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#option-contracts">Option contracts?</a></span><span class="word_count">(81w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(25w~1m)</span></li>
+</ul>
+</div>
+<h2 id="notes"><span class="section_number">1</span><span class="section_title">Notes</span></h2>
+<p>This is a very sketchy draft. Many other stuffs need to be written down here.</p>
+<p>It is straightforward to write a Haskell program that implements this theory. Indeed a similar thing has been done in 2000 <span class="citation" data-cites="SpjContract">[<a href="#ref-SpjContract">1</a>]</span>.</p>
+<h2 id="primitive-valuables"><span class="section_number">2</span><span class="section_title">Primitive valuables</span></h2>
+<p>The value of the <em>null valuable</em> is zero.</p>
+<p>The value of an amount of <em>cash</em> is the amount itself.</p>
+<p><span class="math display">\[
+\newcommand\fVal{\mathsf{val}}
+\newcommand\fEmpty{\mathsf{empty}}
+\newcommand\fCash{\mathsf{cash}}
+\newcommand\fNeg{\mathsf{neg}}
+\newcommand\fBoth{\mathsf{both}}
+\newcommand\fMax{\mathsf{max}}
+\newcommand\fMin{\mathsf{min}}
+\begin{align*}
+\fVal ~ \fEmpty &amp;= 0
+\\ \fVal ~ (\fCash ~ a) &amp;= a.
+\end{align*}
+\]</span></p>
+<h2 id="basic-combinators-of-valuables"><span class="section_number">3</span><span class="section_title">Basic combinators of valuables</span></h2>
+<p>The expression <span class="math inline">\(\fNeg~x\)</span> represents giving up <span class="math inline">\(x\)</span>.</p>
+<p>The expression <span class="math inline">\(\fBoth~x~y\)</span> represents owning both <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p>
+<p>The expression <span class="math inline">\(\fMax~x~y\)</span> represents choosing the one of <span class="math inline">\(x\)</span> or <span class="math inline">\(y\)</span> that has the greatest value.</p>
+<p>The expression <span class="math inline">\(\fMin~x~y\)</span> represents choosing the one of <span class="math inline">\(x\)</span> or <span class="math inline">\(y\)</span> that has the least value.</p>
+<p><span class="math display">\[
+\begin{align*}
+\fVal ~ (\fNeg~x) &amp;= - \fVal~x
+\\ \fVal ~ (\fBoth ~ x ~ y) &amp;= \fVal ~ x + \fVal ~ y
+\\ \fVal ~ (\fMax ~ x ~ y) &amp;= \fMax ~ (\fVal ~ x) ~ (\fVal ~ y).
+\\ \fVal ~ (\fMin ~ x ~ y) &amp;= \fMin ~ (\fVal ~ x) ~ (\fVal ~ y).
+\end{align*}
+\]</span></p>
+<p>If <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are valuables, we will also write <span class="math display">\[
+\begin{align*}
+-x &amp;= \fNeg~x
+\\ x+y &amp;= \fBoth~x~y
+\\ x-y &amp;= \fBoth~x~(\fNeg~y)
+\end{align*}
+\]</span> with unary <span class="math inline">\(-\)</span> taking precedence over binary <span class="math inline">\(+\)</span>, and <span class="math inline">\(+\)</span> associating to the right: <span class="math display">\[
+- x + y + z = (-x) + (y + z).
+\]</span></p>
+<h2 id="the-value-of-a-delayed-valuable"><span class="section_number">4</span><span class="section_title">The value of a delayed valuable</span></h2>
+<p>The value of a valuable that becomes owned after a <em>delay</em> <span class="math inline">\(d\)</span> is <span class="math display">\[
+\newcommand\fDelay{\mathsf{delay}}
+\newcommand\fDiscRate{\textsf{discrate}}
+\fVal ~ (\fDelay ~ d ~ x) = (\fDiscRate~x)^d \cdot \fVal~x
+\]</span> where <span class="math inline">\(\fDiscRate~x\)</span> is the <em>discount rate</em> of the valuable: <span class="math display">\[
+\fDiscRate~(\fCash~\_) = \frac{1}{1+r}
+\]</span> where <span class="math inline">\(r\)</span> is the <em>risk-free interest rate</em>. Both <span class="math inline">\(d\)</span> and <span class="math inline">\(r\)</span> must use the same unit of time.</p>
+<h2 id="the-value-of-a-chance-to-own-a-valuable"><span class="section_number">5</span><span class="section_title">The value of a chance to own a valuable</span></h2>
+<p>The value of a <em>chance</em> to own <span class="math inline">\(x\)</span> with probability <span class="math inline">\(p\)</span> is <span class="math display">\[
+\newcommand\fChance{\textsf{chance}}
+\newcommand\fRiskApt{\textsf{riskapt}}
+\fVal ~ (\fChance ~ p ~ x) = \fRiskApt~p \cdot \fVal~x.
+\]</span> where everyone is assumed to have the same <em>risk appetite function</em> <span class="math inline">\(\fRiskApt\)</span> satisfying this functional equation<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>: <span class="math display">\[
+\begin{align*}
+\fRiskApt~0 &amp;= 0
+\\ \fRiskApt~1 &amp;= 1
+\\ \fRiskApt~(p\cdot q) &amp;= \fRiskApt~p\cdot\fRiskApt~q.
+\end{align*}
+\]</span> The function <span class="math inline">\(\fRiskApt\)</span> will be a power function<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>, that is <span class="math display">\[
+    \fRiskApt~p = p^k
+\]</span> where <span class="math inline">\(k\)</span> is a constant. If <span class="math inline">\(k = 1\)</span> (and thus <span class="math inline">\(\fRiskApt~p = p\)</span>), the valuation is risk-neutral. If <span class="math inline">\(k &gt; 1\)</span> (and thus <span class="math inline">\(\fRiskApt~p &lt; p\)</span>), the valuation is risk-averse.</p>
+<p>If you are interested about <a href="http://en.wikipedia.org/wiki/Cauchy%27s_functional_equation">Cauchy's functional equation</a>, there is an overview at <a href="http://math.stackexchange.com/questions/423492/overview-of-basic-facts-about-cauchy-functional-equation">Math Stack Exchange</a>.</p>
+<p>(The function <span class="math inline">\(\fRiskApt\)</span> is an endomorphism of the group <span class="math inline">\(([0,1],\cdot)\)</span>, if this helps you find things on the Internet.)</p>
+<h2 id="laws-of-valuables"><span class="section_number">6</span><span class="section_title">Laws of valuables</span></h2>
+<p>These laws should be intuitive: <span class="math display">\[
+\begin{align*}
+-(x+y) &amp;= (-x) + (-y)
+\\ - \fMax~x~y &amp;= \fMin~(-x)~(-y).
+\end{align*}
+\]</span></p>
+<p>Delaying a delay just makes a bigger delay for valuation purposes: <span class="math display">\[
+\fVal \circ \fDelay~a \circ \fDelay~b = \fVal \circ \fDelay~(a+b).
+\]</span></p>
+<p>Chance and delay can be commuted for valuation purposes: <span class="math display">\[
+\fVal \circ \fChance ~ p \circ \fDelay ~ t = \fVal \circ \fDelay ~ t \circ \fChance ~ p.
+\]</span></p>
+<p>Chance to get a chance just makes a smaller chance for valuation purposes: <span class="math display">\[
+\fVal \circ \fChance ~ p \circ \fChance ~ q = \fVal \circ \fChance~(p \cdot q).
+\]</span></p>
+<p>Delay distributes over <span class="math inline">\(\fBoth\)</span> for valuation purposes: <span class="math display">\[
+\fVal~(\fDelay~d~(\fBoth~x~y)) = \fVal~(\fBoth~(\fDelay~d~x)~(\fDelay~d~y)).
+\]</span></p>
+<h2 id="the-value-of-annuities-and-perpetuities"><span class="section_number">7</span><span class="section_title">The value of annuities and perpetuities</span></h2>
+<p>This is an <em>annuity</em> with <span class="math inline">\(n\)</span> installments, each having amount <span class="math inline">\(a\)</span>, paid every period <span class="math inline">\(p\)</span>:</p>
+<p><span class="math display">\[
+\newcommand\fAnnuity{\textsf{annuity}}
+\begin{align*}
+\fAnnuity ~ p ~ 0 ~ a &amp;= 0
+\\ \fAnnuity ~ p ~ n ~ a &amp;= \fCash ~ a + \fDelay ~ p ~ (\fAnnuity ~ p ~ (n-1) ~ a).
+\end{align*}
+\]</span></p>
+<p><em>Perpetuity</em> with period <span class="math inline">\(p\)</span> and individual installment amount <span class="math inline">\(a\)</span>: <span class="math display">\[
+\newcommand\fPerpetuity{\textsf{perpetuity}}
+\begin{align*}
+\fPerpetuity ~ p ~ a &amp;= \fCash ~ a + \fDelay ~ p ~ (\fPerpetuity ~ p ~ a)
+\\ \fVal~(\fPerpetuity~p~a) &amp;= \sum_{k=0}^\infty \frac{a}{(1+r)^{k \cdot p}}
+= \frac{a}{1-\frac{1}{(1+r)^p}}.
+\end{align*}
+\]</span></p>
+<p>Time deposit with period <span class="math inline">\(p\)</span> unit time, interest rate <span class="math inline">\(r\)</span> per unit time, and principal amount <span class="math inline">\(a\)</span>: <span class="math display">\[
+\newcommand\fDeposit{\textsf{deposit}}
+\newcommand\fInterest{\textsf{interest}}
+\begin{align*}
+\fDeposit ~ p ~ r ~ a &amp;= \fCash ~ a + \fDelay ~ p ~ (\fInterest ~ p ~ r ~ a)
+\\ \fInterest ~ p ~ r ~ a &amp;= r \cdot a + \fDelay ~ p ~ (\fInterest ~ p ~ r ~ ((1+r)\cdot a)).
+\end{align*}
+\]</span></p>
+<h2 id="the-value-of-actions"><span class="section_number">8</span><span class="section_title">The value of actions</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">8.1</span><span class="section_title"><a href="#buying-or-selling-something">Buying or selling something</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">8.2</span><span class="section_title"><a href="#buying-and-holding-a-stock-forever">Buying and holding a stock forever</a></span><span class="word_count">(50w~1m)</span></li>
+</ul>
+</div>
+<h3 id="buying-or-selling-something"><span class="section_number">8.1</span><span class="section_title">Buying or selling something</span></h3>
+<p><span class="math display">\[
+\newcommand\fBuy{\textsf{buy}}
+\newcommand\fSell{\textsf{sell}}
+\newcommand\fBuyprice{\textsf{buyprice}}
+\newcommand\fSellprice{\textsf{sellprice}}
+\begin{align*}
+\fBuy~x &amp;= - \fCash~(\fBuyprice~x) + x
+\\ \fSell~x &amp;= \fCash~(\fSellprice~x) - x
+\end{align*}
+\]</span></p>
+<h3 id="buying-and-holding-a-stock-forever"><span class="section_number">8.2</span><span class="section_title">Buying and holding a stock forever</span></h3>
+<p>Buying a stock and holding it forever is equivalent to paying for a perpetuity: <span class="math display">\[
+\newcommand\fBuyhold{\textsf{buyhold}}
+\fBuyhold ~ s = -\fCash~ c + \fPerpetuity ~ p ~ d
+\]</span> where <span class="math inline">\(c\)</span> is the purchase amount, <span class="math inline">\(p\)</span> is the dividend period, and <span class="math inline">\(d\)</span> is the individual dividend amount.</p>
+<h2 id="the-value-of-forward-contracts"><span class="section_number">9</span><span class="section_title">The value of forward contracts?</span></h2>
+<p>The buyer of a <em>forward contract</em> pays the current price now to get the underlying asset later regardless of the future price: <span class="math display">\[
+\newcommand\fForward{\textsf{forward}}
+\newcommand\fEuopt{\textsf{euopt}}
+\newcommand\fAmopt{\textsf{amopt}}
+\newcommand\fCurrentprice{\textsf{currentprice}}
+\fForward~d~x = - \fCash~(\fCurrentprice~x) + \fDelay~d~x.
+\]</span></p>
+<h2 id="option-contracts"><span class="section_number">10</span><span class="section_title">Option contracts?</span></h2>
+<p>From the buyer's point of view, an European option with expiration <span class="math inline">\(d\)</span> on an underlying valuable <span class="math inline">\(x\)</span> is <span class="math display">\[
+\fEuopt ~ d ~ x = \fDelay ~ d ~ (\fMax~\fEmpty~x).
+\]</span></p>
+<p>From the buyer's point of view, an American option with expiration <span class="math inline">\(d\)</span> on an underlying valuable <span class="math inline">\(x\)</span> is <span class="math display">\[
+\fAmopt ~ d ~ x =
+\begin{cases}
+\fEmpty &amp;\text{if } d &lt; 0
+\\ \fMax~x~(\fDelay~\delta~(\fAmopt ~ (d - \delta) ~ x)) &amp;\text{otherwise}
+\end{cases}
+\]</span> where <span class="math inline">\(\delta\)</span> is the hyperreal infinitesimal.</p>
+<p>How do we value them?</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">11</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-SpjContract">
+<p>[1] Peyton-Jones, S. et al. 2000. Composing contracts: An adventure in financial engineering. <em>ACM sigplan international conference on functional programming (icfp’00)</em> (2000), 280–292. url: &lt;<a href="https://www.microsoft.com/en-us/research/publication/composing-contracts-an-adventure-in-financial-engineering/">https://www.microsoft.com/en-us/research/publication/composing-contracts-an-adventure-in-financial-engineering/</a>&gt;.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="http://en.wikipedia.org/wiki/Functional_equation">http://en.wikipedia.org/wiki/Functional_equation</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="http://math.stackexchange.com/questions/43964/if-fxy-fxfy-then-show-that-fx-xt-for-some-t">http://math.stackexchange.com/questions/43964/if-fxy-fxfy-then-show-that-fx-xt-for-some-t</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2016-01-01 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

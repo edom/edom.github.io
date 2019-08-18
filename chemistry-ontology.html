@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On the evolution of the ontology of chemistry</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On the evolution of the ontology of chemistry</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#abstract">Abstract</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#the-ontology-of-chemistry-before-molecules">The ontology of chemistry, before molecules</a></span><span class="word_count">(32w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#the-ontology-of-chemistry-after-molecules">The ontology of chemistry, after molecules</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#the-ontology-of-chemistry-after-subatomic-particles">The ontology of chemistry, after subatomic particles</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#ontology-of-chemistry-before-molecules">Ontology of chemistry before molecules</a></span><span class="word_count">(523w~3m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#ontology-of-chemistry-after-molecules">Ontology of chemistry after molecules</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#digression-language-naming">Digression: Language, naming</a></span><span class="word_count">(92w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#pure-compound"><span class="todo TODO">TODO</span> Pure compound?</a></span><span class="word_count">(52w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#molecules-ancient">Molecules, ancient</a></span><span class="word_count">(41w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#basic-chemical-ontology">Basic chemical ontology</a></span><span class="word_count">(197w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#standardization-of-chemical-notations">Standardization of chemical notations</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#atoms-and-the-absence-of-actual-infinities">Atoms and the absence of actual infinities</a></span><span class="word_count">(48w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#how-do-we-know-that-gases-diffuse">How do we know that gases diffuse?</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#molecules-how-do-we-know">Molecules: How do we know?</a></span><span class="word_count">(379w~2m)</span></li>
+<li><span class="section_number">15</span><span class="section_title"><a href="#atoms-how-we-know-they-exist">Atoms: How we know they exist</a></span><span class="word_count">(363w~2m)</span></li>
+<li><span class="section_number">16</span><span class="section_title"><a href="#atomic-masses">Atomic masses?</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">17</span><span class="section_title"><a href="#nucleus-how-do-we-know">Nucleus: How do we know?</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">18</span><span class="section_title"><a href="#atomizers-do-not-split-things-into-atoms">Atomizers do not split things into atoms</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">19</span><span class="section_title"><a href="#the-evolution-of-chemical-ontology">The evolution of chemical ontology</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">20</span><span class="section_title"><a href="#atoms-redefined-another-language-issue">Atoms, redefined: Another language issue</a></span><span class="word_count">(128w~1m)</span></li>
+<li><span class="section_number">21</span><span class="section_title"><a href="#bonds-what-are-they">Bonds: What are they?</a></span><span class="word_count">(5w~1m)</span></li>
+</ul>
+</div>
+<h2 id="abstract"><span class="section_number">1</span><span class="section_title">Abstract</span></h2>
+<p>Here we discuss the evolution of the ontology of chemistry between the 1st century and the 21st century?</p>
+<p>An example of mereology: molecules = atoms + bonds.</p>
+<p>Forces from strong to weak: nuclear force, chemical bond, intermolecular force, electrostatic force?</p>
+<h2 id="the-ontology-of-chemistry-before-molecules"><span class="section_number">2</span><span class="section_title">The ontology of chemistry, before molecules</span></h2>
+<p>What can be inferred from reason and unaided observation?</p>
+<p>An atom is an indivisible thing. This is defined a-priori. This is declared by fiat.</p>
+<p>TODO WP:democritus ref no 32</p>
+<h2 id="the-ontology-of-chemistry-after-molecules"><span class="section_number">3</span><span class="section_title">The ontology of chemistry, after molecules</span></h2>
+<h2 id="the-ontology-of-chemistry-after-subatomic-particles"><span class="section_number">4</span><span class="section_title">The ontology of chemistry, after subatomic particles</span></h2>
+<h2 id="ontology-of-chemistry-before-molecules"><span class="section_number">5</span><span class="section_title">Ontology of chemistry before molecules</span></h2>
+<p>What is a mixture?</p>
+<p>Mixing salt and water produces salt water, which can be separated by distillation, but mixing wood and oil of vitriol does not produce woody oil of vitriol.</p>
+<p>When a homogenous mixture is divided into two equal parts, both parts have the same properties.</p>
+<p>How did Democritus arrive at his idea, at such a long time before electrochemistry was discovered?</p>
+<p>From <a href="https://en.wikipedia.org/wiki/Democritus#Atomic_hypothesis">https://en.wikipedia.org/wiki/Democritus#Atomic_hypothesis</a> &lt;2019-08-09&gt;</p>
+<blockquote>
+<p>Democritus, along with Leucippus and Epicurus, proposed the earliest views on the shapes and connectivity of atoms. They reasoned that the solidness of the material corresponded to the shape of the atoms involved. Thus, iron atoms are solid and strong with hooks that lock them into a solid; water atoms are smooth and slippery; salt atoms, because of their taste, are sharp and pointed; and air atoms are light and whirling, pervading all other materials.[32] Using analogies from humans' sense experiences, he gave a picture or an image of an atom that distinguished them from each other by their shape, their size, and the arrangement of their parts. Moreover, connections were explained by material links in which single atoms were supplied with attachments: some with hooks and eyes others with balls and sockets.[33] The Democritean atom is an inert solid (merely excluding other bodies from its volume) that interacts with other atoms mechanically. In contrast, modern, quantum-mechanical atoms interact via electric and magnetic force fields and are far from inert.</p>
+</blockquote>
+<p>See also the book: Pfeffer, Jeremy, I.; Nir, Shlomo (2001). Modern Physics: An Introduction Text. World Scientific Publishing Company. p. 183. ISBN 1-86094-250-4.</p>
+<blockquote>
+<p>However, Lucretius, describing atomism in his De rerum natura, gives very clear and compelling empirical arguments for the original atomist theory. He observes that any material is subject to irreversible decay. Through time, even hard rocks are slowly worn down by drops of water. Things have the tendency to get mixed up: Mix water with soil and mud will result, seldom disintegrating by itself. Wood decays. However, there are mechanisms in nature and technology to recreate &quot;pure&quot; materials like water, air, and metals.[citation needed] The seed of an oak will grow out into an oak tree, made of similar wood as historical oak trees, the wood of which has already decayed. The conclusion is that many properties of materials must derive from something inside, that will itself never decay, something that stores for eternity the same inherent, indivisible properties. The basic question is: Why has everything in the world not yet decayed, and how can exactly some of the same materials, plants, and animals be recreated again and again? One obvious solution to explain how indivisible properties can be conveyed in a way not easily visible to human senses, is to hypothesize the existence of &quot;atoms&quot;. These classical &quot;atoms&quot; are nearer to humans' modern concept of &quot;molecule&quot; than to the atoms of modern science. The other central point of classical atomism is that there must be considerable open space between these &quot;atoms&quot;: the void. Lucretius gives reasonable arguments[citation needed] that the void is absolutely necessary to explain how gasses and liquids can flow and change shape, while metals can be molded without their basic material properties changing.</p>
+</blockquote>
+<h2 id="ontology-of-chemistry-after-molecules"><span class="section_number">6</span><span class="section_title">Ontology of chemistry after molecules</span></h2>
+<p>Molecules, elements, compounds</p>
+<h2 id="digression-language-naming"><span class="section_number">7</span><span class="section_title">Digression: Language, naming</span></h2>
+<p>First some people saw a lion before we had a name for it, and then they named it &quot;lion&quot;, and then we began to use the word &quot;lion&quot; to mean it.</p>
+<p>But it is the reverse with atoms.</p>
+<p>First we define the word &quot;atom&quot; to mean &quot;a body which cannot be cut in two&quot;<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, and then we look for it in Nature.</p>
+<p>A name enables us to know that we do not know, and to communicate our ignorance, and to find ways to know about that name.</p>
+<p>Thus, atoms were defined a-priori by fiat.</p>
+<h2 id="pure-compound"><span class="section_number">8</span><span class="section_title"><span class="todo TODO">TODO</span> Pure compound?</span></h2>
+<p>&lt;2019-07-17&gt; <a href="https://cnx.org/contents/f8zJz5tx@7.1:PJxH0gb1@6/2-1-Early-Ideas-in-Atomic-Theory">https://cnx.org/contents/f8zJz5tx@7.1:PJxH0gb1@6/2-1-Early-Ideas-in-Atomic-Theory</a></p>
+<blockquote>
+<p>Dalton knew of the experiments of French chemist Joseph Proust, who demonstrated that <em>all samples of a pure compound contain the same elements in the same proportion by mass</em>. This statement is known as the <em>law of definite proportions</em> or the <em>law of constant composition</em>.</p>
+</blockquote>
+<p>What is a <em>pure compound</em>?</p>
+<h2 id="molecules-ancient"><span class="section_number">9</span><span class="section_title">Molecules, ancient</span></h2>
+<p>&lt;2019-07-16&gt; <a href="https://en.wikipedia.org/wiki/Molecule#History_and_etymology">https://en.wikipedia.org/wiki/Molecule#History_and_etymology</a></p>
+<blockquote>
+<p>The definition of the molecule has evolved as knowledge of the structure of molecules has increased. Earlier definitions were less precise, defining molecules as the smallest particles of pure chemical substances that still retain their composition and chemical properties.</p>
+</blockquote>
+<h2 id="basic-chemical-ontology"><span class="section_number">10</span><span class="section_title">Basic chemical ontology</span></h2>
+<p><a href="https://education.jlab.org/qa/">https://education.jlab.org/qa/</a></p>
+<p>What is the difference between atoms and elements? <a href="https://education.jlab.org/qa/atoms_and_elements.html">https://education.jlab.org/qa/atoms_and_elements.html</a></p>
+<p>What is the simplest way of explaining what atoms, elements, compounds and mixtures are? <a href="https://education.jlab.org/qa/atom_02.html">https://education.jlab.org/qa/atom_02.html</a></p>
+<p>What is a mixture? <a href="https://education.jlab.org/qa/mixture.html">https://education.jlab.org/qa/mixture.html</a></p>
+<p>On the Epistemological and Ontological Status of Chemical Relations <a href="http://www.hyle.org/journal/issues/16-2/bernal.pdf">http://www.hyle.org/journal/issues/16-2/bernal.pdf</a></p>
+<p>SUBSTANCES: THE ONTOLOGY OF CHEMISTRY <a href="https://core.ac.uk/download/pdf/34432791.pdf">https://core.ac.uk/download/pdf/34432791.pdf</a></p>
+<p>&quot;Substance&quot; is a synonym of &quot;thing&quot;.</p>
+<p>&quot;Oil of vitriol&quot; can be obtained by following a recipe for making &quot;oil of vitriol&quot;.</p>
+<p>&quot;Ammonia&quot; is the smelly thing near the Temple of Ammon.</p>
+<p>If we have an unidentified substance that smells like ammonia, how do we know that it is indeed ammonia?</p>
+<ul>
+<li>First, we name a thing (such as &quot;ammonia&quot;).</li>
+<li>Then, we identify its properties (such as a certain odor).</li>
+<li>Then, we reuse the name to mean all things that have the same properties.</li>
+</ul>
+<p>&quot;Sulfur&quot; did not always mean the atom with 16 protons.</p>
+<p><a href="https://www.johnastewart.org/networked-narratives/a-brief-history-of-alchemy/">https://www.johnastewart.org/networked-narratives/a-brief-history-of-alchemy/</a></p>
+<blockquote>
+<p>Jabir ibn Hayyan developed a theory that said that all metals and minerals were composed of two more fundamental elements: sulphur and mercury. […] The more sulphureous elements were thought to be more brittle. […] Metals and minerals with more mercury were more malleable and shiny.</p>
+</blockquote>
+<p>Mixture vs compound <a href="https://education.jlab.org/qa/atom_02.html">https://education.jlab.org/qa/atom_02.html</a></p>
+<p>Example: In hydrogen gas. Each hydrogen-gas <em>molecule</em> consists of two hydrogen <em>atoms</em> bound to each other.</p>
+<p>A molecule is a bunch of bound atoms.</p>
+<h2 id="standardization-of-chemical-notations"><span class="section_number">11</span><span class="section_title">Standardization of chemical notations</span></h2>
+<p>1860 <a href="https://en.wikipedia.org/wiki/Karlsruhe_Congress">https://en.wikipedia.org/wiki/Karlsruhe_Congress</a></p>
+<h2 id="atoms-and-the-absence-of-actual-infinities"><span class="section_number">12</span><span class="section_title">Atoms and the absence of actual infinities</span></h2>
+<p>Democritus's atomic theory follows from the hypothesis that actual infinites do not exist. It is the hypothesis that Nature, although vast, is finite.</p>
+<p>How do we know that Nature is finite?</p>
+<p>How do we know that it is not a limitation of our instruments?</p>
+<h2 id="how-do-we-know-that-gases-diffuse"><span class="section_number">13</span><span class="section_title">How do we know that gases diffuse?</span></h2>
+<p>Maxwell 1873 &quot;Molecules&quot;<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>:</p>
+<blockquote>
+<p>As most gases are invisible, I shall exhibit gaseous diffusion to you by means of two gases, ammonia and hydrochloric acid, which, when they meet, form a solid product.</p>
+</blockquote>
+<h2 id="molecules-how-do-we-know"><span class="section_number">14</span><span class="section_title">Molecules: How do we know?</span></h2>
+<p>&lt;2019-07-15&gt; What is a molecule? &quot;An atom is a body which cannot be cut in two; a molecule is the smallest possible portion of a particular substance.&quot;<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p><a href="https://en.wikipedia.org/wiki/History_of_molecular_theory">https://en.wikipedia.org/wiki/History_of_molecular_theory</a></p>
+<blockquote>
+<p>the composition of water [that water consists of two hydrogen atoms and one oxygen atom] was not known before Avogadro (c. 1811).</p>
+<p>In 1738, Swiss physicist and mathematician Daniel Bernoulli published Hydrodynamica, which laid the basis for the kinetic theory of gases. In this work, Bernoulli positioned the argument, still used to this day, that gases consist of great numbers of molecules moving in all directions, that their impact on a surface causes the gas pressure that we feel, and that what we experience as heat is simply the kinetic energy of their motion. The theory was not immediately accepted, in part because conservation of energy had not yet been established, and it was not obvious to physicists how the collisions between molecules could be perfectly elastic.</p>
+<p>Amedeo Avogadro created the word &quot;molecule&quot;.[8] His 1811 paper &quot;Essay on Determining the Relative Masses of the Elementary Molecules of Bodies&quot;, he essentially states, i.e. according to Partington's A Short History of Chemistry, that:[9] […]</p>
+<p>Avogadro developed this hypothesis in order to reconcile Joseph Louis Gay-Lussac's 1808 law on volumes and combining gases with Dalton's 1803 atomic theory. The greatest difficulty Avogadro had to resolve was the huge confusion at that time regarding atoms and molecules—one of the most important contributions of Avogadro's work was clearly distinguishing one from the other, admitting that simple particles too could be composed of molecules, and that these are composed of atoms. Dalton, by contrast, did not consider this possibility. Curiously, Avogadro considers only molecules containing even numbers of atoms; he does not say why odd numbers are left out.</p>
+<p>The year 1873, by many accounts, was a seminal point in the history of the development of the concept of the &quot;molecule&quot;. In this year, the renowned Scottish physicist James Clerk Maxwell published his famous thirteen page article 'Molecules' in the September issue of Nature.[15] In the opening section to this article, Maxwell clearly states:</p>
+<p>#+BEGIN<sub>QUOTE</sub> An atom is a body which cannot be cut in two; a molecule is the smallest possible portion of a particular substance.</p>
+</blockquote>
+<p>#+END<sub>QUOTE</sub></p>
+<p>Mole: What is it?<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>Dalton defined the relative mass of hydrogen gas to be 1.</p>
+<h2 id="atoms-how-we-know-they-exist"><span class="section_number">15</span><span class="section_title">Atoms: How we know they exist</span></h2>
+<p>An atom is supposed to be an indivisible matter. But how do we know that it is really indivisible?</p>
+<p>What are the properties of an atom? Indivisibility, supposedly.</p>
+<p>How do we know that atoms exist? By dividing objects until we cannot. But what is the reason of our inability: Is it a limitation of our technology, or is it a limitation of Nature?</p>
+<p>How do we infer that atoms exist?</p>
+<p>We have it easy: School teachers shove atomic theory down our throat. Our ancestors had to figure it out the hard way: They have to hypothesize, experiment, fail, and even die, many times. We arrived at 21st century chemistry through a lot of experiments and reasoning. We don't see the toil of our ancestors, the thousands of hypotheses falsified by experiments.</p>
+<p>How do we know atoms exist?<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> Brownian motion? Dalton's ratios?<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a><a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<p>What is the details of Dalton's experiment? What gases did he use? What did he do?</p>
+<p>Electron microscopes? But there was no such thing back then. How do we know atoms exist without electron microscopes?</p>
+<p>Most knowledge about atoms is inferred, not directly perceived. Indeed knowledge about atoms is inferred abductively, not deductively.</p>
+<p>It seems that we can only study minuscule things abductively and not deductively, because we lack the senses to perceive them directly.</p>
+<ul>
+<li>Require: Chemical element</li>
+<li><a href="https://en.wikipedia.org/wiki/Atom#First_evidence-based_theory">WP:Atom, first evidence-based theory</a>
+<ul>
+<li>John Dalton (1766–1844)</li>
+<li><a href="https://en.wikipedia.org/wiki/Law_of_multiple_proportions">WP:Law of multiple proportions</a>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Stoichiometry">WP:Stoichiometry</a>
+<ul>
+<li><a href="http://chemed.chem.purdue.edu/genchem/history/stoichiometry.html">The origins of stoichiometry</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Jeremias_Benjamin_Richter">WP:Jeremias Benjamin Richter</a> (1762–1807)</li>
+<li>Observe:
+<ul>
+<li>Burning wood produces <em>ash</em>.</li>
+<li>Burning <em>more</em> wood produces <em>more</em> ash.</li>
+<li>The amount of ash produced is <em>proportional</em> to the amount of wood burned:
+<ul>
+<li>If burning <span class="math inline">\( x \)</span> amount of wood produces <span class="math inline">\( y \)</span> amount grams of ash, then burning <span class="math inline">\( a \cdot x \)</span> amount grams of wood produces <span class="math inline">\( a \cdot y \)</span> amount of ash.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Require: A chemical reaction that is available to prehistoric humans, and whose reactants and products are easy to weigh.
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Chemical_reaction#History">WP:Chemical reaction, history</a>
+<ul>
+<li>&quot;combustion in fire, fermentation and the reduction of ores to metals were known since antiquity&quot;</li>
+</ul></li>
+<li>Chemical reaction notation example: wood + air + fire -&gt; ash</li>
+</ul></li>
+</ul></li>
+<li>Observe: <a href="https://en.wikipedia.org/wiki/Conservation_of_mass">WP:Conservation of mass</a>
+<ul>
+<li>Burn up a piece of wood in a sealed container.</li>
+<li>Observe: The mass of the container is unchanged.</li>
+</ul></li>
+</ul></li>
+<li>What was Democritus's justification?
+<ul>
+<li><a href="http://people.wku.edu/jan.garrett/democ.htm">http://people.wku.edu/jan.garrett/democ.htm</a></li>
+<li>Is it in Roberto Torretti's 1999 book &quot;The philosophy of physics&quot;?</li>
+</ul></li>
+<li>Section: Compound, bond, molecule, ion
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Molecule">WP:Molecule</a>
+<ul>
+<li>Define: Something is either a <em>molecule</em> or an <em>ion</em>.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="atomic-masses"><span class="section_number">16</span><span class="section_title">Atomic masses?</span></h2>
+<p>How do we know that H 1 amu, He 2 amu, Li 3 amu, etc.</p>
+<p>How do we weigh atoms? Spectroscopy. &quot;What about before the days of mass spectrometers, when chemists were fuzzy about what an atom even was? Then, they primarily measured the weights of the atoms that composed various elements in terms of their relative masses, rather than their actual masses.&quot;<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
+<h2 id="nucleus-how-do-we-know"><span class="section_number">17</span><span class="section_title">Nucleus: How do we know?</span></h2>
+<p>Geiger–Marsden experiment?</p>
+<h2 id="atomizers-do-not-split-things-into-atoms"><span class="section_number">18</span><span class="section_title">Atomizers do not split things into atoms</span></h2>
+<p>An atomizer is a spray with very small nozzle.<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a><a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> It emits very small particles, but they are still much larger than atoms.<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></p>
+<h2 id="the-evolution-of-chemical-ontology"><span class="section_number">19</span><span class="section_title">The evolution of chemical ontology</span></h2>
+<p>People interpreted words differently.</p>
+<h2 id="atoms-redefined-another-language-issue"><span class="section_number">20</span><span class="section_title">Atoms, redefined: Another language issue</span></h2>
+<p>At first, we defined &quot;atoms&quot; to be something unsplittable. Then, after several millenniums of research, we finally found some things that we could not split, so we named them &quot;atoms&quot;. Then, a few decades later, with improved instruments, we found that such atoms could indeed be split into electrons, protons, neutrons. Alas, in the meantime, hundreds of textbooks had been written, and the name had stuck. Thus, we redefined &quot;atom&quot; to mean a neutral bunch of protons, neutrons, and electrons, so that we did not have to rewrite all those textbooks. After all, words do not carry their meanings themselves; it is we who interpret words into meanings.</p>
+<p>How do we know whether something is a limitation of Nature or a limitation of our technology?</p>
+<h2 id="bonds-what-are-they"><span class="section_number">21</span><span class="section_title">Bonds: What are they?</span></h2>
+<p>Nick Lucid<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a><a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Maxwell, 1873, &quot;Molecules&quot;<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://web.archive.org/web/20070209001003/http://www.thecore.nus.edu.sg/landow/victorian/science/science_texts/molecules.html">https://web.archive.org/web/20070209001003/http://www.thecore.nus.edu.sg/landow/victorian/science/science_texts/molecules.html</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>Maxwell 1873 &lt;2019-07-15&gt; <a href="https://en.wikipedia.org/wiki/History_of_molecular_theory">https://en.wikipedia.org/wiki/History_of_molecular_theory</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>Maxwell 1873 &quot;Molecules&quot; <a href="https://web.archive.org/web/20070209001003/http://www.thecore.nus.edu.sg/landow/victorian/science/science_texts/molecules.html">https://web.archive.org/web/20070209001003/http://www.thecore.nus.edu.sg/landow/victorian/science/science_texts/molecules.html</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>&lt;2019-07-15&gt; <a href="https://en.wikipedia.org/wiki/Mole_(unit)">https://en.wikipedia.org/wiki/Mole_(unit)</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="http://www.bbc.com/earth/story/20151120-how-do-we-know-that-things-are-really-made-of-atoms">http://www.bbc.com/earth/story/20151120-how-do-we-know-that-things-are-really-made-of-atoms</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="http://chemed.chem.purdue.edu/genchem/history/dalton.html">http://chemed.chem.purdue.edu/genchem/history/dalton.html</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>Dalton's disputed nitric oxide experiments and the origins of his atomic theory. <a href="https://www.ncbi.nlm.nih.gov/pubmed/18175369">https://www.ncbi.nlm.nih.gov/pubmed/18175369</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://www.livescience.com/20581-weigh-atom.html">https://www.livescience.com/20581-weigh-atom.html</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://en.wikipedia.org/wiki/Atomizer_nozzle">https://en.wikipedia.org/wiki/Atomizer_nozzle</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://en.wikipedia.org/wiki/Atomization">https://en.wikipedia.org/wiki/Atomization</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://www.nyu.edu/classes/tuckerman/adv.chem/lectures/lecture_3/node1.html">https://www.nyu.edu/classes/tuckerman/adv.chem/lectures/lecture_3/node1.html</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p><a href="https://www.youtube.com/watch?v=mFKCW_D2oE4">https://www.youtube.com/watch?v=mFKCW_D2oE4</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://www.youtube.com/watch?v=g39nwNm0Xfw">https://www.youtube.com/watch?v=g39nwNm0Xfw</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-08-17 00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

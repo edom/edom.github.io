@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On the mathematical duality of reading and writing</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On the mathematical duality of reading and writing</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#a-brief-note-about-duality">A brief note about <em>duality</em></a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#can-we-derive-writing-methods-from-reading-methods">Can we <em>derive</em> writing methods from reading methods?</a></span><span class="word_count">(268w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#formalism-of-methods-and-their-duals">Formalism of methods and their duals</a></span><span class="word_count">(131w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#derivations">Derivations?</a></span><span class="word_count">(49w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#systematic-reading-and-systematic-writing">Systematic reading and systematic writing?</a></span><span class="word_count">(277w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(20w~1m)</span></li>
+</ul>
+</div>
+<h2 id="a-brief-note-about-duality"><span class="section_number">1</span><span class="section_title">A brief note about <em>duality</em></span></h2>
+<p>Perhaps I don't know what I'm talking about here.</p>
+<p>Here I'm loosely using &quot;duality&quot;<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> in the mathematical sense: Roughly, I think, two things are <em>dual</em> if each one can be derived from the other.</p>
+<p>Duality enables us to <em>buy two for the price of one</em>.</p>
+<p>An important benefit of duality is that if we know how to read well, then we can <em>derive</em> how to write well from that without much thought.</p>
+<p>I want to show that, if you can read, then you can write.</p>
+<h2 id="can-we-derive-writing-methods-from-reading-methods"><span class="section_number">2</span><span class="section_title">Can we <em>derive</em> writing methods from reading methods?</span></h2>
+<p>Yes!</p>
+<p>If we have a reading method, we can <em>derive</em> a writing method by <em>reversing the steps</em> of the reading method.</p>
+<p>If readers best read from the <em>first</em> section to the <em>last</em> section, then writers best write from the <em>last</em> section to the <em>first</em> section. For example, the conclusion appears last but should be written first; whereas the introduction appears first but should be written last.</p>
+<p>Here is a more concrete example.</p>
+<p>Keshav 2007 <span class="citation" data-cites="keshav2007read">[<a href="#ref-keshav2007read">1</a>]</span> has a <em>three-pass reading method</em>:</p>
+<blockquote>
+<p>The key idea is that you should read the paper in up to three passes, instead of starting at the beginning and plowing your way to the end. Each pass accomplishes specific goals and builds upon the previous pass: The <em>first</em> pass gives you a general idea about the paper. The <em>second</em> pass lets you grasp the paper's content, but not its details. The <em>third</em> pass helps you understand the paper in depth.</p>
+</blockquote>
+<p>Reversing those steps gives us a <em>three-pass writing method</em> for free:</p>
+<ol>
+<li>Write the parts that require the <em>deepest</em> understanding.</li>
+<li>Write the parts for <em>grasping</em> the gist without drowning in details.</li>
+<li>Write the <em>general</em> ideas.</li>
+</ol>
+<p>Another example.</p>
+<p>This is a possible reading method.</p>
+<ol>
+<li>Repeat as necessary:
+<ol>
+<li>Read some of the <em>table of contents</em>.</li>
+<li>Read the <em>first sentence</em> of some paragraphs.</li>
+<li>Read some paragraphs.</li>
+</ol></li>
+</ol>
+<p>The writing method that is the dual of that reading method is:</p>
+<ol>
+<li>Repeat as necessary:
+<ol>
+<li>Write some paragraphs (ignoring the quality of their first sentences).</li>
+<li>Write (or rewrite) the <em>first sentence</em> of some paragraph.</li>
+<li>Write some of the <em>table of contents</em>. (Group the paragraphs into sections.)</li>
+</ol></li>
+</ol>
+<p>If a reading method is desirable, then its dual (the writing method derived by reversing the steps) should also be desirable.</p>
+<h2 id="formalism-of-methods-and-their-duals"><span class="section_number">3</span><span class="section_title">Formalism of methods and their duals</span></h2>
+<p>A <em>method</em> is a statement.</p>
+<p>A <em>statement</em> is any of these, where E means an expression and S means a statement:</p>
+<ul>
+<li>read E</li>
+<li>write E</li>
+<li>repeat S</li>
+<li>S then S</li>
+</ul>
+<p>Note that the above definition is recursive.</p>
+<p>The &quot;then&quot; operator associates to the right: &quot;X then Y then Z&quot; means &quot;X then (Y then Z)&quot;.</p>
+<p>The <em>dual</em> of a method is defined as follows:</p>
+<p>dual(read E) = write E</p>
+<p>dual(write E) = read E</p>
+<p>dual(repeat S) = repeat dual(S)</p>
+<p>dual(S then T) = dual(T) then dual(S)</p>
+<p>It can be proven by structural induction that the &quot;dual&quot; function is an <em>involution</em>, that is, dual(dual(S)) = S.</p>
+<p>Indeed duality enables us to <em>buy two for the price of one</em>: Everytime we come up with an enhancement to our reading method, we get the dual enhancement to the dual writing method <em>for free</em>.</p>
+<h2 id="derivations"><span class="section_number">4</span><span class="section_title">Derivations?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#what-are-desirable-reading-and-desirable-writing">What are desirable reading and desirable writing?</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#can-reading-techniques-and-writing-techniques-inform-each-other">Can reading techniques and writing techniques <em>inform each other</em>?</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#can-readers-teach-writers-how-to-write-and-writers-teach-readers-how-to-read">Can readers teach writers how to write, and writers teach readers how to read?</a></span><span class="word_count">(14w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-are-desirable-reading-and-desirable-writing"><span class="section_number">4.1</span><span class="section_title">What are desirable reading and desirable writing?</span></h3>
+<p>A desirable reading is <em>inspiring</em> and <em>enjoyable</em>. However, the process of writing to produce a desirable reading may be <em>boring</em> and <em>toilsome</em>.</p>
+<h3 id="can-reading-techniques-and-writing-techniques-inform-each-other"><span class="section_number">4.2</span><span class="section_title">Can reading techniques and writing techniques <em>inform each other</em>?</span></h3>
+<h3 id="can-readers-teach-writers-how-to-write-and-writers-teach-readers-how-to-read"><span class="section_number">4.3</span><span class="section_title">Can readers teach writers how to write, and writers teach readers how to read?</span></h3>
+<h2 id="systematic-reading-and-systematic-writing"><span class="section_number">5</span><span class="section_title">Systematic reading and systematic writing?</span></h2>
+<p>Readers read text in several passes, from shallow to deep. Writers write text in several passes, from deep to shallow.</p>
+<p>Writing is the inverse of reading. Readers read <em>top-down</em>: They begin with table of contents, and then they decide which fragments interest them. Writers write <em>bottom-up</em>: They begin with scattered fragments that interest them, and then they reorganize those fragments into a table of contents.</p>
+<p>Readers build up thoughts: If topic Q requires P, then readers expect to read P before reading Q. Writers break down thoughts: If topic Q requires P, then it would be easier for writers to write Q before writing P. (Really?)</p>
+<p>It is easier for readers to read sequentially. It is easier for writers to write fragments randomly and sometimes serendipitously according to what comes to their minds.</p>
+<p>The easiest way to write is the hardest way to read. The easiest way for writers to write fragments is in <em>reverse</em> to the order readers would find easiest to read. If it would be easy for readers to read A-B-C in that order, then it would be easy for writers to write C-B-A in that order.</p>
+<p>Thus, in order to make a writing that is easy to read, <em>write from the end</em>.</p>
+<p>Reading and writing are deserialization and serialization of knowledge, of internal mental models, of internal beliefs.</p>
+<p>Writers also read to enrich their writings.</p>
+<p>Readers scan and skim. Writers also do a similar thing called writing an <em>outline</em> or a <em>draft</em> or a <em>skeleton</em>. scan-write and skim-write.</p>
+<p>How do we read systematically? <a href="https://libraryguides.griffith.edu.au/systematic-literature-reviews-for-education/systematic-reading">https://libraryguides.griffith.edu.au/systematic-literature-reviews-for-education/systematic-reading</a> And how do we derive a way to write systematically from the way to read systematically?</p>
+<p>Why Do We Read? - Purposes &amp; Advantages <a href="https://study.com/academy/lesson/why-do-we-read-purposes-advantages.html">https://study.com/academy/lesson/why-do-we-read-purposes-advantages.html</a></p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">6</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-keshav2007read">
+<p>[1] Keshav, S. 2007. How to read a paper. <em>ACM SIGCOMM Computer Communication Review</em>. 37, 3 (2007), 83–84. url: &lt;<a href="http://ccr.sigcomm.org/online/files/p83-keshavA.pdf">http://ccr.sigcomm.org/online/files/p83-keshavA.pdf</a>&gt;.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Duality_(mathematics)">https://en.wikipedia.org/wiki/Duality_(mathematics)</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-08-17 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On literacy</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On literacy</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#communication">Communication</a></span><span class="word_count">(76w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#the-asymmetry-between-reading-and-writing">The <em>asymmetry</em> between reading and writing</a></span><span class="word_count">(198w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#how-do-write-efficiently-convincing-text">How do write <em>efficiently convincing</em> text?</a></span><span class="word_count">(32w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#not-writers-block-but-thinkers-block">Not writer's block, but thinker's block</a></span><span class="word_count">(78w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#iteration">Iteration</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#top-down-vs-bottom-up-reader">Top-down vs bottom-up reader</a></span><span class="word_count">(80w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#begin-with-a-question">Begin with a question</a></span><span class="word_count">(44w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#how-should-we-write">How should we write?</a></span><span class="word_count">(267w~2m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#on-writing-for-oneself">On writing for oneself</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#readings">Readings</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(18w~1m)</span></li>
+</ul>
+</div>
+<h2 id="communication"><span class="section_number">1</span><span class="section_title">Communication</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#communication-basics">Communication basics</a></span><span class="word_count">(61w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#reading-and-writing-as-asynchronous-dialog">Reading-and-writing as <em>asynchronous</em> dialog</a></span><span class="word_count">(16w~1m)</span></li>
+</ul>
+</div>
+<h3 id="communication-basics"><span class="section_number">1.1</span><span class="section_title">Communication basics</span></h3>
+<p>Writing and speaking are <em>transmission</em>, the conversion of thought to symbols.</p>
+<p>Reading and listening are <em>reception</em>, the conversion of symbols to thought.</p>
+<p>To <em>communicate</em>, the transmitter and the receiver must share the necessary <em>background knowledge</em> and <em>language</em>.</p>
+<p>A <em>language</em> is a system that relates utterances and meanings.</p>
+<p>The <em>background knowledge</em> is a set of beliefs.</p>
+<p>A <em>belief</em> is a logical formula with no free variables.</p>
+<h3 id="reading-and-writing-as-asynchronous-dialog"><span class="section_number">1.2</span><span class="section_title">Reading-and-writing as <em>asynchronous</em> dialog</span></h3>
+<p>Readers come with questions. Writers give answers.</p>
+<p>Readers come with problems. Writers give solutions.</p>
+<h2 id="the-asymmetry-between-reading-and-writing"><span class="section_number">2</span><span class="section_title">The <em>asymmetry</em> between reading and writing</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#writing-is-harder-than-reading">Writing is harder than reading</a></span><span class="word_count">(170w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#writers-have-voice-and-authority">Writers have voice and authority</a></span><span class="word_count">(24w~1m)</span></li>
+</ul>
+</div>
+<h3 id="writing-is-harder-than-reading"><span class="section_number">2.1</span><span class="section_title">Writing is harder than reading</span></h3>
+<p>Writers write for readers. Readers read for themselves, not for writers. Writers are expected to write from the reader's point of view. Readers are not expected to read from the writer's point of view.</p>
+<p>Readers have the money.</p>
+<p>Readers expect more from writers than writers expect from readers. The writer is supposed to be the party that spends more effort in the communication.</p>
+<p>Writing is harder than reading because writers <em>must</em> think more than readers do. Writers cannot <em>passively</em> write; they must first come up with some <em>thoughts</em> to write before they can write anything at all. Readers can passively read a text and still suboptimally benefit from it.</p>
+<p>Another contributing factor to that asymmetry is the physical constraint that eyes can move faster than hands, but perhaps there will be machines to dump our thoughts directly into symbols, or even to directly transmit our thoughts to others, directly between brains, without eyes and hands.</p>
+<p>Speaking is harder than listening for the same reason: Speaking requires thought, and listening does not.</p>
+<h3 id="writers-have-voice-and-authority"><span class="section_number">2.2</span><span class="section_title">Writers have voice and authority</span></h3>
+<p>It is easy to copy the writing many times, and it is hard to change all copies of the writing.</p>
+<h2 id="how-do-write-efficiently-convincing-text"><span class="section_number">3</span><span class="section_title">How do write <em>efficiently convincing</em> text?</span></h2>
+<p>Writers try to convince readers, even in narratives.</p>
+<p>But readers try to reinforce their beliefs?</p>
+<p>Not only arguments, but also narratives, must be convincing.</p>
+<p>Psychology.</p>
+<p>Avoid triggering the reader's <em>defense mechanism</em>.</p>
+<h2 id="not-writers-block-but-thinkers-block"><span class="section_number">4</span><span class="section_title">Not writer's block, but thinker's block</span></h2>
+<p>This is the basic writing method:</p>
+<ol>
+<li>A thought appears in one's mind.</li>
+<li>He writes that down.</li>
+</ol>
+<p>The problem is not about finding what to write, but finding what to <em>think</em>. A writer's block is actually a <em>thinker's block</em>. It is not about running out of words. It is about running out of <em>thoughts</em>.</p>
+<p>Writing begins with <em>thoughts</em>, not words. Writing is converting thoughts to text. If one has no thoughts, he has nothing to convert to text.</p>
+<h2 id="iteration"><span class="section_number">5</span><span class="section_title">Iteration</span></h2>
+<p>Writers rewrite many times. Readers reread many times.</p>
+<p>Rewriting improves text. Rereading improves thought.</p>
+<h2 id="top-down-vs-bottom-up-reader"><span class="section_number">6</span><span class="section_title">Top-down vs bottom-up reader</span></h2>
+<p>From &quot;Version control with Subversion&quot;<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>:</p>
+<blockquote>
+<p>Technical books always face a certain dilemma: whether to cater to <em>top-down</em> or to <em>bottom-up</em> learners. A top-down learner prefers to read or skim documentation, getting a large overview of how the system works; only then does she actually start using the software. A bottom-up learner is a &quot;learn by doing&quot; person—someone who just wants to dive into the software and figure it out as she goes, referring to book sections when necessary.</p>
+</blockquote>
+<h2 id="begin-with-a-question"><span class="section_number">7</span><span class="section_title">Begin with a question</span></h2>
+<p>This is the way to fecund writing. Begin with a question. Then answer it.</p>
+<p>This is the way to productive reading. Begin with a question. Then seek the answer.</p>
+<p>Can we infer &quot;what is good reading&quot; from this &quot;What is good writing&quot; article<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>?</p>
+<h2 id="how-should-we-write"><span class="section_number">8</span><span class="section_title">How should we write?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">8.1</span><span class="section_title"><a href="#writing-topic-position-and-stress-position">Writing; topic position and stress position</a></span><span class="word_count">(49w~1m)</span></li>
+<li><span class="section_number">8.2</span><span class="section_title"><a href="#writing"><span class="todo TODO">TODO</span> Writing?</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">8.3</span><span class="section_title"><a href="#a-writing-method">A writing method?</a></span><span class="word_count">(74w~1m)</span></li>
+<li><span class="section_number">8.4</span><span class="section_title"><a href="#writer-vs-editor">Writer vs editor</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">8.5</span><span class="section_title"><a href="#it-is-important-to-motivate-the-reader">It is important to motivate the reader</a></span><span class="word_count">(130w~1m)</span></li>
+</ul>
+</div>
+<h3 id="writing-topic-position-and-stress-position"><span class="section_number">8.1</span><span class="section_title">Writing; topic position and stress position</span></h3>
+<p>&quot;A reader will unconsciously focus at the end of the sentence to identify what is important.&quot;<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>It is more important for the sentences of a paragraph to have <em>related topics</em> than to have active voice <span class="citation" data-cites="gopen1990science">[<a href="#ref-gopen1990science">1</a>]</span>. (A sentence's topic is what in its topic position.)</p>
+<h3 id="writing"><span class="section_number">8.2</span><span class="section_title"><span class="todo TODO">TODO</span> Writing?</span></h3>
+<p><a href="https://medium.com/@write4research/why-do-academics-and-phders-carefully-choose-useless-titles-for-articles-and-chapters-518f02a2ecbb">https://medium.com/@write4research/why-do-academics-and-phders-carefully-choose-useless-titles-for-articles-and-chapters-518f02a2ecbb</a></p>
+<p><a href="https://medium.com/@write4research/top-ten-questions-to-ask-about-your-chapter-start-32848d924953">https://medium.com/@write4research/top-ten-questions-to-ask-about-your-chapter-start-32848d924953</a></p>
+<h3 id="a-writing-method"><span class="section_number">8.3</span><span class="section_title">A writing method?</span></h3>
+<p>Writing</p>
+<ul>
+<li>rewrite = read + think + write</li>
+<li>Dont rewrite while writing. Dont edit while writing. Let thoughts out.</li>
+<li>the predicate is more important than the subject.</li>
+<li>avoid long subject</li>
+<li>cluster related ideas together</li>
+<li>a predicate must occur no later than the seventh word in the sentence?</li>
+</ul>
+<p>Constrained writing:</p>
+<ul>
+<li>each sentence in the same paragraph has the same subject?</li>
+<li>the first sentence is both a claim and a summary. The first sentence summarizes the paragraph.</li>
+</ul>
+<p>Example:</p>
+<blockquote>
+<p>X is good. &lt;why x is good&gt;</p>
+</blockquote>
+<h3 id="writer-vs-editor"><span class="section_number">8.4</span><span class="section_title">Writer vs editor</span></h3>
+<p>Writers vomit their ideas into words; editors clean up the mess.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<h3 id="it-is-important-to-motivate-the-reader"><span class="section_number">8.5</span><span class="section_title">It is important to motivate the reader</span></h3>
+<p>It is counter-productive to begin a mathematical text with a definition. Such text should begin with <em>motivation</em>.</p>
+<p>It is counter-productive to begin a textbook in group theory by listing the group axioms. We are creative humans, not mechanical theorem provers.</p>
+<p>Such textbook should begin with <em>why</em> the reader should care about group theory. At least, it should begin with why the writer thinks that group theory is fascinating. But it's difficult: How do we convince someone that something as abstract as group theory is interesting?</p>
+<p>Don't make the readers think; make them <em>see</em>. Your goal as a writer is to be a giant who enables the readers to stand on your shoulder as fast as possible, so that they can see farther into the unexplored knowable world.</p>
+<h2 id="on-writing-for-oneself"><span class="section_number">9</span><span class="section_title">On writing for oneself</span></h2>
+<p>One can write for himself, to clarify his thoughts, to augment his memory.</p>
+<h2 id="readings"><span class="section_number">10</span><span class="section_title">Readings</span></h2>
+<p>From <a href="http://www.fortell.org/content/exploring-reading-writing-relationship-critical-thinking">http://www.fortell.org/content/exploring-reading-writing-relationship-critical-thinking</a></p>
+<blockquote>
+
+</blockquote>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">11</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-gopen1990science">
+<p>[1] Gopen, G.D. and Swan, J.A. 1990. The science of scientific writing. <em>American Scientist</em>. 78, 6 (1990), 550–558.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="http://svnbook.red-bean.com/en/1.7/svn.preface.howread.html">http://svnbook.red-bean.com/en/1.7/svn.preface.howread.html</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://writingcooperative.com/what-is-good-writing-6379d77cd0c5">https://writingcooperative.com/what-is-good-writing-6379d77cd0c5</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writinginenglish/stress-position/10252690">https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writinginenglish/stress-position/10252690</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://mshannonhernandez.com/the-writer-vs-the-editor-dont-confuse-the-roles/">https://mshannonhernandez.com/the-writer-vs-the-editor-dont-confuse-the-roles/</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-08-17 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
