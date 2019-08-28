@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Cara memilih pejabat dalam sebuah demokrasi</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Cara memilih pejabat dalam sebuah demokrasi</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<p><em>Pertama</em>, Anda harus bertanya &quot;<em>Apa untungnya buat saya</em> kalau saya pilih dia?&quot;</p>
+<p>Contoh alasan yang masuk akal:</p>
+<ul>
+<li>Saya pilih dia karena dia janji akan mengurangi pajak saya.</li>
+<li>Saya pilih dia karena dia janji akan mempermudah perizinan gereja/wihara/kuil/klenteng/dll.</li>
+<li>Saya pilih dia karena dia janji akan mengatasi banjir di rumah saya <em>dengan cara yang masuk akal</em>.</li>
+<li>Saya pilih dia karena dia janji akan mengatasi macet dan mengurangi polusi <em>dengan cara yang masuk akal</em>.</li>
+<li>Saya pilih dia karena program kerja dia memperbaiki kehidupan banyak orang <em>dengan cara yang masuk akal</em>.</li>
+<li>Saya pilih dia karena dia sepaham dengan pejabat-pejabat lain yang saya pilih dan dia akan membantu program kerja mereka.</li>
+</ul>
+<p>Contoh alasan yang <em>bodoh</em> dan merusak negara:</p>
+<ul>
+<li>Saya pilih dia karena dia ganteng/cantik/baik/pintar/sopan/dll. (Apa untungnya buat Anda?)</li>
+<li>Saya pilih dia karena dia satu agama/suku/kampung dengan saya. (Apa untungnya buat Anda?)</li>
+<li>Saya pilih dia karena baliho dia paling besar. (Apa untungnya buat Anda?)</li>
+</ul>
+<p><em>Kedua</em>, Anda harus bertanya &quot;Bagaimana orang ini akan mewujudkan janji tersebut <em>dengan cara yang masuk akal</em>?&quot; Ini untuk mencari tahu apakah orang ini memang bisa memenuhi janjinya. Kalau dia tidak bisa beri jawaban yang masuk akal, dia cuma asal janji.</p>
+<p>Jangan tanya &quot;Anda bisa?&quot;, tapi tanya &quot;Bagaimana caranya?&quot; Kalau jawabannya tidak masuk akal, berarti sama saja dengan dia tidak berjanji apa-apa. Kalau dia jawab &quot;Tidak tahu&quot;, dia orang <em>jujur meskipun bodoh</em>. Kalau jawabannya tidak masuk akal, berarti dia <em>sudah bodoh penipu pula</em>. Tentu lebih baik bodoh dan <em>jujur</em> daripada bodoh dan <em>penipu</em>.</p>
+<p><em>Ketiga</em>, Anda harus bertanya &quot;Apa ada janjinya yang saling bertentangan?&quot; Misalnya, dia berjanji ke rakyat <em>menaikkan</em> pajak pengusaha, tapi dia berjanji ke pengusaha <em>menurunkan</em> atau tidak mengubah pajak pengusaha (hal yang sama). Kalau ada janjinya yang demikian, niatnya naik pangkat, bukan melayani rakyat; catatlah buktinya, dan perlihatkan dustanya ke orang-orang.</p>
+<p>Politisi <em>boleh saja mengubah pendapatnya</em>, tetapi harus <em>dengan alasan yang masuk akal</em>, misalnya karena dia baru menemukan suatu penelitian ilmiah yang bertentangan dengan pendapat lamanya.</p>
+<p>Seandainya memang tidak ada calon yang becus, kita bisa <em>golongan putih</em> atau bahkan <em>rombak negara</em>, tapi biasanya sih selalu ada minimal satu calon yang becus.</p>
+<p>Kalau Anda memilih politisi tanpa pikir panjang, Anda sendiri yang rugi. Contohnya, lihat orang-orang yang dulu memilih Anies Baswedan dan Sandiaga Uno tapi kemudian <em>demo</em><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, <em>kecewa</em><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>, <em>menyesal</em><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>, dan <em>merasa dikhianati</em><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> oleh pilihan mereka sendiri. Itu kata <em>pemilih mereka sendiri</em> lho, bukan karangan saya. Tentu mereka bukan politisi pertama yang mengecewakan pemilih mereka sendiri, tapi mereka yang paling terkenal, berkat kerusuhan Pilkada Gubernur Jakarta 2017.</p>
+<p>Jadi, setiap kali ada pemilihan, Anda cukup bertanya:</p>
+<ol>
+<li><em>Apa untungnya buat saya</em> kalau saya pilih dia?</li>
+<li>Bagaimana dia akan mewujudkan janjinya <em>dengan cara yang masuk akal</em>?</li>
+<li>Apa ada janjinya yang saling <em>bertentangan</em>?</li>
+</ol>
+<p>Tapi saya khawatir, jangan-jangan pola pikir &quot;apa untungnya buat saya&quot; bisa perlahan mengubah negara jadi plutokrasi seperti di Amerika: pemilik perusahaan besar mendukung politisi yang menguntungkan mereka, tidak peduli merugikan orang banyak.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>2019-07-16: Didemo Nelayan, Anies Baswedan Dinilai Ingkar Janji Soal Reklamasi <a href="https://tirto.id/didemo-nelayan-anies-baswedan-dinilai-ingkar-janji-soal-reklamasi-eeoB">https://tirto.id/didemo-nelayan-anies-baswedan-dinilai-ingkar-janji-soal-reklamasi-eeoB</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>2018-08-14: Anies Coret Anggaran Selter, Warga Bukit Duri Kecewa <a href="https://www.cnnindonesia.com/nasional/20180814185837-20-322267/anies-coret-anggaran-selter-warga-bukit-duri-kecewa">https://www.cnnindonesia.com/nasional/20180814185837-20-322267/anies-coret-anggaran-selter-warga-bukit-duri-kecewa</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>2019-06-24: Soal Reklamasi, Pendukung Termakan Janji Manis Anies <a href="https://www.wartaekonomi.co.id/read233318/kecewa-pendukung-anies-kecewa-janji-manis-anies.html">https://www.wartaekonomi.co.id/read233318/kecewa-pendukung-anies-kecewa-janji-manis-anies.html</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>2019-06-27: Masyarakat Nelayan Kecewa Anies Terbitkan IMB Reklamasi <a href="https://nasional.republika.co.id/berita/nasional/jabodetabek-nasional/ptpkas409/masyarakat-nelayan-kecewa-anies-terbitkan-imb-reklamasi">https://nasional.republika.co.id/berita/nasional/jabodetabek-nasional/ptpkas409/masyarakat-nelayan-kecewa-anies-terbitkan-imb-reklamasi</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>2019-08-18: Nelayan Angke Kecewa Kepada Anies Karena Lakukan Upacara Di Pulau Reklamasi <a href="http://indonews.id/artikel/23130/Nelayan-Angke-Kecewa-Kepada-Anies-Karena-Lakukan-Upacara-Di-Pulau-Reklamasi/">http://indonews.id/artikel/23130/Nelayan-Angke-Kecewa-Kepada-Anies-Karena-Lakukan-Upacara-Di-Pulau-Reklamasi/</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>2017-11-03: UMP 2018 Rp3,6 Juta, Serikat Buruh Menyesal Pilih Anies-Sandi <a href="https://www.cnnindonesia.com/nasional/20171103153223-20-253275/ump-2018-rp36-juta-serikat-buruh-menyesal-pilih-anies-sandi">https://www.cnnindonesia.com/nasional/20171103153223-20-253275/ump-2018-rp36-juta-serikat-buruh-menyesal-pilih-anies-sandi</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>2019-06-25: Nelayan Teluk Jakarta Merasa Dikhianati Anies <a href="https://nasional.republika.co.id/berita/nasional/jabodetabek-nasional/ptm4k1330/nelayan-teluk-jakarta-merasa-dikhianati-anies">https://nasional.republika.co.id/berita/nasional/jabodetabek-nasional/ptm4k1330/nelayan-teluk-jakarta-merasa-dikhianati-anies</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-08-21 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
