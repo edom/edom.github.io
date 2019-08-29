@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On my plan to save myself and perhaps some people</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On my plan to save myself and perhaps some people</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#background">Background</a></span><span class="word_count">(442w~3m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#level-1-hobbyist-backyard-small-plant-planter">Level 1: Hobbyist backyard small-plant planter</a></span><span class="word_count">(532w~3m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#level-2-100-square-meter-medium-tree-planter">Level 2: 100-square-meter medium-tree planter</a></span><span class="word_count">(1103w~6m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#level-3-botanist-permaculturist-ecological-engineer">Level 3: Botanist, permaculturist, ecological engineer</a></span><span class="word_count">(52w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#level-4-people-builder-who-lifts-people-out-of-poverty">Level 4: People builder who lifts people out of poverty</a></span><span class="word_count">(175w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#level-5-mining-smelting-manufacturing-toolmaking">Level 5: Mining, smelting, manufacturing, toolmaking</a></span><span class="word_count">(33w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#level-50-fuel">Level 50: Fuel?</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#level-60-carmaking">Level 60: Carmaking</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#level-70-computer-making">Level 70: Computer-making</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#level-80-weapon-and-defense">Level 80: Weapon and defense</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#level-90-establish-a-society">Level 90: Establish a society</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#level-100-aquanauts-seafaring-deep-ocean-diving">Level 100: Aquanauts? Seafaring? Deep ocean diving?</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#level-200-spacefaring">Level 200: Spacefaring?</a></span><span class="word_count">(3w~1m)</span></li>
+</ul>
+</div>
+<h2 id="background"><span class="section_number">1</span><span class="section_title">Background</span></h2>
+<p>I saw the news: Jakarta is going to sink by 2050.</p>
+<p>I can only depend on my present self to save my future self. No company is going to solve the climate crisis, because no company is going to profit from solving it. Also, we are bad at predicting long-term consequences; we are doomed; we are regressing to anarchy.</p>
+<p>But fortunately I live in Indonesia that has natural advantage in food growing. It has tropical climate. The sun shines all year. The rainfall is abundant. The soil is fertile. Rivers, volcanoes, seas, and fish abound. Plants grow without even trying. In satellite photos, Indonesia looks green everywhere.</p>
+<p>I have to feed myself and move to higher ground. Then perhaps later I can help lift others out of poverty, because Nature pays everyone who works. Indeed all wealth, even our Labor, comes from Nature: Everything in our body, and the food we eat to work, all come from Nature.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#digression-jakarta-the-doomed-city">&lt;2019-07-06&gt; Digression: Jakarta the doomed city</a></span><span class="word_count">(288w~2m)</span></li>
+</ul>
+</div>
+<h3 id="digression-jakarta-the-doomed-city"><span class="section_number">1.1</span><span class="section_title">&lt;2019-07-06&gt; Digression: Jakarta the doomed city</span></h3>
+<p>Jakarta is sinking into the sea.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> At the same time, the sea is rising due to melting polar ice due to climate change. Also recently there was an all-time-high level of air pollution. The future is grim. Only a natural disaster can fix this sinking polluted overcrowded city.</p>
+<p>Jakarta is barely livable. Atrocious traffic. Severe dust.</p>
+<p>Why aren't there more buses? Why aren't there more routes? How hard is it to start a bus company? Why, in the last 30 years, has there never been a bus route through my area?</p>
+<p>&lt;2018-09-22&gt; Jakarta is sinking, unless we stop draining the aquifer below it.</p>
+<p>An animation<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> explains why:</p>
+<ul>
+<li>People pump the aquifers out.</li>
+<li>Rain can't replenish the aquifers because Jakarta is wrapped in concrete.</li>
+<li>There is no more underground water to press the land up.</li>
+<li>The land sinks.</li>
+</ul>
+<p>North Jakarta is sinking by up to 20 cm per year.</p>
+<p>Meanwhile, the government is planning to move the capital from Jakarta to somewhere in Kalimantan.</p>
+<p>Is there anything safe to eat? Is it safer to eat hormones-and-antibiotics-laden chicken or pesticide-laden plants? Are city-dwellers doomed to eat shit?</p>
+<p>Cheap meat can be bought online from PD Dharma Jaya<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>'s DJMeatshop<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> at Jl. Raya Penggilingan no. 25, Jakarta Timur. I found these while browsing the Internet, but I never tried these. I don't know how cheap.<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<p>Somewhat useful government websites:</p>
+<ul>
+<li>Commodity price list<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></li>
+<li>PD Pasar Jaya commodity price list<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></li>
+</ul>
+<p>Jakarta Barat traffic hotspots:</p>
+<ul>
+<li>Pom bensin di Kemanggisan bikin macet tiap jam makan siang. Mobil yang ngantri banyak, stasiun yang buka cuma satu.</li>
+<li>Tempat makan di Tanjung Duren bikin macet, terutama Pisang Goreng Bu Nanik. Bikin tempat makan tapi tidak bikin tempat parkir. Parkir di jalan. Mengganggu kepentingan umum. Negative externality. Seperti buang limbah ke sungai.</li>
+<li>Green Ville terlalu banyak tempat makan. Setiap Sabtu macetnya sampai Jalan Panjang.</li>
+</ul>
+<h2 id="level-1-hobbyist-backyard-small-plant-planter"><span class="section_number">2</span><span class="section_title">Level 1: Hobbyist backyard small-plant planter</span></h2>
+<p>Which plant should I plant? The criteria:</p>
+<ul>
+<li>nutritious, should contain essential nutrients</li>
+<li>delicious for me</li>
+<li>thrives in my surroundings, suitable habitat</li>
+<li>small, not much taller than I am</li>
+</ul>
+<p>I like to eat these plants, so I want to plant them in my backyard:</p>
+<ul>
+<li>garlic, bawang</li>
+<li>Etlingera elatior, kecombrang</li>
+<li>rebung/bambu</li>
+<li>ginger, jahe</li>
+<li>sesame, wijen</li>
+<li>broccoli</li>
+<li>green bean, kacang hijau, buncis</li>
+<li>soybean, kedelai</li>
+</ul>
+<p>How do I get started? Where do I buy the pots, soil, and seeds?</p>
+<p><em>A little basic knowledge</em> suffices in order to begin planting some seeds. Don't worry about getting an undergraduate degree; we're just starting a personal garden to feed ourselves for fun.</p>
+<p>Buy a bucket and a shovel. Shit and piss in the bucket. Dig some hole with the shovel, pour the bucket's contents, and bury the shit and piss with some dead plant parts and leftover vegetables. Beware that the more nutritious the compost pile is (such as due to meat or fruit), the more it invites rats. I left a small cut of a thumb-sized pineapple pulp, and, a few hours later, a rat came.</p>
+<p>As your harvest increases, you may improvise with plastic bags to reduce the number of round-trips you make to move the harvest to your storage. As your harvest outgrows the plastic bags, you may buy a <em>wheelbarrow</em>.</p>
+<p>It is more expensive but less effort to buy a farm from a retiring farmer than to transform a pristine patch of land. You get what you pay for, assuming that you do due diligence?</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#how-to-choose-pots">How to choose pots</a></span><span class="word_count">(91w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#tools">Tools</a></span><span class="word_count">(41w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#plants-in-my-yard">Plants in my yard</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#what-plant">What plant?</a></span><span class="word_count">(67w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#growing-medium">Growing medium</a></span><span class="word_count">(78w~1m)</span></li>
+<li><span class="section_number">2.6</span><span class="section_title"><a href="#humanure-composting">Humanure composting</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">2.7</span><span class="section_title"><a href="#backyard-permaculture">Backyard permaculture</a></span><span class="word_count">(2w~1m)</span></li>
+</ul>
+</div>
+<h3 id="how-to-choose-pots"><span class="section_number">2.1</span><span class="section_title">How to choose pots</span></h3>
+<p>It suffices to answer two questions:</p>
+<ol>
+<li>Will the pot fit the plants?</li>
+<li>Will I be able to hold and lift the filled pot when the plants mature?</li>
+</ol>
+<p>First, it has to fit the <em>plants</em>: The pot has to be large enough for the roots when the plants mature, but not too large that space is wasted.</p>
+<p>Second, it has to &quot;fit&quot; <em>you</em>: The dimension and weight of the filled pot is such that you can comfortably <em>hold and lift</em> it and all its contents (the soil and the plants when they <em>mature</em>).</p>
+<h3 id="tools"><span class="section_number">2.2</span><span class="section_title">Tools</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.2.1</span><span class="section_title"><a href="#conventional-tools">Conventional tools</a></span><span class="word_count">(34w~1m)</span></li>
+<li><span class="section_number">2.2.2</span><span class="section_title"><a href="#plant-identification-tools">Plant identification tools</a></span><span class="word_count">(8w~1m)</span></li>
+</ul>
+</div>
+<h4 id="conventional-tools"><span class="section_number">2.2.1</span><span class="section_title">Conventional tools</span></h4>
+<p>Hoe, spade, knife, scissors, etc.</p>
+<p>For protection against the sun: hats, long-armed white loose thin cotton shirts, long white loose thin cotton pants.</p>
+<p>For protection against things in the soil: long gloves and high boots.</p>
+<h4 id="plant-identification-tools"><span class="section_number">2.2.2</span><span class="section_title">Plant identification tools</span></h4>
+<p>Does PlantSnap<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> work with Indonesian plants?</p>
+<h3 id="plants-in-my-yard"><span class="section_number">2.3</span><span class="section_title">Plants in my yard</span></h3>
+<p>Scadoxus multiflorus<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> (&quot;Bunga November&quot;, &quot;Bunga Desember&quot;, apalah, di tempat saya berbunganya bulan Agustus.)</p>
+<p>Murraya paniculata<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> (kemuning)</p>
+<h3 id="what-plant"><span class="section_number">2.4</span><span class="section_title">What plant?</span></h3>
+<p>dragon fruit cultivation <a href="https://www.botanical-online.com/en/cultivation/dragon-fruit-how-to-grow">https://www.botanical-online.com/en/cultivation/dragon-fruit-how-to-grow</a> Evolutionarily natural habitat</p>
+<ul>
+<li>&quot;In nature, these plants grow under the canopy of trees.&quot;</li>
+<li>&quot;Annual rainfall: 800mm to 1,500mm&quot;</li>
+<li>&quot;Temperature: 18 to 26 deg C&quot;</li>
+<li>&quot;Drought resistant and sensitive to cold&quot;</li>
+<li>&quot;Deep and well drained soils&quot;</li>
+<li>seed or vegetative reproduction (cactus)</li>
+</ul>
+<p>&quot;Plants can take up to five years to come into full commercial production&quot; What is the natural seed dispersal method of</p>
+<p>Jual tanaman hias lebih untung? Roses? Orchids? Mawar? Anggrek?</p>
+<h3 id="growing-medium"><span class="section_number">2.5</span><span class="section_title">Growing medium</span></h3>
+<p>Plants do not need soil; they need a <em>growing medium</em> (a medium for growing, not a medium that is growing). The purpose of the growing medium is to hold water and nutrients such that plant roots can absorb them. It has to be slightly <em>porous</em> and it has to have the right granularity. If the grain is too small, the medium will dissolve in water. If the grain is too big, the medium will not hold water.</p>
+<h3 id="humanure-composting"><span class="section_number">2.6</span><span class="section_title">Humanure composting</span></h3>
+<p>Rob Greenfield<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
+<h3 id="backyard-permaculture"><span class="section_number">2.7</span><span class="section_title">Backyard permaculture</span></h3>
+<h2 id="level-2-100-square-meter-medium-tree-planter"><span class="section_number">3</span><span class="section_title">Level 2: 100-square-meter medium-tree planter</span></h2>
+<p>Now it's time to move out to somewhere less crowded, because we are going to deal with smelly things such as compost piles, animals, and manure, and our urban neighbors would complain.</p>
+<p>Buy a patch of land with a reliable water source.</p>
+<p>Limit to 100 square meters, or you'll be overwhelmed.</p>
+<p>Raise chickens?</p>
+<p>In 2019, there is still <em>a lot</em> of untouched land, even in the island of Java alone. Not everyone has to live in cities.</p>
+<ul>
+<li>Moringa oleifera<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>, kelor<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>, drumstick tree; Wikipedia says that this tree is a fast-growing, long-living, heat-tolerant, 7-to-11-meters-tall, aggressive invasive species; I think the tree must absorb <em>a lot</em> of nutrients from the soil in order to do that.</li>
+<li>cacao fruit</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#get-a-car">Get a car?</a></span><span class="word_count">(50w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#find-a-market">Find a market</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#get-a-patch-of-land-100-square-meters-or-bigger">Get a patch of land, 100 square meters or bigger</a></span><span class="word_count">(939w~5m)</span></li>
+</ul>
+</div>
+<h3 id="get-a-car"><span class="section_number">3.1</span><span class="section_title">Get a car?</span></h3>
+<p>For moving between home and farm, and to move the harvest to the market.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1.1</span><span class="section_title"><a href="#get-a-drivers-license">Get a driver's license?</a></span><span class="word_count">(35w~1m)</span></li>
+</ul>
+</div>
+<h4 id="get-a-drivers-license"><span class="section_number">3.1.1</span><span class="section_title">Get a driver's license?</span></h4>
+<p>SIM B2?</p>
+<p>What is the penalty for getting caught driving without license? Pidana kurungan paling lama 4 bulan atau denda paling banyak Rp 1.000.000?<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a></p>
+<p>Majority of Indonesian truck drivers do not have driving license.</p>
+<h3 id="find-a-market"><span class="section_number">3.2</span><span class="section_title">Find a market</span></h3>
+<h3 id="get-a-patch-of-land-100-square-meters-or-bigger"><span class="section_number">3.3</span><span class="section_title">Get a patch of land, 100 square meters or bigger</span></h3>
+<p>Should we just buy a land somewhere in Bogor or borrow a land somewhere in Bandung, or should we start with Jakarta backyard pots first?</p>
+<p>Considerations, from the most important:</p>
+<ul>
+<li>Distance to market.</li>
+<li>Soil health. If there are grass and trees on it, then it should be healthy enough.</li>
+<li>Air pollution from forest fires and factories?</li>
+<li>River pollution from upstream.</li>
+<li>Disasters such as earthquake, landslide, flood.</li>
+<li>Diseases, animals, and parasites such as mosquitos.</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.3.1</span><span class="section_title"><a href="#on-permaculture-homesteading-and-finding-a-place-to-live">On permaculture, homesteading, and finding a place to live</a></span><span class="word_count">(121w~1m)</span></li>
+<li><span class="section_number">3.3.2</span><span class="section_title"><a href="#finding-a-place-to-live">Finding a place to live</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">3.3.3</span><span class="section_title"><a href="#deprecated">Deprecated</a></span><span class="word_count">(720w~4m)</span></li>
+</ul>
+</div>
+<h4 id="on-permaculture-homesteading-and-finding-a-place-to-live"><span class="section_number">3.3.1</span><span class="section_title">On permaculture, homesteading, and finding a place to live</span></h4>
+<p>On permaculture and homesteading, especially in Indonesia</p>
+<p>What is the easiest place?</p>
+<p>My initial guess is next to a river, preferably upstream, because it is less likely to be polluted.</p>
+<p>Water, nutrient, transport, electricity, infrastructure, internet, access, roads, civilization, hospitals, characters/beliefs of local people.</p>
+<p>Government zone plan? Bureaucracy?</p>
+<p>(Jakarta…)</p>
+<p>Kalimantan risk: Pembakaran hutan untuk lahan kelapa sawit. &lt;2019-08-19&gt; Yudi said it was not too severe in Sanggau.</p>
+<p>Masker rekomendasi Yudi <a href="https://www.tokopedia.com/untungteknik/o-po-masker-n95-1502-particulate-respirator-masker-kertas-with-valve/review">https://www.tokopedia.com/untungteknik/o-po-masker-n95-1502-particulate-respirator-masker-kertas-with-valve/review</a></p>
+<p>Rekomendasi Mufid: Tanah di Bogor beberapa hektar cuma beberapa ratus juta rupiah.</p>
+<p>Jakarta is sinking, polluted, and jammed, and the news does not give me the impression that the 2019 Jakarta governor Anies is competent enough to solve these problems.</p>
+<p>I doubt Jakarta government, but I doubt government outside Jakarta even more.</p>
+<h4 id="finding-a-place-to-live"><span class="section_number">3.3.2</span><span class="section_title">Finding a place to live</span></h4>
+<ul>
+<li>Internet access that is affordable and not shitty</li>
+</ul>
+<p>Permaculture, sustainability, ecological engineering, personal</p>
+<p>Natural-habitat database?<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a></p>
+<p>Ecological engineering curriculum?</p>
+<p>Plant doctor = plant scientist = plant pathologist</p>
+<p>Botanist?</p>
+<h4 id="deprecated"><span class="section_number">3.3.3</span><span class="section_title">Deprecated</span></h4>
+<p>(This section is impractical and deprecated. To simplify my search, I have constrained the target location to be at most 100 km from Jakarta.)</p>
+<ol>
+<li><p>Where should we live?</p>
+<p>Where is the best place to live? Where on Earth should we live?</p>
+<p>According to &quot;The Economist&quot;<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>, in 2018, Vienna is the most livable city, and it was Melbourne.</p>
+<p>The United States of America seems to be the most powerful country on Earth. I thought America was liberal; it turns out to be socialist. Also, America has too much frivolous lawsuits<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>.</p>
+<p>How do we measure, perhaps indirectly, the <em>rationality</em> a country? That is, how do we measure how likely its people think critically? How do we know which people use their brains?</p>
+<p>I am thinking about metrics that may correlate with the quality of life in a country. Among those metrics are immigration hardness, passport strength<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>, tax rate<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>, press freedom index<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> (journalist imprisonment rate?), human freedom index (HFI)<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>, most liberal country ranking<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a>. I think tax rate correlates with government size, and smaller government is better, but some high-tax-rate countries have good HFI.</p>
+<p>New Zealand sounds promising. It has good HFI.</p>
+<p>It seems that America has never killed or imprisoned journalists for criticizing people in power.</p>
+<p>I think that the country that is the hardest to immigrate into<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a> may be the best country on Earth. But I think those developed countries have their own problems.</p>
+<p>A strong passport means that other countries believe that the issuer will not export bad people.</p>
+<p>I think the solution to the refugee problem is not to take refugees, but to <em>fix the source country</em>, which must have become so messy that millions of people would rather die at sea than stay at home.</p>
+<p>Switzerland?<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a></p>
+<p>Making a house<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a></p></li>
+<li><p>Which places on Earth should we avoid?</p>
+<p>Big groups to avoid:</p>
+<ul>
+<li>natural disasters: hurricanes, earthquakes, heat wave, flood, etc.</li>
+<li>social disasters: dictatorship, Marxism, religious extremism, intolerance, unreliable law, questionable worldview, questionable government, police atrocity, oppression of the weak, etc.</li>
+</ul>
+<p>It's wise to avoid places with known disaster risks:</p>
+<ul>
+<li>US risky areas:
+<ul>
+<li>Florida, North Carolina: hurricanes</li>
+<li>San Francisco, California: earthquakes and soil liquefaction</li>
+<li>Tornado alley (where?)</li>
+<li>North Carolina: missing nuclear bomb<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a></li>
+</ul></li>
+<li>Japan, South Korea, Philippines: 2018 super typhoon Jebi and Mangkhut</li>
+<li>areas in the Ring of Fire<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a><a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a></li>
+</ul>
+<p>USA: foods full of additives, broken expensive higher education, broken expensive healthcare, intolerance (especially political), entitlement mentality, Internet surveillance.<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a><a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a> Mass shooting. Bad work-life balance. Regulatory capture. Despite all that, USA is still much better than the other countries in the not-to-live list. It casts doubt upon me: I am thinking about moving to America, but the Americans themselves are thinking about leaving America. The grass is always greener on the other side of the fence?</p>
+<p>Australia: heat wave<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a>.</p>
+<p>French: police atrocity<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a>.</p>
+<p>Indonesia: police atrocity, miscarriage of justice, justices lacking integrity, JIS case, unreliable law,<a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a><a href="#fn36" class="footnote-ref" id="fnref36"><sup>36</sup></a>, unnecessary regulation and bureaucracy, Internet censorship. Imprisonment of drug users (who are victims and should be helped, not imprisoned). Muslim extremists. Bali: annual Nyepi days. Palu: earthquake and liquefaction. Aceh: tsunami, sharia, subductions, and Muslim extremists. Selat Sunda: Krakatau, subductions.</p>
+<p>Philippines: Muslim extremists, 2019 church bombing<a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a><a href="#fn38" class="footnote-ref" id="fnref38"><sup>38</sup></a></p>
+<p>Thailand: toxic smog<a href="#fn39" class="footnote-ref" id="fnref39"><sup>39</sup></a></p>
+<p>China: air pollution (but I heard it was improving)</p>
+<p>North Korea: for obvious reasons; also Otto Warmbier case</p>
+<p>Latin America: interference from the USA?</p>
+<p>France, inequality, gilets jaunes</p>
+<p>Egypt: Muslim extremists, strange laws, imprisoning Laura Plummer for bringing painkillers to her ailing boyfriend.</p>
+<p>Brazil: 2019 dam collapse, anti-LGBT, and now Trumpian president in 2019.</p>
+<p>India: bombing, terrorism<a href="#fn40" class="footnote-ref" id="fnref40"><sup>40</sup></a>, Muslim extremists, Hindu extremists, castes (social segregation), stray cattle problems<a href="#fn41" class="footnote-ref" id="fnref41"><sup>41</sup></a>, superbugs, heat wave, extreme poverty, 2019 Aadhaar (national identity database) data leak<a href="#fn42" class="footnote-ref" id="fnref42"><sup>42</sup></a> (not the first time), 2019 SBI data leak<a href="#fn43" class="footnote-ref" id="fnref43"><sup>43</sup></a>, and God knows what else.</p>
+<p>Pakistan: Muslim extremists, Asia Bibi case.</p>
+<p>Arabic countries, Muslim countries, and refugee origin countries. UAE: wrongful conviction and imprisonment of Matthew Hedges<a href="#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a><a href="#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a>. Saudi Arabia: dictatorship, arbitrary detention<a href="#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a><a href="#fn47" class="footnote-ref" id="fnref47"><sup>47</sup></a>, assassination of Jamal Khashoggi<a href="#fn48" class="footnote-ref" id="fnref48"><sup>48</sup></a>, Yemen bombings<a href="#fn49" class="footnote-ref" id="fnref49"><sup>49</sup></a>. Iraq and Iran: the war between them. Afghanistan: The Afghan refugees would rather flee Afghanistan. Syrian: The Syrian refugees would rather flee Syria. ISIS/ISIL, Muslim extremists.</p>
+<p>Israel: surrounded by neighboring countries who want to kill you.</p>
+<p>China, surveillance, Big Brother government, dictatorships. But I do agree with some of their policies and stances; I'm torn.</p>
+<p>What can you do if you are an average person born who is born in a shitty place but wants to move to a better place? You don't have &quot;a post-secondary education, a job offer in Canada, close relatives in the northern nation, a business to bring north or 'a high net worth or significant financial resources'&quot;<a href="#fn50" class="footnote-ref" id="fnref50"><sup>50</sup></a>. You are not an oppressed minority either.</p></li>
+</ol>
+<h2 id="level-3-botanist-permaculturist-ecological-engineer"><span class="section_number">4</span><span class="section_title">Level 3: Botanist, permaculturist, ecological engineer</span></h2>
+<p>Close the nutrient cycle.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#how-does-a-plant-know-that-it-is-the-time-to-fruit-to-reproduce">How does a plant know that it is the time to fruit (to reproduce)?</a></span><span class="word_count">(44w~1m)</span></li>
+</ul>
+</div>
+<h3 id="how-does-a-plant-know-that-it-is-the-time-to-fruit-to-reproduce"><span class="section_number">4.1</span><span class="section_title">How does a plant know that it is the time to fruit (to reproduce)?</span></h3>
+<p>Abundance of properly balanced nutrition. Reproduction is costly. In principle, a plant begins fruiting if the circumstances at the <em>maturation</em> of the fruit maximize the chance of survival of the offspring.<a href="#fn51" class="footnote-ref" id="fnref51"><sup>51</sup></a></p>
+<h2 id="level-4-people-builder-who-lifts-people-out-of-poverty"><span class="section_number">5</span><span class="section_title">Level 4: People builder who lifts people out of poverty</span></h2>
+<p>We have to fix the mindset.</p>
+<p>Seek wealth, not money.</p>
+<p>What is wealth? I define it as the sum of satisfied wants.</p>
+<p>We must distinguish between <em>wealthy</em> and <em>moneyful</em>. An example of a moneyful-but-poor person is one who has a lot of money but hardly uses it. An example of a moneyless-but-wealthy person a farmer without money but can eat whatever he wants to, anytime he wants to, from his fertile productive land.</p>
+<p>Nature pays everyone who works. Nature pays workers directly with wealth, not indirectly with money.</p>
+<p>I dream that everyone sufficiently feeds themself from their own patch of land. Bill Gates wanted a personal computer at every home; I want a food garden at every home, and I want every neighborhood to close their nutrient cycle.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#fellow-people-tired-of-modern-life-and-its-associated-rat-race">&lt;2019-08-24&gt; Fellow people tired of modern life and its associated rat race</a></span><span class="word_count">(44w~1m)</span></li>
+</ul>
+</div>
+<h3 id="fellow-people-tired-of-modern-life-and-its-associated-rat-race"><span class="section_number">5.1</span><span class="section_title">&lt;2019-08-24&gt; Fellow people tired of modern life and its associated rat race</span></h3>
+<p><a href="https://www.reddit.com/r/TrueOffMyChest/comments/b0rgq4/modern_life_is_complete_garbage/">https://www.reddit.com/r/TrueOffMyChest/comments/b0rgq4/modern_life_is_complete_garbage/</a></p>
+<p>I'm tired as well.</p>
+<p>Nature has given us everything we need to survive. There is no reason to work beyond the minimum necessary for survival.</p>
+<p>People can have a nice job and <em>still</em> hate it.</p>
+<h2 id="level-5-mining-smelting-manufacturing-toolmaking"><span class="section_number">6</span><span class="section_title">Level 5: Mining, smelting, manufacturing, toolmaking</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#geology">Geology</a></span><span class="word_count">(28w~1m)</span></li>
+</ul>
+</div>
+<h3 id="geology"><span class="section_number">6.1</span><span class="section_title">Geology</span></h3>
+<p>Why only some mountains erupt? Why are some mountains active and some inactive?</p>
+<p>How do we predict the locations of chemical elements? Which chemical elements are found where?</p>
+<p>What? <a href="https://en.wikipedia.org/wiki/Geologic_map">https://en.wikipedia.org/wiki/Geologic_map</a></p>
+<h2 id="level-50-fuel"><span class="section_number">7</span><span class="section_title">Level 50: Fuel?</span></h2>
+<h2 id="level-60-carmaking"><span class="section_number">8</span><span class="section_title">Level 60: Carmaking</span></h2>
+<h2 id="level-70-computer-making"><span class="section_number">9</span><span class="section_title">Level 70: Computer-making</span></h2>
+<h2 id="level-80-weapon-and-defense"><span class="section_number">10</span><span class="section_title">Level 80: Weapon and defense</span></h2>
+<p>We can outsource this to the government of Indonesia. We can depend on the government of Indonesia to protect us. In exchange, we create real economic growth.</p>
+<h2 id="level-90-establish-a-society"><span class="section_number">11</span><span class="section_title">Level 90: Establish a society</span></h2>
+<h2 id="level-100-aquanauts-seafaring-deep-ocean-diving"><span class="section_number">12</span><span class="section_title">Level 100: Aquanauts? Seafaring? Deep ocean diving?</span></h2>
+<h2 id="level-200-spacefaring"><span class="section_number">13</span><span class="section_title">Level 200: Spacefaring?</span></h2>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Jakarta Is The World's Fastest-Sinking City (HBO) <a href="https://www.youtube.com/watch?v=dNE5aptbGyY">https://www.youtube.com/watch?v=dNE5aptbGyY</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Jakarta is sinking! - Equator from the Air - BBC <a href="https://www.youtube.com/watch?v=qOSwBIstZUs">https://www.youtube.com/watch?v=qOSwBIstZUs</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>1:55 in <a href="https://www.youtube.com/watch?v=dNE5aptbGyY">https://www.youtube.com/watch?v=dNE5aptbGyY</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="http://dharmajaya.co.id/">http://dharmajaya.co.id/</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="http://smartcity.jakarta.go.id/blog/198/beli-daging-online-dari-perusahaan-daerah-dharma-jaya">http://smartcity.jakarta.go.id/blog/198/beli-daging-online-dari-perusahaan-daerah-dharma-jaya</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://www.instagram.com/djmeatshop/">https://www.instagram.com/djmeatshop/</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="http://m.warungdaging.com/#features">http://m.warungdaging.com/#features</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="http://infopangan.jakarta.go.id/">http://infopangan.jakarta.go.id/</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="http://www.pasarjaya.co.id/komoditas">http://www.pasarjaya.co.id/komoditas</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://www.plantsnap.com/">https://www.plantsnap.com/</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://en.wikipedia.org/wiki/Scadoxus_multiflorus">https://en.wikipedia.org/wiki/Scadoxus_multiflorus</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://en.wikipedia.org/wiki/Murraya_paniculata">https://en.wikipedia.org/wiki/Murraya_paniculata</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>I Compost my Own Poop! Humanure <a href="https://www.youtube.com/watch?v=h1c7voDyIGc">https://www.youtube.com/watch?v=h1c7voDyIGc</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://en.wikipedia.org/wiki/Moringa_oleifera">https://en.wikipedia.org/wiki/Moringa_oleifera</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p><a href="https://id.wikipedia.org/wiki/Kelor">https://id.wikipedia.org/wiki/Kelor</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p><a href="https://id.wikipedia.org/wiki/Surat_Izin_Mengemudi#Ketentuan_Pidana">https://id.wikipedia.org/wiki/Surat_Izin_Mengemudi#Ketentuan_Pidana</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p><a href="https://www.researchgate.net/post/Is_there_a_database_describing_the_various_habitat_characteristics_of_plant_species_worldwide">https://www.researchgate.net/post/Is_there_a_database_describing_the_various_habitat_characteristics_of_plant_species_worldwide</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p>&quot;Where is the world's most liveable city?&quot;, The Economist <a href="https://www.youtube.com/watch?v=ylR21fezN7E">https://www.youtube.com/watch?v=ylR21fezN7E</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p><a href="https://www.legalzoom.com/articles/top-ten-frivolous-lawsuits">https://www.legalzoom.com/articles/top-ten-frivolous-lawsuits</a><a href="#fnref19" class="footnote-back">↩</a></p></li>
+<li id="fn20"><p><a href="https://www.passportindex.org/byRank.php">https://www.passportindex.org/byRank.php</a><a href="#fnref20" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p><a href="https://en.wikipedia.org/wiki/List_of_countries_by_tax_rates">https://en.wikipedia.org/wiki/List_of_countries_by_tax_rates</a><a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p><a href="https://en.wikipedia.org/wiki/Press_Freedom_Index">https://en.wikipedia.org/wiki/Press_Freedom_Index</a><a href="#fnref22" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p><a href="https://www.cato.org/human-freedom-index-new">https://www.cato.org/human-freedom-index-new</a><a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn24"><p><a href="https://www.worldatlas.com/articles/the-10-most-liberal-countries-of-the-world.html">https://www.worldatlas.com/articles/the-10-most-liberal-countries-of-the-world.html</a><a href="#fnref24" class="footnote-back">↩</a></p></li>
+<li id="fn25"><p><a href="https://www.investopedia.com/articles/personal-finance/121114/5-hardest-countries-getting-citizenship.asp">https://www.investopedia.com/articles/personal-finance/121114/5-hardest-countries-getting-citizenship.asp</a><a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn26"><p><a href="https://getpocket.com/explore/item/living-in-switzerland-ruined-me-for-america-and-its-lousy-work-culture">https://getpocket.com/explore/item/living-in-switzerland-ruined-me-for-america-and-its-lousy-work-culture</a><a href="#fnref26" class="footnote-back">↩</a></p></li>
+<li id="fn27"><p><a href="https://en.wikipedia.org/wiki/List_of_human_habitation_forms">https://en.wikipedia.org/wiki/List_of_human_habitation_forms</a><a href="#fnref27" class="footnote-back">↩</a></p></li>
+<li id="fn28"><p>Vsauce: &quot;Cruel Bombs&quot; <a href="https://www.youtube.com/watch?v=SHZAaGidUbg">https://www.youtube.com/watch?v=SHZAaGidUbg</a><a href="#fnref28" class="footnote-back">↩</a></p></li>
+<li id="fn29"><p><a href="https://en.wikipedia.org/wiki/Ring_of_Fire">https://en.wikipedia.org/wiki/Ring_of_Fire</a><a href="#fnref29" class="footnote-back">↩</a></p></li>
+<li id="fn30"><p>South East Asia earthquake map <a href="https://cilisos.my/what-protects-malaysia-from-all-these-earthquakes-that-is-happening-in-indonesia/">https://cilisos.my/what-protects-malaysia-from-all-these-earthquakes-that-is-happening-in-indonesia/</a><a href="#fnref30" class="footnote-back">↩</a></p></li>
+<li id="fn31"><p><a href="https://www.quora.com/Is-USA-a-good-place-to-live-in">https://www.quora.com/Is-USA-a-good-place-to-live-in</a><a href="#fnref31" class="footnote-back">↩</a></p></li>
+<li id="fn32"><p><a href="https://www.vice.com/en_us/article/ev4aww/american-ex-pats-explain-why-they-quit-america">https://www.vice.com/en_us/article/ev4aww/american-ex-pats-explain-why-they-quit-america</a><a href="#fnref32" class="footnote-back">↩</a></p></li>
+<li id="fn33"><p><a href="https://www.theguardian.com/australia-news/2018/dec/24/christmas-day-heatwave-weather-records-temperatures-forecast-heat-wave-australia-sydney-melbourne-adelaide">https://www.theguardian.com/australia-news/2018/dec/24/christmas-day-heatwave-weather-records-temperatures-forecast-heat-wave-australia-sydney-melbourne-adelaide</a><a href="#fnref33" class="footnote-back">↩</a></p></li>
+<li id="fn34"><p><a href="https://en.wikipedia.org/wiki/Rémi_Fraisse">https://en.wikipedia.org/wiki/Rémi_Fraisse</a><a href="#fnref34" class="footnote-back">↩</a></p></li>
+<li id="fn35"><p>Perkap hanya kertas. Fix the system. Jangan bikin lomba menyelesaikan kasus. <a href="https://tirto.id/polisi-kami-akui-ada-kasus-salah-tangkap-cKi8">https://tirto.id/polisi-kami-akui-ada-kasus-salah-tangkap-cKi8</a><a href="#fnref35" class="footnote-back">↩</a></p></li>
+<li id="fn36"><p>Enak sekali jadi hakim: salah tidak perlu tanggung jawab? <a href="https://www.hukumonline.com/berita/baca/hol5949/kesalahan-hakim-tanggung-jawab-siapa">https://www.hukumonline.com/berita/baca/hol5949/kesalahan-hakim-tanggung-jawab-siapa</a><a href="#fnref36" class="footnote-back">↩</a></p></li>
+<li id="fn37"><p><a href="https://www.theguardian.com/world/2019/jan/27/two-bombs-explode-at-philippines-cathedral-killing-people">https://www.theguardian.com/world/2019/jan/27/two-bombs-explode-at-philippines-cathedral-killing-people</a><a href="#fnref37" class="footnote-back">↩</a></p></li>
+<li id="fn38"><p><a href="https://www.aljazeera.com/news/2019/01/southern-philippines-mosque-hit-deadly-grenade-attack-190130004852265.html">https://www.aljazeera.com/news/2019/01/southern-philippines-mosque-hit-deadly-grenade-attack-190130004852265.html</a><a href="#fnref38" class="footnote-back">↩</a></p></li>
+<li id="fn39"><p><a href="https://www.theguardian.com/world/2019/jan/30/toxic-smog-forces-bangkok-to-close-hundreds-of-schools">https://www.theguardian.com/world/2019/jan/30/toxic-smog-forces-bangkok-to-close-hundreds-of-schools</a><a href="#fnref39" class="footnote-back">↩</a></p></li>
+<li id="fn40"><p><a href="https://en.wikipedia.org/wiki/List_of_terrorist_incidents_in_India">https://en.wikipedia.org/wiki/List_of_terrorist_incidents_in_India</a><a href="#fnref40" class="footnote-back">↩</a></p></li>
+<li id="fn41"><p><a href="https://www.odditycentral.com/animals/indias-sacred-strays-millions-of-urban-cows-living-alongside-humans.html">https://www.odditycentral.com/animals/indias-sacred-strays-millions-of-urban-cows-living-alongside-humans.html</a><a href="#fnref41" class="footnote-back">↩</a></p></li>
+<li id="fn42"><p><a href="https://techcrunch.com/2019/01/31/aadhaar-data-leak/">https://techcrunch.com/2019/01/31/aadhaar-data-leak/</a><a href="#fnref42" class="footnote-back">↩</a></p></li>
+<li id="fn43"><p><a href="https://techcrunch.com/2019/01/30/state-bank-india-data-leak/">https://techcrunch.com/2019/01/30/state-bank-india-data-leak/</a><a href="#fnref43" class="footnote-back">↩</a></p></li>
+<li id="fn44"><p><a href="https://www.theguardian.com/world/2018/nov/21/british-academic-matthew-hedges-accused-of-spying-jailed-for-life-in-uae">https://www.theguardian.com/world/2018/nov/21/british-academic-matthew-hedges-accused-of-spying-jailed-for-life-in-uae</a><a href="#fnref44" class="footnote-back">↩</a></p></li>
+<li id="fn45"><p><a href="https://www.theguardian.com/world/2018/nov/26/matthew-hedges-jailed-british-academic-pardoned-by-uae">https://www.theguardian.com/world/2018/nov/26/matthew-hedges-jailed-british-academic-pardoned-by-uae</a><a href="#fnref45" class="footnote-back">↩</a></p></li>
+<li id="fn46"><p><a href="https://en.wikipedia.org/wiki/2017_Saudi_Arabian_purge">https://en.wikipedia.org/wiki/2017_Saudi_Arabian_purge</a><a href="#fnref46" class="footnote-back">↩</a></p></li>
+<li id="fn47"><p><a href="https://www.hrw.org/news/2018/05/06/saudi-arabia-thousands-held-arbitrarily">https://www.hrw.org/news/2018/05/06/saudi-arabia-thousands-held-arbitrarily</a><a href="#fnref47" class="footnote-back">↩</a></p></li>
+<li id="fn48"><p><a href="https://en.wikipedia.org/wiki/Assassination_of_Jamal_Khashoggi">https://en.wikipedia.org/wiki/Assassination_of_Jamal_Khashoggi</a><a href="#fnref48" class="footnote-back">↩</a></p></li>
+<li id="fn49"><p><a href="https://en.wikipedia.org/wiki/Saudi_Arabian-led_intervention_in_Yemen">https://en.wikipedia.org/wiki/Saudi_Arabian-led_intervention_in_Yemen</a><a href="#fnref49" class="footnote-back">↩</a></p></li>
+<li id="fn50"><p><a href="https://www.usatoday.com/story/tech/news/2016/11/10/100000-americans-crashed-canadian-immigration-site/93587034/">https://www.usatoday.com/story/tech/news/2016/11/10/100000-americans-crashed-canadian-immigration-site/93587034/</a><a href="#fnref50" class="footnote-back">↩</a></p></li>
+<li id="fn51"><p><a href="https://www.wonderopolis.org/wonder/how-do-plants-know-when-to-flower">https://www.wonderopolis.org/wonder/how-do-plants-know-when-to-flower</a><a href="#fnref51" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-08-30 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
