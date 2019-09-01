@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On anomalies</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On anomalies</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#on-the-language-we-use-for-anomalies-and-unexplained-phenomenons">On the language we use for anomalies and unexplained phenomenons</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#on-beginning-anomaly-research">On beginning anomaly research</a></span><span class="word_count">(269w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#on-precognition-and-retrocausation">On precognition and retrocausation</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#on-paranormal-evidences-especially-those-captured-by-21st-century-equipments">On paranormal <em>evidences</em>, especially those captured by 21st century equipments</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#reports-of-experiencing-the-subjective-experience-of-others">Reports of experiencing the subjective experience of others</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#on-testing-alleged-mind-body-interactions">On testing alleged mind-body interactions</a></span><span class="word_count">(1421w~8m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#english-indonesian-term-concordance">English-Indonesian term concordance</a></span><span class="word_count">(7w~1m)</span></li>
+</ul>
+</div>
+<h2 id="on-the-language-we-use-for-anomalies-and-unexplained-phenomenons"><span class="section_number">1</span><span class="section_title">On the language we use for anomalies and unexplained phenomenons</span></h2>
+<p>The field of study of anomalies is called <em>anomalistics</em><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. See also ASSAP<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<p>There is also <em>parapsychology</em>.</p>
+<p>Paranormal<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>The &quot;para-&quot; prefix means &quot;beyond&quot; or &quot;beside&quot;.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p><a href="https://www.google.com/amp/s/amp.reddit.com/r/Paranormal/comments/48bwox/exskeptics_what_event_convinced_you_of_the/">https://www.google.com/amp/s/amp.reddit.com/r/Paranormal/comments/48bwox/exskeptics_what_event_convinced_you_of_the/</a></p>
+<p><a href="https://abcnews.go.com/GMA/Weekend/psychic-reveals-tricks-trade/story?id=10590096">https://abcnews.go.com/GMA/Weekend/psychic-reveals-tricks-trade/story?id=10590096</a></p>
+<p><a href="https://www.cia.gov/library/readingroom/document/cia-rdp96-00788r000100340001-4">https://www.cia.gov/library/readingroom/document/cia-rdp96-00788r000100340001-4</a></p>
+<h2 id="on-beginning-anomaly-research"><span class="section_number">2</span><span class="section_title">On beginning anomaly research</span></h2>
+<p>Lots of frauds and unreliable anecdotes. <em>Where should we begin?</em> We can begin from these:</p>
+<ul>
+<li>corroborated report by an independent third party (not a self-report by the psychic himself),</li>
+<li>evidence in which its authors have no motive to falsify the record,</li>
+<li>accounts of skeptical ghost hunters.</li>
+</ul>
+<p>Google doesn't help much, because its search result for &quot;psychic&quot; is polluted with <em>cold-reading industry</em><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> stuff. That industry taints the term &quot;psychic&quot; and encumbers my Google search. But <em>you can help:</em> Stop calling cold-readers &quot;psychics&quot;, and use &quot;psychics&quot; only for real psychics. Call people what they are, not what they claim to be.</p>
+<p>Google search result for psychic-related terms is full of two things:</p>
+<ul>
+<li>cold-readers trying to sell you shit,</li>
+<li>disbelievers shoving their shit on you.</li>
+</ul>
+<p>Wikipedia is also of little help; it is infested by disbelievers.</p>
+<p>Disbelievers are not skeptics.</p>
+<p>Reddit is a better starting point than Google for anomaly research. Example: The &quot;Psychic&quot; subreddit<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
+<p>Is there a &quot;psychic&quot; who does not ask for too many confirmations? A &quot;psychic&quot; who asks for too many confirmations is a cold-reader, not a psychic.<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<p>Choose a class of phenomenon (two example classes are precognition and psychokinesis). Focus one day on finding evidences of it.</p>
+<p>For corroborated reports, we can begin from the document &quot;Newspaper articles re psychics&quot;<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>, which is part of the Stargate project of the CIA.</p>
+<p>Either all those people are insane, or there is something we don't know. If there is one or two reports, the reporter may be hallucinating. If there are thousands of reports, there may be something going on.</p>
+<p>Not enough details in this report<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a></p>
+<p>Forer effect (making &quot;predictions&quot; that are true for most people) is not psychic.</p>
+<p>Has any skeptic changed his belief?<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a></p>
+<h2 id="on-precognition-and-retrocausation"><span class="section_number">3</span><span class="section_title">On precognition and retrocausation</span></h2>
+<p><a href="https://scry.cloud/">scry.cloud</a> may be an interesting starting point for testing. Can we find a Scry user whose accuracy is anomalous?</p>
+<p>The &quot;precognition&quot; subreddit<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
+<p>Does precognition imply retrocausation?</p>
+<h2 id="on-paranormal-evidences-especially-those-captured-by-21st-century-equipments"><span class="section_number">4</span><span class="section_title">On paranormal <em>evidences</em>, especially those captured by 21st century equipments</span></h2>
+<p>Witnesses are often reliable.</p>
+<p>Most evidence was anecdotal until J.B. Rhine began using statistics.<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a></p>
+<p>We assume that the records are not manipulated?</p>
+<p>EVP?</p>
+<p>Camera?</p>
+<p>Are these experiments trustworthy? <a href="https://www.consciouslifestylemag.com/mind-over-matter-experiments/">https://www.consciouslifestylemag.com/mind-over-matter-experiments/</a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#are-there-double-blind-parapsychological-experiments">Are there double-blind parapsychological experiments?</a></span><span class="word_count">(36w~1m)</span></li>
+</ul>
+</div>
+<h3 id="are-there-double-blind-parapsychological-experiments"><span class="section_number">4.1</span><span class="section_title">Are there double-blind parapsychological experiments?</span></h3>
+<p>What does the oil industry say about dowsers? How much money are they betting on it? If it were big, there had to be something? <a href="https://www.quora.com/What-are-some-practical-applications-of-parapsychology">https://www.quora.com/What-are-some-practical-applications-of-parapsychology</a></p>
+<p>What do the archeologists say about psychics?</p>
+<h2 id="reports-of-experiencing-the-subjective-experience-of-others"><span class="section_number">5</span><span class="section_title">Reports of experiencing the subjective experience of others</span></h2>
+<p><a href="https://www.reddit.com/r/precognition/comments/bhbxzb/seeing_through_the_eyes_of_another_person/">https://www.reddit.com/r/precognition/comments/bhbxzb/seeing_through_the_eyes_of_another_person/</a></p>
+<h2 id="on-testing-alleged-mind-body-interactions"><span class="section_number">6</span><span class="section_title">On testing alleged mind-body interactions</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#on-the-legitimacy-of-psychic-claims">On the legitimacy of psychic claims</a></span><span class="word_count">(220w~2m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#on-russell-targs-claim-of-remote-viewing">On Russell Targ's claim of remote viewing</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#on-police-cases-allegedly-solved-by-psychics">On police cases allegedly solved by psychics</a></span><span class="word_count">(113w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#on-possessions-out-of-body-experiences-obes-and-near-death-experiences-ndes">On possessions, out-of-body experiences (OBEs), and near-death experiences (NDEs)</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">6.5</span><span class="section_title"><a href="#wanted-replicable-magick-experiments">Wanted: replicable magick experiments</a></span><span class="word_count">(382w~2m)</span></li>
+<li><span class="section_number">6.6</span><span class="section_title"><a href="#obtaining-magickal-powers">Obtaining magickal powers?</a></span><span class="word_count">(662w~4m)</span></li>
+</ul>
+</div>
+<h3 id="on-the-legitimacy-of-psychic-claims"><span class="section_number">6.1</span><span class="section_title">On the legitimacy of psychic claims</span></h3>
+<p>Psychic claims are <em>falsifiable</em>, but unfortunately most are frauds. We should test those which are not frauds, as seriously as we test scientific theories.</p>
+<p>It seems to me that, in the &quot;psychic&quot; world, fame and legitimacy are inversely correlated.</p>
+<p>Cold reading is not psychic.</p>
+<p>Where do we find the real psychics, if they exist at all? We should begin not from famous &quot;psychics&quot;, but we should begin from &quot;proven&quot; psychics, those who have solved police cases <em>several</em> times.</p>
+<p>Can we trust these people?</p>
+<ul>
+<li>Bob Olson claims to have a methodology<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> for his &quot;Genuine &amp; Legitimate Psychic Mediums List&quot;<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>, but he puts a disclaimer<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>, so is he saying anything at all?</li>
+<li>&quot;Troy Griffin claims he's worked on more than 100 missing persons cases.&quot;<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a></li>
+</ul>
+<p>It is not about 100% accuracy; it is about <em>much better than chance</em>.</p>
+<p>If police knows psychics, then there will be no cold cases? Does the existence of cold cases prove that psychics do not exist?</p>
+<p>It is easy to test psychic mediums, telepaths, clairvoyants, and other kinds of psychics. However, it is difficult to <em>replicate</em> the test, because, if it works, it works only with a particular psychic, so it is hard for different researchers at different places to replicate the experiment at different times.</p>
+<p>If we can prove that psychic mediums are reliable, can we infer the existence of <em>disembodied minds</em>?</p>
+<h3 id="on-russell-targs-claim-of-remote-viewing"><span class="section_number">6.2</span><span class="section_title">On Russell Targ's claim of remote viewing</span></h3>
+<p>How do we test it?</p>
+<p>Banned TEDTalk about Psychic Abilities | Russell Targ | suespeaks.org <a href="https://www.youtube.com/watch?v=hBl0cwyn5GY">https://www.youtube.com/watch?v=hBl0cwyn5GY</a></p>
+<h3 id="on-police-cases-allegedly-solved-by-psychics"><span class="section_number">6.3</span><span class="section_title">On police cases allegedly solved by psychics</span></h3>
+<p>Psychic detective<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a></p>
+<p>We need a psychic who has solved <em>several</em> cases and is corroborated by an independent third party (such as the police; the case must not be self-reported by the psychic himself). He is probably not famous. He probably does not call himself &quot;psychic&quot; because that word has been tainted by fraudsters.</p>
+<p>From a 2000 article by CIA<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>, I infer:</p>
+<ul>
+<li>Police uses psychics, but rarely, and mostly as last resort.</li>
+<li>Most psychics are unreliable, although some have unexplainedly high accuracy.</li>
+</ul>
+<p>Is there any people who unexplainedly solve <em>several</em> police cases?<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a><a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a><a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a></p>
+<p>How do we verify those claims? We can ask the police directly. I think we can assume that the police are honest.</p>
+<h3 id="on-possessions-out-of-body-experiences-obes-and-near-death-experiences-ndes"><span class="section_number">6.4</span><span class="section_title">On possessions, out-of-body experiences (OBEs), and near-death experiences (NDEs)</span></h3>
+<p>Sam Parnia, AWARE II study</p>
+<p>Pim van Lommel</p>
+<p>How do we verify, test, explain possessions and out-of-body experiences?</p>
+<h3 id="wanted-replicable-magick-experiments"><span class="section_number">6.5</span><span class="section_title">Wanted: replicable magick experiments</span></h3>
+<ul>
+<li><p>Notes?</p>
+<ul>
+<li>The presence of the experimenter affects the result?</li>
+<li>The experiments may need to be repeated many times?</li>
+</ul></li>
+<li><p>Experiment ideas, ordered from the easiest to repeat:</p>
+<ul>
+<li><p>Extrasensory perception</p>
+<ul>
+<li><p>Astral projection</p>
+<ol>
+<li>Get a person (A) who can astral-project.</li>
+<li>Generate a bit X.</li>
+<li>Ask A about X.</li>
+</ol></li>
+<li><p>Dream precognition</p>
+<ul>
+<li><p>Telepathy</p>
+<ol>
+<li>Get two telepathic people A and B. (If you are telepathic yourself, you can be any one of them.)</li>
+<li>Generate a bit X (0 or 1) that only you and A know.</li>
+<li>Let A telepathically tell X to B. (Take care to isolate each of you to avoid sensory leakage.)</li>
+<li>Ask B about X.</li>
+</ol></li>
+</ul></li>
+<li><p>Spirit possession</p>
+<ul>
+<li><p>Procedure:</p>
+<ol>
+<li>Get two mediums A and B. (If you are a medium yourself, you can be A.)</li>
+<li>Get A to summon a spirit S.</li>
+<li>Generate a bit X (0 or 1) that only you and A know.</li>
+<li>Let A tell X to S.</li>
+<li>Get S into B. (This needs more detail.)</li>
+<li>Ask the S-possessed B about X. If he/she consistently knows, we may have a support for dualism.</li>
+<li>Get S out of B.</li>
+</ol></li>
+<li>If the experiment result is promising, we can test the spirit's working memory capacity by replacing the bit X with a string, a number, a sentence, or whatever longer. The only important constraint is that you need to pick an X that is easy to remember but hard to guess.</li>
+<li><p>Problems:</p>
+<ol>
+<li>Mediation may be tiring? (Can get another medium?)</li>
+<li>Spirits may refuse to cooperate? (Can get another spirit?)</li>
+</ol></li>
+</ul></li>
+</ul></li>
+<li><p>Joint micropsychokinesis</p>
+<ul>
+<li><p>What if many people try to influence a RNG at once? So far experiments one person influences a RNG at a time. Does the effect add up?</p>
+<ul>
+<li>Is there even any effect at all?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>We might dismiss one person for hallucinating. Two unrelated honest people corroborating each other are less likely to be hallucinating. The more people say the same thing, the more serious the claim is. Not necessarily more true, but surely more serious. Most people are not pathological liars.</p>
+<ul>
+<li>The facts may be correct, but the explanation may be unjustified.</li>
+<li><a href="https://www.lesswrong.com/posts/CJxSgaqG6y7z6Rbij/are-mass-hallucinations-a-real-thing">https://www.lesswrong.com/posts/CJxSgaqG6y7z6Rbij/are-mass-hallucinations-a-real-thing</a></li>
+</ul></li>
+<li><p><a href="https://www.reddit.com/r/AskReddit/comments/1sv39b/serious_what_in_your_opinion_is_the_most/">https://www.reddit.com/r/AskReddit/comments/1sv39b/serious_what_in_your_opinion_is_the_most/</a></p>
+<ul>
+<li><p><a href="https://www.youtube.com/watch?v=92jFdzNC228&amp;feature=youtu.be&amp;t=2m28s">https://www.youtube.com/watch?v=92jFdzNC228&amp;feature=youtu.be&amp;t=2m28s</a></p>
+<ul>
+<li>Andy Coppock</li>
+</ul></li>
+<li><p><a href="https://www.youtube.com/watch?v=DL_bIhVJi-k&amp;feature=youtu.be">https://www.youtube.com/watch?v=DL_bIhVJi-k&amp;feature=youtu.be</a></p>
+<ul>
+<li><p>text summary <a href="https://www.reddit.com/r/AskReddit/comments/1sv39b/serious_what_in_your_opinion_is_the_most/ce25ska/">https://www.reddit.com/r/AskReddit/comments/1sv39b/serious_what_in_your_opinion_is_the_most/ce25ska/</a></p>
+<ul>
+<li>there is also a debunking</li>
+</ul></li>
+</ul></li>
+<li><p><a href="https://www.quora.com/What-are-the-most-convincing-paranormal-cases">https://www.quora.com/What-are-the-most-convincing-paranormal-cases</a></p></li>
+</ul></li>
+<li>From the ghost's point of view, it is we who are haunting them, not they who are haunting us. Or is it not that simple?</li>
+<li><p>aggregators</p>
+<ul>
+<li><a href="https://www.reddit.com/r/Paranormal/comments/7nh31e/creating_a_google_map_of_haunted_locations/">Creating a Google map of haunted locations</a></li>
+</ul></li>
+<li>some ghost pictures are due to crappy camera <a href="https://www.reddit.com/r/Paranormal/comments/6jdy18/question_why_does_every_ghost_picture_seem_to_be/">https://www.reddit.com/r/Paranormal/comments/6jdy18/question_why_does_every_ghost_picture_seem_to_be/</a></li>
+<li><p>scientific?</p>
+<ul>
+<li><a href="https://www.reddit.com/r/Paranormal/comments/w2b04/hello_rparanormal_i_am_a_physicist_and_i_have_an/">https://www.reddit.com/r/Paranormal/comments/w2b04/hello_rparanormal_i_am_a_physicist_and_i_have_an/</a></li>
+<li><p><a href="http://liparanormalinvestigators.com/">http://liparanormalinvestigators.com/</a></p>
+<ul>
+<li>They claim <a href="http://liparanormalinvestigators.com/evidence-gallery/">high standard of evidence</a>.</li>
+</ul></li>
+</ul></li>
+<li><p>2018-08-13</p>
+<ul>
+<li><p>I was too scared to view some materials at night. I did these:</p>
+<ul>
+<li>Play &quot;Yakety Sax&quot; in the background.</li>
+<li>Surf the Internet with my sister.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="obtaining-magickal-powers"><span class="section_number">6.6</span><span class="section_title">Obtaining magickal powers?</span></h3>
+<ul>
+<li>Which ones are not charlatans, fraudsters, quacks?</li>
+<li>We may dismiss the explanation, but we must not dismiss the fact (the phenomenon, the observation).</li>
+<li><p>Are there tutorials?</p>
+<ul>
+<li><p>Related search terms (Indonesian, Javanese, Sundanese, English):</p>
+<ul>
+<li>ajian, clairaudiance, clairvoyance, extrasensory perception, gaib (occult), gendam, ilmu, jangjawokan, kanuragan, kinasihan, linuwih, magick, medium, poltergeist, premonition, psychokinesis, reiki, remote viewing, rukyah, ruwat, sakti, santet, sihir, telekinesis, telepathy, teluh, tenaga dalam, tenung</li>
+</ul></li>
+</ul></li>
+<li><a href="https://www.youtube.com/watch?v=hBl0cwyn5GY">Banned TEDTalk about Psychic Abilities | Russell Targ | suespeaks.org</a></li>
+<li><p>To be tested: theories, hypotheses, assertions, sometimes contradicting each other</p>
+<ul>
+<li><p>Gaia: &quot;A Unified Theory Of The Paranormal&quot;, <a href="https://www.youtube.com/watch?v=QinS6-0O2_Q">youtube</a></p>
+<ul>
+<li><p>John A. Keel, The Mothman Propecies, The Eighth Tower</p>
+<ul>
+<li>electromagnetic events are often associated with paranormal events</li>
+<li>Santet has negative electric charge. Sleeping on the floor blocks santet. <a href="https://areknerut.wordpress.com/2012/11/15/hukum-fisika-sebagai-cara-untuk-menangkal-santet/">https://areknerut.wordpress.com/2012/11/15/hukum-fisika-sebagai-cara-untuk-menangkal-santet/</a></li>
+<li>Sleeping on the floor worsens santet. (7th item in the list) <a href="https://www.brilio.net/serem/7-cara-menangkal-santet-menurut-pendekar-silat-a-masruri-170924x.html">https://www.brilio.net/serem/7-cara-menangkal-santet-menurut-pendekar-silat-a-masruri-170924x.html</a></li>
+</ul></li>
+<li><p>Stephen Greer, CE-5 UFO summoning protocol</p></li>
+</ul></li>
+</ul></li>
+<li>Gaia: Remembering Past Lives, <a href="https://www.youtube.com/watch?v=X4LuRJWzPEA">youtube</a></li>
+<li><p><a href="https://www.youtube.com/watch?v=n8yhaFd_GpM">YT:TED:A scientific approach to the paranormal | Carrie Poppy</a></p></li>
+<li><p>Undigested information</p>
+<ul>
+<li><p>These are unknown, but these give us a procedure we can try, if it's clear at all.</p>
+<ul>
+<li>A simple remote viewing protocol everyone can try: <a href="http://www.irva.org/remote-viewing/howto.html">http://www.irva.org/remote-viewing/howto.html</a></li>
+<li>Farsight institute for remote viewing has instructions for &quot;scientific remote viewing&quot;.</li>
+<li>Paul H. Smith's remote viewing has procedures we can follow.</li>
+<li><p>Other people's scientific experiments</p>
+<ul>
+<li><p>Articles to read.</p>
+<ul>
+<li><a href="https://www.quora.com/What-are-some-trippy-thought-experiments-2">https://www.quora.com/What-are-some-trippy-thought-experiments-2</a></li>
+<li><a href="http://listverse.com/2013/10/21/10-mind-boggling-thought-experiments/">http://listverse.com/2013/10/21/10-mind-boggling-thought-experiments/</a></li>
+<li><a href="http://rationallyspeaking.blogspot.co.id/2013/09/three-and-half-thought-experiments-in.html">http://rationallyspeaking.blogspot.co.id/2013/09/three-and-half-thought-experiments-in.html</a></li>
+</ul></li>
+</ul></li>
+<li><p>Robert Monroe's out-of-body-experience how-to <a href="http://weird-people.com/astral-projection-how-to/">http://weird-people.com/astral-projection-how-to/</a></p></li>
+</ul></li>
+<li><p>Is it science?</p>
+<ul>
+<li>Chinese psychic kids</li>
+<li><p>Dream research</p>
+<ul>
+<li>Is dream research our best bet at consciousness research?</li>
+<li>Lucid dreams</li>
+<li>the sense of time in dream? <a href="http://www.susanblackmore.co.uk/Articles/si91ld.html">http://www.susanblackmore.co.uk/Articles/si91ld.html</a></li>
+<li><a href="http://www.sawka.com/spiritwatch/dream.htm">http://www.sawka.com/spiritwatch/dream.htm</a></li>
+<li><a href="http://www.spiritwatch.ca/">http://www.spiritwatch.ca/</a></li>
+<li><a href="http://serendip.brynmawr.edu/bb/neuro/neuro99/web2/Plotnick.html">http://serendip.brynmawr.edu/bb/neuro/neuro99/web2/Plotnick.html</a></li>
+<li><a href="http://www.abichal.com/html/dreams/lucid_dreams/lucid_dreamers/alan_worsley.htm">http://www.abichal.com/html/dreams/lucid_dreams/lucid_dreamers/alan_worsley.htm</a></li>
+<li><a href="http://www.lucidity.com/">http://www.lucidity.com/</a></li>
+<li><a href="http://www.lucidity.com/slbbs/">http://www.lucidity.com/slbbs/</a></li>
+</ul></li>
+<li><p><a href="http://www.magickofthought.com/">Mike Sententia old blog</a></p>
+<ul>
+<li><a href="http://www.magickofthought.com/tag/science/">http://www.magickofthought.com/tag/science/</a></li>
+<li><a href="http://www.magickofthought.com/tag/testing/">http://www.magickofthought.com/tag/testing/</a></li>
+</ul></li>
+<li><p>Popular writings</p>
+<ul>
+<li><a href="http://listverse.com/2009/01/29/top-10-bizarre-afterlife-experiments/">http://listverse.com/2009/01/29/top-10-bizarre-afterlife-experiments/</a></li>
+<li><a href="http://www.therichest.com/rich-list/most-shocking/6-paranormal-experiments-conducted-by-the-government/?view=all">http://www.therichest.com/rich-list/most-shocking/6-paranormal-experiments-conducted-by-the-government/?view=all</a></li>
+<li><a href="http://io9.com/5721855/25-of-the-scariest-science-experiments-ever-conducted">http://io9.com/5721855/25-of-the-scariest-science-experiments-ever-conducted</a></li>
+</ul></li>
+<li>Carl Jung's parapsychological research</li>
+<li><p>Haunting</p>
+<ul>
+<li><p>Institutional experiments</p>
+<ul>
+<li>Major research approaches.</li>
+<li>Major psi experiments.</li>
+<li>Koestler Parapsychology Unit recent studies and research overview. It sells online courses and Caroline Watt's book (An introduction to parapsychology). PA student members get discount.</li>
+<li>James E. Kennedy's research, other papers, experimenter effects PDF, misconduct, and why psi is elusive.</li>
+<li>Dean Radin's of experiments.</li>
+<li>Wiseman's dream precognition</li>
+<li>13 University-Sanctioned Paranormal Research Projects</li>
+<li>An Introduction to Parapsychology - Harvey J. Irwin and Caroline A. Watt</li>
+<li>Basic research in parapsychology</li>
+<li>Global consciousness project correlates shocking world events and significant RNG perturbations.</li>
+<li>2012 <a href="http://media.noetic.org/uploads/files/PhysicsEssays-Radin-DoubleSlit-2012.pdf">correlating concentrated attention and double-slit experiment outcome</a>. PDF. Needs lab equipment.</li>
+<li>2011 retrocausal experiments (draft). I think this paper has been retracted by the author himself. PDF. Journal of Personality and Social Psychology 100, 407–425. An APA journal. Daryl Bem. Wiseman replication failed. Replication is important.</li>
+<li>PEAR experiments</li>
+<li>Modern experiments in telepathy <a href="http://psycnet.apa.org/psycinfo/1955-03428-000">http://psycnet.apa.org/psycinfo/1955-03428-000</a></li>
+<li>Dream telepathy: Experiments in nocturnal ESP <a href="http://psycnet.apa.org/psycinfo/1975-02219-000">http://psycnet.apa.org/psycinfo/1975-02219-000</a></li>
+<li>Automated Tests for Telephone Telepathy Using Mobile Phones <a href="http://www.explorejournal.com/article/S1550-8307(15)00062-2/abstract">http://www.explorejournal.com/article/S1550-8307(15)00062-2/abstract</a></li>
+</ul></li>
+<li><p>Old papers</p>
+<ul>
+<li>1989 Evidence for consciousness-related anomalies in random physical systems. Foundations of Physics vol 19 no 12.</li>
+<li>1989 intention influences random events. PDF. Journal of Scientific Exploration.</li>
+</ul></li>
+</ul></li>
+<li><p>Military-related</p>
+<ul>
+<li>p-teleport. PDF.</li>
+<li><a href="https://en.wikipedia.org/wiki/Stargate_Project">https://en.wikipedia.org/wiki/Stargate_Project</a></li>
+<li>Document too long: <a href="https://www.reddit.com/r/occult/comments/6rue4m/magick_explained_scientifically_in_cia_doc/">Reddit 6rue4m: Magick explained scientifically in CIA doc</a>.</li>
+</ul></li>
+<li><p>Other experiments I have not seen into</p>
+<ul>
+<li><a href="http://www.thescoleexperiment.com/">http://www.thescoleexperiment.com/</a></li>
+<li><a href="http://www.iisis.net/index.php?page=semkiw-reincarnation-communication-with-dead">http://www.iisis.net/index.php?page=semkiw-reincarnation-communication-with-dead</a></li>
+<li><a href="http://www.nbcbayarea.com/news/tech/Brain-Scanner-Records-Dreams-on-Video-130497213.html">http://www.nbcbayarea.com/news/tech/Brain-Scanner-Records-Dreams-on-Video-130497213.html</a></li>
+<li><a href="http://www.reddit.com/r/Paranormal/comments/1qgo0w/ama_i_have_have_a_phd_in_parapsychology/">http://www.reddit.com/r/Paranormal/comments/1qgo0w/ama_i_have_have_a_phd_in_parapsychology/</a></li>
+<li><a href="http://www.dailygrail.com/Fresh-Science/2014/1/Scientists-Call-Open-Informed-Study-Psi-Effects-and-Consciousness">http://www.dailygrail.com/Fresh-Science/2014/1/Scientists-Call-Open-Informed-Study-Psi-Effects-and-Consciousness</a></li>
+</ul></li>
+<li><p>J. B. Rhine</p>
+<ul>
+<li><a href="http://archived.parapsych.org/members/jb_rhine.html">http://archived.parapsych.org/members/jb_rhine.html</a></li>
+<li><a href="http://www.rhine.org/what-we-do/current-research.html">http://www.rhine.org/what-we-do/current-research.html</a></li>
+<li><a href="http://dukemagazine.duke.edu/issues/111209/depqa.html">http://dukemagazine.duke.edu/issues/111209/depqa.html</a></li>
+<li>Study J. B. Rhine <a href="http://www.williamjames.com/Science/ESP.htm">http://www.williamjames.com/Science/ESP.htm</a></li>
+</ul></li>
+</ul></li>
+<li><p>How do we verify this?</p>
+<ul>
+<li><p>John Chang, the magus of java, youtube video</p>
+<ul>
+<li><a href="http://www.gestaltreality.com/2012/02/07/mo-pai-nei-kung-john-chang/">http://www.gestaltreality.com/2012/02/07/mo-pai-nei-kung-john-chang/</a></li>
+</ul></li>
+<li><p>Nina Kulagina <a href="http://www.mysteriouspeople.com/Nina_Kulagina.htm">http://www.mysteriouspeople.com/Nina_Kulagina.htm</a></p>
+<ul>
+<li><a href="https://www.cicap.org/new/articolo.php?id=101003">Massimo Polidoro's Secrets of a Russian Psychic</a></li>
+</ul></li>
+<li>Matthew Manning</li>
+<li><a href="https://en.wikipedia.org/wiki/Quantum_cognition">https://en.wikipedia.org/wiki/Quantum_cognition</a></li>
+<li>&quot;The afterlife experiments&quot; book</li>
+<li><p>What is &quot;dimensional jumping&quot;? Is it legit? How do we do it? <a href="https://np.reddit.com/r/DimensionalJumping/">/r/DimensionalJumping</a></p>
+<ul>
+<li><a href="https://www.reddit.com/r/DimensionalJumping/comments/2ax00o/dimensional_jumping_for_dummies_revamped/">Reddit 2ax00o</a> has a procedure everyone can try.</li>
+<li><a href="https://www.reddit.com/r/DimensionalJumping/comments/38c3yk/how_to_jump_between_dimensions/">Reddit 38c3yk</a> offers 6 procedures everyone can try.</li>
+</ul></li>
+<li><p>Somewhat promising sources, but still, forum, need much corroboration</p>
+<ul>
+<li><p>user 'darkbreed'</p>
+<ul>
+<li><a href="http://www.unexplained-mysteries.com/forum/topic/120420-scientific-research-on-psychic-metaphysical/">http://www.unexplained-mysteries.com/forum/topic/120420-scientific-research-on-psychic-metaphysical/</a></li>
+<li><a href="http://www.unexplained-mysteries.com/forum/topic/124456-offering-a-helping-hand-and-deeper-insights/">http://www.unexplained-mysteries.com/forum/topic/124456-offering-a-helping-hand-and-deeper-insights/</a></li>
+</ul></li>
+<li><a href="http://moebius.psy.ed.ac.uk/~info/ResearchCentres.php3">http://moebius.psy.ed.ac.uk/~info/ResearchCentres.php3</a></li>
+<li><a href="http://www.espresearch.com">http://www.espresearch.com</a></li>
+<li><p><a href="http://en.wikipedia.org/wiki/SRI_International">http://en.wikipedia.org/wiki/SRI_International</a></p></li>
+</ul></li>
+<li>after-death communication <a href="http://www.after-death.com/links/research.htm">http://www.after-death.com/links/research.htm</a></li>
+<li><a href="http://www.collective-evolution.com/2014/03/08/10-scientific-studies-that-prove-consciousness-can-alter-our-physical-material-world/">http://www.collective-evolution.com/2014/03/08/10-scientific-studies-that-prove-consciousness-can-alter-our-physical-material-world/</a></li>
+<li><a href="https://www.reddit.com/r/metaphysical/top/">https://www.reddit.com/r/metaphysical/top/</a></li>
+<li><p>Are these serious?</p>
+<ul>
+<li><a href="http://metaphysicsuniversity.com/">http://metaphysicsuniversity.com/</a></li>
+<li><a href="http://www.umsonline.org/">http://www.umsonline.org/</a></li>
+</ul></li>
+<li><p>demonic possession</p>
+<ul>
+<li><a href="https://www.mirror.co.uk/news/weird-news/devil-father-amorth-exorcist-film-11137254.amp">https://www.mirror.co.uk/news/weird-news/devil-father-amorth-exorcist-film-11137254.amp</a></li>
+<li><p><a href="http://www.theweek.co.uk/87467/exorcism-industry-booming-in-france-italy-and-uk">http://www.theweek.co.uk/87467/exorcism-industry-booming-in-france-italy-and-uk</a></p>
+<ul>
+<li>Does demonic possession happen only in Italy? Does demonic possession also happen in other countries?</li>
+<li>Does it only happen to Catholics?</li>
+<li>Is the frequency of demonic possession inversely proportional to the distance from Vatican?</li>
+</ul></li>
+</ul></li>
+<li><p>Reddit</p>
+<ul>
+<li><a href="http://www.reddit.com/r/parapsychology/">http://www.reddit.com/r/parapsychology/</a></li>
+<li><a href="http://www.reddit.com/r/ParanormalScience/search?q=experiment&amp;sort=relevance&amp;restrict_sr=on&amp;t=all">http://www.reddit.com/r/ParanormalScience/search?q=experiment&amp;sort=relevance&amp;restrict_sr=on&amp;t=all</a></li>
+<li><a href="http://www.reddit.com/r/Paranormal/search?q=experiment&amp;sort=relevance&amp;restrict_sr=on&amp;t=all">http://www.reddit.com/r/Paranormal/search?q=experiment&amp;sort=relevance&amp;restrict_sr=on&amp;t=all</a></li>
+<li><a href="http://www.reddit.com/r/Psychic/search?q=experiment&amp;sort=relevance&amp;restrict_sr=on&amp;t=all">http://www.reddit.com/r/Psychic/search?q=experiment&amp;sort=relevance&amp;restrict_sr=on&amp;t=all</a></li>
+<li>maybe not so helpful <a href="http://www.reddit.com/r/occult/search?q=experiment&amp;sort=relevance&amp;restrict_sr=on&amp;t=all">http://www.reddit.com/r/occult/search?q=experiment&amp;sort=relevance&amp;restrict_sr=on&amp;t=all</a></li>
+</ul></li>
+<li>Uri Geller</li>
+<li>autistic savants</li>
+<li>brain injury cause superpower?</li>
+<li>parapsychology</li>
+<li>psychotronics</li>
+<li>psychokinesis</li>
+<li>PEAR (Princeton Engineering Anomalies Research)</li>
+<li>SRI (Stanford Research Institute)</li>
+<li>Write a protocol <a href="http://www2.lv.psu.edu/jxm57/irp/prot.htm">http://www2.lv.psu.edu/jxm57/irp/prot.htm</a></li>
+<li><a href="http://www.spr.ac.uk/">http://www.spr.ac.uk/</a></li>
+<li>Is this for real? <a href="http://www.spiritualresearchfoundation.org/spiritual-problems/demonic-possession/ghost-spirit-symptoms/">http://www.spiritualresearchfoundation.org/spiritual-problems/demonic-possession/ghost-spirit-symptoms/</a></li>
+<li>voodoo: vance vanders?</li>
+<li>anomalous cognition in hypnagogic condition</li>
+<li>Isaac Newton's study of the occult?</li>
+<li>premonition</li>
+<li><p>Body swap/brain swap</p>
+<ul>
+<li>Let there be two people, A, wearing red shirt, and B, wearing green shirt; they are looking at their respective shirts; I assume that everybody knows first-hand the concept of self. A' sees A's body, B' sees B's body.</li>
+</ul></li>
+<li><a href="https://www.kaskus.co.id/forum/23/supranatural">https://www.kaskus.co.id/forum/23/supranatural</a></li>
+<li>poltergeist proof? journal articles?</li>
+<li><p><a href="http://psionguild.org/education/articles/mental-abilities/telepathy-manual/#IVB">http://psionguild.org/education/articles/mental-abilities/telepathy-manual/#IVB</a></p></li>
+</ul></li>
+<li><p>What is the difference between magick, occult, mysticism? What are their etymologies?</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Magick_(Thelema)">https://en.wikipedia.org/wiki/Magick_(Thelema)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Occult">https://en.wikipedia.org/wiki/Occult</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Mysticism">https://en.wikipedia.org/wiki/Mysticism</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Natural_magic">https://en.wikipedia.org/wiki/Natural_magic</a></li>
+</ul></li>
+<li><p>Websites that I have glanced and I deem to have no content</p>
+<ul>
+<li><p>Problems</p>
+<ul>
+<li>unclear proposition for the reader in a hurry</li>
+<li>doesn't make any prediction or explanation</li>
+<li>doesn't even bother to understand existing science</li>
+</ul></li>
+<li><p>from Google search &quot;scientific method occult&quot;</p>
+<ul>
+<li><a href="http://occultsciences.org/">http://occultsciences.org/</a></li>
+<li><p><a href="https://www.occultphysics.com/">https://www.occultphysics.com/</a></p>
+<ul>
+<li>selling a book</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>aggregators</p>
+<ul>
+<li><a href="https://www.reddit.com/r/Paranormal/comments/3ep2f1/my_huge_collection_of_paranormalthemed_askreddit/">https://www.reddit.com/r/Paranormal/comments/3ep2f1/my_huge_collection_of_paranormalthemed_askreddit/</a></li>
+<li><a href="https://www.reddit.com/r/Paranormal/comments/6l40lg/some_lesser_known_askreddit_paranormal_etc_threads/">https://www.reddit.com/r/Paranormal/comments/6l40lg/some_lesser_known_askreddit_paranormal_etc_threads/</a></li>
+<li><a href="https://www.reddit.com/r/Thetruthishere/top/">https://www.reddit.com/r/Thetruthishere/top/</a></li>
+<li><p>things that convince some people</p>
+<ul>
+<li><a href="https://www.reddit.com/r/AskReddit/comments/6prmsk/serious_redditors_who_use_to_not_believe_in_the/">https://www.reddit.com/r/AskReddit/comments/6prmsk/serious_redditors_who_use_to_not_believe_in_the/</a></li>
+<li><a href="https://www.reddit.com/r/AskReddit/comments/6ryogk/serious_redditors_who_believe_in_the_paranormal/">https://www.reddit.com/r/AskReddit/comments/6ryogk/serious_redditors_who_believe_in_the_paranormal/</a></li>
+<li><a href="https://www.reddit.com/r/Thetruthishere/comments/5bq8fj/what_is_the_most_convincing_paranormal_evidence/">https://www.reddit.com/r/Thetruthishere/comments/5bq8fj/what_is_the_most_convincing_paranormal_evidence/</a></li>
+</ul></li>
+</ul></li>
+<li><p>Parapsychology. Some interesting anecdotes. Still looking for replicable experiment.</p>
+<ul>
+<li><a href="https://koestlerunit.wordpress.com/">Koestler parapsychology unit of University of Edinburgh</a></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Dream_telepathy">WP:Dream telepathy</a></li>
+<li><p>[[<a href="https://www.reddit.com/r/AskReddit/comments/1sv39b/serious_what_in_your_opinion_is_the_most/">https://www.reddit.com/r/AskReddit/comments/1sv39b/serious_what_in_your_opinion_is_the_most/</a>][[Serious] What, in your opinion, is the most convincing photo captured of something supernatural? : AskReddit]]</p>
+<ul>
+<li><a href="https://www.reddit.com/r/Paranormal/comments/1b0k5d/i_aint_afraid_of_no_ghost/">https://www.reddit.com/r/Paranormal/comments/1b0k5d/i_aint_afraid_of_no_ghost/</a></li>
+</ul></li>
+</ul>
+<h2 id="english-indonesian-term-concordance"><span class="section_number">7</span><span class="section_title">English-Indonesian term concordance</span></h2>
+<table>
+<thead>
+<tr class="header">
+<th>English</th>
+<th>Indonesian</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>psychic</td>
+<td>cenayang, &quot;orang pintar&quot;</td>
+</tr>
+<tr class="even">
+<td>occult</td>
+<td>gaib</td>
+</tr>
+<tr class="odd">
+<td>shaman</td>
+<td>dukun</td>
+</tr>
+<tr class="even">
+<td>roaming spirit</td>
+<td>arwah gentayangan</td>
+</tr>
+<tr class="odd">
+<td>ghost</td>
+<td>hantu</td>
+</tr>
+</tbody>
+</table>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Anomalistics">https://en.wikipedia.org/wiki/Anomalistics</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Association_for_the_Scientific_Study_of_Anomalous_Phenomena">https://en.wikipedia.org/wiki/Association_for_the_Scientific_Study_of_Anomalous_Phenomena</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://www.etymonline.com/search?q=paranormal">https://www.etymonline.com/search?q=paranormal</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.etymonline.com/word/para-">https://www.etymonline.com/word/para-</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://www.reddit.com/r/AskReddit/comments/29041r/serious_psychics_of_reddit_do_you_knowingly_scam/">https://www.reddit.com/r/AskReddit/comments/29041r/serious_psychics_of_reddit_do_you_knowingly_scam/</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://blogs.scientificamerican.com/illusion-chasers/two-neuroscientists-walk-into-a-psychic-fair/">https://blogs.scientificamerican.com/illusion-chasers/two-neuroscientists-walk-into-a-psychic-fair/</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://www.reddit.com/r/Psychic/">https://www.reddit.com/r/Psychic/</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://en.wikipedia.org/wiki/Psychic">https://en.wikipedia.org/wiki/Psychic</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://www.cia.gov/library/readingroom/docs/CIA-RDP96-00788R002000240037-5.pdf">https://www.cia.gov/library/readingroom/docs/CIA-RDP96-00788R002000240037-5.pdf</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://www.huffpost.com/entry/psychic-mediums_n_5acf4961e4b08337adca0b62">https://www.huffpost.com/entry/psychic-mediums_n_5acf4961e4b08337adca0b62</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>inconclusive <a href="https://www.reddit.com/r/AskReddit/comments/vx51d/reddit_has_anyone_been_to_a_psychicmedium_as_a/">https://www.reddit.com/r/AskReddit/comments/vx51d/reddit_has_anyone_been_to_a_psychicmedium_as_a/</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://www.reddit.com/r/precognition/">https://www.reddit.com/r/precognition/</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>Remote Viewing and the Reality of Psychic Phenomena | Waking Cosmos | Garret Moddel Ph.D. <a href="https://www.youtube.com/watch?v=IC1kTVe61yc">https://www.youtube.com/watch?v=IC1kTVe61yc</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://bestpsychicmediums.com/testedaslegitimate">https://bestpsychicmediums.com/testedaslegitimate</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p><a href="https://bestpsychicmediums.com/thelist.htm">https://bestpsychicmediums.com/thelist.htm</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p><a href="https://bestpsychicmediums.com/disclaimer.htm">https://bestpsychicmediums.com/disclaimer.htm</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p><a href="https://www.vice.com/en_us/article/9k33av/a-psychic-detective-tells-us-how-he-solves-murders">https://www.vice.com/en_us/article/9k33av/a-psychic-detective-tells-us-how-he-solves-murders</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p><a href="https://en.wikipedia.org/wiki/Psychic_detective">https://en.wikipedia.org/wiki/Psychic_detective</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p><a href="https://www.cia.gov/library/readingroom/docs/CIA-RDP96-00788R000100280009-3.pdf">https://www.cia.gov/library/readingroom/docs/CIA-RDP96-00788R000100280009-3.pdf</a><a href="#fnref19" class="footnote-back">↩</a></p></li>
+<li id="fn20"><p>10 Real Psychics Who Helped Solve Mysteries <a href="https://www.youtube.com/watch?v=4nCaiJbKdFw">https://www.youtube.com/watch?v=4nCaiJbKdFw</a><a href="#fnref20" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p><a href="https://patch.com/michigan/northville/michigan-medium-solves-cold-cases--spotlighted-in-investigation-discoverys-newest-series-restless-souls">https://patch.com/michigan/northville/michigan-medium-solves-cold-cases--spotlighted-in-investigation-discoverys-newest-series-restless-souls</a><a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p><a href="https://www.reddit.com/r/UnresolvedMysteries/comments/6d4e41/request_any_cases_that_were_actually_helped_by_a/">https://www.reddit.com/r/UnresolvedMysteries/comments/6d4e41/request_any_cases_that_were_actually_helped_by_a/</a><a href="#fnref22" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-09-02 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
