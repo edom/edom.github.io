@@ -175,11 +175,12 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">7</span><span class="section_title"><a href="#on-left-recursion-and-its-solution">On <em>left recursion</em> and its solution</a></span><span class="word_count">(1131w~6m)</span></li>
 <li><span class="section_number">8</span><span class="section_title"><a href="#on-the-almost-duality-of-parsing-and-unparsing">On the almost-<em>duality</em> of parsing and unparsing</a></span><span class="word_count">(164w~1m)</span></li>
 <li><span class="section_number">9</span><span class="section_title"><a href="#the-semantics-of-grammar-expressions">The semantics of grammar expressions</a></span><span class="word_count">(23w~1m)</span></li>
-<li><span class="section_number">10</span><span class="section_title"><a href="#what-ideas">What ideas?</a></span><span class="word_count">(242w~2m)</span></li>
-<li><span class="section_number">11</span><span class="section_title"><a href="#conferences">Conferences</a></span><span class="word_count">(4w~1m)</span></li>
-<li><span class="section_number">12</span><span class="section_title"><a href="#politics-of-parsing">Politics of parsing</a></span><span class="word_count">(17w~1m)</span></li>
-<li><span class="section_number">13</span><span class="section_title"><a href="#declarative-programming-research-group">Declarative Programming Research Group</a></span><span class="word_count">(322w~2m)</span></li>
-<li><span class="section_number">14</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(406w~3m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#on-the-set-theoretic-fixed-point-semantics-of-context-free-non-terminals">On the set-theoretic fixed-point semantics of context-free non-terminals</a></span><span class="word_count">(152w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#what-ideas">What ideas?</a></span><span class="word_count">(242w~2m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#conferences">Conferences</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#politics-of-parsing">Politics of parsing</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#declarative-programming-research-group">Declarative Programming Research Group</a></span><span class="word_count">(322w~2m)</span></li>
+<li><span class="section_number">15</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(406w~3m)</span></li>
 </ul>
 </div>
 <h2 id="todo"><span class="section_number">1</span><span class="section_title">TODO</span></h2>
@@ -1064,25 +1065,42 @@ exp0 :- &quot;&quot; ; (&quot;*&quot;, exp ; &quot;+&quot;, exp), exp0
 </ul>
 <h2 id="the-semantics-of-grammar-expressions"><span class="section_number">9</span><span class="section_title">The semantics of grammar expressions</span></h2>
 <p>Consider the expression X,Y. Declaratively it means X followed by Y. Operationally it means match X <em>then</em> match Y.</p>
-<h2 id="what-ideas"><span class="section_number">10</span><span class="section_title">What ideas?</span></h2>
+<h2 id="on-the-set-theoretic-fixed-point-semantics-of-context-free-non-terminals"><span class="section_number">10</span><span class="section_title">On the set-theoretic fixed-point semantics of context-free non-terminals</span></h2>
+<p>&lt;2019-09-05&gt;</p>
+<p>Notation: Let <span class="math inline">\(X \cdot Y = \SetBuilder{xy}{x \in X, ~ y \in Y}\)</span>. We call this the &quot;concatenating product&quot;.</p>
+<p>Suppose that <span class="math inline">\(f:Set \to Set\)</span> is a set endofunction defined using only set literals, concatenating products, unions, and recursive references to its argument.</p>
+<p>Conjecture: Such <span class="math inline">\(f\)</span> has exactly one fixed point, and this algorithm computes that fixed point:</p>
+<pre class="example"><code>procedure fixed_point(f) {
+    var x := empty_set
+    loop {
+        let y = f(x)
+        if x = y { return x }
+        else { x := y }
+    }
+}
+</code></pre>
+<p>Hunch: We can use that to make a parser, because a non-terminal rule can be thought of as a set endofunction like that.</p>
+<p>For example, consider the rule <span class="math inline">\( R : A \to A b | c \)</span>. The rule can be thought as the function <span class="math inline">\( \hat{R}(\hat{A}) = (\hat{A} \cdot \Set{b}) \cup \Set{c} \)</span>. The non-terminal <span class="math inline">\(A\)</span> can be thought of as representing the set <span class="math inline">\( \hat{A} \)</span> satisfying the fixed-point equation <span class="math inline">\( \hat{A} = (\hat{A} \cdot \Set{b}) \cup \Set{c} \)</span></p>
+<p>The non-terminal <span class="math inline">\(A\)</span> can be thought of as representing the fixed point of the function <span class="math inline">\(\hat{R}\)</span>.</p>
+<h2 id="what-ideas"><span class="section_number">11</span><span class="section_title">What ideas?</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">10.1</span><span class="section_title"><a href="#possible-prefix-incremental-parsing">Possible-prefix incremental parsing?</a></span><span class="word_count">(18w~1m)</span></li>
-<li><span class="section_number">10.2</span><span class="section_title"><a href="#techniques">Techniques?</a></span><span class="word_count">(38w~1m)</span></li>
-<li><span class="section_number">10.3</span><span class="section_title"><a href="#begin-with-an-unparser-and-invert-it">&lt;2019-07-31&gt; Begin with an unparser, and invert it?</a></span><span class="word_count">(112w~1m)</span></li>
-<li><span class="section_number">10.4</span><span class="section_title"><a href="#idea-incremental-update-of-the-set-of-all-currently-possible-parse-trees">Idea: incremental update of the set of all currently possible parse trees?</a></span><span class="word_count">(12w~1m)</span></li>
-<li><span class="section_number">10.5</span><span class="section_title"><a href="#procedural-parsing">Procedural parsing?</a></span><span class="word_count">(19w~1m)</span></li>
-<li><span class="section_number">10.6</span><span class="section_title"><a href="#language-oriented-approach">Language-oriented approach</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">11.1</span><span class="section_title"><a href="#possible-prefix-incremental-parsing">Possible-prefix incremental parsing?</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">11.2</span><span class="section_title"><a href="#techniques">Techniques?</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">11.3</span><span class="section_title"><a href="#begin-with-an-unparser-and-invert-it">&lt;2019-07-31&gt; Begin with an unparser, and invert it?</a></span><span class="word_count">(112w~1m)</span></li>
+<li><span class="section_number">11.4</span><span class="section_title"><a href="#idea-incremental-update-of-the-set-of-all-currently-possible-parse-trees">Idea: incremental update of the set of all currently possible parse trees?</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">11.5</span><span class="section_title"><a href="#procedural-parsing">Procedural parsing?</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">11.6</span><span class="section_title"><a href="#language-oriented-approach">Language-oriented approach</a></span><span class="word_count">(47w~1m)</span></li>
 </ul>
 </div>
-<h3 id="possible-prefix-incremental-parsing"><span class="section_number">10.1</span><span class="section_title">Possible-prefix incremental parsing?</span></h3>
+<h3 id="possible-prefix-incremental-parsing"><span class="section_number">11.1</span><span class="section_title">Possible-prefix incremental parsing?</span></h3>
 <p>Given a string S, find all rules that <em>may</em> match a string that begins with S.</p>
-<h3 id="techniques"><span class="section_number">10.2</span><span class="section_title">Techniques?</span></h3>
+<h3 id="techniques"><span class="section_number">11.2</span><span class="section_title">Techniques?</span></h3>
 <p>In <em>recursive descent parsing</em><a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a>, the program procedures mirror the grammar rules. Backtracking <em>unreads</em> the input (places the input back into a queue).</p>
 <p>&quot;How should I specify a grammar for a parser?&quot;<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a></p>
 <p>Naive parser with memoization.</p>
 <p>TODO sample Leiss's book &quot;Language equations&quot;</p>
-<h3 id="begin-with-an-unparser-and-invert-it"><span class="section_number">10.3</span><span class="section_title">&lt;2019-07-31&gt; Begin with an unparser, and invert it?</span></h3>
+<h3 id="begin-with-an-unparser-and-invert-it"><span class="section_number">11.3</span><span class="section_title">&lt;2019-07-31&gt; Begin with an unparser, and invert it?</span></h3>
 <p>Idea: Can we write an unparser, and derive a parser? Because unparsing (Tree -&gt; String) is easier than parsing (String -&gt; Tree).</p>
 <p>Interesting article with very relevant introduction: <span class="citation" data-cites="danielsson2013correct">[<a href="#ref-danielsson2013correct">6</a>]</span> mentions <span class="citation" data-cites="Matsuda2013FliPprAP">[<a href="#ref-Matsuda2013FliPprAP">12</a>]</span>:</p>
 <blockquote>
@@ -1101,8 +1119,8 @@ g Times = &quot;*&quot;
 f (Exp op a b) = g op &lt;&gt; &quot; &quot; &lt;&gt; f a &lt;&gt; &quot; &quot; &lt;&gt; f b
 </code></pre>
 <p>Inverting a binary function produces a ternary relation.</p>
-<h3 id="idea-incremental-update-of-the-set-of-all-currently-possible-parse-trees"><span class="section_number">10.4</span><span class="section_title">Idea: incremental update of the set of all currently possible parse trees?</span></h3>
-<h3 id="procedural-parsing"><span class="section_number">10.5</span><span class="section_title">Procedural parsing?</span></h3>
+<h3 id="idea-incremental-update-of-the-set-of-all-currently-possible-parse-trees"><span class="section_number">11.4</span><span class="section_title">Idea: incremental update of the set of all currently possible parse trees?</span></h3>
+<h3 id="procedural-parsing"><span class="section_number">11.5</span><span class="section_title">Procedural parsing?</span></h3>
 <p>Parsing machine primitives:</p>
 <ul>
 <li>Read the next character from the input port.</li>
@@ -1110,35 +1128,35 @@ f (Exp op a b) = g op &lt;&gt; &quot; &quot; &lt;&gt; f a &lt;&gt; &quot; &quot;
 <li>Compare characters.</li>
 </ul>
 <p>How do those primitives compose?</p>
-<h3 id="language-oriented-approach"><span class="section_number">10.6</span><span class="section_title">Language-oriented approach</span></h3>
+<h3 id="language-oriented-approach"><span class="section_number">11.6</span><span class="section_title">Language-oriented approach</span></h3>
 <p>The language-oriented approach to parsing is to make a language for expressing a relation between strings and trees.</p>
 <p>The structure of the concrete syntax tree reflects the structure of the grammar production rules.</p>
 <p>Example: a regular expression is a DSL for string matching / pattern matching / parsing.</p>
-<h2 id="conferences"><span class="section_number">11</span><span class="section_title">Conferences</span></h2>
+<h2 id="conferences"><span class="section_number">12</span><span class="section_title">Conferences</span></h2>
 <p>ACM SIGPLAN SLE <a href="http://www.sleconf.org/blog/11-20-2013-parsing-at-sle-2013">http://www.sleconf.org/blog/11-20-2013-parsing-at-sle-2013</a></p>
-<h2 id="politics-of-parsing"><span class="section_number">12</span><span class="section_title">Politics of parsing</span></h2>
+<h2 id="politics-of-parsing"><span class="section_number">13</span><span class="section_title">Politics of parsing</span></h2>
 <p>This patent (US patent 6449589, &quot;Elimination of left recursion from context-free grammars&quot;)<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a><a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a> should not exist?</p>
-<h2 id="declarative-programming-research-group"><span class="section_number">13</span><span class="section_title">Declarative Programming Research Group</span></h2>
+<h2 id="declarative-programming-research-group"><span class="section_number">14</span><span class="section_title">Declarative Programming Research Group</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">13.1</span><span class="section_title"><a href="#transitive-closure">Transitive closure</a></span><span class="word_count">(280w~2m)</span></li>
-<li><span class="section_number">13.2</span><span class="section_title"><a href="#transitive-closure-in-prolog">Transitive closure in Prolog</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">14.1</span><span class="section_title"><a href="#transitive-closure">Transitive closure</a></span><span class="word_count">(280w~2m)</span></li>
+<li><span class="section_number">14.2</span><span class="section_title"><a href="#transitive-closure-in-prolog">Transitive closure in Prolog</a></span><span class="word_count">(40w~1m)</span></li>
 </ul>
 </div>
-<h3 id="transitive-closure"><span class="section_number">13.1</span><span class="section_title">Transitive closure</span></h3>
+<h3 id="transitive-closure"><span class="section_number">14.1</span><span class="section_title">Transitive closure</span></h3>
 <p>There are several ways of thinking about transitivity: relation, logic, graph, fixed-point, and limit.</p>
 <p>A relation <span class="math inline">\(R\)</span> is <em>transitive</em> iff <span class="math inline">\(\forall x \forall y \forall z [(R(x,y) \wedge R(y,z)) \to R(x,z)]\)</span>.</p>
 <p>The transitive closure of a relation <span class="math inline">\(R\)</span> is the smallest transitive superrelation of <span class="math inline">\(R\)</span>. Such closure is obtained by adding the fewest number of edges to make <span class="math inline">\(R\)</span> transitive.</p>
 <p>The <em>transitive closure of an arity-2 predicate <span class="math inline">\(P\)</span></em> is <span class="math inline">\(T(P)\)</span> where <span class="math inline">\(T(P,x,y) = P(x,y) \vee \exists i (P(x,i) \wedge T(P,i,y)) \)</span>. The transitive closure of a first-order logic predicate is a first-order logic predicate. But the transitive closure <em>operator</em> <span class="math inline">\(T\)</span> is a second-order logic predicate. Fagin 1974 proves that transitive closure makes first-order logic more expressive.<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a></p>
 <p>The <em>transitive closure of an arity-2 relation <span class="math inline">\(R\)</span></em> is <span class="math inline">\(R \cup R_2 \cup R_3 \cup \ldots = \bigcup_{k \in \Nat \ge 1} R_k\)</span> where <span class="math inline">\(R_k = \underbrace{R \circ \ldots \circ R}_k\)</span>. But this assumes that the relation is countable. If the relation is finite and its domain has <span class="math inline">\(n\)</span> elements, then <span class="math inline">\(k\)</span> does not need to go higher than <span class="math inline">\(n-1\)</span>, because the shortest path between two connected vertices in that graph will have at most <span class="math inline">\(n-1\)</span> edges. Thus <span class="math inline">\(T(R)\)</span> is the smallest set that satisfies the equation <span class="math inline">\(T(R) = T(R) \cup R\)</span>. Thus <span class="math inline">\(T(R)\)</span> is the least fixed point of the function <span class="math inline">\(A \mapsto (A \cup R)\)</span>.</p>
 <p>We can also think of transitive closure of <span class="math inline">\(R\)</span> as the limit <span class="math inline">\(\lim_{n\to\infty} S_n\)</span> But this also assumes that the relation is countable. where <span class="math inline">\(S_1 = R\)</span> and <span class="math inline">\(S_{n+1} = (S_n \circ R) \cup R\)</span> and <span class="math inline">\((B,C,S) \circ (A,B,R) = (A,C,\SetBuilder{(x,z)}{\exists x (R(x,y) \wedge S(y,z))})\)</span>. We can think of <span class="math inline">\(S_n\)</span> as the set of paths whose length does not exceed <span class="math inline">\(n\)</span>.</p>
-<h3 id="transitive-closure-in-prolog"><span class="section_number">13.2</span><span class="section_title">Transitive closure in Prolog</span></h3>
+<h3 id="transitive-closure-in-prolog"><span class="section_number">14.2</span><span class="section_title">Transitive closure in Prolog</span></h3>
 <p>This naïve Prolog predicate <code>t/2</code> may not terminate if the graph represented by <code>edge</code> is cyclic. Direct translation of the logical formula does not work.</p>
 <pre class="example"><code>t(A,B) :- edge(A,B).
 t(A,C) :- edge(A,B), t(B,C).
 </code></pre>
 <p>How do we make Prolog smarter so that the above predicate <code>t/2</code> terminates?</p>
-<h2 id="bibliography" class="unnumbered"><span class="section_number">14</span><span class="section_title">Bibliography</span></h2>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">15</span><span class="section_title">Bibliography</span></h2>
 <div id="refs" class="references">
 <div id="ref-afroozeh2015one">
 <p>[1] Afroozeh, A. and Izmaylova, A. 2015. One parser to rule them all. <em>2015 acm international symposium on new ideas, new paradigms, and reflections on programming and software (onward!)</em> (2015), 151–170. url: &lt;<a href="https://2015.onward-conference.org/details/onward2015-papers/11/One-Parser-to-Rule-Them-All">https://2015.onward-conference.org/details/onward2015-papers/11/One-Parser-to-Rule-Them-All</a>&gt;.</p>
