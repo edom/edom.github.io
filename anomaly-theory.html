@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Towards the abduction of the simplest theory that explains paranormal evidence</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Towards the abduction of the simplest theory that explains paranormal evidence</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#about-this-document">About this document</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#meta-research-directions">Meta-research directions</a></span><span class="word_count">(304w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#theoretical-implications-of-some-evidence">Theoretical implications of some evidence</a></span><span class="word_count">(988w~5m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#claims-that-require-corroboration-before-they-are-admissible-as-evidence">Claims that require corroboration before they are admissible as evidence</a></span><span class="word_count">(174w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#my-experiments">My experiments?</a></span><span class="word_count">(203w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#other">Other</a></span><span class="word_count">(858w~5m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(55w~1m)</span></li>
+</ul>
+</div>
+<h2 id="about-this-document"><span class="section_number">1</span><span class="section_title">About this document</span></h2>
+<p>This document discusses souls and the phenomenons associated with them, such as anomalous cognition, reincarnation, afterlife, out-of-body experience, near-death experience, subjective experience (first-person point of view), and so on.</p>
+<h2 id="meta-research-directions"><span class="section_number">2</span><span class="section_title">Meta-research directions</span></h2>
+<p>Whenever we feel lost in our paranormal research, answering these meta-questions will give us some directions:</p>
+<ul>
+<li>How does evidence <em>constrain</em> (narrow down) the space of hypotheses that attempt to explain paranormal phenomenons?</li>
+<li>What <em>key</em> question should we ask next in order to formulate a <em>crucial</em> experiment whose result would most strongly constrain the hypothesis space?</li>
+<li>How can <em>mathematics</em> help, if it can help at all?</li>
+</ul>
+<p>There is always the &quot;fraud explanation&quot;, so before a report is admitted as evidence, the possibility of fraud has to be ruled out.</p>
+<p>We research souls <em>indirectly</em> as we research stars, because it is difficult to experiment with souls as it is with stars. Thus we mostly <em>observe</em> and <em>theorize</em>.</p>
+<p>We also research souls as we do <em>chemistry</em>. The object of study is complex and we do not know what it actually is; we only know some of its properties and some phenomenons associated with it. Our current knowledge of <em>souls</em> is similar to our past knowledge of <em>phlogistons</em>. We need a psychic &quot;Lavoisier&quot; to discover the psychic &quot;oxygen&quot; and replace the psychic &quot;phlogiston combustion&quot; theory with &quot;oxygen combustion&quot; theory. We do not know what a soul is as we did not know what a phlogiston is. We merely <em>posit</em> their existence and assume that they cause the phenomenons that interest us, and then we set out to find their properties.</p>
+<p>The primary method of reasoning in this research is <em>abductive</em>: Find the simplest theory that explains all known evidence.</p>
+<p>There are <em>experiments</em> about afterlife and reincarnation. Afterlife experiments?<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> The Future Life Institute proposes an experiment purported to prove reincarnation by 2050.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>We are trying to craft experiments that test <em>dualism</em>.</p>
+<p>Here I sloppily use &quot;soul&quot; and &quot;spirit&quot; as synonyms, and I use them to mean the non-material part of living beings. I don't think this will be a problem, because we don't know what they are anyway.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<h2 id="theoretical-implications-of-some-evidence"><span class="section_number">3</span><span class="section_title">Theoretical implications of some evidence</span></h2>
+<p>What evidence do we have, and how does it constrain our hypothesis space?</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#on-past-life-memories">On past-life memories</a></span><span class="word_count">(559w~3m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#questions-on-the-movement-of-spirits">Questions on the movement of spirits</a></span><span class="word_count">(43w~1m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#hypotheses-on-anomalous-cognition">Hypotheses on anomalous cognition</a></span><span class="word_count">(64w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#on-mental-property-transference-in-organ-donations">On mental property transference in organ donations</a></span><span class="word_count">(50w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#on-anomalous-cognition">On anomalous cognition</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#on-experiencing-the-subjective-experience-of-others">On experiencing the subjective experience of others</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">3.7</span><span class="section_title"><a href="#questions-on-souls-that-fight-each-other">Questions on souls that fight each other</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">3.8</span><span class="section_title"><a href="#hypotheses-about-the-properties-of-souls">Hypotheses about the properties of souls</a></span><span class="word_count">(192w~1m)</span></li>
+</ul>
+</div>
+<h3 id="on-past-life-memories"><span class="section_number">3.1</span><span class="section_title">On past-life memories</span></h3>
+<p>The most compelling <em>evidence</em> of memory of past life is the thousands of records meticulously collected, verified, and corroborated by Ian Stevenson and Jim Tucker. Some children can tell some <em>facts</em> about a specific deceased person that, according to our common sense, can only be known by the deceased person alone because he has never told those facts to anyone else. By &quot;facts&quot;, we mean assertions whose truth can be corroborated with historical records or living relatives. The facts are so specific that an impostor is astronomically unlikely to guess them correctly. The facts are also not written, recorded, or told, so it does not use known communication channels. There is a lot of evidence of memory of past lives.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a><a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a><a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a><a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a></p>
+<p>Past-life memory seems to fade as one grows into adulthood. <span class="citation" data-cites="haraldsson2012persistence">[<a href="#ref-haraldsson2012persistence">1</a>]</span></p>
+<p>Edwin C. May hypothesizes that people with <em>synesthesia</em> are more likely to have precognition ability, and that there is a <em>psychic organ</em> or a <em>psychic sensor</em> (he uses the analogy &quot;psychic retina&quot;).<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></p>
+<p>By &quot;memory of past life&quot;, I mean memory of <em>subjective experience</em> of past life.</p>
+<p>Thus it should also be possible to experience life from other people's point of view; it should be possible to experience other people's qualia (subjective experience); it should be possible to <em>swap souls</em>, be it temporary or permanent.</p>
+<p>That evidence shows that <em>our common sense is wrong</em>, that our understanding of life and death is wrong, and that, when a man dies, he does not go to heaven, but neither does he disappear into oblivion.</p>
+<p>Come to think of it, our common sense (Western rationality common sense) is not so common, and is rather exceptional than common.</p>
+<p>Can one soul reincarnate into two bodies? Can two people have memory of one deceased person? If yes, then soul is ideal (software) because it can be copied but not moved. If no, then soul is material (hardware) because it can be moved but not copied. I propose that we search for two people who recall the same deceased person. I hypothesize that we will not find any such pair.</p>
+<p>Is it important to ask why the subjects are mostly children between 2 and 5 years old? Adults may censor themselves to conform to social norms.</p>
+<p>A dying soul may be like a dying star: They explode, reverberating through spacetime.</p>
+<p>Now that we have established the existence of the phenomenon, we ask: <em>How do they remember their past lives?</em> How does it work? What is the mechanism?</p>
+<p>Why does the old soul get diluted as the new person grows into adulthood?</p>
+<p>Does the old person has to be willing to reincarnate?</p>
+<p>Hypothesis: Past-life regression may happen due to a <em>mixing of souls</em>. Memory may exist without soul. Memory may infect souls as prions infect cow brains.</p>
+<p>Memory can persist outside brains. For example, a hard disk has memory. A capacitor has memory. Every stateful system has memory.</p>
+<p>Souls may broadcast signals that reverberate in the Universe, and the reverberation may later be picked up by another soul?</p>
+<p>Something else?</p>
+<p>Perhaps there is a limit to the maximum spacetime distance between the birthplace of a person and the deathplace of his previous life. Tongren Yuye 2008<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a><a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> calls this &quot;the principle of locality of the soul&quot;, in which &quot;a baby's previous body&quot; should die &quot;near the baby's birth place&quot;.</p>
+<p>We can test the principle of locality of the soul with the records of Stevenson &amp; Tucker.</p>
+<p>More interestingly, Stevenson found some <em>patterns</em> in reincarnation.<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a></p>
+<h3 id="questions-on-the-movement-of-spirits"><span class="section_number">3.2</span><span class="section_title">Questions on the movement of spirits</span></h3>
+<p>How do spirits move? Do they require energy to move? Where do they get that energy from? How do we measure it?</p>
+<p>Do ghosts prefer to haunt some places? What kind of places do ghosts prefer to haunt? Why?</p>
+<h3 id="hypotheses-on-anomalous-cognition"><span class="section_number">3.3</span><span class="section_title">Hypotheses on anomalous cognition</span></h3>
+<p>I hypothesize that all forms of anomalous cognition is caused by <em>the same mechanism</em>. Anomalous cognition includes recalling past-life memory, telepathy, precognition, possession, and mediumship.</p>
+<p>To know whether it is really cognition (that is, whether the subject actually knows something), we select the subject's anomalous claims that we are sure the subject could not have known conventionally, and then we verify them.</p>
+<h3 id="on-mental-property-transference-in-organ-donations"><span class="section_number">3.4</span><span class="section_title">On mental property transference in organ donations</span></h3>
+<p>There are some claims and disclaims that some mental properties are transferred from organ donors to recipients. Lowth 2016: Positive <a href="https://listverse.com/2016/05/14/10-organ-recipients-who-took-on-the-traits-of-their-donors/">https://listverse.com/2016/05/14/10-organ-recipients-who-took-on-the-traits-of-their-donors/</a> Bunzel et al. 1992: Negative or inconclusive. Does changing the heart mean changing personality? A retrospective inquiry on 47 heart transplant patients. <a href="https://www.ncbi.nlm.nih.gov/pubmed/1299456">https://www.ncbi.nlm.nih.gov/pubmed/1299456</a></p>
+<h3 id="on-anomalous-cognition"><span class="section_number">3.5</span><span class="section_title">On anomalous cognition</span></h3>
+<p>There are reports of <em>anomalous cognition</em> in which some people see dead people and know some details about those dead people. For example, Brian Weiss had a patient named Catherine who anomalously told him details about his dead relatives.<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a></p>
+<p>The &quot;precognition&quot; subreddit<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
+<p>Does precognition imply retrocausation?</p>
+<h3 id="on-experiencing-the-subjective-experience-of-others"><span class="section_number">3.6</span><span class="section_title">On experiencing the subjective experience of others</span></h3>
+<p><a href="https://www.reddit.com/r/precognition/comments/bhbxzb/seeing_through_the_eyes_of_another_person/">https://www.reddit.com/r/precognition/comments/bhbxzb/seeing_through_the_eyes_of_another_person/</a></p>
+<h3 id="questions-on-souls-that-fight-each-other"><span class="section_number">3.7</span><span class="section_title">Questions on souls that fight each other</span></h3>
+<p>Are there instances of souls fighting each other to control a body?</p>
+<h3 id="hypotheses-about-the-properties-of-souls"><span class="section_number">3.8</span><span class="section_title">Hypotheses about the properties of souls</span></h3>
+<p>What is the <em>weight</em> of a soul? Has anyone repeated Duncan MacDougall's soul-weighing experiment more rigorously? It would be the parapsychology analog of the Michelson–Morley experiment? I think some of the weight difference is because some air leaves the lungs and intestines as muscles relax. Each liter of air weighs 1.23 gram at room condition.<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a> A weight difference of 21 grams would mean that a man expels 17 liters of air when he dies. I don't think there is that much air in the body. Even an adult man's pair of lungs only contains 6 liters of air, and not all of it is expelled when his muscles relax completely. I don't think anyone can fart 11 liters of air at once; otherwise coroners would routinely see dead people's bellies implode.</p>
+<p>Gasser 2014 says what?<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a> How do we test his &quot;psychon theory&quot;?</p>
+<p><a href="https://www.neuroquantology.com/index.php/journal/article/view/389">https://www.neuroquantology.com/index.php/journal/article/view/389</a></p>
+<p><a href="https://www.lionsroar.com/do-you-only-live-once/">https://www.lionsroar.com/do-you-only-live-once/</a> <a href="https://www.lionsroar.com/reincarnation-research-buddhism/">https://www.lionsroar.com/reincarnation-research-buddhism/</a> <a href="https://reincarnationafterdeath.com/theory/">https://reincarnationafterdeath.com/theory/</a></p>
+<p>2 people 1 soul? <a href="https://www.quora.com/Can-two-people-share-the-same-soul-1">https://www.quora.com/Can-two-people-share-the-same-soul-1</a> <a href="https://www.reddit.com/r/spirituality/comments/9qbzla/one_soul_in_two_bodies_or_two_souls_in_one_does/">https://www.reddit.com/r/spirituality/comments/9qbzla/one_soul_in_two_bodies_or_two_souls_in_one_does/</a> ??? <a href="http://weeklyworldnews.com/headlines/15170/how-to-tell-if-youre-double-souled/">http://weeklyworldnews.com/headlines/15170/how-to-tell-if-youre-double-souled/</a></p>
+<p>Are souls <em>recycled</em> in the same way nutrients are recycled in the biogeochemical cycle?</p>
+<p>What happens in a <em>mass death</em>, such as in the 2004 Aceh tsunami that killed more than 100,000 people?<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a> Where do all those souls go?</p>
+<h2 id="claims-that-require-corroboration-before-they-are-admissible-as-evidence"><span class="section_number">4</span><span class="section_title">Claims that require corroboration before they are admissible as evidence</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#claims-that-may-be-practical-enough-to-test">Claims that may be practical enough to test</a></span><span class="word_count">(34w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#claims-that-may-be-hard-to-test">Claims that may be hard to test</a></span><span class="word_count">(114w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#questions-on-psychokinesis">Questions on psychokinesis</a></span><span class="word_count">(19w~1m)</span></li>
+</ul>
+</div>
+<h3 id="claims-that-may-be-practical-enough-to-test"><span class="section_number">4.1</span><span class="section_title">Claims that may be practical enough to test</span></h3>
+<p>Joseph McMoneagle's remote viewing of Mars can be tested. I think we'll begin exploring Mars in the 21st century.</p>
+<p>Joseph (Joe) McMoneagle got a Legion of Merit<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a><a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a>.</p>
+<p>Ingo Swann<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a></p>
+<h3 id="claims-that-may-be-hard-to-test"><span class="section_number">4.2</span><span class="section_title">Claims that may be hard to test</span></h3>
+<p>Immanuel Kant's account of Emanuel Swedenborg, 18th century.</p>
+<p>Evidence captured by 21st century equipments.</p>
+<p>Witnesses are often reliable.</p>
+<p>Most evidence was anecdotal until J.B. Rhine began using statistics.<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a></p>
+<p>We assume that the records are not manipulated?</p>
+<p>EVP?</p>
+<p>Camera?</p>
+<p>Are these experiments trustworthy? <a href="https://www.consciouslifestylemag.com/mind-over-matter-experiments/">https://www.consciouslifestylemag.com/mind-over-matter-experiments/</a></p>
+<p>Most convincing unexplained recordings for me:</p>
+<ul>
+<li>From <a href="https://www.reddit.com/r/AskReddit/comments/1sv39b/serious_what_in_your_opinion_is_the_most/">https://www.reddit.com/r/AskReddit/comments/1sv39b/serious_what_in_your_opinion_is_the_most/</a>
+<ul>
+<li>&quot;Ghost scares dogs on camera&quot;<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a>
+<ul>
+<li>text summary<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a>
+<ul>
+<li>there is also a debunking</li>
+</ul></li>
+</ul></li>
+<li>&quot;My Ghost Story Haunted Lab&quot;<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a>; dubious, a reality show?
+<ul>
+<li>Andy Coppock?</li>
+</ul></li>
+<li><a href="https://www.quora.com/What-are-the-most-convincing-paranormal-cases">https://www.quora.com/What-are-the-most-convincing-paranormal-cases</a></li>
+</ul></li>
+</ul>
+<p>Are there double-blind parapsychological experiments?</p>
+<p>What does the oil industry say about dowsers? How much money are they betting on it? If it were big, there had to be something? <a href="https://www.quora.com/What-are-some-practical-applications-of-parapsychology">https://www.quora.com/What-are-some-practical-applications-of-parapsychology</a></p>
+<p>Oil dowsing: Either it does not work or it is a heavily guarded secret.</p>
+<p>What do the archeologists say about psychics?</p>
+<h3 id="questions-on-psychokinesis"><span class="section_number">4.3</span><span class="section_title">Questions on psychokinesis</span></h3>
+<p>If psychokinesis is real and moving objects requires energy, where does the energy comes from in psychokinesis?</p>
+<h2 id="my-experiments"><span class="section_number">5</span><span class="section_title">My experiments?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#a-mind-silencingmind-idlingmind-parking-experiment">A mind-silencing/mind-idling/mind-parking experiment</a></span><span class="word_count">(180w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#filter-theory-of-consciousness-meditation-focusing-or-unfocusing">Filter theory of consciousness? Meditation: focusing or unfocusing?</a></span><span class="word_count">(23w~1m)</span></li>
+</ul>
+</div>
+<h3 id="a-mind-silencingmind-idlingmind-parking-experiment"><span class="section_number">5.1</span><span class="section_title">A mind-silencing/mind-idling/mind-parking experiment</span></h3>
+<p>I tried to silence my mind, or, perhaps more accurately, <em>idle</em> my mind, or, <em>park</em> my mind, by not thinking anything, or, by focusing on the null thought (nothingness). It seemed to dislike silence; it fought back by generating random thoughts.</p>
+<p>I tried to pretend that I did not have any senses.</p>
+<p>From<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a>, emphasis mine:</p>
+<blockquote>
+<p>I've learned from […] that the majority of humans seem to walk about oblivious to anything/everything of a psychic nature because our cultural and other programming has built up our own <em>psychic shields</em>, shored up quite by belief (and disbelief). True disbelievers are rarely, if ever, bothered by or even experience anything psychic. Their shields are strong.</p>
+<p>[…]</p>
+<p>I know I won't be harmed because a) <em>ghosts can't physically harm people</em> and b) my &quot;psychic shield&quot; is strong […] and c) I have knowledge of the first two which mitigates any negative emotional impact I might feel.</p>
+</blockquote>
+<p>I tried to silence my mind, with the hope of receiving something, but I received nothing, as if I were a radio receiver with no nearby radio stations broadcasting any radio waves.</p>
+<h3 id="filter-theory-of-consciousness-meditation-focusing-or-unfocusing"><span class="section_number">5.2</span><span class="section_title">Filter theory of consciousness? Meditation: focusing or unfocusing?</span></h3>
+<p>An attention is a subset of all sensory inputs?</p>
+<p>Is meditation about focusing or unfocusing (unfocused awareness)?</p>
+<h2 id="other"><span class="section_number">6</span><span class="section_title">Other</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#on-the-ontology-of-paranormal-things">On the ontology of paranormal things</a></span><span class="word_count">(100w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#what-we-perceive-is-not-the-object-itself">What we perceive is not the object itself</a></span><span class="word_count">(105w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#on-anomalous-cognition-1">On anomalous cognition</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#on-testing-folk-theories-and-folk-hypotheses">On testing folk theories and folk hypotheses</a></span><span class="word_count">(180w~1m)</span></li>
+<li><span class="section_number">6.5</span><span class="section_title"><a href="#materialism-is-false-what-are-these-trying-to-say">Materialism is false? What are these trying to say?</a></span><span class="word_count">(87w~1m)</span></li>
+<li><span class="section_number">6.6</span><span class="section_title"><a href="#on-spirits-ghosts-possessions-and-mediums">On spirits, ghosts, possessions, and mediums</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">6.7</span><span class="section_title"><a href="#on-the-nature-versus-nurture-of-psychic-abilities">On the nature-versus-nurture of psychic abilities</a></span><span class="word_count">(227w~2m)</span></li>
+<li><span class="section_number">6.8</span><span class="section_title"><a href="#on-embodied-consciousness-or-possessed-body">On embodied consciousness or possessed body?</a></span><span class="word_count">(70w~1m)</span></li>
+<li><span class="section_number">6.9</span><span class="section_title"><a href="#on-the-care-that-has-to-be-taken-before-invoking-quantum-physics">On the care that has to be taken before invoking quantum physics</a></span><span class="word_count">(31w~1m)</span></li>
+</ul>
+</div>
+<h3 id="on-the-ontology-of-paranormal-things"><span class="section_number">6.1</span><span class="section_title">On the ontology of paranormal things</span></h3>
+<p>Telepathy, Clairvoyance, and Precognition are instances of Psychic Ability.</p>
+<p>Anomalous Perception is my synonym for Extra-Sensory Perception, because Perception is the act of <em>interpreting</em> sensory inputs, and thus perception implies sensors, by definition; it is just that we don't know the sensor, in the same way we can use the skin to feel pressure without knowing how the skin transduces pressure into sensory inputs for the brain.</p>
+<p>Sensing is the transduction of a phenomenon into a signal.</p>
+<p>Ghost is a subclass of Spirit.</p>
+<p>Poltergeist is an instance of Paranormal Phenomenon.</p>
+<p>Kruth<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>: &quot;Parapsychology is the scientific study of five specific phenomena.&quot;</p>
+<p><a href="https://rsbakker.wordpress.com/2014/03/18/the-ontology-of-ghosts/">https://rsbakker.wordpress.com/2014/03/18/the-ontology-of-ghosts/</a></p>
+<h3 id="what-we-perceive-is-not-the-object-itself"><span class="section_number">6.2</span><span class="section_title">What we perceive is not the object itself</span></h3>
+<p>I think philosophers have known this for a long time.</p>
+<p>What we see is not the object itself, but an <em>image</em> of the object. We see the light that is reflected or emitted by the object.</p>
+<p>What I think I am is only my perception of me and not what I actually am, in the same way that, when I see a tree, I am seeing the image of the tree, the light that reaches my eyes, not the tree itself. By &quot;I see a tree&quot;, I mean that the light reflected by the tree has arrived at my eyes.</p>
+<h3 id="on-anomalous-cognition-1"><span class="section_number">6.3</span><span class="section_title">On anomalous cognition</span></h3>
+<p>We assume that, in order for a man to ken something, he has to perceive an image of it with his senses.</p>
+<h3 id="on-testing-folk-theories-and-folk-hypotheses"><span class="section_number">6.4</span><span class="section_title">On testing folk theories and folk hypotheses</span></h3>
+<p>We need a falsifiable theory that makes some testable predictions.</p>
+<p>The theory has to be to explain paranormal phenomenons such as precognition, spiritual possession, poltergeist, and haunting.</p>
+<p>Utts 2001 <span class="citation" data-cites="utts2001assessment">[<a href="#ref-utts2001assessment">2</a>]</span><a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a> claims that &quot;Using the standards applied to any other area of science, it is concluded that psychic functioning has been well established.&quot; Ray Hyman was a co-researcher but did not share the conclusion.</p>
+<p>&quot;Senders do not appear to be necessary at all; feedback of the correct answer may or may not be necessary. Distance in time and space do not seem to be an impediment.&quot; <span class="citation" data-cites="utts2001assessment">[<a href="#ref-utts2001assessment">2</a>]</span>:</p>
+<p><a href="https://tunsasays.wordpress.com/">https://tunsasays.wordpress.com/</a></p>
+<p>Kruth 2015<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a> proposed a theory of psi.</p>
+<ul>
+<li>Carpenter 2004 &quot;First Sight Model and Theory of Psi&quot;. OK, it explains, but what does it <em>predict</em>?</li>
+<li>From &lt;2019-09-06&gt; <a href="https://www.rhine.org/who-we-are/9-uncategorised/192-peg-slide.html">https://www.rhine.org/who-we-are/9-uncategorised/192-peg-slide.html</a></li>
+<li>From &lt;2019-09-06&gt; gsearch psychic experiencers group</li>
+<li>From &lt;2019-09-06&gt; <a href="https://www.reddit.com/r/Paranormal/comments/9g3ero/hi_reddit_im_loyd_auerbach_parapsychologist_ask/?sort=confidence">https://www.reddit.com/r/Paranormal/comments/9g3ero/hi_reddit_im_loyd_auerbach_parapsychologist_ask/?sort=confidence</a></li>
+</ul>
+<p>Brian D. Josephson<a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a> has a &quot;mind-matter unification project&quot;. He also has spoken out against pseudo-skeptics.</p>
+<p>Angela Moore started Psychic Review Online<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a> to keep track of real and fake psychics. Interesting: A company named &quot;Psychic Source&quot; has skin in the game with money-back guarantee.</p>
+<p>Can we corroborate with Debra Chalmers's previous employer? <a href="https://www.psychicreviewonline.com/blog/in-the-news/725/">https://www.psychicreviewonline.com/blog/in-the-news/725/</a></p>
+<p><a href="https://www.researchgate.net/publication/317784136_What_is_Psi_From_Anti-Parapsychology_to_Psi_as_a_Next_Scientific_Revolution_Theoretical_Reviews_and_Hypothesized_Vision">https://www.researchgate.net/publication/317784136_What_is_Psi_From_Anti-Parapsychology_to_Psi_as_a_Next_Scientific_Revolution_Theoretical_Reviews_and_Hypothesized_Vision</a></p>
+<p>BDJ <a href="https://www.researchgate.net/publication/328968105_The_Physics_of_Mind_and_Thought">https://www.researchgate.net/publication/328968105_The_Physics_of_Mind_and_Thought</a></p>
+<p><a href="https://www.researchgate.net/publication/328968105_The_Physics_of_Mind_and_Thought">https://www.researchgate.net/publication/328968105_The_Physics_of_Mind_and_Thought</a></p>
+<h3 id="materialism-is-false-what-are-these-trying-to-say"><span class="section_number">6.5</span><span class="section_title">Materialism is false? What are these trying to say?</span></h3>
+<ul>
+<li>2016 article &quot;Why Materialism Is False, and Why It Has Nothing To Do with the Mind&quot; <a href="https://www.cambridge.org/core/journals/philosophy/article/why-materialism-is-false-and-why-it-has-nothing-to-do-with-the-mind/5DC675B901E2F68E82643B88EE468EAE">https://www.cambridge.org/core/journals/philosophy/article/why-materialism-is-false-and-why-it-has-nothing-to-do-with-the-mind/5DC675B901E2F68E82643B88EE468EAE</a></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.5.1</span><span class="section_title"><a href="#are-materialism-and-subjective-experience-compatible">Are materialism and subjective experience compatible?</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">6.5.2</span><span class="section_title"><a href="#what-is-non-local-consciousness-are-these-legit-or-kook">What is non-local consciousness? Are these legit or kook?</a></span><span class="word_count">(55w~1m)</span></li>
+</ul>
+</div>
+<h4 id="are-materialism-and-subjective-experience-compatible"><span class="section_number">6.5.1</span><span class="section_title">Are materialism and subjective experience compatible?</span></h4>
+<ul>
+<li>Problem of other minds.</li>
+</ul>
+<h4 id="what-is-non-local-consciousness-are-these-legit-or-kook"><span class="section_number">6.5.2</span><span class="section_title">What is non-local consciousness? Are these legit or kook?</span></h4>
+<ol>
+<li><p>Pim van Lommel, cardiologist, consciousness after clinical death</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Pim_van_Lommel">WP:Pim van Lommel</a>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Near-death_experience">WP:Near-death experience</a></li>
+</ul></li>
+</ul></li>
+<li><p>Sam Parnia's AWARE study</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Sam_Parnia">https://en.wikipedia.org/wiki/Sam_Parnia</a></li>
+</ul></li>
+<li><p>Dying, near-death experiences, thanatology</p>
+<ul>
+<li><a href="http://www.nderf.org/">http://www.nderf.org/</a></li>
+<li><a href="https://iands.org/news/news/front-page-news/1060-aware-study-initial-results-are-published.html">AWARE study initial results are published!</a></li>
+<li><a href="https://www.resuscitationjournal.com/article/S0300-9572%2814%2900739-4/pdf">https://www.resuscitationjournal.com/article/S0300-9572%2814%2900739-4/pdf</a></li>
+<li><a href="https://www.youtube.com/watch?v=mMYhgTgE6MU">YT:From life to death, beyond and back - Thomas Fleischmann - TEDxTUHHSalon</a></li>
+</ul></li>
+<li><p>Central premonitions registry</p>
+<ul>
+<li>1968, <a href="http://www.weirduniverse.net/blog/comments/central_premonitions_registry">http://www.weirduniverse.net/blog/comments/central_premonitions_registry</a></li>
+<li>2017, <a href="https://scry.cloud/">https://scry.cloud/</a></li>
+</ul></li>
+<li><p>Astral travel, remote viewing, out-of-body experience?</p>
+<ul>
+<li><a href="https://allaboutheaven.org/observations/1122/127/swann-ingo-out-of-body-to-mercury-003207">https://allaboutheaven.org/observations/1122/127/swann-ingo-out-of-body-to-mercury-003207</a></li>
+<li><a href="https://www.quora.com/Is-astral-projection-true-If-so-has-anyone-done-it-Is-there-a-standard-procedure">https://www.quora.com/Is-astral-projection-true-If-so-has-anyone-done-it-Is-there-a-standard-procedure</a></li>
+<li><a href="https://www.youtube.com/watch?v=bjQxwm9vuiE">&quot;Experiments Proving Astral Projection is Real&quot;</a></li>
+</ul></li>
+</ol>
+<h3 id="on-spirits-ghosts-possessions-and-mediums"><span class="section_number">6.6</span><span class="section_title">On spirits, ghosts, possessions, and mediums</span></h3>
+<p>What places do ghosts prefer to haunt, and why? How do ghosts decide what places to haunt?</p>
+<p>The folk theory is that spirits can possess bodies.</p>
+<p>Auerbach 2018 claims that ghosts cannot physically harm people.<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.6.1</span><span class="section_title"><a href="#what-happens-after-we-die">What happens after we die?</a></span><span class="word_count">(5w~1m)</span></li>
+</ul>
+</div>
+<h4 id="what-happens-after-we-die"><span class="section_number">6.6.1</span><span class="section_title">What happens after we die?</span></h4>
+<p>Compare:</p>
+<ul>
+<li><a href="https://tunsasays.wordpress.com/2015/04/23/the-survival-hypothesis-a-very-brief-discussion/">https://tunsasays.wordpress.com/2015/04/23/the-survival-hypothesis-a-very-brief-discussion/</a></li>
+</ul>
+<h3 id="on-the-nature-versus-nurture-of-psychic-abilities"><span class="section_number">6.7</span><span class="section_title">On the nature-versus-nurture of psychic abilities</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.7.1</span><span class="section_title"><a href="#on-the-learnability-of-psychic-abilities">On the learnability of psychic abilities</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">6.7.2</span><span class="section_title"><a href="#on-the-genetic-basis-of-psychic-abilities">On the genetic basis of psychic abilities?</a></span><span class="word_count">(92w~1m)</span></li>
+<li><span class="section_number">6.7.3</span><span class="section_title"><a href="#on-the-effects-of-the-mothers-emotional-state-while-conceiving-her-baby">On the effects of the mother's emotional state while conceiving her baby</a></span><span class="word_count">(66w~1m)</span></li>
+<li><span class="section_number">6.7.4</span><span class="section_title"><a href="#on-using-babies-and-animals-as-sensors">On using babies and animals as sensors</a></span><span class="word_count">(22w~1m)</span></li>
+</ul>
+</div>
+<h4 id="on-the-learnability-of-psychic-abilities"><span class="section_number">6.7.1</span><span class="section_title">On the learnability of psychic abilities</span></h4>
+<p>Can one learn to be psychic? Conflicting opinions:</p>
+<ul>
+<li>Angela Moore: &quot;Psychic ability can not be learned. You're either born with the gift or you aren't&quot;<a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a></li>
+<li>Carpenter 2004 psi theory/model</li>
+</ul>
+<p>It disheartens me to hear people say that psychics are born and not made.</p>
+<h4 id="on-the-genetic-basis-of-psychic-abilities"><span class="section_number">6.7.2</span><span class="section_title">On the genetic basis of psychic abilities?</span></h4>
+<p>It seems that psychic abilities run in families.<a href="#fn36" class="footnote-ref" id="fnref36"><sup>36</sup></a><a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a></p>
+<p>Does it have genetic basis? Hereditary? Inherited trait?</p>
+<p><a href="https://noetic.org/research/genetics-of-psychic-ability/">https://noetic.org/research/genetics-of-psychic-ability/</a></p>
+<p>If psychic abilities are inherited, then they may have genetic basis. If there does not seem to be any genetic basis, then dualism may be true and there may be mental genetics we don't yet know.</p>
+<p>Is the non-psychic person doomed? Is being non-psychic like being a lactose-intolerant, in the sense that you <em>just can't</em> produce the enzyme because you were born without the necessary machinery (unless you underwent some gene therapy perhaps)?</p>
+<h4 id="on-the-effects-of-the-mothers-emotional-state-while-conceiving-her-baby"><span class="section_number">6.7.3</span><span class="section_title">On the effects of the mother's emotional state while conceiving her baby</span></h4>
+<p>It seems that stressing the pregnant mother may affect the epigenetics of the unborn baby.</p>
+<p>Dutch famine experiment.</p>
+<p>What if the mother is physically unstressed but mentally stressed? That is, what if we give the mother the perfect nutrition, but we mentally torture the mother? What will happen to the unborn baby? What will the baby become?</p>
+<p><a href="https://www.jashow.org/articles/hereditary-coherence-and-other-forms-of-transference/">https://www.jashow.org/articles/hereditary-coherence-and-other-forms-of-transference/</a></p>
+<h4 id="on-using-babies-and-animals-as-sensors"><span class="section_number">6.7.4</span><span class="section_title">On using babies and animals as sensors</span></h4>
+<p>If babies are more sensitive to paranormal phenomenons, then we can use babies as paranormal sensors!</p>
+<h3 id="on-embodied-consciousness-or-possessed-body"><span class="section_number">6.8</span><span class="section_title">On embodied consciousness or possessed body?</span></h3>
+<p>Is each of us a consciousness that gets trapped in a body, or a body that gets possessed by a consciousness?</p>
+<p>Are we mostly ideal/mental or mostly material/physical?</p>
+<p>Is poltergeist a body that gets possessed by a consciousness?</p>
+<p>Hypothesis: Both a human and a poltergeist are a combination of mind and body. But a human is more body than mental whereas a poltergeist is more mental than body.</p>
+<h3 id="on-the-care-that-has-to-be-taken-before-invoking-quantum-physics"><span class="section_number">6.9</span><span class="section_title">On the care that has to be taken before invoking quantum physics</span></h3>
+<p>Parapsychology itself already makes people think you're a lunatic. Invoking quantum physics will make people think you're a deranged lunatic.</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">7</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-haraldsson2012persistence">
+<p>[1] Haraldsson, E. and Abu-Izzedin, M. 2012. Persistence of “past-life” memories in adults who, in their childhood, claimed memories of a past life. <em>The Journal of nervous and mental disease</em>. 200, 11 (2012), 985–989. url: &lt;<a href="https://www.ncbi.nlm.nih.gov/pubmed/23124184">https://www.ncbi.nlm.nih.gov/pubmed/23124184</a>&gt;.</p>
+</div>
+<div id="ref-utts2001assessment">
+<p>[2] Utts, J. 2001. An assessment of the evidence for psychic functioning. <em>Basic research in parapsychology</em>. (2001), 110–141. url: &lt;<a href="http://www.deanradin.com/evidence/Utts1996.pdf">http://www.deanradin.com/evidence/Utts1996.pdf</a>&gt;.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://listverse.com/2009/01/29/top-10-bizarre-afterlife-experiments/">https://listverse.com/2009/01/29/top-10-bizarre-afterlife-experiments/</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="http://www.theoccultmuseum.com/5-chilling-experiments-attempted-prove-existence-afterlife/">http://www.theoccultmuseum.com/5-chilling-experiments-attempted-prove-existence-afterlife/</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&lt;2019-09-08&gt; <a href="http://www.futurelifeinstitute.org/2013/psd/Experiment-Web.pdf">http://www.futurelifeinstitute.org/2013/psd/Experiment-Web.pdf</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.etymonline.com/word/soul#etymonline_v_23918">https://www.etymonline.com/word/soul#etymonline_v_23918</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://www.etymonline.com/word/spirit#etymonline_v_24031">https://www.etymonline.com/word/spirit#etymonline_v_24031</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>&lt;2019-09-08&gt; <a href="https://upliftconnect.com/past-lives/">https://upliftconnect.com/past-lives/</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>&lt;2019-09-08&gt; <a href="https://www.gaia.com/article/incredible-evidence-for-remembering-past-lives">https://www.gaia.com/article/incredible-evidence-for-remembering-past-lives</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>&lt;2019-09-08&gt; <a href="https://www.consciouslifestylemag.com/reincarnation-stories-proof-past-life/">https://www.consciouslifestylemag.com/reincarnation-stories-proof-past-life/</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>&lt;2019-09-08&gt; <a href="https://www.rd.com/true-stories/chilling-reincarnation-stories/">https://www.rd.com/true-stories/chilling-reincarnation-stories/</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>&lt;2019-09-08&gt; <a href="https://www.google.com/amp/s/www.psychologytoday.com/us/blog/feeling-too-much/201412/children-who-seemingly-remember-past-lives%3famp">https://www.google.com/amp/s/www.psychologytoday.com/us/blog/feeling-too-much/201412/children-who-seemingly-remember-past-lives%3famp</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>&lt;2019-09-08&gt; <a href="https://uvamagazine.org/articles/the_science_of_reincarnation">https://uvamagazine.org/articles/the_science_of_reincarnation</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>&lt;2019-09-09&gt; How Precognition Works with Edwin C. May <a href="https://www.youtube.com/watch?v=37tPK3iwcZ4">https://www.youtube.com/watch?v=37tPK3iwcZ4</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>translation &lt;2019-09-08&gt; <a href="https://www.fyears.org/2010/06/how-to-prove-reincarnation-with-statistical-experiment.html">https://www.fyears.org/2010/06/how-to-prove-reincarnation-with-statistical-experiment.html</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>original in Mandarin Chinese &lt;2019-09-08&gt; <a href="https://www.geekonomics10000.com/178">https://www.geekonomics10000.com/178</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p>&lt;2019-09-08&gt; <a href="https://psi-encyclopedia.spr.ac.uk/articles/patterns-reincarnation-cases">https://psi-encyclopedia.spr.ac.uk/articles/patterns-reincarnation-cases</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p>Dr. Brian Weiss: Past-Life Skeptic to Past-Life Expert | SuperSoul Sunday | Oprah Winfrey Network <a href="https://www.youtube.com/watch?v=qQAgiP8zQ6M">https://www.youtube.com/watch?v=qQAgiP8zQ6M</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p><a href="https://www.reddit.com/r/precognition/">https://www.reddit.com/r/precognition/</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p>&lt;2019-09-08&gt; <a href="https://en.wikipedia.org/wiki/Density_of_air">https://en.wikipedia.org/wiki/Density_of_air</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p><a href="http://www.pandualism.com/d/reincarnation.html">http://www.pandualism.com/d/reincarnation.html</a><a href="#fnref19" class="footnote-back">↩</a></p></li>
+<li id="fn20"><p>&lt;2019-09-08&gt; <a href="https://en.wikipedia.org/wiki/2004_Indian_Ocean_earthquake_and_tsunami">https://en.wikipedia.org/wiki/2004_Indian_Ocean_earthquake_and_tsunami</a><a href="#fnref20" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p><a href="https://en.wikipedia.org/wiki/Legion_of_Merit">https://en.wikipedia.org/wiki/Legion_of_Merit</a><a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p>Joe McMoneagle; &lt;2019-09-07&gt; <a href="https://en.wikipedia.org/wiki/Recipients_of_the_Legion_of_Merit">https://en.wikipedia.org/wiki/Recipients_of_the_Legion_of_Merit</a><a href="#fnref22" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p><a href="https://en.wikipedia.org/wiki/Ingo_Swann">https://en.wikipedia.org/wiki/Ingo_Swann</a><a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn24"><p>Remote Viewing and the Reality of Psychic Phenomena | Waking Cosmos | Garret Moddel Ph.D. <a href="https://www.youtube.com/watch?v=IC1kTVe61yc">https://www.youtube.com/watch?v=IC1kTVe61yc</a><a href="#fnref24" class="footnote-back">↩</a></p></li>
+<li id="fn25"><p><a href="https://www.youtube.com/watch?v=DL_bIhVJi-k">https://www.youtube.com/watch?v=DL_bIhVJi-k</a><a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn26"><p><a href="https://www.reddit.com/r/AskReddit/comments/1sv39b/serious_what_in_your_opinion_is_the_most/ce25ska/">https://www.reddit.com/r/AskReddit/comments/1sv39b/serious_what_in_your_opinion_is_the_most/ce25ska/</a><a href="#fnref26" class="footnote-back">↩</a></p></li>
+<li id="fn27"><p><a href="https://www.youtube.com/watch?v=92jFdzNC228&amp;t=2m28s">https://www.youtube.com/watch?v=92jFdzNC228&amp;t=2m28s</a><a href="#fnref27" class="footnote-back">↩</a></p></li>
+<li id="fn28"><p><a href="https://www.reddit.com/r/Paranormal/comments/9g3ero/hi_reddit_im_loyd_auerbach_parapsychologist_ask/e61agrg/">https://www.reddit.com/r/Paranormal/comments/9g3ero/hi_reddit_im_loyd_auerbach_parapsychologist_ask/e61agrg/</a><a href="#fnref28" class="footnote-back">↩</a></p></li>
+<li id="fn29"><p>&lt;2019-09-07&gt; <a href="https://tunsasays.wordpress.com/about-this-site/">https://tunsasays.wordpress.com/about-this-site/</a><a href="#fnref29" class="footnote-back">↩</a></p></li>
+<li id="fn30"><p>Also on CIA website <a href="https://www.cia.gov/library/readingroom/document/cia-rdp96-00791r000200070001-9">https://www.cia.gov/library/readingroom/document/cia-rdp96-00791r000200070001-9</a><a href="#fnref30" class="footnote-back">↩</a></p></li>
+<li id="fn31"><p>&lt;2019-09-06&gt; <a href="https://tunsasays.wordpress.com/2015/05/04/the-nature-of-psi-the-first-sight-model-and-theory-of-psi/">https://tunsasays.wordpress.com/2015/05/04/the-nature-of-psi-the-first-sight-model-and-theory-of-psi/</a><a href="#fnref31" class="footnote-back">↩</a></p></li>
+<li id="fn32"><p><a href="http://www.tcm.phy.cam.ac.uk/~bdj10/">http://www.tcm.phy.cam.ac.uk/~bdj10/</a><a href="#fnref32" class="footnote-back">↩</a></p></li>
+<li id="fn33"><p><a href="https://www.psychicreviewonline.com">https://www.psychicreviewonline.com</a><a href="#fnref33" class="footnote-back">↩</a></p></li>
+<li id="fn34"><p>&lt;2019-09-07&gt; <a href="https://www.reddit.com/r/Paranormal/comments/9g3ero/hi_reddit_im_loyd_auerbach_parapsychologist_ask/e61agrg/">https://www.reddit.com/r/Paranormal/comments/9g3ero/hi_reddit_im_loyd_auerbach_parapsychologist_ask/e61agrg/</a><a href="#fnref34" class="footnote-back">↩</a></p></li>
+<li id="fn35"><p><a href="https://www.psychicreviewonline.com">https://www.psychicreviewonline.com</a><a href="#fnref35" class="footnote-back">↩</a></p></li>
+<li id="fn36"><p><a href="https://psychicelements.com/blog/are-psychic-abilities-hereditary/">https://psychicelements.com/blog/are-psychic-abilities-hereditary/</a><a href="#fnref36" class="footnote-back">↩</a></p></li>
+<li id="fn37"><p><a href="https://www.anthonstmaarten.com/blog/psychic-dna-nature-or-nurture">https://www.anthonstmaarten.com/blog/psychic-dna-nature-or-nurture</a><a href="#fnref37" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-09-07 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
