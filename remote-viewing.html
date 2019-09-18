@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On remote viewing</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On remote viewing</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#on-remote-viewing-1">On remote viewing</a></span><span class="word_count">(281w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#on-the-theory-of-remote-viewing">On the theory of remote viewing</a></span><span class="word_count">(109w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#on-indirect-remote-viewing">On indirect remote viewing</a></span><span class="word_count">(388w~2m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#remote-viewing-self-training-protocol">Remote viewing self-training protocol?</a></span><span class="word_count">(495w~3m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#meditation">Meditation?</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(53w~1m)</span></li>
+</ul>
+</div>
+<h2 id="on-remote-viewing-1"><span class="section_number">1</span><span class="section_title">On remote viewing</span></h2>
+<p>There is evidence of remote viewing, although perhaps one has to experience it himself.</p>
+<p>Perhaps, of all psychic phenomenons, remote viewing is the least extravagant-sounding one, the least risky one, the easiest one to learn, the easiest one to show, and the easiest one to believe. However, one does not even have to believe anything about remote viewing in order to be able to do it; one only has to follow a protocol.</p>
+<p>Joe McMoneagle 2000 book <span class="citation" data-cites="mcmoneagle2000remote">[<a href="#ref-mcmoneagle2000remote">1</a>]</span>.</p>
+<p>Russell Targ, in his 2012 book <span class="citation" data-cites="targ2012reality">[<a href="#ref-targ2012reality">3</a>]</span>, advises us against enrolling in expensive remote-viewing schools:</p>
+<blockquote>
+<p>I believe there is presently no evidence that there is any benefit to paying thousands of dollars to attend any such remote-viewing school—as compared with reading this book or Ingo Swann’s wonderful book &quot;Natural ESP&quot;. But I could be wrong. The claims many of these schools make are confusing to the public, as implied by their very names—Controlled Remote Viewing (CRV®), Extended Remote Viewing (ERV®), and Technical Remote Viewing (TRV®), for example. Joe McMoneagle, who was one of the first, and by far the most successful of the army viewers, has also written an excellent book, &quot;Remote Viewing Secrets&quot;, in which he unscrambles these acronyms. He also describes a very clear and sensible approach to learning remote viewing, based on his more than thirty years of experience. <span class="citation" data-cites="targ2012reality">[<a href="#ref-targ2012reality">3</a>]</span></p>
+</blockquote>
+<p>&lt;2019-09-16&gt; I'm trying remote viewing. I think my accuracy so far, as a total newbie, out of about 5 trials, is below 10%.</p>
+<p>Remote viewing has been used for psychic archeology.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Stephan A. Schwartz seems to have some strong evidence for remote viewing, with archeological flair. It seems promising. Project Deep Quest.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>More recent, 2004, Courtney Brown, &quot;Scientific Remote Viewing&quot;, a protocol<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>International Remote Viewing Association<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<h2 id="on-the-theory-of-remote-viewing"><span class="section_number">2</span><span class="section_title">On the theory of remote viewing</span></h2>
+<p>The theory so far is that, by quieting the mind, and relaxedly focusing the attention on the target, sometimes vague signals surface from the collective unconscious (the cosmic consciousness) to the viewer's conscious mind.</p>
+<p>&quot;A suggested remote viewing training procedure&quot;<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> (CIA Project Stargate FOIA archive). It contains a model (an explanatory hypothesis) of how remote viewing might work. It is written in plain language.</p>
+<p>Is meditation thinking or feeling?</p>
+<p>René Warcollier's &quot;Mind to mind&quot;?</p>
+<p>I think we should first learn what we know about remote viewing<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>, and begin with free-form remote viewing. Free-form does not mean anything goes; there is still a <em>protocol</em> to follow to prevent contamination.</p>
+<h2 id="on-indirect-remote-viewing"><span class="section_number">3</span><span class="section_title">On indirect remote viewing</span></h2>
+<p>Is <em>reverse remote viewing</em> possible? In forward remote viewing, from an address, we perceive the object referred to by the address. In reverse remote viewing, from a photo, we find out where the photo was taken.</p>
+<p>But isn't reverse remote viewing just forward remote viewing whose address is the photo and whose object is the address where the photo was taken?</p>
+<p><em>Associative remote viewing</em> can be used to ask multiple-choice questions about the future.</p>
+<p>Targ et al. used <em>associative</em> remote viewing for financial prediction, because it is hard to remote-view anything <em>analytical</em> such as numbers, letters, etc.<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> Why is that? Why is it hard to remote-view left-brain stuff? Are there psychic people without right hemisphere? What is Sperry's split-brain experiment trying to tell us?<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> Why does it seem that people without corpus callosum cannot verbally describe the things in their left visual field? Douglas Dean et al. (in &quot;Executive ESP&quot; book) found that CEOs of profitable companies have more precognitive abilities than the CEOs of non-profitable companies do. Rauscher &amp; Targ 2006 proposes a &quot;complex Minkowski space&quot;<span class="citation" data-cites="rauscher2006investigation">[<a href="#ref-rauscher2006investigation">2</a>]</span>, a generalization of the Minkowski space in Einstein's general relativity theory.</p>
+<p>But, in the same book <span class="citation" data-cites="targ2012reality">[<a href="#ref-targ2012reality">3</a>]</span>, Targ claims that Ingo could &quot;read the code words written on the file cabinets&quot;. Perhaps it's because it was so hidden that it became so clear in the psychic space; that is what Targ reports Pat Price said.</p>
+<blockquote>
+<p>When the two CIA agents who came to investigate asked why he had so accurately described the “incorrect” location, Pat said, “The more intent you are on hiding something, the more it shines like a beacon in psychic space.” <span class="citation" data-cites="targ2012reality">[<a href="#ref-targ2012reality">3</a>]</span></p>
+</blockquote>
+<p>Psychic stock pickers, gamblers, or lottery winners?</p>
+<p>One can use remote viewing to profit from the financial market.<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a><a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> However, it would be more convincing if the study lasted <em>tens of years</em> through several economic cycles and crises instead of only 17 months.</p>
+<p>But what about the Efficient Market Hypothesis? What if all financial traders are psychic with 100% accuracy? What if all relevant future events are known and certain, and the price takes into account all of those future events? Will the price the constant? If everyone knew that, exactly 123,456 days later, the biggest oil pipeline will experience an inevitable catastrophe with certain probability, then what would the price of oil be?</p>
+<p>There is a <em>genealogy</em> of remote viewing methods.<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a><a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></p>
+<h2 id="remote-viewing-self-training-protocol"><span class="section_number">4</span><span class="section_title">Remote viewing self-training protocol?</span></h2>
+<p>Can you simultaneously play the role of the viewer and the monitor?</p>
+<p>How do we distinguish conscious noise (mental noise, &quot;interpretative overlay&quot;, now called &quot;analytical overlay&quot;) from remote-perception signal?</p>
+<p>The conscious mind interferes with its imagination.</p>
+<p>Perhaps the aim of meditation is to <em>feel</em> that we are not our conscious minds. It is as if we were trying to look at ourselves from a third person point of view.</p>
+<p>My hypothesis is that remote viewing experts are able to quickly relax their brains; perhaps they are able to quickly switch into and out of &quot;theta state&quot;?</p>
+<p>Information comes in as short bursts (less than 1 second) of vague signals, not as a smooth sailing experience. Why is that?</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#an-imperfect-protocol-for-remote-viewing-self-training-using-google-maps">An imperfect protocol for remote viewing self-training using Google Maps</a></span><span class="word_count">(365w~2m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#self-training-remote-viewing-using-machine-learning-datasets">Self-training remote viewing using machine learning datasets?</a></span><span class="word_count">(16w~1m)</span></li>
+</ul>
+</div>
+<h3 id="an-imperfect-protocol-for-remote-viewing-self-training-using-google-maps"><span class="section_number">4.1</span><span class="section_title">An imperfect protocol for remote viewing self-training using Google Maps</span></h3>
+<p>Open Google Maps in your browser.</p>
+<p>Pick any city in the world. It is better to pick cities you are not familiar with. For example: another city in your country, or a city outside your country.</p>
+<p>Adjust the zoom level such that you can see road names and some landmarks but not detailed buildings.</p>
+<p>Drag the Street View guy to see roads that have Street View photos, but drop the guy back in the toolbar he came from; don't drop the guy on any road. While you are dragging the Street View guy, the roads with Street View will be highlighted in blue.</p>
+<p>Cover the bottom part that shows preview photo.</p>
+<p>Click on any point on any road that has Street View. Note the pair of coordinates in the search box. The pair of coordinates is the <em>identifier</em>. This identifier should be thought of referring to a Google Street View photo, not the real location on Earth where the photo was taken. We are interested in the photo itself, not in the location where it was taken.</p>
+<p>Hide the browser window, such as by Alt+Tab-ing to another maximized window. You can now release your hand.</p>
+<p>Remote view the target photo at the time the Street View photo was taken. Note that you want to remote-view the photo itself and not the actual location on Earth where the photo was taken.</p>
+<p>Click the lower photo on the left sidebar to open Street View at that point.</p>
+<p>Compare your remote viewing result and the Street View photo.</p>
+<p>Repeat the exercise as many times as desired.</p>
+<p>Note that this protocol is not perfect for training. The data pool is somewhat predictable, and some information leaks: You know there will be a road in the photo, and it seems that all Street View photos are taken at noon. But, from this, can you learn to tell apart between the roads that come from your imagination and the roads that come from your unconscious?</p>
+<p>It seems focusing on the photo does not work; perhaps we should focus on the actual location.</p>
+<p>This protocol is bad. It is too easy to accidentally click on something, and a photo pops up, and it contaminates your mind.</p>
+<h3 id="self-training-remote-viewing-using-machine-learning-datasets"><span class="section_number">4.2</span><span class="section_title">Self-training remote viewing using machine learning datasets?</span></h3>
+<p>Random number generator</p>
+<p>Dataset for &quot;Object detection and recognition&quot;<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a></p>
+<p>Caltech 101 dataset<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></p>
+<h2 id="meditation"><span class="section_number">5</span><span class="section_title">Meditation?</span></h2>
+<p>The attention wanders in meditation, but we <em>gently</em> bring it back to where we want it to be.<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a> The more we try to suppress a thought, the harder it resists. Acknowledge the thought, and move on?</p>
+<p>Is it about relaxation or concentration? Is it about silence or concentration?</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">6</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-mcmoneagle2000remote">
+<p>[1] McMoneagle, J. 2000. <em>Remote viewing secrets: A handbook</em>. Hampton Roads Publishing Company.</p>
+</div>
+<div id="ref-rauscher2006investigation">
+<p>[2] Rauscher, E.A. and Targ, R. 2006. Investigation of a complex space-time metric to describe precognition of the future. <em>AIP conference proceedings</em> (2006), 121–146. url: &lt;<a href="http://www.espresearch.com/espgeneral/doc-SpeedOfThought.pdf">http://www.espresearch.com/espgeneral/doc-SpeedOfThought.pdf</a>&gt;.</p>
+</div>
+<div id="ref-targ2012reality">
+<p>[3] Targ, R. 2012. <em>The reality of esp: A physicist’s proof of psychic abilities</em>. Quest Books.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-09-13&gt; The History of Psychic Archeology with Stephan A. Schwartz <a href="https://www.youtube.com/watch?v=KwcEyflmaxk">https://www.youtube.com/watch?v=KwcEyflmaxk</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-09-13&gt; Project Deep Quest with Stephan A. Schwartz <a href="https://www.youtube.com/watch?v=WH4i7Z4JwPA">https://www.youtube.com/watch?v=WH4i7Z4JwPA</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://farsight.org/SRV/SRVManualByCourtneyBrown.pdf">https://farsight.org/SRV/SRVManualByCourtneyBrown.pdf</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.irva.org/remote-viewing/howto.html">https://www.irva.org/remote-viewing/howto.html</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://www.cia.gov/library/readingroom/document/cia-rdp96-00789r002200070001-0">https://www.cia.gov/library/readingroom/document/cia-rdp96-00789r002200070001-0</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>&lt;2019-09-18&gt; Targ &amp; Ketra, &quot;What We Know About Remote Viewing&quot; <a href="http://www.espresearch.com/espgeneral/WhatWeKnow.shtml">http://www.espresearch.com/espgeneral/WhatWeKnow.shtml</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>&lt;2019-09-16&gt; 3:27 Precognitive Financial Forecasting with Russell Targ <a href="https://www.youtube.com/watch?v=bQK0oHP94x4">https://www.youtube.com/watch?v=bQK0oHP94x4</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://www.psychologytoday.com/intl/blog/consciousness-self-organization-and-neuroscience/201802/no-you-re-not-left-brained-or-right">https://www.psychologytoday.com/intl/blog/consciousness-self-organization-and-neuroscience/201802/no-you-re-not-left-brained-or-right</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>&lt;2019-09-11&gt; 60% success rate is not an exorbitant claim; 17-month study; brochure for a 2005 workshop <a href="http://www.espresearch.com/JAN05ARVBrochure.pdf">http://www.espresearch.com/JAN05ARVBrochure.pdf</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>&lt;2019-09-11&gt; SSE Talks - Remote viewing the Stock Market - Christopher Carson Smith <a href="https://www.youtube.com/watch?v=K3x5QHD7Ewo">https://www.youtube.com/watch?v=K3x5QHD7Ewo</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>&lt;2019-09-16&gt; <a href="http://www.remoteviewed.com/methodshistorymap.html">http://www.remoteviewed.com/methodshistorymap.html</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>&lt;2019-09-16&gt; <a href="http://www.remoteviewed.com/remote-viewing-methods/">http://www.remoteviewed.com/remote-viewing-methods/</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>&lt;2019-09-16&gt; <a href="https://en.wikipedia.org/wiki/List_of_datasets_for_machine-learning_research#Object_detection_and_recognition">https://en.wikipedia.org/wiki/List_of_datasets_for_machine-learning_research#Object_detection_and_recognition</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>&lt;2019-09-19&gt; <a href="http://www.vision.caltech.edu/Image_Datasets/Caltech101/">http://www.vision.caltech.edu/Image_Datasets/Caltech101/</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p>&lt;2019-09-17&gt; How to Meditate with Charles T. Tart <a href="https://www.youtube.com/watch?v=OWfe3pVYP8o">https://www.youtube.com/watch?v=OWfe3pVYP8o</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-09-07 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
