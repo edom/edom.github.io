@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Summary of some books</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Summary of some books</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#about">About</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#planned">Planned</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#the-magus-of-java-kosta-danaos">&quot;The Magus of Java: […]&quot;, Kosta Danaos</a></span><span class="word_count">(48w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#proof-of-heaven-eben-alexander">&quot;Proof of Heaven […]&quot;, Eben Alexander</a></span><span class="word_count">(41w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#the-reality-of-esp-russell-targ">&quot;The Reality of ESP: […]&quot;, Russell Targ</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#kundalini-guide-kimberly-moon">&quot;Kundalini: […] Guide […]&quot;, Kimberly Moon</a></span><span class="word_count">(191w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#mind-trek-joseph-mcmoneagle">&quot;Mind Trek […]&quot;, Joseph McMoneagle</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#remote-viewing-ingo-swann">&quot;Remote Viewing: […]&quot;, Ingo Swann</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#need-to-background-research-the-authors">Need to background-research the authors</a></span><span class="word_count">(48w~1m)</span></li>
+</ul>
+</div>
+<h2 id="about"><span class="section_number">1</span><span class="section_title">About</span></h2>
+<p>What I am interested in: theories (testable theories, not conspiracy theories), hypotheses, corroboratable facts, experiments, reports, observations.</p>
+<p>Usually I prefer engineers and scientists who have experienced anomalies themselves.</p>
+<p>Perhaps a more appropriate title is &quot;Review of some authors&quot;.</p>
+<h2 id="planned"><span class="section_number">2</span><span class="section_title">Planned</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#psychic-development-william-w.-hewitt">&quot;Psychic Development […]&quot;, William W. Hewitt</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#astral-travel-richard-webster">&quot;Astral Travel […]&quot;, Richard Webster</a></span><span class="word_count">(15w~1m)</span></li>
+</ul>
+</div>
+<h3 id="psychic-development-william-w.-hewitt"><span class="section_number">2.1</span><span class="section_title">&quot;Psychic Development […]&quot;, William W. Hewitt</span></h3>
+<p>&quot;Psychic Development for Beginners&quot;</p>
+<h3 id="astral-travel-richard-webster"><span class="section_number">2.2</span><span class="section_title">&quot;Astral Travel […]&quot;, Richard Webster</span></h3>
+<p>&quot;Astral Travel for Beginners: Transcend Time and Space with Out-of-Body Experiences&quot;</p>
+<h2 id="the-magus-of-java-kosta-danaos"><span class="section_number">3</span><span class="section_title">&quot;The Magus of Java: […]&quot;, Kosta Danaos</span></h2>
+<p>&quot;The Magus of Java: Teachings of an Authentic Taoist Immortal&quot;</p>
+<p>This book is Kosta Danaos's account of John Chang, a level-4-of-72 neigong master at the time that book was written.</p>
+<p>Kostas and John did some experiments and had some hypotheses about yin and yang.</p>
+<h2 id="proof-of-heaven-eben-alexander"><span class="section_number">4</span><span class="section_title">&quot;Proof of Heaven […]&quot;, Eben Alexander</span></h2>
+<p>&quot;Proof of Heaven: A Neurosurgeon's Journey into the Afterlife&quot;</p>
+<p>This book is Eben Alexander's account of his near-death experience.</p>
+<p>He considered how some materialistic hypotheses fail to explain the experience he had when his neocortex was not functioning.</p>
+<h2 id="the-reality-of-esp-russell-targ"><span class="section_number">5</span><span class="section_title">&quot;The Reality of ESP: […]&quot;, Russell Targ</span></h2>
+<p>&quot;The Reality of ESP: A Physicist's Proof of Psychic Abilities&quot;</p>
+<h2 id="kundalini-guide-kimberly-moon"><span class="section_number">6</span><span class="section_title">&quot;Kundalini: […] Guide […]&quot;, Kimberly Moon</span></h2>
+<p>&quot;Kundalini: The Ultimate Guide to Awakening Your Chakras Through Kundalini Yoga and Meditation and to Experiencing Higher Consciousness, Clairvoyance, Astral Travel, Chakra Energy, and Psychic Visions&quot;</p>
+<p>What a long title.</p>
+<p>The book is relatively short for its very long title.</p>
+<p>I feel that this book is a mere aggregation of information found by googling lots of sites. I feel it contains little original thought, commentary, opinion, or insight. It feels like a bunch of generic wellness advices. It feels like a mere repetition of what others say. It feels like a mere echo in the giant echo chamber that is the Internet.</p>
+<p>I feel this book is optimized for search-engine. The title is full of gratuitous keywords. Lots of list-titled chapters (like 123 ways you can do XYZ).</p>
+<p>Did she try anything she wrote? Did she have any experience about it? What worked for her, and what did not? What are her experiments and hypotheses? Why did she not write about such things?</p>
+<p>Nevertheless, it is a guide, as its title claims, but not the ultimate guide. It is a guide in the sense that it provides some procedures you can try.</p>
+<h2 id="mind-trek-joseph-mcmoneagle"><span class="section_number">7</span><span class="section_title">&quot;Mind Trek […]&quot;, Joseph McMoneagle</span></h2>
+<p>&quot;Mind Trek: Exploring Consciousness, Time &amp; Space through Remote Viewing&quot;</p>
+<p>Interesting: His out-of-body experience interferes with his remote viewing.</p>
+<h2 id="remote-viewing-ingo-swann"><span class="section_number">8</span><span class="section_title">&quot;Remote Viewing: […]&quot;, Ingo Swann</span></h2>
+<p>&quot;Remote Viewing: The Real Story, An Autobiographical Memoir&quot;</p>
+<h2 id="need-to-background-research-the-authors"><span class="section_number">9</span><span class="section_title">Need to background-research the authors</span></h2>
+<p>Books whose title contains &quot;secret&quot; or &quot;hidden&quot; are suspect.</p>
+<p>The title of these books arouses my suspicion. I demand a background check on the authors before I read these books.</p>
+<p>David Wilcock's &quot;The Hidden Science of Lost Civilisations: The Source Field Investigations&quot; has some facts, but?</p>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-09-28 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

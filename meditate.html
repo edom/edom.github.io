@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On meditation</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("span");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On meditation</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what-is-meditation">What is meditation?</a></span><span class="word_count">(134w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#how-do-i-meditate">How do I meditate?</a></span><span class="word_count">(1117w~6m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#untested-wild-guesses-dont-read">Untested wild guesses; don't read</a></span><span class="word_count">(1773w~9m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#other-things">Other things</a></span><span class="word_count">(33w~1m)</span></li>
+</ul>
+</div>
+<h2 id="what-is-meditation"><span class="section_number">1</span><span class="section_title">What is meditation?</span></h2>
+<p>This question is useless. Everybody has an opinion about what meditation is.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> A more useful question is &quot;<em>How</em> do I meditate?&quot; You can skip to the next section.</p>
+<p>Daydreaming is the <em>opposite</em> of meditation. Daydreaming is mindless; meditation is mindful. Daydreaming is unfocused; meditation is focused.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a><a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<p>Meditation is about focusing, not relaxation Meditation is focus, not relaxation; the relaxation is only to help the focusing. But focus on what: nothing, something, or everything?</p>
+<p>To meditate on something is to focus on that thing, and that thing only, exclusively, and nothing else?</p>
+<p>&quot;However, the actual aim of Meditation is not having a blank mind as popularly believed.&quot;<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
+<p>The essence of meditation is the singular exclusive focus on the object of meditation. The stillness and relaxation are there to help us focus, but are not the goal of meditation.</p>
+<h2 id="how-do-i-meditate"><span class="section_number">2</span><span class="section_title">How do I meditate?</span></h2>
+<p>This is how I think one should meditate.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#beware-of-the-risks-of-meditation">Beware of the risks of meditation</a></span><span class="word_count">(452w~3m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#choose-one-object-to-meditate-on">Choose one object to meditate on</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#minimize-distraction">Minimize distraction</a></span><span class="word_count">(82w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#focus-on-the-object-exclusively">Focus on the object exclusively</a></span><span class="word_count">(494w~3m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#other-objects">Other objects?</a></span><span class="word_count">(37w~1m)</span></li>
+</ul>
+</div>
+<h3 id="beware-of-the-risks-of-meditation"><span class="section_number">2.1</span><span class="section_title">Beware of the risks of meditation</span></h3>
+<p><em>Trigger warning: Do not read if you have suicidal tendencies;</em> instead, find a suicide hotline near you on the Internet, and seek help from that suicide hotline.</p>
+<p><em>Warning: Meditation may harm you,</em> especially if you teach yourself, or get it from an unqualified beginner like me; I'm not a meditation teacher; I'm just sharing my experiments; it may not work for you; it may even work <em>against</em> you. <em>Proceed at your own risk.</em></p>
+<p><em>Beginners should avoid meditating too much</em>. Beginners should avoid meditating more than 20 minutes per day? Use common sense. I am curious about the possibility of obtaining psychic powers by meditating, but I approach it with some skepticism.</p>
+<p>Meditation may harm you and others, although it happens somewhat rarely.<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a><a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a><a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> You may lose enjoyment in things you used to enjoy. You may no longer love the people you love. You may change, and this may lead to a divorce if you are married. You may become uncaring about anything including your friends, kids, and parents. You may become unable to feel emotions. The change is not always better, and may be irreversible. You may be unable to return to your old self.</p>
+<p>It may help if you are already an optimistic nihilist before you begin meditating.</p>
+<p>I had already been a nihilist before I began meditating in my thirties.</p>
+<p>In my teens, when I was in senior high school, I found nihilism on the Internet.</p>
+<p>In my mid-twenties, I occasionally thought about suicide, perhaps every a few months, although I never dared to do it. The thoughts were not too strong and not too frequent, but it was there.</p>
+<p>In my late twenties, I bounced back a bit and emerged as a mostly apathetic person able to enjoy a few things.</p>
+<p>Suicide is always an option. I never say &quot;There is nothing I can do&quot; because I <em>can</em> always kill myself, although I <em>will not</em> always do that, but <em>it feels good to always have an option</em>. It gives me a feeling of <em>power</em> over the world: If I don't like the world, I always have the option of killing myself, besides all the other options I may have.</p>
+<p>I rarely feel happy; I am merely content most of the time.</p>
+<p>I rarely feel sad; I usually feel angry instead.</p>
+<p>I fear death. No. I fear dying. No. I fear the <em>pain</em> of dying. No. I fear the <em>suffering</em> from the pain of dying. Thus, it is inspiring to see the burning monk Thích Quảng Đức<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> <em>separate</em> pain and suffering. Surely there are less painful ways to die than burning. If he can have that much pain without suffering, then perhaps we can too; it should even be easier for us, because we should have less pain.</p>
+<h3 id="choose-one-object-to-meditate-on"><span class="section_number">2.2</span><span class="section_title">Choose one object to meditate on</span></h3>
+<p>Choose one object, such as your deity, a problem of yours, a favorite thing of yours, a mantra, etc. It does not have to be a visual object; it can be a sound, a smell, a taste, etc. Whatever suits you.</p>
+<h3 id="minimize-distraction"><span class="section_number">2.3</span><span class="section_title">Minimize distraction</span></h3>
+<p>Go to somewhere quiet, cool, comfortable, in a relatively static environment that does not change very much: An environment with stable noise, no blinking lights, no jarring sounds, no haphazard winds, no unpredictable heat, no mosquitos.</p>
+<p>Get into a comfortable position that can be sustained with minimum effort. Sitting, lying down, hanging, whatever works for you. Close your eyes. Stay still. Do not move your body. If you are lying down, you can pretend that you have sleep paralysis. Whatever suits you.</p>
+<h3 id="focus-on-the-object-exclusively"><span class="section_number">2.4</span><span class="section_title">Focus on the object exclusively</span></h3>
+<p>Focus on the object exclusively, only on the object, and nothing else. Let breathing happen comfortably, regularly, and unconsciously, like when you are sleeping, but do not try to make the breathing unconscious; just let it be. If you become aware of your breathing, acknowledge it, and move on. Do not try to suppress your awareness of anything else such as your breathing or the environment. Instead, acknowledge those thoughts, let them be, do not respond to them; be indifferent to them, and focus on the object without trying to regain your attention from those thoughts. It's like you are ironing your clothes and your kid ask you to play; you say you'll play with him after you finish ironing, you continue ironing, and your kid goes away, but make sure you fulfill that promise, or your kid will distrust you. If you let your thoughts be and not respond to them, they will pass on their own like a gentle breeze blowing past you.</p>
+<p>Do not shoo your thoughts; let them get bored and leave on their own. These thoughts are like your childhood friends calling you from outside the fence to play: If you pretend you're not home, they'll go away on their own. (Is this a bad analogy?)</p>
+<p>After a few minutes of exclusive focus, you will be unaware of your surroundings and other sensory inputs; you will be aware of only the object and nothing else. We call this feeling the state of <em>oneness</em>, but in beginners, this happens for a very short duration, only a few seconds, and then you <em>will</em> be distracted, your mind will pull you back to your body, and you will become aware again of your surroundings, and lose the exclusive focus on the object, but you will remember that for a short time you were fixated on the object and unaware of everything else. You are aware that your state of mind has changed. (Perhaps this is what is meant by being aware of awareness itself? If you can be aware of the shift of your awareness, then you can be aware of your awareness itself?)</p>
+<p>After a few distractions, it becomes increasingly difficult to reenter the state of oneness. You can take a few minutes of break, do something else, and come back to meditation later.</p>
+<p>Therefore, meditation has two aims.</p>
+<p>First, to <em>prolong</em> the state of oneness above, from a few seconds to forever (as long as desired).</p>
+<p>Second, to <em>shorten</em> the transition from normal waking state to the state of oneness, from a few minutes to none (at will, as short as desired, like blinking an eye).</p>
+<p>Thus, the aim of meditation is to enable you to get into and out of the state of oneness <em>whenever</em> you want it. At first it's very hard to get in and it's too easy to get out, but, with practice, you should be able to get in, stay, and get out, at any time you want.</p>
+<h3 id="other-objects"><span class="section_number">2.5</span><span class="section_title">Other objects?</span></h3>
+<p>What if the object is <em>nothing</em>?</p>
+<p>What if the object is <em>everything</em>?</p>
+<p>What if the object is a part of your own body?</p>
+<p>What if the object is a part of your own mind?</p>
+<p>What if the object is yourself?</p>
+<h2 id="untested-wild-guesses-dont-read"><span class="section_number">3</span><span class="section_title">Untested wild guesses; don't read</span></h2>
+<p>It seems that the thing common to the obtainment of superpowers in all cultures is <em>meditation</em>, be it Indian or Chinese.</p>
+<p>I think meditation done right should eventually induce synesthesia after a few years?</p>
+<p>Hypothesis: If we don't think of anything, the mind will naturally daydream, as a spring is at its resting position when there are no external forces.</p>
+<p>When we are daydreaming, we do not remember reality.</p>
+<p>We glance at a wooden table, and we see a legged brown thing. Then, we stare at the wooden table, and we see the grain. This shows that we can <em>perceive the same thing in several different ways</em>. The light that arrives at our eyes has not changed. It is our attention that changes. We can fail to perceive what we sense. We do not perceive everything that arrives at our senses.</p>
+<p>When you are doing something boring but necessary, often your mind wanders somewhere else. What is this state of mind? Daydreaming?</p>
+<p>Feeling boredom or hatred means you think something is wrong; this implies that you care. Apathy means you don't feel anything. Perhaps we don't get apathetic as we age; it's just that our priorities change.</p>
+<p>I used to be able to feel bored. However, as I get older, I find it harder to feel bored. Apparently my boredom has been replaced by apathy.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#eeg-of-meditator-in-noisy-environment">EEG of meditator in noisy environment?</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#we-are-still-aware-in-our-sleep-only-less-aware">We are still aware in our sleep, only less aware?</a></span><span class="word_count">(111w~1m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#on-meditation-subconscious-reality">On meditation, subconscious, reality</a></span><span class="word_count">(1382w~7m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#meditation">Meditation?</a></span><span class="word_count">(47w~1m)</span></li>
+</ul>
+</div>
+<h3 id="eeg-of-meditator-in-noisy-environment"><span class="section_number">3.1</span><span class="section_title">EEG of meditator in noisy environment?</span></h3>
+<p>Is meditation effective for entering alpha state in noisy environment?</p>
+<h3 id="we-are-still-aware-in-our-sleep-only-less-aware"><span class="section_number">3.2</span><span class="section_title">We are still aware in our sleep, only less aware?</span></h3>
+<p>If a bang can wake me up, then I am aware in my sleep?</p>
+<p>Thus one practicing pratyahara is in a state between awake and asleep, but more toward the awake state: He is awake-like because he is conscious, but he is asleep-like because he disconnects the brain and the mind, he disconnects his sensors and actuators from the brain, he does not respond to weak stimuli, in the same way a sleeping person does not respond to weak stimuli.</p>
+<p>The brain wakes us up if there is a sudden change of inputs, be it from silent to noisy, or from noisy to silent.<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></p>
+<h3 id="on-meditation-subconscious-reality"><span class="section_number">3.3</span><span class="section_title">On meditation, subconscious, reality</span></h3>
+<p>&lt;2019-09-22&gt; I have not yet found reality.</p>
+<p>When I first tried to relax, I realized that <em>I didn't know how to relax!</em></p>
+<p>Why is relaxing so hard? Why does it take years to learn how to relax?</p>
+<p>I am so confused. Is meditation about relaxing or focusing, or both, or neither?</p>
+<p>I think the most important thing in remote viewing is the ability to enter and exit an extremely relaxed-but-focused state at will.</p>
+<p>Hypothesis: Sleep is for the mind, not for the brain/body.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.3.1</span><span class="section_title"><a href="#the-dangers-of-getting-new-senses">The dangers of getting new senses</a></span><span class="word_count">(113w~1m)</span></li>
+<li><span class="section_number">3.3.2</span><span class="section_title"><a href="#the-illusion">The illusion</a></span><span class="word_count">(1029w~6m)</span></li>
+<li><span class="section_number">3.3.3</span><span class="section_title"><a href="#the-subconscious">The subconscious</a></span><span class="word_count">(83w~1m)</span></li>
+<li><span class="section_number">3.3.4</span><span class="section_title"><a href="#forgetting-dreams">Forgetting dreams?</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">3.3.5</span><span class="section_title"><a href="#the-cage">The &quot;cage&quot;?</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">3.3.6</span><span class="section_title"><a href="#on-the-limits-of-imagination">On the limits of imagination</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">3.3.7</span><span class="section_title"><a href="#what-is-time">What is time?</a></span><span class="word_count">(10w~1m)</span></li>
+</ul>
+</div>
+<h4 id="the-dangers-of-getting-new-senses"><span class="section_number">3.3.1</span><span class="section_title">The dangers of getting new senses</span></h4>
+<p>Imagine a congenitally blind person seeing for the first time. Perhaps that is also the feeling of getting enlightened or getting a psychic ability for the first time. If they feel like getting a new sense, we can treat Joyce Schenkein's 2015 post<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a> as a cautionary tale:</p>
+<blockquote>
+<p>Von Senden studied patients who were born blind (due to congenital cataracts) and who, later in life (like age 40) underwent surgery to have them removed. He found that they never learned to see normally. Several were depressed to have this constant, unstoppable input of &quot;static&quot; and at least one person committed suicide.</p>
+</blockquote>
+<p>Perhaps not all recovering blind people end up like that?</p>
+<h4 id="the-illusion"><span class="section_number">3.3.2</span><span class="section_title">The illusion</span></h4>
+<p>The Indian concept of &quot;maya&quot;<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a> (illusion) is easy to wit, hard to ken.</p>
+<p>It is trivial to realize that our senses are imperfect. It is hard to know what is real then. Can we know anything without any senses?</p>
+<p>When we think we perceive an object, we actually perceive its reflection. We do not see a tree. We see the light reflected by the tree, and not even all of the reflected light, but only a small part of all light reflected by the tree, only the part that reaches our eyes. Can we directly experience a tree? What does it feel like to be a tree?</p>
+<p>When I think I see a chair, I dont see a chair, but I see a chair as presented to me by my mind.</p>
+<p>All perception is illusory. The perception of the passing of time. But, then, what is real?</p>
+<p>If I live without any emotions at all, then am I not a psychopath? There is a difference between being aware of your emotions and not having any emotions at all.</p>
+<p>These things enrage me: interrupted internet connections, the government's passing laws I disagree with, food couriers sending something that doesn't match my order, people getting dogs without knowing how to train them. By &quot;it enrages me&quot;, I mean it drives me to a murderous mood; I would kill the stupid offending person, if I didn't fear being caught by cops. But I don't dwell in such feeling. I acknowledge my anger, and after a few minutes it subsides, and my recollecting of the event does not provoke an emotion as great as the first occurrence. I used to be enraged by traffic jams but now I see them as a chance to meditate. I am most enraged by things that violate my expectations.</p>
+<p>Swann theorizes that the body is the way of communication between the conscious and the subconscious.</p>
+<p>Even if I didn't have any language I would still feel emotions and have thoughts. It would just be that I would not be able to describe my experience.</p>
+<p>Naked awareness is easy to wit but hard to ken. It's easy to say what it is. But it's hard to actually <em>experience</em> it and ken it first-hand.</p>
+<p>It is easy to understand that our perceptions are illusory. It is hard to turn off those illusions, especially if those illusions feel so real. It seems that those illusions are not completely arbitrary; they seem to have some correspondence with reality. It is hard to perceive the reality, but it is because the reality cannot be perceived, but must be directly experienced, because every perception is a representation of reality. If we quiet <em>all</em> senses, we are left with reality? But &quot;all senses&quot; is a lot. If we close our eyes, we can still hear. If we close our eyes and ears, we can still feel the wind blowing. Imagine a baby born without <em>any</em> sensors at all?</p>
+<p>It is wrong to think that congenitally blind people see blackness everywhere. They <em>just don't</em> see. They just don't experience sight. There is a difference between seeing blackness and not seeing anything at all. They don't even experience the blackness that non-blind people see with closed eyes. Meditation is that. We don't aim to see blackness. We aim to not experience anything. It is hard for a sighted person to pretend that he has no sight.</p>
+<p><a href="https://en.wikipedia.org/wiki/Recovery_from_blindness">https://en.wikipedia.org/wiki/Recovery_from_blindness</a></p>
+<p><a href="https://www.reddit.com/r/explainlikeimfive/comments/2b0xpx/eli5_do_blind_people_just_see_the_color_black_or/">https://www.reddit.com/r/explainlikeimfive/comments/2b0xpx/eli5_do_blind_people_just_see_the_color_black_or/</a></p>
+<p>Open one eye, and try to see with the closed eye.</p>
+<p>Even if we destroy our senses, for example by blinding our eyes, we can still perceive and we still have memory and Imagination between us and reality.</p>
+<p>Switching from naked awareness to maya is like a congenitally blind person seeing for the first time. Perhaps that is why naked awareness enables us to see everything afresh.</p>
+<p>Is it possible to know something without perceiving it? Must I perceive myself before I know that I exist?</p>
+<p>Can i be aware without memory? If i momentarily have naked awareness, how do i know i have it, and how do i know i had it, if i had to be simply aware without sensing and remembering? How can i know something without remembering it? I can. I can thoughtlessly stare at a chair, and know that there is something there. Imagine someone without senses, memory, and imagination.</p>
+<p>How can we remote-view if we do not perceive? In other for us to cognize something, we must perceive it?</p>
+<p>A mind-silencing/mind-idling/mind-parking experiment?</p>
+<p>I tried to silence my mind, or, perhaps more accurately, <em>idle</em> my mind, or, <em>park</em> my mind, by not thinking anything, or, by focusing on the null thought (nothingness). It seemed to dislike silence; it fought back by generating random thoughts.</p>
+<p>Even as I receive random images, my conscious mind interferes.</p>
+<p>I tried to pretend that I did not have any senses.</p>
+<p>From<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>, emphasis mine:</p>
+<blockquote>
+<p>I've learned from […] that the majority of humans seem to walk about oblivious to anything/everything of a psychic nature because our cultural and other programming has built up our own <em>psychic shields</em>, shored up quite by belief (and disbelief). True disbelievers are rarely, if ever, bothered by or even experience anything psychic. Their shields are strong.</p>
+<p>[…]</p>
+<p>I know I won't be harmed because a) <em>ghosts can't physically harm people</em> and b) my &quot;psychic shield&quot; is strong […] and c) I have knowledge of the first two which mitigates any negative emotional impact I might feel.</p>
+</blockquote>
+<p>I tried to silence my mind, with the hope of receiving something, but I received nothing, as if I were a radio receiver with no nearby radio stations broadcasting any radio waves.</p>
+<p>Perhaps at first I should pretend to be dissociative. Perhaps when I'm eating I should say &quot;<em>My body</em> is putting the food into my body's mouth&quot; and &quot;The thought of saltiness appears in <em>my mind</em>&quot; instead of saying &quot;I'm eating a salty food&quot;. Perhaps I should never use the word &quot;I&quot;. When I see a flower, the light reflected by the flower reaches my body, and the thought of a flower appears in my mind. When I'm thinking, I should say that a thought appears in <em>my mind</em>. I am not seeing, doing, feeling, or thinking anything; I simply exist. Perhaps that is how I should think in order to meditate before remote viewing?</p>
+<h4 id="the-subconscious"><span class="section_number">3.3.3</span><span class="section_title">The subconscious</span></h4>
+<p>What is it? Does it exist? How does it work? How do we know it exists?</p>
+<p>Buchanan 2009 <span class="citation" data-cites="buchanan2009seventh">[<a href="#ref-buchanan2009seventh">1</a>]</span> suggests that the problem is in the communication between the conscious and the subconscious, not in the variation of psychic talent. The problem is associating the senses.</p>
+<p>Hypothesis: <em>Feeling</em> is the way the subconscious communicate to the conscious.</p>
+<p>Hypothesis: The mind consists of these parts: the thinking (the logical/linguistic), the feeling (the autonomous/subconscious/emotional), the moving (the motoric), and the observing (the conscious).</p>
+<p>Where does imagination come from?</p>
+<h4 id="forgetting-dreams"><span class="section_number">3.3.4</span><span class="section_title">Forgetting dreams?</span></h4>
+<p>To lucid-dream, make it a habit to ask yourself every hour, &quot;Am I dreaming?&quot;? Does that work? Why? How?</p>
+<p><a href="https://www.livescience.com/62703-why-we-forget-dreams-quickly.html">https://www.livescience.com/62703-why-we-forget-dreams-quickly.html</a></p>
+<h4 id="the-cage"><span class="section_number">3.3.5</span><span class="section_title">The &quot;cage&quot;?</span></h4>
+<p>Dzogchen?</p>
+<p>Namkhai Norbu, &quot;The Mirror: Advice on the Presence of Awareness&quot;?</p>
+<h4 id="on-the-limits-of-imagination"><span class="section_number">3.3.6</span><span class="section_title">On the limits of imagination</span></h4>
+<p>Can I imagine a color I has never seen?</p>
+<p>Can I imagine a color I <em>cannot</em> see? For example, what is the color of a gamma ray? Or, I can see that?</p>
+<p>Subconscious is habit?</p>
+<p>Does subliminals work?</p>
+<p>Are levitating monks real?</p>
+<h4 id="what-is-time"><span class="section_number">3.3.7</span><span class="section_title">What is time?</span></h4>
+<p>If time is an illusion, what is real?</p>
+<h3 id="meditation"><span class="section_number">3.4</span><span class="section_title">Meditation?</span></h3>
+<p>The attention wanders in meditation, but we <em>gently</em> bring it back to where we want it to be.<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a> The more we try to suppress a thought, the harder it resists. Acknowledge the thought, and move on?</p>
+<p>Is it about relaxation or concentration? Is it about silence or concentration?</p>
+<h2 id="other-things"><span class="section_number">4</span><span class="section_title">Other things</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#hemi-sync">Hemi-Sync</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#wim-hof-method-vs-tummo-meditation">Wim Hof method vs Tummo meditation?</a></span><span class="word_count">(24w~1m)</span></li>
+</ul>
+</div>
+<h3 id="hemi-sync"><span class="section_number">4.1</span><span class="section_title">Hemi-Sync</span></h3>
+<p>Joe McMoneagle tried Hemi-Sync.</p>
+<p>Eben Alexander said something about Hemi-Sync.</p>
+<h3 id="wim-hof-method-vs-tummo-meditation"><span class="section_number">4.2</span><span class="section_title">Wim Hof method vs Tummo meditation?</span></h3>
+<p><a href="https://www.wimhofmethod.com/tummo-meditation">https://www.wimhofmethod.com/tummo-meditation</a></p>
+<div id="refs" class="references">
+<div id="ref-buchanan2009seventh">
+<p>[1] Buchanan, L. 2009. <em>The seventh sense: The secrets of remote viewing as told by a&quot; psychi</em>. Simon; Schuster.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Meditation">https://en.wikipedia.org/wiki/Meditation</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://hackspirit.com/dalai-lama-reveals-practice-meditation-properly/">https://hackspirit.com/dalai-lama-reveals-practice-meditation-properly/</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://www.osho.com/meditate/meditation-tool-kit/questions-about-meditation/what-is-not-meditation">https://www.osho.com/meditate/meditation-tool-kit/questions-about-meditation/what-is-not-meditation</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="http://www.meditationiseasy.com/meditation-intro/what-is-not-meditation/">http://www.meditationiseasy.com/meditation-intro/what-is-not-meditation/</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://yogainternational.com/article/view/the-real-meaning-of-meditation">https://yogainternational.com/article/view/the-real-meaning-of-meditation</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>&lt;2019-09-28&gt; <a href="https://moodsmith.com/meditation-and-daydreaming/">https://moodsmith.com/meditation-and-daydreaming/</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>&lt;2019-09-28&gt; <a href="https://aboutmeditation.com/whats-the-difference-between-daydreaming-and-meditating/">https://aboutmeditation.com/whats-the-difference-between-daydreaming-and-meditating/</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>&lt;2019-09-28&gt; <a href="https://www.reddit.com/r/Meditation/comments/2553k9/is_daydreaming_a_form_of_meditation/">https://www.reddit.com/r/Meditation/comments/2553k9/is_daydreaming_a_form_of_meditation/</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>&lt;2019-09-28&gt; Sandra Winkler <a href="https://www.quora.com/What-will-happen-as-you-focus-on-your-breath-meditation">https://www.quora.com/What-will-happen-as-you-focus-on-your-breath-meditation</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://www.vice.com/en_us/article/vbaedd/meditation-is-a-powerful-mental-tool-and-for-some-it-goes-terribly-wrong">https://www.vice.com/en_us/article/vbaedd/meditation-is-a-powerful-mental-tool-and-for-some-it-goes-terribly-wrong</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://patcarrington.com/about-meditation/meditation-articles/the-misuse-of-meditation/">https://patcarrington.com/about-meditation/meditation-articles/the-misuse-of-meditation/</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="http://shinzenyoung.blogspot.com/2011_11_01_archive.html">http://shinzenyoung.blogspot.com/2011_11_01_archive.html</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>&lt;2019-09-29&gt; <a href="https://en.wikipedia.org/wiki/Th%C3%ADch_Qu%E1%BA%A3ng_%C4%90%E1%BB%A9c">https://en.wikipedia.org/wiki/Th%C3%ADch_Qu%E1%BA%A3ng_%C4%90%E1%BB%A9c</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://www.reddit.com/r/NoStupidQuestions/comments/b77yh5/a_loud_noise_will_wake_someone_up_but_will_the/">https://www.reddit.com/r/NoStupidQuestions/comments/b77yh5/a_loud_noise_will_wake_someone_up_but_will_the/</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p>&lt;2019-09-21&gt; <a href="https://www.quora.com/What-does-it-feel-like-to-see-for-the-first-time">https://www.quora.com/What-does-it-feel-like-to-see-for-the-first-time</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p>&lt;2019-09-22&gt; <a href="https://en.wikipedia.org/wiki/Maya_(religion)">https://en.wikipedia.org/wiki/Maya_(religion)</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p><a href="https://www.reddit.com/r/Paranormal/comments/9g3ero/hi_reddit_im_loyd_auerbach_parapsychologist_ask/e61agrg/">https://www.reddit.com/r/Paranormal/comments/9g3ero/hi_reddit_im_loyd_auerbach_parapsychologist_ask/e61agrg/</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p>&lt;2019-09-17&gt; How to Meditate with Charles T. Tart <a href="https://www.youtube.com/watch?v=OWfe3pVYP8o">https://www.youtube.com/watch?v=OWfe3pVYP8o</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <p>
+            Disqus has been removed because it hijacks my links and redirects them to third-party ad networks.
+            On 2019-05-27, a friend of mine reported that links on my website are broken,
+            and I caught Disqus red-handed redirecting my links to pwieu.com.
+        </p>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-09-28 00:00:00 +0700.</p>
+                <p class="rss-subscribe">There is an
+                    <a href="/feed.xml">RSS feed</a>, but it's unused because this site is a wiki, not a blog.</p>
+                <p>Stop writing books, papers, and blogs!
+                    Write a personal wiki instead!
+                    Or, even better, contribute to a community wiki.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
