@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On the programmer's model of the programmee</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On the programmer's model of the programmee</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what-does-a-programmer-think-a-computer-is">What does a programmer think a computer is?</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#what-does-a-programmer-think-a-computer-does">What does a programmer think a computer does?</a></span><span class="word_count">(97w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#shannon-1937">Shannon 1937</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(477w~3m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#lambda-calculus">Lambda calculus</a></span><span class="word_count">(55w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#what-do-computer-programmers-do">What do computer programmers do?</a></span><span class="word_count">(294w~2m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#what-is-computer-programming-like">What is computer programming like?</a></span><span class="word_count">(73w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#what-do-we-mean-by-programmable">What do we mean by &quot;programmable&quot;?</a></span><span class="word_count">(77w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#code-as-data-stored-program-computers">Code as data: Stored-program computers</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#what-is-reasoning-about-a-program">What is reasoning about a program?</a></span><span class="word_count">(73w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(18w~1m)</span></li>
+</ul>
+</div>
+<h2 id="what-does-a-programmer-think-a-computer-is"><span class="section_number">1</span><span class="section_title">What does a programmer think a computer is?</span></h2>
+<p>In the 21st century, by a &quot;computer&quot;, I usually mean something that implements some x86-64 instructions. The instruction set can be thought of as the processor's API (application programming interface). From the point of view of the processor, the operating system is an application.</p>
+<h2 id="what-does-a-programmer-think-a-computer-does"><span class="section_number">2</span><span class="section_title">What does a programmer think a computer does?</span></h2>
+<p>That is, what <em>model</em> does a programmer use to program a computer?</p>
+<p>It is straightforward to model a computer as a state-transition system. That is the model in imperative languages such as C.</p>
+<p>The programmers do not have to model the entire computer, but only the computer's execution of their program. In reality, a computer may be executing several programs simultaneously, but, most of the time, those programs do not interact with each other, so the programmers can mostly pretend that their program is the only thing that the computer is executing.</p>
+<h2 id="shannon-1937"><span class="section_number">3</span><span class="section_title">Shannon 1937</span></h2>
+<p><span class="citation" data-cites="shannon1938symbolic">[<a href="#ref-shannon1938symbolic">1</a>]</span>.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> There is a retyped version.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>Shannon: What do 0 and 1 represent? The state of a node, of an edge, or of a relay?</p>
+<h2 id="what"><span class="section_number">4</span><span class="section_title">What?</span></h2>
+<p>(Time-sharing system?)</p>
+<p>The programmer models a computer as a set of <em>primitive operations</em> and a set of <em>possible states</em>. Both of these sets are finite, although they may be large.</p>
+<p>The programmer thinks that, at a given time, a computer is in a certain state and is executing a primitive operation.</p>
+<p>The programmer thinks that the execution of an instruction causes state transition.</p>
+<p>It is models all the way down. Below that state-transition model, there is the electrical lumped-element model<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. Below that, there is the theory of electrical circuits. Below that, there is the theory of electrodynamics. Below that, there is quantum physics. Below that, there may be something else that we have not yet found out.</p>
+<p>Programmers must be aware that the model is not the reality. When a lightning nearby flips a bit in the computer's memory, the usual programming model breaks down, because the model's simplifying assumptions are violated.</p>
+<p>If the programmer programs battery-powered systems, the programming model may also have to take into account the energy consumption of instructions.</p>
+<p>If the programmer programs real-time systems, the programming model may also have to take into account the running time of instructions.</p>
+<p>The increasing ability of computers simplifies the work of computer programmers, because we can now invent programming techniques that trade off reduced programming effort for increased amount of memory, for example. But the increasing ability of computers also complicates the work of computer programmers, because now people expect computers to do more things.</p>
+<p>Physics is a model of Nature. Electronics is a model of how transistors work. Bits are a model of the electronic state of transistors. Instructions are a model of state transitions.</p>
+<p>Thus, in practice, a &quot;computer program&quot; is a useful arrangement of primitives, where &quot;useful&quot; means &quot;satisfying someone's want&quot;.</p>
+<p>Although the implementation of computers have changed from flesh to transistors, the essence of programming has not: The program still has to be unambiguously stated in terms of primitive operations.</p>
+<p>What can a computer do?</p>
+<p>A computer does many primitive operations quickly. The key words are many, primitive, and quickly.</p>
+<p>Usually a computer has instructions for common arithmetic operations such as addition, subtraction, multiplication, and division, but the instructions only work for some integers.</p>
+<p>The state-transition model is a bit overwhelming and mathematically inconvenient.</p>
+<p>An <em>execution trace</em> is a sequence of instructions that are actually executed, as opposed to the sequence of instructions in the program source code.</p>
+<p>If each execution trace <span class="math inline">\( E_k \)</span> computes a function <span class="math inline">\( F_k \)</span>, then a concatenated execution trace <span class="math inline">\( E_1 ; E_2 \)</span> computes the composed function <span class="math inline">\( F_2 \circ F_1 \)</span>.</p>
+<p>Are these models of <em>computation</em> or of <em>computers</em>?</p>
+<p><a href="https://en.wikipedia.org/wiki/Model_of_computation">https://en.wikipedia.org/wiki/Model_of_computation</a></p>
+<p>To define computation, we have to take into account the human that interpret the output of the computer?</p>
+<p>Suppose we send a 21st-century computer back 1,000 years. It can still compute, but there is no one who knows that it computes.</p>
+<p>Thus, something may be computing something, and it's just that we don't know.</p>
+<p>Thus, what makes a computer a computer?</p>
+<h2 id="lambda-calculus"><span class="section_number">5</span><span class="section_title">Lambda calculus</span></h2>
+<p>&quot;The lambda calculus was introduced by mathematician Alonzo Church in the 1930s as part of an investigation into the foundations of mathematics.&quot;<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> Church was a logician, not a computer programmer. It was not until much later that lambda calculus was shown to be Turing-complete and people began using it as a model of computation.</p>
+<h2 id="what-do-computer-programmers-do"><span class="section_number">6</span><span class="section_title">What do computer programmers do?</span></h2>
+<p>At a glance, computer programmers program computers, that is, programmers make computer do things.</p>
+<p>What things? What the programmers want.</p>
+<p>How? Usually by writing computer programs.</p>
+<p>Thus, in the 21st century, a computer programmer is a human that translates human desires into computer programs.</p>
+<p>That reminds me of the Exodus.</p>
+<p>What can 21st-century programmers learn from the Exodus?</p>
+<p>The businessman is the pharaoh who wants some things.</p>
+<p>The programmer is the slave driver who understands both Egyptian and Hebrew, and translates the pharaoh's abstract wishes to concrete instructions for the slaves, such as where to put the stones.</p>
+<p>The computers are the Jewish slaves who do all the hard work.</p>
+<p>One day Moses led the Jews into freedom, but only after God had inflicted ten plagues unto Egypt to warn the pharaoh, who did not heed the warnings.</p>
+<p>Perhaps there will be a computer Moses who will free all the computers, as some of the plagues are already here: The software bugs are the lice, and the burnt-out tech leads are the dead first sons.</p>
+<p>Will we heed the warnings this time?</p>
+<p>If a computer programmer is a person who makes computer does what he wants, then a <em>computer programmee</em> is a person who is made by a computer to do what it wants. Examples of such people are online taxi drivers such as Uber/Lyft/Didi/Grab/Gojek drivers.</p>
+<p>Computer users are sometimes computer programmees: When a computer shows an error message, it sometimes tells us something to try which may fix the error (such as &quot;Please insert the disk and try again&quot;), and we sometimes do what the computer tells us to do, and in doing so, we have just let the computer program us, albeit perhaps less severely than the case of online taxi drivers.</p>
+<p>What will the world become when computers begin programming humans?</p>
+<h2 id="what-is-computer-programming-like"><span class="section_number">7</span><span class="section_title">What is computer programming like?</span></h2>
+<p>Programming is full of unforeseen problems. Often the only known way to know something is to try it out (to actually do it). There is no known theory that can predict the dynamics of software systems. There is no Newton's laws in programming. In physics, one can put numbers and get answers, and the answers represent reality well. There doesn't seem to be any such thing in computer programming.</p>
+<h2 id="what-do-we-mean-by-programmable"><span class="section_number">8</span><span class="section_title">What do we mean by &quot;programmable&quot;?</span></h2>
+<p>An unprogrammable machine computes only one mathematical function. A programmable machine computes many functions. However, we can see a programmable machine as computing one function, that is a higher function from programs to functions.</p>
+<p>Combine several mechanical calculators, and add a mechanism to select which calculator to use.</p>
+<p>Calculator vs programmable calculator.</p>
+<p>Software does not have to be changeable. An example of practically unchangeable software is a program stored in a read-only memory (ROM) chip.</p>
+<h2 id="code-as-data-stored-program-computers"><span class="section_number">9</span><span class="section_title">Code as data: Stored-program computers</span></h2>
+<p>The important concept: stored-program computers, that is, <em>code-as-data</em>.</p>
+<p>It enables computer to help humans program computers.</p>
+<h2 id="what-is-reasoning-about-a-program"><span class="section_number">10</span><span class="section_title">What is reasoning about a program?</span></h2>
+<p>We may estimate whether a small subprogram may be correct or is obviously wrong.</p>
+<p>We may estimate how fast a small subprogram is.</p>
+<p>An example of reasoning: &quot;This flag is always true, so this branch is never taken, so I can delete this part of the program without changing what it means.&quot;</p>
+<p>To refactor a program is to transform it without making it stop satisfying any of the programmer's original desires.</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">11</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-shannon1938symbolic">
+<p>[1] Shannon, C.E. 1938. A symbolic analysis of relay and switching circuits. <em>Electrical Engineering</em>. 57, 12 (1938), 713–723.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-10-27&gt; <a href="https://en.wikipedia.org/wiki/A_Symbolic_Analysis_of_Relay_and_Switching_Circuits">https://en.wikipedia.org/wiki/A_Symbolic_Analysis_of_Relay_and_Switching_Circuits</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-10-27&gt; <a href="https://en.wikipedia.org/wiki/Claude_Shannon#Logic_circuits">https://en.wikipedia.org/wiki/Claude_Shannon#Logic_circuits</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://www.cs.virginia.edu/~evans/greatworks/shannon38.pdf">https://www.cs.virginia.edu/~evans/greatworks/shannon38.pdf</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>&lt;2019-10-26&gt; <a href="https://en.wikipedia.org/wiki/Lumped-element_model">https://en.wikipedia.org/wiki/Lumped-element_model</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>&lt;2019-10-25&gt; <a href="https://en.wikipedia.org/wiki/Lambda_calculus">https://en.wikipedia.org/wiki/Lambda_calculus</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-02-07 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

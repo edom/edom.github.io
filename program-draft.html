@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Computer programming?</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Computer programming?</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what-are-types-good-for">What are types good for?</a></span><span class="word_count">(513w~3m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#overloading">Overloading</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#lispschemeracket">Lisp/Scheme/Racket</a></span><span class="word_count">(96w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#nanopass">Nanopass</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#macros">Macros</a></span><span class="word_count">(226w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#on-programming-languages">On programming languages</a></span><span class="word_count">(273w~2m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#programming-language-research">Programming language research</a></span><span class="word_count">(1536w~8m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#computer-programming-1">Computer programming</a></span><span class="word_count">(465w~3m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#philosophy-of-computer-programming">Philosophy of computer programming?</a></span><span class="word_count">(1116w~6m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#philosophy-of-length-dimension-measure-size-cardinality">Philosophy of length, dimension, measure, size, cardinality</a></span><span class="word_count">(988w~5m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#programming-languages">Programming languages</a></span><span class="word_count">(1045w~6m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#programming-language-implementation">Programming language implementation</a></span><span class="word_count">(704w~4m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#language-mixing-issues">Language mixing issues</a></span><span class="word_count">(130w~1m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#enhancing-existing-languages">Enhancing existing languages</a></span><span class="word_count">(202w~2m)</span></li>
+<li><span class="section_number">15</span><span class="section_title"><a href="#complexity">Complexity</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">16</span><span class="section_title"><a href="#enterprise-application-programming">Enterprise application programming</a></span><span class="word_count">(383w~2m)</span></li>
+<li><span class="section_number">17</span><span class="section_title"><a href="#gui-programming">GUI programming?</a></span><span class="word_count">(76w~1m)</span></li>
+<li><span class="section_number">18</span><span class="section_title"><a href="#human-and-social-aspects-of-computer-programming">Human and social aspects of computer programming</a></span><span class="word_count">(551w~3m)</span></li>
+<li><span class="section_number">19</span><span class="section_title"><a href="#memory-management">Memory management</a></span><span class="word_count">(313w~2m)</span></li>
+<li><span class="section_number">20</span><span class="section_title"><a href="#games-and-crashes">Games and crashes?</a></span><span class="word_count">(103w~1m)</span></li>
+<li><span class="section_number">21</span><span class="section_title"><a href="#modules">Modules</a></span><span class="word_count">(157w~1m)</span></li>
+<li><span class="section_number">22</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(193w~1m)</span></li>
+</ul>
+</div>
+<h2 id="what-are-types-good-for"><span class="section_number">1</span><span class="section_title">What are types good for?</span></h2>
+<p>How useful is that question?</p>
+<p>Types, ontologies, meta-models, reasoning?</p>
+<p>Even if a language does not have types, we reason about our program with types, and type errors have real consequences. We may say to ourselves things like &quot;This variable is supposed to refer to an integer.&quot; Types answer &quot;What does this represent?&quot;, and that question is very often asked when developing and maintaining a program, and thus a type system is very useful because it provides a framework for answering &quot;What is this?&quot;. Types also answer &quot;What can I do with this thing?&quot;: with types, the computer can present the methods understood by an object, and those methods are what one can do with the object, or, indeed, those methods are <em>all</em> one can do with the object.</p>
+<p>The reason why a type system is so useful is because it helps computers understand our programs. To understand something is to have a useful model of it.</p>
+<p>Even in assembly language, we reason with types. For example, to the computer, there is no difference between pointers and numbers: They are all bits. However, to humans, it does not make sense to add two pointers as if they were numbers. Humans <em>interpret</em> bits. If humans tell a computer to add the content of two registers, it will do that unquestioningly; it does not care about the meaning. Computers do what we say, not what we mean. The program is the law, and computers follow the letter of the law, not the spirit. If computers could reason morally, they might refuse some of the things we ask them to do, such as using them in weapons that kill others more efficiently, or using them to spy on billions of people.</p>
+<p>How do we answer &quot;What is this thing?&quot; Ontology studies that. Genus differentia: &quot;An X is a Y that is/has Z.&quot; (Logically, <span class="math inline">\( x(t) = y(t) \wedge z(t) \)</span>). Ostensive definition (that is, definition by examples): &quot;A T is something like X, Y, Z.&quot; (But how do we teach computers to generalize examples? Because we don't know how, we don't have ostensive definitions in our type systems.) Thus <em>a type system can be thought of an ontology</em> but with closed-world assumption (but doesn't an ontology require open-world assumption?). A type system can be thought of as a meta-model. The program is a model of reality, and the type system is a model of the program (a meta-model of reality).</p>
+<p>Usually, we do not expect the type of a variable to ever change at runtime.</p>
+<p>What has type: variables or values? Both. The type of a variable limits the type of values that the variable can represent.</p>
+<p>Sometimes we care about the shape of a function more than we care about its name, perhaps because there is only few such functions that make sense. For example, if I didn't know that &quot;split&quot; were named &quot;split&quot;, I would probably look for a function with type String -&gt; String -&gt; List String. Haskell has Hayoo or Hoogle. In this way, programming becomes arranging functions so that their types fit, like solving a jigsaw puzzle.</p>
+<h2 id="overloading"><span class="section_number">2</span><span class="section_title">Overloading</span></h2>
+<p>Overloading is making the meaning of a variable depend on its name <em>and type</em>. Normally, in Scheme, the meaning of a variable depends only on its name.</p>
+<h2 id="lispschemeracket"><span class="section_number">3</span><span class="section_title">Lisp/Scheme/Racket</span></h2>
+<p>When in doubt, use <code>equal?</code>. The worst thing it can do is slow down your program, but it won't be wrong.</p>
+<p>What sucks of Racket?</p>
+<ul>
+<li>Scribble is slow.</li>
+<li>The <code>racket/gui</code> module refuses to be loaded twice, so you can't <code>(require (for-syntax racket/gui))</code>?</li>
+</ul>
+<p>I think it is evil to make modules have side-effect when they are instantiated; what are the alternatives?</p>
+<p><code>define</code> is a side-effect? Should have no global variable? Pass the world in a parameter to main, like in Newspeak, Nix, Dhall, Morte?</p>
+<p>There are no global variables in lambda calculus? But what are the advantages of this purity? Supercompilation? First-class modules?</p>
+<h2 id="nanopass"><span class="section_number">4</span><span class="section_title">Nanopass</span></h2>
+<p>The simplest way to make a compiler in the 21st century?</p>
+<p>But I think one should make interpreters and partial evaluators, and derive compilers, instead of making compilers manually?</p>
+<h2 id="macros"><span class="section_number">5</span><span class="section_title">Macros</span></h2>
+<p>What is a macro? A macro can be thought of as a <em>syntax transformation</em>: a syntax-object endofunction.</p>
+<p>A natural way of expressing macros is pattern-matching rewrite rules.</p>
+<p>The implementation of Typed Racket is discussed in <span class="citation" data-cites="culpeper2007advanced">[<span class="citeproc-not-found" data-reference-id="culpeper2007advanced"><strong>???</strong></span>]</span>. It also shows three communication patterns for macros: static bindings, syntax properties (Typed Racket's <code>type-label</code> syntax property), and persistent effects (Typed Racket's <code>declare-type!</code> macro).</p>
+<p>A newbie often wonders, why is something so complex? Because it has evolved to handle many problems that a newbie would not think of. Why is the Linux kernel complex? Because it has to handle out of memory, out of disk space, and other corner cases, because they have happened, and they will happen again; the kernel is not supposed to just crash or hang when it encounters those reasonably common problems. Adding hygiene complicates Scheme's macro system, but hygiene is often necessary for us to be able to reason about macros.</p>
+<p>Hygiene means static/lexical/eager/compile-time binding: The meaning of symbols are determined by their definition site. Unhygienic means dynamic/lazy/run-time binding: The meaning of symbols are determined by their use site.</p>
+<p>There are many ways to define things, but not all are simple for machines. <a href="https://en.wikipedia.org/wiki/Definition">https://en.wikipedia.org/wiki/Definition</a></p>
+<p>It is impractical for a software system to be stateless: A stateless software system cannot remember anything. What is practical is to minimize or centralize the stateful parts so that it does not infect the stateless parts.</p>
+<h2 id="on-programming-languages"><span class="section_number">6</span><span class="section_title">On programming languages</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#what-do-we-mean-by-extensible-languages">What do we mean by extensible languages?</a></span><span class="word_count">(219w~2m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#all-programs-are-ultimately-imperative">All programs are ultimately imperative</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#static-vs-dynamic-bad-terminology">Static vs dynamic: bad terminology?</a></span><span class="word_count">(29w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-do-we-mean-by-extensible-languages"><span class="section_number">6.1</span><span class="section_title">What do we mean by extensible languages?</span></h3>
+<p>What do we mean by an &quot;extensible&quot; language? Turing complete? New syntactic constructs with arbitrary custom semantics? English is extensible: one can define new forms and words. Lambda calculus is extensible: one can add forms and reduction rules. A CPU's instruction set is extensible: one can add new instructions. If one tries hard enough, C is extensible, in the sense that one can modify the compiler's source code to add new forms. The semantics of the extension must be expressed in terms of the base semantics. Interoperation of L and M is defining a common language C that can express both L and M. It is easier to write Lisp code that generates Lisp code than to write C code that generates C code, because, in Lisp, the AST pretty much consists of cons+symbol+string+number, and there are &quot;read&quot; and &quot;write&quot;.</p>
+<p>The description-simplicity of syntax aids metaprogramming. The metaprogramming complexity of a grammar is the length of the shortest Haskell model of its AST specification.</p>
+<p>Lisp syntax is <em>easier to describe</em> than C syntax (although not necessarily easier to read/write/use). Easily describable syntax simplifies metaprogramming because there are fewer cases to handle.</p>
+<p>Thus, all languages are in principle extensible, but what about in practice? The question is thus: How hard is it to extend a particular language?</p>
+<h3 id="all-programs-are-ultimately-imperative"><span class="section_number">6.2</span><span class="section_title">All programs are ultimately imperative</span></h3>
+<p>Every fancy language construct must ultimately be translated into a sequence of CPU instructions, because the CPU only understands those instructions.</p>
+<h3 id="static-vs-dynamic-bad-terminology"><span class="section_number">6.3</span><span class="section_title">Static vs dynamic: bad terminology?</span></h3>
+<p>We should ask these questions instead:</p>
+<ul>
+<li>Is type information available at runtime?</li>
+<li>How far can types be manipulated at compile-time?</li>
+<li>Is there a distinction between compile-time and run-time?</li>
+</ul>
+<h2 id="programming-language-research"><span class="section_number">7</span><span class="section_title">Programming language research</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#dream">Dream?</a></span><span class="word_count">(57w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#where-should-we-publish-our-programming-language-research-findings">Where should we publish our programming language research findings?</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">7.3</span><span class="section_title"><a href="#similar-researchers">Similar researchers</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">7.4</span><span class="section_title"><a href="#what-is-the-state-of-the-art-of-declarative-programming-in-2019">What is the state of the art of declarative programming in 2019?</a></span><span class="word_count">(779w~4m)</span></li>
+<li><span class="section_number">7.5</span><span class="section_title"><a href="#old-goal">Old goal?</a></span><span class="word_count">(660w~4m)</span></li>
+</ul>
+</div>
+<h3 id="dream"><span class="section_number">7.1</span><span class="section_title">Dream?</span></h3>
+<p>We dream of creating the best programming system. We think we should program directly in the language of the mind. We think programming languages need to interoperate. We dream of writing translating meta-programs to free programmers from design mistakes such as Java. We are deep-diving into declarative programming. We want a programming language with minimal accidental complexity.</p>
+<h3 id="where-should-we-publish-our-programming-language-research-findings"><span class="section_number">7.2</span><span class="section_title">Where should we publish our programming language research findings?</span></h3>
+<p>Should we publish at ICFP, PLDI, POPL, SPLASH/OOPSLA, or Salon des Refusés?</p>
+<p>POPL has the &quot;Off the beaten track&quot;.</p>
+<p>We want maximum open access.</p>
+<h3 id="similar-researchers"><span class="section_number">7.3</span><span class="section_title">Similar researchers</span></h3>
+<p>University of Kent, faculty of computer science, programming languages and systems<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<h3 id="what-is-the-state-of-the-art-of-declarative-programming-in-2019"><span class="section_number">7.4</span><span class="section_title">What is the state of the art of declarative programming in 2019?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.4.1</span><span class="section_title"><a href="#what-is-declarative-programming">What is declarative programming?</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">7.4.2</span><span class="section_title"><a href="#what-is-the-trend-where-is-the-research-going">What is the trend? Where is the research going?</a></span><span class="word_count">(72w~1m)</span></li>
+<li><span class="section_number">7.4.3</span><span class="section_title"><a href="#two-camps-of-declarative-programming-languages">Two camps of declarative programming languages</a></span><span class="word_count">(62w~1m)</span></li>
+<li><span class="section_number">7.4.4</span><span class="section_title"><a href="#the-problem-with-functional-logic-programming-when-should-functional-terms-be-reduced">The problem with functional-logic programming: when should functional terms be reduced?</a></span><span class="word_count">(147w~1m)</span></li>
+<li><span class="section_number">7.4.5</span><span class="section_title"><a href="#unifying-functional-and-logic-programming-as-a-rewriting-system">Unifying functional and logic programming as a rewriting system</a></span><span class="word_count">(305w~2m)</span></li>
+<li><span class="section_number">7.4.6</span><span class="section_title"><a href="#what-is-the-difference-between-program-synthesis-and-program-derivation">What is the difference between program synthesis and program derivation?</a></span><span class="word_count">(82w~1m)</span></li>
+<li><span class="section_number">7.4.7</span><span class="section_title"><a href="#problem-java-and-sql-are-oblivious-of-each-other">Problem: Java and SQL are oblivious of each other</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">7.4.8</span><span class="section_title"><a href="#how-do-we-program-as-close-as-possible-to-the-internal-language-of-thought">How do we program as close as possible to the internal language of thought?</a></span><span class="word_count">(69w~1m)</span></li>
+<li><span class="section_number">7.4.9</span><span class="section_title"><a href="#how-can-we-reach-the-ideal-system">How can we reach the ideal system?</a></span><span class="word_count">(23w~1m)</span></li>
+</ul>
+</div>
+<h4 id="what-is-declarative-programming"><span class="section_number">7.4.1</span><span class="section_title">What is declarative programming?</span></h4>
+<p>What do we declare?</p>
+<h4 id="what-is-the-trend-where-is-the-research-going"><span class="section_number">7.4.2</span><span class="section_title">What is the trend? Where is the research going?</span></h4>
+<p>We are still trying to unify functional programming and logic programming.</p>
+<p>What is the state of the art? Unifying logic programming and functional programming?</p>
+<p>ALF (Algebraic Logic Functional), LambdaProlog, etc.?</p>
+<p>Some formalisms for declarative programming:</p>
+<ul>
+<li>first-order logic</li>
+<li>calculus of constructions</li>
+<li>lambda calculus</li>
+<li>set theory</li>
+<li>System F</li>
+<li>relational algebra, relational calculus</li>
+</ul>
+<p>Declaratively and essentially.</p>
+<p>How should we make computers do what we want? Does programming a computer require a language?</p>
+<p>Wolfram language<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> meta-algorithms? Wolfram language is proprietary.</p>
+<h4 id="two-camps-of-declarative-programming-languages"><span class="section_number">7.4.3</span><span class="section_title">Two camps of declarative programming languages</span></h4>
+<p>It is easier to add nondeterminism to lambda calculus than it is to add lambda-expression to Horn clauses?</p>
+<p>There are at least two camps of the declarative programming languages: First: Start from Prolog, move toward Haskell. Second: Start from Haskell, move toward Prolog. Example of second camp is Curry.</p>
+<p>Where is ALF? <a href="https://www.informatik.uni-kiel.de/~mh/systems/ALF.html">https://www.informatik.uni-kiel.de/~mh/systems/ALF.html</a></p>
+<p>Seres 2001 <span class="citation" data-cites="seres2001algebra">[<a href="#ref-seres2001algebra">12</a>]</span></p>
+<p>Hoare &amp; He 1998 <span class="citation" data-cites="hoare1998unifying">[<a href="#ref-hoare1998unifying">6</a>]</span></p>
+<h4 id="the-problem-with-functional-logic-programming-when-should-functional-terms-be-reduced"><span class="section_number">7.4.4</span><span class="section_title">The problem with functional-logic programming: when should functional terms be reduced?</span></h4>
+<p>The problem: sometimes we want to reduce an argument of a term. However, if we could do that, we would soon run into the opposite problem: sometimes we do <em>not</em> want to reduce an argument of a term. These problems await those who want functional logic programming.</p>
+<p>Mercury, ALF, Curry, Lambda-Prolog.</p>
+<p>Prolog sucks for list transformation (such as deriving a list by applying a function to each element). Auxiliary predicates force us to name something that should not have to be named.</p>
+<p>Prolog does not reduce any function symbols. Prolog's interpretation of function symbols is the identity function.</p>
+<p>In first-order logic, we may interpret a function symbol <span class="math inline">\(f\)</span> of arity <span class="math inline">\(n\)</span> as a function <span class="math inline">\(\semantics{f} : D^n \to D\)</span> where <span class="math inline">\(D\)</span> is the domain of discourse.</p>
+<p>Milicevic 2015 <span class="citation" data-cites="milicevic2015advancing">[<a href="#ref-milicevic2015advancing">10</a>]</span> builds on Ruby.</p>
+<p>Lorenz 2017 <span class="citation" data-cites="lorenz2017application">[<a href="#ref-lorenz2017application">9</a>]</span>: thinking of an application as a language? Mind-blowing?</p>
+<h4 id="unifying-functional-and-logic-programming-as-a-rewriting-system"><span class="section_number">7.4.5</span><span class="section_title">Unifying functional and logic programming as a rewriting system</span></h4>
+<p>Both SLD-resolution and normal-order beta-reduction can be seen as term-rewriting systems.</p>
+<p>All we have to do is add non-determinism to Pure<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>, and we have a Prolog-Haskell hybrid.</p>
+<p>A Horn clause translates to several rewrite rules. with disjunctive-normal-form body is <code>A :- B1 ; ... ; Bn</code> is the rewrite rule <span class="math inline">\(A \to B_1 \vee A \to B_2 \vee \ldots \vee A \to B_n\)</span>.</p>
+<p>A function definition translates to one rewrite rule. <code>A = B</code> is the rewrite rule <span class="math inline">\(A \to B\)</span>.</p>
+<pre class="example"><code>prolog {
+    a(X) :- b(X), c(X).
+    parent(dad,kid).
+    parent(daddy,kiddo).
+}
+
+haskell {
+    what n = \exists x y : parent x y &amp;&amp; length + length y == n
+}
+</code></pre>
+<ol>
+<li><p>Lambda-calculus with choice/disjunction</p>
+<p>Nondeterministic programming: Prolog, Amb, Alisp<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. Other nondeterminstic extensions to lambda calculus are already in the literature: 1998 <span class="citation" data-cites="kutzner1998non">[<a href="#ref-kutzner1998non">8</a>]</span>, 2009 <span class="citation" data-cites="fischer2009purely">[<a href="#ref-fischer2009purely">5</a>]</span>.</p>
+<p>&quot;Lambda logic is the union of first order logic and lambda calculus.&quot;<span class="citation" data-cites="beeson2004lambda">[<a href="#ref-beeson2004lambda">2</a>]</span></p>
+<p>Nondeterminism-by-backtracking may be implemented in Scheme with continuations.</p>
+<p>How do we combine lambda-calculus beta-reduction and Prolog unification?</p>
+<p><span class="citation" data-cites="kfoury1999beta">[<a href="#ref-kfoury1999beta">7</a>]</span></p>
+<p>Here we describe <span class="math inline">\(\lambda_|\)</span>-calculus (lambda-calculus with choice; that is a vertical bar). Other names:</p>
+<ul>
+<li>lambda-calculus with nondeterminism</li>
+<li>lambda-calculus with disjunction</li>
+</ul>
+<p>We add expression syntax for disjunction. Thus the syntax becomes:</p>
+<ol>
+<li>Every name is an expression.</li>
+<li>If <span class="math inline">\(x\)</span> is a name and <span class="math inline">\(y\)</span> is an expression, then <span class="math inline">\(\lambda x.y\)</span> is an expression (abstraction).</li>
+<li>If <span class="math inline">\(x\)</span> is an expression and <span class="math inline">\(y\)</span> is an expression, then <span class="math inline">\(xy\)</span> is an expression (application).</li>
+<li>If <span class="math inline">\(x\)</span> is an expression and <span class="math inline">\(y\)</span> is an expression, then <span class="math inline">\(x | y\)</span> is an expression (choice). For consistency with Prolog's <code>;</code> operator (disjunction), the choice operator <span class="math inline">\(|\)</span> associates to the <em>right</em>: <span class="math inline">\(x | y | z = x | (y | z)\)</span>.</li>
+</ol>
+<p>We add two rules to beta-reduction. Thus the beta-reduction now consists of three rules. The last two rules makes the beta-reduction ambiguous.</p>
+<span class="math display">\[\begin{align*}
+(\lambda x. y) z &amp;\to y[x := z]
+\\ x | y &amp;\to x
+\\ x | y &amp;\to y
+\end{align*}
+\]</span>
+<p>We define two constant expressions: <span class="math inline">\(false\)</span> and <span class="math inline">\(true\)</span>.</p>
+<p>Now we define a ternary logic mapping from expression to <span class="math inline">\(\{false,unknown,true\}\)</span>.</p>
+<span class="math display">\[\begin{align*}
+T(false) &amp;= false
+\\ T(true) &amp;= true
+\\ T(\lambda x. y) &amp;= true
+\\ T((\lambda x. y) z) &amp;= T(y[x := z])
+\\ T(A = B) &amp;= unknown
+\end{align*}
+\]</span>
+<p>A Prolog-like operational semantics:</p>
+<span class="math display">\[\begin{align*}
+x | y &amp;\to x \text{ if \(x\) succeeds}
+\\ x | y &amp;\to y \text{ if \(x\) fails}
+\end{align*}
+\]</span>
+<p>We define one constant <span class="math inline">\(false\)</span>.</p>
+<p>We define that an expression <em>fails</em> iff it reduces to the constant <span class="math inline">\(false\)</span>. We define that an expression <em>succeeds</em> if it does not fail.</p>
+<span class="math display">\[\begin{align*}
+fail | x &amp;\to x
+\\ x | fail &amp;\to x
+\end{align*}
+\]</span></li>
+</ol>
+<h4 id="what-is-the-difference-between-program-synthesis-and-program-derivation"><span class="section_number">7.4.6</span><span class="section_title">What is the difference between program synthesis and program derivation?</span></h4>
+<p>They look the same to me.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<ol>
+<li><p>&lt;2019-02-27&gt; Idea: automatic derivation of program quotients</p>
+<p>That computer has limited memory is accidental complexity. We should program with natural numbers and infinite sets. The translator should automatically compute the <em>quotient</em> of the program.</p>
+<p>Built-in types: Natural numbers.</p>
+<p>Given a function f : nat -&gt; nat, the translator should be able to <em>derive the quotient</em> f' : uint32 -&gt; uint32 where <span class="math inline">\( f&#39; n = (f (n \bmod 2^{32})) \bmod 2^{32} \)</span>.</p></li>
+</ol>
+<h4 id="problem-java-and-sql-are-oblivious-of-each-other"><span class="section_number">7.4.7</span><span class="section_title">Problem: Java and SQL are oblivious of each other</span></h4>
+<h4 id="how-do-we-program-as-close-as-possible-to-the-internal-language-of-thought"><span class="section_number">7.4.8</span><span class="section_title">How do we program as close as possible to the internal language of thought?</span></h4>
+<p>I think logic is the internal language of thought.</p>
+<p>I think a man who does not know any language will still know causality; he is merely unable to describe it.</p>
+<p>A man who does not know any language knows that touching fire causes pain, and that eating causes satiety, but does he know the concept of <em>causality</em> itself?</p>
+<h4 id="how-can-we-reach-the-ideal-system"><span class="section_number">7.4.9</span><span class="section_title">How can we reach the ideal system?</span></h4>
+<p>If we keep improving existing systems, will we get there? Or does it require a fundamental change?</p>
+<h3 id="old-goal"><span class="section_number">7.5</span><span class="section_title">Old goal?</span></h3>
+<p>The goal is to make <em>the</em> programming language.</p>
+<p><em>The</em> ultimate best programming language?</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.5.1</span><span class="section_title"><a href="#what-is-programming-language-research-for">What is programming language research for?</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">7.5.2</span><span class="section_title"><a href="#jargon-is-necessary-for-concision-high-information-transfer-rate">Jargon is necessary for concision (high information transfer rate)</a></span><span class="word_count">(33w~1m)</span></li>
+<li><span class="section_number">7.5.3</span><span class="section_title"><a href="#but-we-cant-just-assume-that-users-are-going-to-wait-forever-that-memory-is-unlimited-that-network-is-always-up-and-fast-etc.">But we can't just assume that users are going to wait forever, that memory is unlimited, that network is always up and fast, etc.?</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">7.5.4</span><span class="section_title"><a href="#communities-and-other-people-with-related-goals">Communities and other people with related goals</a></span><span class="word_count">(568w~3m)</span></li>
+</ul>
+</div>
+<h4 id="what-is-programming-language-research-for"><span class="section_number">7.5.1</span><span class="section_title">What is programming language research for?</span></h4>
+<p>A goal of programming language research is to make a better programming language (if not the best). Do more with less.</p>
+<h4 id="jargon-is-necessary-for-concision-high-information-transfer-rate"><span class="section_number">7.5.2</span><span class="section_title">Jargon is necessary for concision (high information transfer rate)</span></h4>
+<p>In different fields of studies, we invent jargons for concision, to speed up information transmission, to convey more meaning in shorter time with less words.</p>
+<h4 id="but-we-cant-just-assume-that-users-are-going-to-wait-forever-that-memory-is-unlimited-that-network-is-always-up-and-fast-etc."><span class="section_number">7.5.3</span><span class="section_title">But we can't just assume that users are going to wait forever, that memory is unlimited, that network is always up and fast, etc.?</span></h4>
+<h4 id="communities-and-other-people-with-related-goals"><span class="section_number">7.5.4</span><span class="section_title">Communities and other people with related goals</span></h4>
+<ol>
+<li><p>Communities</p>
+<ul>
+<li>#proglangdesign community
+<ul>
+<li>their wiki <a href="https://github.com/proglangdesign/proglangdesign-wiki/wiki">https://github.com/proglangdesign/proglangdesign-wiki/wiki</a></li>
+<li>their reddit <a href="https://www.reddit.com/r/ProgrammingLanguages/">https://www.reddit.com/r/ProgrammingLanguages/</a></li>
+<li>their website <a href="https://www.proglangdesign.net/">https://www.proglangdesign.net/</a></li>
+</ul></li>
+</ul></li>
+<li><p>People</p>
+<ul>
+<li>&lt;2018-10-04&gt; <a href="http://www.cs.umd.edu/~dvanhorn/">David Van Horn</a> &quot;I work toward making the construction of reusable, trusted software components possible and effective&quot;</li>
+</ul></li>
+<li><p>Finding giants whose shoulders we want to stand on, for building the programming language</p>
+<ul>
+<li>These languages are interesting starting points:
+<ul>
+<li><a href="https://github.com/ollef/sixten">Sixten</a></li>
+<li>Dhall</li>
+<li><a href="http://www.haskellforall.com/2014/09/morte-intermediate-language-for-super.html">Morte: an intermediate language for super-optimizing functional programs</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/27z7yw/is_there_such_a_thing_as_a_lowlevel_functional/">Is there such a thing as a low-level functional language? : haskell</a>
+<ul>
+<li>ATS and Rust</li>
+</ul></li>
+<li><a href="https://www.quora.com/What-are-some-of-the-most-abstract-programming-languages-in-2015">What are some of the most abstract programming languages in 2015? - Quora</a></li>
+<li>Midori</li>
+<li>Mercury</li>
+<li>Perl 6?</li>
+</ul></li>
+<li>Designing programming languages:
+<ul>
+<li>2018 article &quot;Interdisciplinary Programming Language Design&quot; <a href="http://www.cs.cmu.edu/~mcoblenz/HCPLD-preprint.pdf">pdf</a></li>
+<li>2018 article &quot;A Programmable Programming Language&quot; <a href="http://silo.cs.indiana.edu:8346/c211/impatient/cacm-draft.pdf">pdf</a></li>
+<li>2018 article &quot;Combining Model Checking and Testing&quot; <a href="https://www.cis.upenn.edu/~alur/CIS673/testing.pdf">pdf</a></li>
+<li>2013 article &quot;Idris, a General Purpose Dependently Typed Programming Language: Design and Implementation&quot; <a href="https://eb.host.cs.st-andrews.ac.uk/drafts/impldtp.pdf">pdf</a></li>
+<li>2007 article &quot;Position Paper: Thoughts on Programming with Proof Assistants&quot; <a href="https://ac.els-cdn.com/S1571066107002502/1-s2.0-S1571066107002502-main.pdf?_tid=19c6192b-ca57-4ef0-9403-1cfb624c817c&amp;acdnat=1535488824_78a2c31f390f3a1fb72f0c31024f2495">pdf</a></li>
+<li>1996 article &quot;Seven Deadly Sins of Introductory Programming Language Design&quot; <a href="https://pdfs.semanticscholar.org/d314/78c5b95c399b6418b41011debefbc699c633.pdf">pdf</a></li>
+<li>1996 book &quot;Advanced programming language design&quot; <a href="https://www.researchgate.net/profile/Raphael_Finkel/publication/220692467_Advanced_programming_language_design/links/0c96052af3e324bf31000000/Advanced-programming-language-design.pdf">pdf</a></li>
+<li>1973 article &quot;Hints on Programming Language Design&quot; <a href="http://www.dtic.mil/dtic/tr/fulltext/u2/773391.pdf">pdf</a></li>
+</ul></li>
+<li>Finding recent programming language research:
+<ul>
+<li>meetings, conferences, symposiums
+<ul>
+<li><a href="https://twitter.com/poplconf?lang=en">POPL on Twitter</a>. Its full name is &quot;ACM SIGPLAN Symposium on Principles of Programming Languages&quot;.</li>
+</ul></li>
+<li>collections, links, aggregators
+<ul>
+<li><a href="https://www.cs.cmu.edu/~mleone/language-research.html">https://www.cs.cmu.edu/~mleone/language-research.html</a></li>
+</ul></li>
+</ul></li>
+<li>What already exists?
+<ul>
+<li><a href="https://tomassetti.me/resources-create-programming-languages/">68 Resources on creating programming languages</a></li>
+<li>2004, book, &quot;Programming language design concepts&quot;</li>
+<li><a href="https://en.wikipedia.org/wiki/Expression_problem">https://en.wikipedia.org/wiki/Expression_problem</a></li>
+<li>don't repeat yourself
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Generic_programming">https://en.wikipedia.org/wiki/Generic_programming</a>
+<ul>
+<li>parametric polymorphism</li>
+</ul></li>
+</ul></li>
+<li>Safely Composable Type-Specific Languages <a href="https://www.cs.cmu.edu/~aldrich/papers/ecoop14-tsls.pdf">https://www.cs.cmu.edu/~aldrich/papers/ecoop14-tsls.pdf</a></li>
+</ul></li>
+<li>books
+<ul>
+<li>books recommended by courses related to programming language research
+<ul>
+<li><a href="http://plus.kaist.ac.kr/~han/courses/cs520/">http://plus.kaist.ac.kr/~han/courses/cs520/</a></li>
+<li><a href="https://www.cl.cam.ac.uk/teaching/1516/ConceptsPL/">https://www.cl.cam.ac.uk/teaching/1516/ConceptsPL/</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Programming_language_theory#Further_reading">https://en.wikipedia.org/wiki/Programming_language_theory#Further_reading</a></li>
+</ul></li>
+<li>1995, book, &quot;Syntax and semantics of programming languages&quot;, Slonneger &amp; Kurtz <a href="http://homepage.divms.uiowa.edu/~slonnegr/plf/Book/">http://homepage.divms.uiowa.edu/~slonnegr/plf/Book/</a></li>
+</ul></li>
+<li>2017, PhD thesis, <a href="http://tomasp.net/academic/theses/coeffects/">&quot;Context-aware programming languages&quot;</a>
+<ul>
+<li><a href="http://tomasp.net/coeffects/">amazingly empathic considerate presentation that has the audience in mind</a>
+<ul>
+<li>if only all PhD theses are presented that way
+<ul>
+<li>if only everybody writes that way</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>2014, book, Odersky, &quot;Scala by example&quot;
+<ul>
+<li>perhaps the best way to learn Scala for non-Scala programmers</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/John_C._Reynolds">https://en.wikipedia.org/wiki/John_C._Reynolds</a>
+<ul>
+<li>2014, <a href="http://www.cs.bham.ac.uk/~udr/papers/EssenceOfReynolds.pdf">The essence of Reynolds</a>
+<ul>
+<li>1998, Reynolds, &quot;Theories of programming languages&quot;</li>
+</ul></li>
+</ul></li>
+<li>a list of people <a href="http://www.angelfire.com/tx4/cus/people/index.html">http://www.angelfire.com/tx4/cus/people/index.html</a></li>
+<li>other people's collections
+<ul>
+<li><a href="https://github.com/steshaw/plt">https://github.com/steshaw/plt</a></li>
+</ul></li>
+<li>google search for &quot;haskell code generation&quot;
+<ul>
+<li><a href="https://www.joachim-breitner.de/blog/719-veggies__Haskell_code_generation_from_scratch">veggies: Haskell code generation from scratch – Blog – Joachim Breitner's Homepage</a>
+<ul>
+<li><a href="https://www.reddit.com/r/haskell/comments/66q87y/veggies_haskell_code_generation_from_scratch/">veggies: Haskell code generation from scratch : haskell</a></li>
+</ul></li>
+<li><a href="https://www.bytelabs.org/project/haskell-bottom-up-rewrite-generator/">HBURG - Haskell Bottom Up Rewrite Generator | ByteLabs</a></li>
+</ul></li>
+<li>software development is software too
+<ul>
+<li>meta-language
+<ul>
+<li>2016, &quot;JunGL: a Scripting Language for Refactoring&quot;, <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.94.859&amp;rep=rep1&amp;type=pdf">pdf</a></li>
+</ul></li>
+</ul></li>
+</ul>
+<ol>
+<li><p>People who share the vision for <em>the</em> programming language</p>
+<ul>
+<li><p><a href="https://brianmckenna.org/blog/polymorphic_programming">Polymorphic Programming - BAM Weblog</a></p>
+<ul>
+<li>has some links</li>
+<li>Elliott 2017 <span class="citation" data-cites="elliott2017compiling">[<a href="#ref-elliott2017compiling">3</a>]</span> &quot;Compiling to Categories&quot;</li>
+<li><p>Is this 1969 article related? Can't be found online.</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Polymorphic_Programming_Language">https://en.wikipedia.org/wiki/Polymorphic_Programming_Language</a></li>
+</ul></li>
+<li><p>Are these related?</p>
+<ul>
+<li>1989, article, &quot;Database Programming in Machiavelli – a Polymorphic Language with Static Type Inference&quot;, <a href="http://homepages.inf.ed.ac.uk/opb/papers/SIGMOD89.pdf">pdf</a></li>
+</ul></li>
+</ul></li>
+<li><p>Can we use Description Logic (the theoretical foundations of Web Ontology Language OWL) to generate software, especially enterprise applications?</p>
+<ul>
+<li>2015, article, [[<a href="https://arxiv.org/abs/1503.01723">https://arxiv.org/abs/1503.01723</a>][[1503.01723] Modelling the Semantic Web using a Type System]]</li>
+<li>2005, article, &quot;Software engineering ontologies and their implementation&quot;, <a href="https://espace.curtin.edu.au/bitstream/handle/20.500.11937/9549/19598_downloaded_stream_116.pdf">pdf</a>, <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.86.5585&amp;rep=rep1&amp;type=pdf">pdf copy</a></li>
+</ul></li>
+</ul></li>
+<li><p>People who share some of the vision but don't go far enough</p>
+<ul>
+<li><p>XForms</p>
+<ul>
+<li>2016, article, <a href="https://link.springer.com/article/10.1007/s11280-015-0339-z">Leveraging declarative languages in web application development - SpringerLink</a></li>
+<li>2014, slides, advocacy, <a href="https://homepages.cwi.nl/~steven/Talks/2014/01-31-declarative/">Declarative Web Applications</a></li>
+</ul></li>
+<li>2007, workshop, <a href="https://www.w3.org/2007/02/dmdwa-ws/">Declarative Models of Distributed Web Applications</a></li>
+<li><a href="http://www.proglangdesign.net/">#proglangdesign</a></li>
+<li><p>IDE (integrated development environment), editor</p>
+<ul>
+<li>Given a grammar, the computer should generate an IDE for us. Syntax highlighting. Refactoring.</li>
+<li><a href="https://hackage.haskell.org/package/treersec">https://hackage.haskell.org/package/treersec</a> &quot;Build a structure editor for a programming language from combinators following the grammar.&quot;</li>
+<li><a href="http://www.lamdu.org/">http://www.lamdu.org/</a></li>
+<li><p>cirru <a href="https://news.ycombinator.com/item?id=13773813">https://news.ycombinator.com/item?id=13773813</a></p>
+<ul>
+<li>lots of similar things <a href="https://news.ycombinator.com/item?id=13774864">https://news.ycombinator.com/item?id=13774864</a></li>
+</ul></li>
+<li><p>isomorf: find code fragment popularity by structure (not-only-text) comparison <a href="https://isomorf.io/#!/tours/of/overview/7/haskell">https://isomorf.io/#!/tours/of/overview/7/haskell</a></p></li>
+</ul></li>
+<li><p>supercompilation, specialization, partial evaluation</p>
+<ul>
+<li><p>Haskell supercompilation?</p>
+<ul>
+<li>GHC</li>
+<li>Supero</li>
+<li><p>Morte</p>
+<ul>
+<li><p><a href="https://github.com/Gabriel439/Haskell-Morte-Library">https://github.com/Gabriel439/Haskell-Morte-Library</a></p>
+<ul>
+<li>&quot;Morte is a super-optimizing intermediate language for functional languages.&quot;</li>
+</ul></li>
+<li><p><a href="http://www.haskellforall.com/2014/09/morte-intermediate-language-for-super.html">http://www.haskellforall.com/2014/09/morte-intermediate-language-for-super.html</a></p></li>
+</ul></li>
+</ul></li>
+<li><p><a href="http://thyer.name/phd-thesis/thesis-thyer.pdf">Thyer's PhD thesis &quot;Lazy specialization&quot;</a> has an accessible introduction to lambda calculus in Chapter 2.</p>
+<ul>
+<li>&quot;Tower of interpreters&quot; test</li>
+<li><p>2018, &quot;Collapsing towers of interpreters&quot; <a href="http://lampwww.epfl.ch/~amin/pub/collapsing-towers.pdf">http://lampwww.epfl.ch/~amin/pub/collapsing-towers.pdf</a></p>
+<ul>
+<li>&quot;It is well known that <em>staging</em> an interpreter – making it generate code whenever it would normally interpret an expression – yields a compiler […]&quot;</li>
+</ul></li>
+</ul></li>
+<li><p>1991, &quot;A partial evaluator for the untyped lambda-calculus&quot;, <a href="https://www.cambridge.org/core/journals/journal-of-functional-programming/article/a-partial-evaluator-for-the-untyped-lambda-calculus/EE324F936F0A009B6766B13FF6755DFC">paywall</a></p>
+<ul>
+<li>related: semantic-directed code generation?</li>
+</ul></li>
+<li>Gabriel Gonzales stuff: Morte, Dhall.</li>
+<li><p><a href="http://lambda-the-ultimate.org/node/2739">LTU: Ongoing work on Supercompilation of Java code (or supercompilation in general)?</a></p></li>
+</ul></li>
+<li><p><a href="https://medium.com/@McCosmos/a-treatise-on-cosmos-the-new-programming-language-905be69eb4af">A Treatise on Cosmos —the New Programming Language</a></p>
+<ul>
+<li>procedural-looking logic programming language</li>
+</ul></li>
+<li><p>syntax</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Off-side_rule">WP:Off-side rule</a>, indentation as block delimiter</li>
+</ul></li>
+<li><p><a href="http://wiki.c2.com/?QuestForThePerfectLanguage">Quest For The Perfect Language</a></p></li>
+</ul></li>
+</ol></li>
+</ol>
+<h2 id="computer-programming-1"><span class="section_number">8</span><span class="section_title">Computer programming</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">8.1</span><span class="section_title"><a href="#what-is-computer-programming">What is computer programming?</a></span><span class="word_count">(77w~1m)</span></li>
+<li><span class="section_number">8.2</span><span class="section_title"><a href="#how-should-we-program-computers">How should we program computers?</a></span><span class="word_count">(362w~2m)</span></li>
+<li><span class="section_number">8.3</span><span class="section_title"><a href="#must-a-programming-system-be-textual-or-arboreal">Must a programming system be textual or arboreal?</a></span><span class="word_count">(27w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-is-computer-programming"><span class="section_number">8.1</span><span class="section_title">What is computer programming?</span></h3>
+<p>We say &quot;we program a computer&quot; to mean that we make the computer (1) do what we want it to do and (2) do <em>only</em> that. Security problems arise from neglecting the second part.</p>
+<p>A programmer is someone who programs a computer. The essence of a programmer's job is to formalize the ontology implicit in the user's requirements.</p>
+<p>Why do we program computers? The same reason we make machines. Because we are lazy tool-using curious animals.</p>
+<h3 id="how-should-we-program-computers"><span class="section_number">8.2</span><span class="section_title">How should we program computers?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">8.2.1</span><span class="section_title"><a href="#the-programmer-should-be-able-to-only-care-about-what-the-end-user-cares-about">The programmer should be able to only care about what the end-user cares about</a></span><span class="word_count">(147w~1m)</span></li>
+<li><span class="section_number">8.2.2</span><span class="section_title"><a href="#when-will-we-have-telepathy">When will we have telepathy?</a></span><span class="word_count">(59w~1m)</span></li>
+<li><span class="section_number">8.2.3</span><span class="section_title"><a href="#a-language-that-is-expressive-enough-to-describe-itself">A language that is expressive enough to describe itself?</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">8.2.4</span><span class="section_title"><a href="#how-should-programmers-specialize">How should programmers specialize?</a></span><span class="word_count">(64w~1m)</span></li>
+<li><span class="section_number">8.2.5</span><span class="section_title"><a href="#two-camps-of-programming-language-design">Two camps of programming language design</a></span><span class="word_count">(71w~1m)</span></li>
+</ul>
+</div>
+<h4 id="the-programmer-should-be-able-to-only-care-about-what-the-end-user-cares-about"><span class="section_number">8.2.1</span><span class="section_title">The programmer should be able to only care about what the end-user cares about</span></h4>
+<p>The user has a goal. The user treats the system as a black box (the user does not know <em>how</em> the system works; the user only cares about <em>what</em> the system does). The user is concerned about these and only these:</p>
+<ul>
+<li>What do I have to input into the system?</li>
+<li>How do I understand the system's output?</li>
+</ul>
+<p>Finite integers are accidental complexity. We should program with mathematical numbers, and the computer should automatically take the <em>quotient</em> of the program (translates the ideal program into a finite/limited/bounded implementation that is correct for the first <span class="math inline">\(2^64\)</span> inputs).</p>
+<p>We should do as little as possible, and the computer should do as much as possible.</p>
+<p>We should be able to tell the computer as little as possible. We should be able to tell the computer only the essential complexity. Implementation is accidental complexity.</p>
+<h4 id="when-will-we-have-telepathy"><span class="section_number">8.2.2</span><span class="section_title">When will we have telepathy?</span></h4>
+<p>Telepathy. Directly with our mind. Computers should be prosthetic minds. We can lift more with a prosthetic arm than with a natural arm. We can think more With a prosthetic mind than with a natural mind.</p>
+<p>Such technology does not exist in 2019, so we are stuck with the second most ideal solution: declarative programming languages.</p>
+<h4 id="a-language-that-is-expressive-enough-to-describe-itself"><span class="section_number">8.2.3</span><span class="section_title">A language that is expressive enough to describe itself?</span></h4>
+<p>We want a language that can be its own meta-language.</p>
+<p>Logic can describe itself?</p>
+<h4 id="how-should-programmers-specialize"><span class="section_number">8.2.4</span><span class="section_title">How should programmers specialize?</span></h4>
+<p>Programmers should <em>not</em> be divided into backend and frontend, for two reasons:</p>
+<ol>
+<li>Doing so causes much code duplication.</li>
+<li>Backend and frontend are accidental complexity, not essential complexity. Everyone who specializes in handling accidental complexity is going to be obsolete.</li>
+</ol>
+<p>Instead, programmers should be divided into <em>language designer</em> and <em>language user</em>.</p>
+<p>The language user should program in a use case specification language.</p>
+<p>An example of essential complexity:</p>
+<pre class="example"><code>discount_percent age =
+  if age &lt; 18 or age &gt; 55
+    then 10
+    else 0
+</code></pre>
+<h4 id="two-camps-of-programming-language-design"><span class="section_number">8.2.5</span><span class="section_title">Two camps of programming language design</span></h4>
+<p>There are two camps in programming language design: bottom-up and top-down.</p>
+<p>Bottom-up language design:</p>
+<ul>
+<li>Begin with physics.</li>
+<li>Claude Shannon abstracted the underlying physics into bits and boolean algebra.</li>
+<li>Machine code.</li>
+<li>Two's-complement signed integers.</li>
+<li>Variables abstract away finite registers.</li>
+<li>Garbage collection abstracts away finite memory.</li>
+<li>Go up until the language is convenient enough to use.</li>
+</ul>
+<p>Top-down language design:</p>
+<ul>
+<li>Begin from logic and mathematics, the internal language of thought.</li>
+<li>Go down until the language is convenient enough to realize.</li>
+</ul>
+<h3 id="must-a-programming-system-be-textual-or-arboreal"><span class="section_number">8.3</span><span class="section_title">Must a programming system be textual or arboreal?</span></h3>
+<p>Why confine ourselves to texts and trees? Why not graphs?</p>
+<p>There are visual programming languages.</p>
+<p>Problem: Visual programming system encumbers blind people.</p>
+<h2 id="philosophy-of-computer-programming"><span class="section_number">9</span><span class="section_title">Philosophy of computer programming?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#program-and-execution">Program and execution</a></span><span class="word_count">(66w~1m)</span></li>
+<li><span class="section_number">9.2</span><span class="section_title"><a href="#what-is-computation-computer-programming-language">What is computation, computer, programming, language?</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">9.3</span><span class="section_title"><a href="#who-use-programming-languages">Who use programming languages?</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">9.4</span><span class="section_title"><a href="#the-fundamental-reason-why-there-is-no-perfect-language-the-pigeonhole-principle-encoding-length-trade-off">The fundamental reason why there is no perfect language: The pigeonhole principle, encoding length trade-off</a></span><span class="word_count">(114w~1m)</span></li>
+<li><span class="section_number">9.5</span><span class="section_title"><a href="#ontology-what-exists-in-a-programming-language">Ontology: what exists in a programming language?</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">9.6</span><span class="section_title"><a href="#philosophical-principles">Philosophical principles</a></span><span class="word_count">(464w~3m)</span></li>
+<li><span class="section_number">9.7</span><span class="section_title"><a href="#a-lambda-abstraction-is-not-a-function">A lambda abstraction is not a function</a></span><span class="word_count">(65w~1m)</span></li>
+<li><span class="section_number">9.8</span><span class="section_title"><a href="#the-philosophical-foundation-of-object-orientation">The philosophical foundation of object-orientation?</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">9.9</span><span class="section_title"><a href="#programming-is-computable-mathematics">Programming is computable mathematics?</a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">9.10</span><span class="section_title"><a href="#programming-language-ontology">Programming language ontology?</a></span><span class="word_count">(135w~1m)</span></li>
+<li><span class="section_number">9.11</span><span class="section_title"><a href="#should-we-strive-to-create-a-programming-language-with-ontological-parsimony-minimal-ontological-commitment">Should we strive to create a programming language with ontological parsimony (minimal ontological commitment)?</a></span><span class="word_count">(80w~1m)</span></li>
+</ul>
+</div>
+<h3 id="program-and-execution"><span class="section_number">9.1</span><span class="section_title">Program and execution</span></h3>
+<p>In imperative programming, a program is a sequence of commands, and execution is what we expect.</p>
+<p>In logic programming, a program is a logical formula, and executing that program is proving that formula.</p>
+<p>In functional programming, a program is an expression, and executing that program is reducing that expression until a normal form is reached.</p>
+<p>The common view that includes both logic and functional programming is term-rewriting.</p>
+<h3 id="what-is-computation-computer-programming-language"><span class="section_number">9.2</span><span class="section_title">What is computation, computer, programming, language?</span></h3>
+<p>Programming is making a computer do what we want it to do.</p>
+<p>Languages are divided into several categories:</p>
+<ul>
+<li>hardware programming, system programming</li>
+<li>enterprise application programming</li>
+<li>scripting? network administration</li>
+<li>markup: XML, Markdown</li>
+<li>data: JSON, YAML</li>
+</ul>
+<p>The question: What is the least-effort way to make a computer do X?</p>
+<h3 id="who-use-programming-languages"><span class="section_number">9.3</span><span class="section_title">Who use programming languages?</span></h3>
+<p>A programming language serves as a means of communication in three cases:</p>
+<ul>
+<li>human-to-human:</li>
+<li>human-to-machine:</li>
+<li>machine-to-machine:</li>
+</ul>
+<p>We advance technologically when we raise the bar for machines (we expect more from machines), not when we expect more from humans. (?)</p>
+<h3 id="the-fundamental-reason-why-there-is-no-perfect-language-the-pigeonhole-principle-encoding-length-trade-off"><span class="section_number">9.4</span><span class="section_title">The fundamental reason why there is no perfect language: The pigeonhole principle, encoding length trade-off</span></h3>
+<p>If we choose to encode something shorter in a language, then other things must be encoded longer. If we make it easier to do something, something else has to become harder.</p>
+<p>A language is essentially a Huffman code, a compression scheme, where often-used concepts are encoded more shortly than rarely-used concepts.</p>
+<p><em>Language encodes concept into symbols.</em></p>
+<p>If there are only 26 letters and 1,000 concepts, then, by the pigeonhole principle, it is simply impossible to encode all those concepts using only 1-letter symbols.</p>
+<p>The reason why there is no perfect language is simple: the pigeonhole principle precludes encoding all possible concepts into short words.</p>
+<h3 id="ontology-what-exists-in-a-programming-language"><span class="section_number">9.5</span><span class="section_title">Ontology: what exists in a programming language?</span></h3>
+<ul>
+<li>numbers</li>
+<li>byte strings</li>
+<li>character strings</li>
+<li>maps</li>
+<li>functions</li>
+<li>relations</li>
+</ul>
+<h3 id="philosophical-principles"><span class="section_number">9.6</span><span class="section_title">Philosophical principles</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.6.1</span><span class="section_title"><a href="#philosophical-principle-meta-thought-how-to-find-essence">Philosophical principle, meta-thought, how to find essence</a></span><span class="word_count">(96w~1m)</span></li>
+<li><span class="section_number">9.6.2</span><span class="section_title"><a href="#the-essence-of-description-and-computation">The essence of description and computation</a></span><span class="word_count">(59w~1m)</span></li>
+<li><span class="section_number">9.6.3</span><span class="section_title"><a href="#programming">Programming</a></span><span class="word_count">(310w~2m)</span></li>
+</ul>
+</div>
+<h4 id="philosophical-principle-meta-thought-how-to-find-essence"><span class="section_number">9.6.1</span><span class="section_title">Philosophical principle, meta-thought, how to find essence</span></h4>
+<p>Everything (every language element) should have as few properties as possible. If something has as few properties as possible, then what is left is its essence. Example: In C, the name of a function is a property of that function. In JavaScript, the name of a function is not a property of that function. var add = function(x,y) { return x+y; }</p>
+<p>Is the name &quot;x&quot; a property of the variable x in the lambda expression \ x -&gt; x + 1? We can have nameless parameters with de Bruijn indexes.</p>
+<h4 id="the-essence-of-description-and-computation"><span class="section_number">9.6.2</span><span class="section_title">The essence of description and computation</span></h4>
+<p>The essence of description is the composition of primitives.</p>
+<p>Computation is the execution of a computing description.</p>
+<p>All computations have repetitions. Turing machine computation is repeated primitive computation. Lambda-calculus beta-normalization is repeated beta-reduction.</p>
+<p>Computation is the normalization of an expression to a value.</p>
+<p>A logical axiom corresponds to a computing primitive.</p>
+<p>A proof corresponds to a computing description (program).</p>
+<h4 id="programming"><span class="section_number">9.6.3</span><span class="section_title">Programming</span></h4>
+<ol>
+<li><p>What is a program?</p>
+<ul>
+<li>A program is represented by
+<ul>
+<li>a sequence of instructions (procedural programming)</li>
+<li>a lambda expression (functional programming)</li>
+</ul></li>
+</ul></li>
+<li><p>Metaprogramming</p>
+<ul>
+<li>JetBrains MPS</li>
+<li><a href="http://txl.ca/index.html">TXL: source transformation by example</a>, what can it do?</li>
+<li><a href="http://www.moserware.com/2008/06/ometa-who-what-when-where-why.html">http://www.moserware.com/2008/06/ometa-who-what-when-where-why.html</a></li>
+</ul></li>
+<li><p>Comparing Ocaml and SML</p>
+<ul>
+<li><a href="http://adam.chlipala.net/mlcomp/">Comparing Objective Caml and Standard ML</a>, Adam Chlipala
+<ul>
+<li><a href="https://people.mpi-sws.org/~rossberg/sml-vs-ocaml.html">https://people.mpi-sws.org/~rossberg/sml-vs-ocaml.html</a></li>
+</ul></li>
+</ul></li>
+<li><p>Interoperation</p>
+<ul>
+<li>Programming languages don't work with each other very well.
+<ul>
+<li>What we need is not a new programming language, but a way for languages to work together?</li>
+</ul></li>
+<li><a href="https://mollyrocket.com/casey/stream_0019.html">compression-oriented programming</a></li>
+<li>Lisp family/dialects
+<ul>
+<li>Scheme</li>
+<li><a href="https://picolisp.com/wiki/?home">PicoLisp</a></li>
+</ul></li>
+<li>Undigested
+<ul>
+<li><a href="https://hakonrossebo.github.io/functional-programming-babelfish/">https://hakonrossebo.github.io/functional-programming-babelfish/</a></li>
+<li><a href="https://github.com/rainbyte/haskell-ide-chart">https://github.com/rainbyte/haskell-ide-chart</a></li>
+<li><a href="http://docs.mamedev.org/techspecs/luaengine.html">http://docs.mamedev.org/techspecs/luaengine.html</a></li>
+</ul></li>
+<li>The source code is a textual representation of the abstract syntax tree (AST).</li>
+<li>The source code is unimportant cosmetics. We should care about the ASTs and transformations between ASTs. We should read, write, and edit ASTs directly, not text. The editor should not parse text into AST; it should generate text from AST.</li>
+<li>Language-oriented programming? Data-first programming?
+<ul>
+<li>Data is the most important thing.
+<ul>
+<li>Because data is harder to back up than code?</li>
+</ul></li>
+<li>Program translates the shape of data.</li>
+<li>Describe what you want, and write code that follows that description to call the lower-level implementation details.</li>
+</ul></li>
+<li>Programming language design
+<ul>
+<li>Which should we start with?
+<ul>
+<li>Semantics (high-level, top-down language design)</li>
+<li>Machine code (low-level, bottom-up language design)</li>
+</ul></li>
+<li>Every enhancement reduces cognitive load.</li>
+<li>Example of bottom-up language design and how each level reduces cognitive load:
+<ul>
+<li>Begin with machine code.</li>
+<li>Provide mnemonics for instructions.</li>
+<li>Provide the illusion of infinite custom-named registers and orthogonal operands.</li>
+<li>Provide macros subroutines as extensible instructions.</li>
+<li>Provide the illusion of infinite custom-named registers and orthogonal operands.</li>
+<li>Provide macros and subroutines as extensible instructions.</li>
+<li>Provide named locations.</li>
+<li>Provide the illusion of infinite memory.</li>
+<li>Abstract away processor registers.</li>
+<li>Abstract away pointers.</li>
+<li>Expression.</li>
+<li>Infix expression syntax.</li>
+<li>First-class functions.</li>
+<li>The program itself is a procedural program that tells the interpreter what code to generate.</li>
+<li>End up with something like Randall Hyde's High Level Assembly?</li>
+</ul></li>
+</ul></li>
+<li>PL research
+<ul>
+<li><a href="https://www.microsoft.com/en-us/research/publication/implementing-functional-languages-a-tutorial/">1992, book, &quot;Implementing functional languages: a tutorial&quot;</a></li>
+</ul></li>
+<li>Improve an existing language instead of starting new?</li>
+<li>What is this? <a href="http://reasonablypolymorphic.com/blog/elm-is-wrong">http://reasonablypolymorphic.com/blog/elm-is-wrong</a></li>
+</ul></li>
+<li><p>Interesting languages?</p>
+<ol>
+<li><p>Rebol? Rebol metaprogramming?</p>
+<p><a href="https://en.m.wikipedia.org/wiki/REBOL">https://en.m.wikipedia.org/wiki/REBOL</a></p></li>
+<li><p>Carp lisp dialect?</p></li>
+</ol></li>
+<li><p>Scheme vs Lisp:</p>
+<ul>
+<li>A Lisp implementation doesn't have to have proper tail calls.</li>
+<li>A Scheme implementation must have proper tail calls.</li>
+</ul></li>
+<li><p>Type systems</p>
+<ul>
+<li>Types help computers help us.
+<ul>
+<li>Types prevent some mistakes.</li>
+<li>Types are part of documentation.
+<ul>
+<li>Types help us write an IDE.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ol>
+<h3 id="a-lambda-abstraction-is-not-a-function"><span class="section_number">9.7</span><span class="section_title">A lambda abstraction is not a function</span></h3>
+<p>A mathematical function is a triple <span class="math inline">\((A,B,F)\)</span> where <span class="math inline">\(A\)</span> is the domain, <span class="math inline">\(B\)</span> is the codomain, and <span class="math inline">\(F \subseteq A \times B\)</span> is the mapping.</p>
+<p>A lambda abstraction <span class="math inline">\( \lambda x. y \)</span> is not the <em>same</em> as a function <span class="math inline">\( x \mapsto y \)</span>.</p>
+<p>The expression 1 + 2 is not the <em>same</em> as the number 3. That expression <em>evaluates</em> to that number.</p>
+<h3 id="the-philosophical-foundation-of-object-orientation"><span class="section_number">9.8</span><span class="section_title">The philosophical foundation of object-orientation?</span></h3>
+<p>Identity?</p>
+<p>Properties?</p>
+<p>What does &quot;X is a Y&quot; mean?</p>
+<p>What does &quot;Every X is a Y&quot; mean?</p>
+<p>First-order logical meaning of object-oriented definitions?</p>
+<pre class="example"><code>Car my_car = new Car(); // my_car is a Car.
+class What extends Car {} // Every What is a Car.
+</code></pre>
+<span class="math display">\[\begin{align*}
+Car(my\_car)
+\\
+\forall x : What(x) \to Car(x)
+\end{align*}
+\]</span>
+<h3 id="programming-is-computable-mathematics"><span class="section_number">9.9</span><span class="section_title">Programming is computable mathematics?</span></h3>
+<p><a href="https://en.wikipedia.org/wiki/Semantic_domain">https://en.wikipedia.org/wiki/Semantic_domain</a></p>
+<p>&quot;A programmable analog neural computer and simulator&quot; <a href="https://pdfs.semanticscholar.org/5f6b/579b1f4166ea536f5ed188e9976390729303.pdf">https://pdfs.semanticscholar.org/5f6b/579b1f4166ea536f5ed188e9976390729303.pdf</a></p>
+<p>To rewrite a part of a program without introducing errors, we need to preserve the <em>meaning</em> of the program, and thus we need a theory of semantics.</p>
+<p>See also Rapaport 2015 section 7.2 (&quot;What is computation?&quot;) from page 233.</p>
+<p>See Rapaport 2015 page 267 about other computation models.</p>
+<p>What can we get from this? <a href="https://plato.stanford.edu/entries/computer-science/">https://plato.stanford.edu/entries/computer-science/</a></p>
+<p>&lt;2014-05-07&gt; Reddit user TezlaKoil shows how to derive Russell's paradox in untyped lambda-calculus, and shows the relationship between Russell's paradox and Curry's Y combinator.<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<h3 id="programming-language-ontology"><span class="section_number">9.10</span><span class="section_title">Programming language ontology?</span></h3>
+<p>2005 &quot;Towards a programming language ontology&quot; <a href="https://pdfs.semanticscholar.org/028f/3f5df68e49b2d42663e935f1615ba46f41a0.pdf">https://pdfs.semanticscholar.org/028f/3f5df68e49b2d42663e935f1615ba46f41a0.pdf</a></p>
+<ul>
+<li>paraphrase of Frege &amp; Dummett: &quot;the ontological implications of a language are to be identified with the entities required to provide its constructs with a semantics&quot;</li>
+<li>a possible ontology for computer science: something exists if and only if it is computable</li>
+<li>&quot;properties of programs such as efficiency, flexibility and elegance are, from the [Computer Science] view of things, absolutely essential. But these properties are obliterated by the [Denotational Semantics].&quot;
+<ul>
+<li>Denotational semantics can't reason about a program's resource usage.</li>
+</ul></li>
+<li>&quot;CS build programs and systems from data</li>
+</ul>
+<p>types. So instead of sets we propose to turn matters around and use data types [instead of sets] as our basic ontology.&quot;</p>
+<ul>
+<li>Calculus of constructions (inductive data types) may provide an ontology.</li>
+</ul>
+<p>&quot;The 'existence' referred to need not be 'real', but exist only in a universe of discourse.&quot; <a href="https://en.wikipedia.org/wiki/Ontological_commitment">https://en.wikipedia.org/wiki/Ontological_commitment</a></p>
+<h3 id="should-we-strive-to-create-a-programming-language-with-ontological-parsimony-minimal-ontological-commitment"><span class="section_number">9.11</span><span class="section_title">Should we strive to create a programming language with ontological parsimony (minimal ontological commitment)?</span></h3>
+<p>How do we design a programming language whose ontology coincides with how we think about the real world?</p>
+<p>How do we design a programming language whose ontology coincides with the ontology of mathematics?</p>
+<p>How can we be a mathematician without being an implicit Platonist? Anyone who believes that perfect circles exist is a Platonist. Anyone who believes that the square root of two exists is a Platonist.</p>
+<p>Mathematics is language.</p>
+<p><a href="https://www.iep.utm.edu/mathplat/">https://www.iep.utm.edu/mathplat/</a></p>
+<h2 id="philosophy-of-length-dimension-measure-size-cardinality"><span class="section_number">10</span><span class="section_title">Philosophy of length, dimension, measure, size, cardinality</span></h2>
+<p>Similar questions<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.1</span><span class="section_title"><a href="#what-is-length">What is length?</a></span><span class="word_count">(206w~2m)</span></li>
+<li><span class="section_number">10.2</span><span class="section_title"><a href="#what-is-dimension">What is dimension?</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">10.3</span><span class="section_title"><a href="#what-is-size">What is size?</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">10.4</span><span class="section_title"><a href="#why-do-we-measure-length">Why do we measure length?</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">10.5</span><span class="section_title"><a href="#how-do-we-measure-length">How do we measure length?</a></span><span class="word_count">(147w~1m)</span></li>
+<li><span class="section_number">10.6</span><span class="section_title"><a href="#why-do-we-conflate-length-and-cardinality">Why do we conflate length and cardinality?</a></span><span class="word_count">(32w~1m)</span></li>
+<li><span class="section_number">10.7</span><span class="section_title"><a href="#response">&lt;2019-02-06&gt; Response</a></span><span class="word_count">(188w~1m)</span></li>
+<li><span class="section_number">10.8</span><span class="section_title"><a href="#length">&lt;2019-03-02&gt; Length</a></span><span class="word_count">(318w~2m)</span></li>
+<li><span class="section_number">10.9</span><span class="section_title"><a href="#history">History</a></span><span class="word_count">(47w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-is-length"><span class="section_number">10.1</span><span class="section_title">What is length?</span></h3>
+<p>&quot;Length&quot; means &quot;the distance measured along the longest dimension of an object&quot;<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>, &quot;property of being long or extended in one direction; distance along a line&quot;<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>, &quot;the most extended dimension of an object&quot;<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a><a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>, &quot;the longest extent of anything as measured from end to end&quot;<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>. To use the word &quot;length&quot; for anything else (such as ADTs, which are trees), we must first define what the &quot;longest dimension&quot; of a tree is.</p>
+<p>We can think of &quot;length&quot; as a nominalization of &quot;long&quot;.</p>
+<p>In a programming language, the word &quot;length&quot; implies that things have a <em>geometry</em>.</p>
+<p>In order to define length, we must define a measure for every value in the language.</p>
+<p><span class="math inline">\(m(x)\)</span> should be the number of bits required to represent <span class="math inline">\(x\)</span>?</p>
+<p><span class="math inline">\(m(n) = \log_2 n\)</span> or <span class="math inline">\(m(n) = n\)</span>?</p>
+<p><span class="math inline">\(m([a,b]) = something + m(a) + m(b)\)</span>?.</p>
+<p>When we say &quot;the length of this text is 1,000 characters&quot;, we tacitly assume that a character is a <em>unit of length</em>.</p>
+<p>&quot;Length&quot; does not make sense for heterogenous sequence. &quot;The length of [abc, 1, [1,2,3]] is 3 elements&quot;. Should an element, which has an arbitrary size, be a unit of length?</p>
+<p>&quot;Length&quot; implies unit of length.</p>
+<p>We say &quot;this movie is 90 minutes long&quot;.</p>
+<p>When we say &quot;the length of X is Y&quot;, we implicitly see X as a <em>line</em>.</p>
+<h3 id="what-is-dimension"><span class="section_number">10.2</span><span class="section_title">What is dimension?</span></h3>
+<p>what<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a><a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a><a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a></p>
+<h3 id="what-is-size"><span class="section_number">10.3</span><span class="section_title">What is size?</span></h3>
+<p>what<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a><a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a></p>
+<h3 id="why-do-we-measure-length"><span class="section_number">10.4</span><span class="section_title">Why do we measure length?</span></h3>
+<p>Because we want to place an object inside a container, and we want to know whether the container is large enough. Because we want to tie an object, and we want to know whether we have enough rope. And so on.</p>
+<h3 id="how-do-we-measure-length"><span class="section_number">10.5</span><span class="section_title">How do we measure length?</span></h3>
+<p>The length of a line is how long that line is.</p>
+<p>The length of a box (a rectangular prism) is the length of its longest axis. A rectangular prism has three axes. Why is the length of a prism not the length of its diagonal?</p>
+<p>Unit of length.</p>
+<p>We can take &quot;the length of a sphere&quot; to mean &quot;the length of the longest line that we can put in a sphere&quot;, and therefore we are justified in saying &quot;The length of a sphere is its diameter&quot;. What are the axes of a sphere?</p>
+<p>If we think of a triple as something like a rope, that is, if we think of each element as a point occupying no space, then:</p>
+<pre class="example"><code>length (_,_,_) = 3
+</code></pre>
+<p>If we think of a triple as something like a cube, that is, if we think of each element as a dimension (as a side of a cube), then:</p>
+<pre class="example"><code>length (a,b,c) = maximum [length a, length b, length c]
+</code></pre>
+<h3 id="why-do-we-conflate-length-and-cardinality"><span class="section_number">10.6</span><span class="section_title">Why do we conflate length and cardinality?</span></h3>
+<p>We seem to think that the elements of a sequence occupy no space, like point mass in Newtonian mechanics. Why should sequence length be element count?</p>
+<h3 id="response"><span class="section_number">10.7</span><span class="section_title">&lt;2019-02-06&gt; Response</span></h3>
+<p>My philosophical analysis leads me to the conclusion that the problem is our conflating &quot;length&quot; and &quot;cardinality&quot;.</p>
+<pre class="example"><code>-- Let `huge` be a text taking 1 gigabytes of memory.
+length      [huge] = 1  -- does not make sense
+cardinality [huge] = 1  -- makes sense
+</code></pre>
+<p>&quot;Length&quot; implies a <em>longest dimension</em> and a <em>unit of length</em>.</p>
+<p><code>length &quot;hello&quot; = 5</code> makes sense because of two things: (1) it makes sense for a character list to be visualized as a <em>one-dimensional</em> line and (2) it makes sense for character to be a <em>unit of length</em> (if we assume that there are finitely many characters and each character is one unit of length).</p>
+<p><code>length [[1],[2,3]] = 2</code> does not make sense. It stretches English too much for a list to be a <em>unit of length</em>, because each list may have different size, unless we declare by fiat that the size of each list is one, but this tyranny only begets more philosophical problems.</p>
+<p><code>length (Identity &quot;hello&quot;) = 1</code> does not make sense for the same reason <code>length [[1],[2,3]] = 2</code> does not make sense.</p>
+<p>However, if we generously assume that Haskell &quot;length&quot; means &quot;cardinality&quot;, all the above make sense, <em>but</em> that generous assumption still does not justify <code>length (undefined,undefined) = 1</code> which violates both the meaning of &quot;length&quot; and the meaning of &quot;cardinality&quot;.</p>
+<h3 id="length"><span class="section_number">10.8</span><span class="section_title">&lt;2019-03-02&gt; Length</span></h3>
+<p>(I'm assuming that we want to distinguish between &quot;cardinality&quot; and &quot;length&quot; here. I hope I don't misunderstand your question.)</p>
+<blockquote>
+<p>What about the equivalent <code>let a = [1]; b = [2,3] in length [a,b]</code>? Why doesn't the fact that the expression equals 2 make sense?</p>
+</blockquote>
+<p>For example, let A = {1,2,3} and B = {4,5,6}. The set {A,B} has <em>fewer elements</em> than the set A. But the set {A,B} <em>occupies more space</em> than the set A.</p>
+<p>The equality <code>length [a,b] = 2</code> does not make sense, because length is about the <em>amount of space occupied</em> by a thing, not about the <em>number of things</em>. It does not make sense that b = [2,3] occupies less space when it is <em>in</em> a list (such as [b]) than when it is <em>outside</em> a list (such as b by itself).</p>
+<p>It does not make sense that a box is <em>shorter</em> than its contents. But it does make sense that a box appears <em>fewer</em> than its contents.</p>
+<p>Cardinality is about counting of the number of things in a box (provided that we agree on what a &quot;thing&quot; is). Length is about measuring the <em>amount of space occupied</em> by the things in the box.</p>
+<blockquote>
+<p>To what extent are we being bewitched by syntax and distracted from the semantics?</p>
+</blockquote>
+<p>I think this is not a problem of syntax at all: We are dealing with the semantics directly, that is, how we are supposed to interpret the word &quot;length&quot;.</p>
+<p>An example of how we may define &quot;length&quot; in a philosophically sound manner (here called &quot;amount of space&quot; instead of &quot;length&quot;):</p>
+<p>In logic, the amount-of-space function can be thought of as a semantic function whose codomain is the set of natural numbers:</p>
+<pre class="example"><code>space : D -&gt; N, where D is the domain of discourse and N is the set of natural numbers
+space Nil = 1
+space (Cons x y) = 1 + space x + space y
+space Z = 1
+space (S x) = 1 + space x
+...
+</code></pre>
+<p>In Haskell, the best approximation is something like this:</p>
+<pre class="example"><code>class Space a where
+    space :: a -&gt; Nat
+
+instance (Space a) =&gt; Space (List a) where
+    space Nil = 1
+    space (Cons x y) = 1 + space x + space y
+
+instance Space Nat where
+    space Z = 1
+    space (S x) = 1 + space x
+
+...
+</code></pre>
+<p>I think &quot;amount of space&quot; is not even expressible in Haskell because its type has to be <code>D -&gt; Nat</code> (equivalent to <code>forall a. a -&gt; Nat</code>) where D is the set of all Haskell values.</p>
+<h3 id="history"><span class="section_number">10.9</span><span class="section_title">History</span></h3>
+<p>&lt;2019-02-06&gt; I was triggered by Abdullah's pointing out to me that in Haskell, length &quot;Hello&quot; = 5, length (Identity &quot;Hello&quot;) = 1, and length (undefined,undefined) = 1. Each of those viewpoints has its philosophical justifications. The question is: Which one has the strongest justification? What <em>is</em> &quot;length&quot;?</p>
+<h2 id="programming-languages"><span class="section_number">11</span><span class="section_title">Programming languages</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">11.1</span><span class="section_title"><a href="#taxonomy-of-programming-languages">Taxonomy of programming languages?</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">11.2</span><span class="section_title"><a href="#what-should-a-programming-language-be">What should a programming language be?</a></span><span class="word_count">(87w~1m)</span></li>
+<li><span class="section_number">11.3</span><span class="section_title"><a href="#what-is-the-essence-of-programming-language-constructs">What is the essence of programming language constructs?</a></span><span class="word_count">(568w~3m)</span></li>
+<li><span class="section_number">11.4</span><span class="section_title"><a href="#growing-a-programming-language">Growing a programming language?</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">11.5</span><span class="section_title"><a href="#what-is-a-paradigm">What is a paradigm?</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">11.6</span><span class="section_title"><a href="#leverage-existing-infrastructures-instead-of-creating-from-scratch">Leverage existing infrastructures instead of creating from scratch</a></span><span class="word_count">(89w~1m)</span></li>
+<li><span class="section_number">11.7</span><span class="section_title"><a href="#logic-programming">Logic programming</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">11.8</span><span class="section_title"><a href="#what-is-the-best-programming-language">What is the best programming language?</a></span><span class="word_count">(88w~1m)</span></li>
+<li><span class="section_number">11.9</span><span class="section_title"><a href="#what-are-some-interesting-programming-languages">What are some interesting programming languages?</a></span><span class="word_count">(104w~1m)</span></li>
+</ul>
+</div>
+<h3 id="taxonomy-of-programming-languages"><span class="section_number">11.1</span><span class="section_title">Taxonomy of programming languages?</span></h3>
+<ul>
+<li>Dichotomies</li>
+<li>Having denotational semantics vs not</li>
+<li>With vs without runtime type information</li>
+<li>Curry-style, implicit typing, optional typing, gradual typing</li>
+<li>Church-style suggestive typing, meaningful typing</li>
+<li>Statement vs expression</li>
+<li>Imperative vs declarative</li>
+<li>Value vs reference (referentially transparent vs not)</li>
+<li>By value spaces?</li>
+<li>Principled vs unprincipled</li>
+<li>Designed by person vs by committee</li>
+</ul>
+<h3 id="what-should-a-programming-language-be"><span class="section_number">11.2</span><span class="section_title">What should a programming language be?</span></h3>
+<p>How should <a href="haskell.html">Haskell</a> be improved?</p>
+<ul>
+<li>How do we use Haskell without fmap, ap, and other annoying syntactic baggages? How do we have Maybe(A) = A union {Nothing}? (The original question that started it all.)</li>
+<li>What does a set-theoretic type system look like? (The consequence of wanting Maybe(A) = A union {Nothing}.)</li>
+<li>What if the denotational semantics directly involve functors and monads?</li>
+<li>Why should we use that language / write programs that way?</li>
+<li>Is there an efficient implementation?</li>
+</ul>
+<p>How should lambda calculus be implemented? What is an optimal implementation?</p>
+<h3 id="what-is-the-essence-of-programming-language-constructs"><span class="section_number">11.3</span><span class="section_title">What is the essence of programming language constructs?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">11.3.1</span><span class="section_title"><a href="#records-dictionaries-ordering-function-model">Records, dictionaries, ordering, function model</a></span><span class="word_count">(54w~1m)</span></li>
+<li><span class="section_number">11.3.2</span><span class="section_title"><a href="#the-essence-of-dictionary-is-finite-function">The essence of dictionary is finite function</a></span><span class="word_count">(34w~1m)</span></li>
+<li><span class="section_number">11.3.3</span><span class="section_title"><a href="#what-is-a-text">What is a text?</a></span><span class="word_count">(113w~1m)</span></li>
+<li><span class="section_number">11.3.4</span><span class="section_title"><a href="#strings-especially-of-characters">Strings, especially of characters</a></span><span class="word_count">(183w~1m)</span></li>
+<li><span class="section_number">11.3.5</span><span class="section_title"><a href="#dictionary-map-associative-array-record-finite-function-hash-table">Dictionary, map, associative array, record, finite function, hash table</a></span><span class="word_count">(49w~1m)</span></li>
+<li><span class="section_number">11.3.6</span><span class="section_title"><a href="#what-is-an-array">What is an array?</a></span><span class="word_count">(50w~1m)</span></li>
+<li><span class="section_number">11.3.7</span><span class="section_title"><a href="#comments">Comments</a></span><span class="word_count">(84w~1m)</span></li>
+</ul>
+</div>
+<h4 id="records-dictionaries-ordering-function-model"><span class="section_number">11.3.1</span><span class="section_title">Records, dictionaries, ordering, function model</span></h4>
+<p>A record's components are ordered. A dictionary's entries are unordered. Both can be <em>modeled</em> by a function from the set of keys to the set of values.</p>
+<p>A record <code>{a:1, b:2}</code> can be modeled by the function <span class="math inline">\((K,V,F)\)</span> where <span class="math inline">\(K = \Set{a,b}\)</span> and <span class="math inline">\(V = \Set{1,2}\)</span> and <span class="math inline">\(F = \Set{(a,1), (b,2)}\)</span>.</p>
+<h4 id="the-essence-of-dictionary-is-finite-function"><span class="section_number">11.3.2</span><span class="section_title">The essence of dictionary is finite function</span></h4>
+<p>Clojure gets this right?</p>
+<p>Left-hand side of an application may be:</p>
+<ul>
+<li>a dictionary,</li>
+<li>a lambda, or</li>
+<li>a finite left-biased union of arbitrarily many dictionaries and lambdas, or</li>
+<li>a union like that but right-biased.</li>
+</ul>
+<h4 id="what-is-a-text"><span class="section_number">11.3.3</span><span class="section_title">What is a text?</span></h4>
+<p>ASCII does a good job representing English texts, but not other texts.</p>
+<p>Is text the successor to printing with movable types?</p>
+<p>Direction, grapheme, character, radical, letter, modifier, etc.</p>
+<p>What does Unicode think a text is?</p>
+<p>A text is a writing? Drawing vs writing? This &quot;A&quot; is just a <em>representation</em> of the first letter of the English alphabet, in the same way &quot;0&quot; is a representation of the first natural number.</p>
+<p>Text is inherently sequential/linear because that is the way we read. Our brain is physically limited; it can only focus on one thing at a time; we read by moving focus through text. Unless you are Kim Peek who may read two pages at once<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a><a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a><a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a>.</p>
+<h4 id="strings-especially-of-characters"><span class="section_number">11.3.4</span><span class="section_title">Strings, especially of characters</span></h4>
+<p>Why do we have strings?</p>
+<p>Computer keyboards evolved from typewriters.</p>
+<p>Computerization of human writing?</p>
+<p>First came Gutenberg's printing press. Each letter is imprinted by a type.</p>
+<p>The problem is to encode human text in bits. We solved the problem of encoding numbers with two's-complement signed integers. English text is simple: ASCII.</p>
+<p>An accented letter is a letter and an accent.</p>
+<p>A <em>string</em> is a homogenous sequence.</p>
+<p>A string has a beginning, and may have an ending. A string may be finite.</p>
+<p>A <em>byte string</em> is a sequence of bytes.</p>
+<p>An <em>ASCII string</em> is a byte string.</p>
+<p>A <em>character string</em> is a sequence of characters.</p>
+<p>Unqualified &quot;string&quot; usually means &quot;character string&quot;.</p>
+<p>A <em>character string literal</em> is surrounded with quotes.</p>
+<ul>
+<li>inconclusive discussion <a href="https://www.reddit.com/r/ProgrammingLanguages/comments/9tj6ka/how_would_you_best_implement_first_class_strings/">https://www.reddit.com/r/ProgrammingLanguages/comments/9tj6ka/how_would_you_best_implement_first_class_strings/</a></li>
+</ul>
+<ol>
+<li><p>Escape sequences</p></li>
+<li><p>Characters</p>
+<p>What is Unicode's definition of &quot;character&quot;? Is that definition sane?</p>
+<p>Should Unicode normalization/canonicalization be built into the programming language?</p>
+<p>Issues: ordering/collation, capitalization, combination, halfwidthization, ligature, etc.</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/String_(computer_science)">https://en.wikipedia.org/wiki/String_(computer_science)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Character_(computing)">https://en.wikipedia.org/wiki/Character_(computing)</a></li>
+</ul>
+<p>A character may represent a vowel-or-consonant (such as Latin alphabets), or a syllable (such as Indic scripts or Japanese kanas), or an idea (such as Han ideographs).</p>
+<p>A writing system is a convention for mapping syntax and semantics.</p>
+<p>What do people use character strings for?</p>
+<p>What do people do with character strings?</p></li>
+</ol>
+<h4 id="dictionary-map-associative-array-record-finite-function-hash-table"><span class="section_number">11.3.5</span><span class="section_title">Dictionary, map, associative array, record, finite function, hash table</span></h4>
+<ol>
+<li><p>Clojure maps are applicable like functions.</p>
+<p>A very interesting fundamental idea.</p>
+<div class="sourceCode" id="cb9" data-org-language="lisp"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><a class="sourceLine" id="cb9-1" title="1">({:a <span class="dv">1</span> :b <span class="dv">2</span> :c <span class="dv">3</span>} :a)</a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="op">=&gt;</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb9-3" title="3">({:a <span class="dv">1</span> :b <span class="dv">2</span> :c <span class="dv">3</span>} :b)</a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="op">=&gt;</span> <span class="dv">2</span></a></code></pre></div>
+<p>Clojure has nice map syntax: <code>(m k)</code> for accessing k.</p>
+<p>Maps are isomorphic to functions. We update a map. Updating a function is simple:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb10-1" title="1">update nk nv f <span class="fu">=</span> \ k <span class="ot">-&gt;</span> <span class="kw">if</span> k <span class="fu">==</span> nk <span class="kw">then</span> nv <span class="kw">else</span> f k</a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="co">-- and then beta-normalize the lambda body</span></a></code></pre></div>
+<p>A Prolog deterministic binary predicate is like a Clojure map.</p></li>
+</ol>
+<h4 id="what-is-an-array"><span class="section_number">11.3.6</span><span class="section_title">What is an array?</span></h4>
+<p>What is the difference between an array, a string (byte string vs character string), and a sequence?</p>
+<p>C does not have built-in arrays; it has pointer arithmetics. An &quot;array access&quot; expression p[i] is a syntactic sugar for the pointer arithmetic dereference expression *(p+i).</p>
+<p>Is a C++ vector an array?</p>
+<h4 id="comments"><span class="section_number">11.3.7</span><span class="section_title">Comments</span></h4>
+<p>Humans and machines should understand the same thing. Comments should not be used very much. All explanations should be understood by both humans and machines. If a programmer has to resort to comments, then the language has failed to be expressive enough to express that comment.</p>
+<p>We require less comments in languages with static type-checking.</p>
+<p>A variable's type is a partial answer to &quot;What does this variable mean&quot;, &quot;What is this variable&quot;, and &quot;What are the possible values of this variable&quot;. It formalizes the programmer's assumptions.</p>
+<h3 id="growing-a-programming-language"><span class="section_number">11.4</span><span class="section_title">Growing a programming language?</span></h3>
+<p>2006, &quot;A growable language&quot; &quot;programming language designers should plan for such growth, along with the growth of a user community&quot; <a href="https://dl.acm.org/citation.cfm?id=1176621">https://dl.acm.org/citation.cfm?id=1176621</a></p>
+<p>Racket manifesto? Racket language-oriented programming?</p>
+<h3 id="what-is-a-paradigm"><span class="section_number">11.5</span><span class="section_title">What is a paradigm?</span></h3>
+<p>A mindset. A way of thinking. A way of looking at things. A lens through which we look at everything.</p>
+<h3 id="leverage-existing-infrastructures-instead-of-creating-from-scratch"><span class="section_number">11.6</span><span class="section_title">Leverage existing infrastructures instead of creating from scratch</span></h3>
+<p>Instead of creating a programming language from scratch, we should leverage existing programming language infrastructures.</p>
+<p>So far we think Prolog is the best for sketching languages with abstract syntax (that is, when we care about the semantics and do not care about the concrete syntax). The concrete syntax can always come later. Pretty concrete syntax will not console the programmers traumatized by ugly semantics. It would be like marrying a handsome but rotten man: the hype turns into regret after a few weeks.</p>
+<h3 id="logic-programming"><span class="section_number">11.7</span><span class="section_title">Logic programming</span></h3>
+<p>Prolog is at least second-order, as exemplified by its call/2.</p>
+<p>We should program in logic because logic is the nternal language of thought?</p>
+<h3 id="what-is-the-best-programming-language"><span class="section_number">11.8</span><span class="section_title">What is the best programming language?</span></h3>
+<p>This is what I think the best programming language would is like, as of &lt;2018-12-30&gt;.</p>
+<p>general feel: Prolog + Haskell</p>
+<p>Katahdin - runtime syntax manipulation</p>
+<p>supercompilation + partial evaluation + compilation by abstract interpretation</p>
+<p>user-extensible unification?</p>
+<p>Type system: Curry-style, not Church-style. More like Erlang Dialyzer or TypeScript than Haskell. Users should be able to write their own program checkers and program transformations.</p>
+<p>Module and import system: ld linker script, JavaScript, Nix import by lambda parameter name, Dhall, OCaml local import.</p>
+<p>Syntax: Landin offside rule?</p>
+<p>Pure + nondeterminism + JavaScript module system</p>
+<h3 id="what-are-some-interesting-programming-languages"><span class="section_number">11.9</span><span class="section_title">What are some interesting programming languages?</span></h3>
+<ul>
+<li><p>Interesting functional programming languages tailored for web programming. Perhaps related to data modeling.</p>
+<ul>
+<li><p>Ur/Web</p>
+<ul>
+<li><p><a href="http://www.impredicative.com/ur/faq.html">FAQ</a></p>
+<ul>
+<li>&quot;Why would I prefer to use Ur/Web over OPA?&quot;</li>
+</ul></li>
+<li><p><a href="http://www.impredicative.com/ur/resources.html">How to Get Started Learning Ur/Web</a></p></li>
+</ul></li>
+<li><a href="http://links-lang.org/">The Links Programming Language</a></li>
+<li><p><a href="http://opalang.org/">The Opa Language</a></p></li>
+</ul></li>
+<li><p>Moving logic into SQL stored procedures</p>
+<ul>
+<li><p><a href="https://sivers.org/pg">Simplify: move code into database functions | Derek Sivers</a></p>
+<ul>
+<li>A legitimate concern: How do we version-control (and release, and rollback) stored procedures, triggers, and other database logics?</li>
+</ul></li>
+<li><p><a href="https://news.ycombinator.com/item?id=11802917">Andl, a relational language that is not SQL, is coming to Postgres | Hacker News</a></p></li>
+</ul></li>
+<li><a href="https://www.microsoft.com/en-us/research/publication/convenient-explicit-effects-using-type-inference-with-subeffects/">https://www.microsoft.com/en-us/research/publication/convenient-explicit-effects-using-type-inference-with-subeffects/</a></li>
+<li><a href="https://nikita-volkov.github.io/if-haskell-were-strict/">If Haskell were strict, what would the laziness be like?</a></li>
+<li><p><a href="http://homepages.inf.ed.ac.uk/wadler/papers/free-rectypes/free-rectypes.txt">http://homepages.inf.ed.ac.uk/wadler/papers/free-rectypes/free-rectypes.txt</a></p></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">11.9.1</span><span class="section_title"><a href="#do-we-really-have-to-read-these-fragmented-sources">Do we really have to read these fragmented sources?</a></span><span class="word_count">(16w~1m)</span></li>
+</ul>
+</div>
+<h4 id="do-we-really-have-to-read-these-fragmented-sources"><span class="section_number">11.9.1</span><span class="section_title">Do we really have to read these fragmented sources?</span></h4>
+<ul>
+<li><a href="http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-12.html">Lecture 12: Design and Evolution of Programming Languages</a></li>
+</ul>
+<h2 id="programming-language-implementation"><span class="section_number">12</span><span class="section_title">Programming language implementation</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">12.1</span><span class="section_title"><a href="#how-should-we-make-programming-tools-such-as-compilers-interpreters-and-editors">How should we make programming tools such as compilers, interpreters, and editors?</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">12.2</span><span class="section_title"><a href="#what-meta-programming-tools-exist">What meta-programming tools exist?</a></span><span class="word_count">(126w~1m)</span></li>
+<li><span class="section_number">12.3</span><span class="section_title"><a href="#meta-programming-and-language-oriented-programming">Meta-programming and language-oriented programming?</a></span><span class="word_count">(162w~1m)</span></li>
+<li><span class="section_number">12.4</span><span class="section_title"><a href="#implementing-programming-languages">Implementing programming languages</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">12.5</span><span class="section_title"><a href="#should-we-use-prolog">Should we use Prolog?</a></span><span class="word_count">(115w~1m)</span></li>
+<li><span class="section_number">12.6</span><span class="section_title"><a href="#principles">Principles?</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">12.7</span><span class="section_title"><a href="#write-abstract-interpreters-not-compilers">Write abstract interpreters, not compilers?</a></span><span class="word_count">(67w~1m)</span></li>
+<li><span class="section_number">12.8</span><span class="section_title"><a href="#begin-with-an-interpreter-not-a-compiler">Begin with an interpreter, not a compiler</a></span><span class="word_count">(74w~1m)</span></li>
+<li><span class="section_number">12.9</span><span class="section_title"><a href="#making-compilers">Making compilers?</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">12.10</span><span class="section_title"><a href="#piggybacking-a-host-language">Piggybacking a host language</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">12.11</span><span class="section_title"><a href="#how-should-lambda-calculus-be-implemented">How should lambda-calculus be implemented?</a></span><span class="word_count">(108w~1m)</span></li>
+</ul>
+</div>
+<h3 id="how-should-we-make-programming-tools-such-as-compilers-interpreters-and-editors"><span class="section_number">12.1</span><span class="section_title">How should we make programming tools such as compilers, interpreters, and editors?</span></h3>
+<h3 id="what-meta-programming-tools-exist"><span class="section_number">12.2</span><span class="section_title">What meta-programming tools exist?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">12.2.1</span><span class="section_title"><a href="#rascal-mpl">Rascal MPL</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">12.2.2</span><span class="section_title"><a href="#eclipse-xtext">Eclipse Xtext</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">12.2.3</span><span class="section_title"><a href="#jetbrains-mps">JetBrains MPS</a></span><span class="word_count">(121w~1m)</span></li>
+</ul>
+</div>
+<h4 id="rascal-mpl"><span class="section_number">12.2.1</span><span class="section_title">Rascal MPL</span></h4>
+<p><a href="https://www.rascal-mpl.org/">https://www.rascal-mpl.org/</a></p>
+<h4 id="eclipse-xtext"><span class="section_number">12.2.2</span><span class="section_title">Eclipse Xtext</span></h4>
+<h4 id="jetbrains-mps"><span class="section_number">12.2.3</span><span class="section_title">JetBrains MPS</span></h4>
+<p>MPS is &quot;Meta Programming System&quot;.</p>
+<p>A concept can have properties. Each property has a type. The property type system is limited to int, string, and regex-constrained string.</p>
+<p>A member in a model is an <em>instance</em> of a concept, similar to how an object is an instance of a class in Java.</p>
+<p>MPS is a <em>tree</em> editor, not a text editor.</p>
+<p>A concept is an AST (abstract syntax tree) node type.</p>
+<p>On 2017-08-12, MPS 2017.2 doesn't support Java 7 try-with-resources statements.</p>
+<p>The MPS IntelliJ IDEA plugin allows you to use a language from IDEA, but not defining your own language. You need the MPS IDE for that.</p>
+<p>External links:</p>
+<ul>
+<li><a href="https://confluence.jetbrains.com/display/MPSD20172/Using+MPS+inside+IntelliJ+IDEA">Using MPS inside IntelliJ IDEA</a></li>
+<li><a href="https://confluence.jetbrains.com/pages/viewpage.action?pageId=93128576">MPS user guide for Java developers (IntelliJ IDEA)</a> (long)</li>
+<li><a href="https://confluence.jetbrains.com/display/MPSD20172/Finding+your+way+out">What to do when there is a problem</a></li>
+</ul>
+<h3 id="meta-programming-and-language-oriented-programming"><span class="section_number">12.3</span><span class="section_title">Meta-programming and language-oriented programming?</span></h3>
+<p>The Racket manifesto<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>: programming-language programming language</p>
+<p>miniKanren, scheme logic programming <a href="http://minikanren.org/">http://minikanren.org/</a> <a href="https://github.com/clojure/core.logic/wiki/A-Core.logic-Primer">https://github.com/clojure/core.logic/wiki/A-Core.logic-Primer</a></p>
+<p>2000 article &quot;Domain Specific Meta Languages&quot; <a href="https://www-users.cs.umn.edu/~evw/pubs/vanwyk00sac/vanwyk00sac.pdf">https://www-users.cs.umn.edu/~evw/pubs/vanwyk00sac/vanwyk00sac.pdf</a></p>
+<p>1996 book &quot;Advanced programming language design&quot; 2008 article &quot;Position paper: Practical foundations for programming languages&quot; 2012 book &quot;Practical Foundations for Programming Languages&quot; Version 1.32 of 05.15.2012 <a href="http://profs.sci.univr.it/~merro/files/harper.pdf">http://profs.sci.univr.it/~merro/files/harper.pdf</a></p>
+<p>University of Arizona, Spring 2006, CS 520 Principles of Programming Languages - Lecture 04: Types and Polymorphism <a href="https://www2.cs.arizona.edu/classes/cs520/spring06/04types.pdf">https://www2.cs.arizona.edu/classes/cs520/spring06/04types.pdf</a> from &quot;Lecture 4: higher polymorphism&quot; <a href="https://blog.inf.ed.ac.uk/apl16/archives/178/comment-page-1">https://blog.inf.ed.ac.uk/apl16/archives/178/comment-page-1</a></p>
+<p>Programming Language Foundations in Agda <a href="https://plfa.github.io/">https://plfa.github.io/</a></p>
+<p>2018 article &quot;Logic Programming as a Service&quot; <a href="https://arxiv.org/abs/1806.02577">https://arxiv.org/abs/1806.02577</a></p>
+<p>Liber amicorum for Doaitse Swierstra <a href="https://www.reddit.com/r/haskell/comments/1hmc9t/pdf_liber_a_for_doaitse_swierstra_read_free/">https://www.reddit.com/r/haskell/comments/1hmc9t/pdf_liber_a_for_doaitse_swierstra_read_free/</a></p>
+<p>1994 article &quot;Efficient Self-Interpretation in Lambda Calculus&quot; <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.56.4382&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.56.4382&amp;rep=rep1&amp;type=pdf</a></p>
+<p>Lambda the Ultimate: Meta-programming <a href="http://lambda-the-ultimate.org/taxonomy/term/15">http://lambda-the-ultimate.org/taxonomy/term/15</a></p>
+<p>2009 article &quot;Directly Reflective Meta-Programming&quot; <a href="http://homepage.divms.uiowa.edu/~astump/papers/archon.pdf">http://homepage.divms.uiowa.edu/~astump/papers/archon.pdf</a></p>
+<p>Footnote F from <span class="citation" data-cites="felleisen2018programmable">[<a href="#ref-felleisen2018programmable">4</a>]</span>:</p>
+<blockquote>
+<p>Language workbenches (such as Spoofax) deal with conventional syntax for DSLs but do not support the incremental modification of existing languages. A 2015 report suggests, however, these tool chains are also converging toward the idea of language creation as language modification. We conjecture that, given sufficient time, development of Racket and language workbenches will converge on similar designs.</p>
+</blockquote>
+<h3 id="implementing-programming-languages"><span class="section_number">12.4</span><span class="section_title">Implementing programming languages</span></h3>
+<h3 id="should-we-use-prolog"><span class="section_number">12.5</span><span class="section_title">Should we use Prolog?</span></h3>
+<p>We should prototype our language in Prolog.</p>
+<p>We should implement our language in Prolog.</p>
+<ul>
+<li>2004, parsing in Prolog, &quot;Parsing and Semantics in DCGs&quot; <a href="http://www.inf.ed.ac.uk/teaching/courses/aipp/lecture_slides/11_PS_DCGs.pdf">http://www.inf.ed.ac.uk/teaching/courses/aipp/lecture_slides/11_PS_DCGs.pdf</a></li>
+<li>Prolog DCG (definite clause grammar) facilitates writing an attribute grammar.</li>
+<li><a href="https://en.wikipedia.org/wiki/Definite_clause_grammar">https://en.wikipedia.org/wiki/Definite_clause_grammar</a></li>
+</ul>
+<p>Erlang started out as a DSL in Prolog. See 1992 article &quot;Use of Prolog for developing a new programming language&quot;.</p>
+<p>&lt;2018-10-20&gt; Change of opinion: we should write the language in Prolog instead of Haskell.</p>
+<ul>
+<li>&quot;Ott is a tool for writing definitions of programming languages and calculi. It takes as input a definition of a language syntax and semantics, in a concise and readable ASCII notation that is close to what one would write in informal mathematics.&quot; <a href="https://www.cl.cam.ac.uk/~pes20/ott/">https://www.cl.cam.ac.uk/~pes20/ott/</a></li>
+</ul>
+<p>&lt;2018-12-11&gt; My current answer: Prolog.</p>
+<p>My previous answers:</p>
+<ul>
+<li>Haskell</li>
+<li>Racket</li>
+<li>Scheme</li>
+<li>Java</li>
+<li>C</li>
+<li>C++</li>
+</ul>
+<p>Other people?</p>
+<ul>
+<li><a href="https://hackernoon.com/the-programming-language-im-looking-for-948d93f7a396">https://hackernoon.com/the-programming-language-im-looking-for-948d93f7a396</a></li>
+</ul>
+<h3 id="principles"><span class="section_number">12.6</span><span class="section_title">Principles?</span></h3>
+<p>Fast build time is important.</p>
+<h3 id="write-abstract-interpreters-not-compilers"><span class="section_number">12.7</span><span class="section_title">Write abstract interpreters, not compilers?</span></h3>
+<p>&lt;2018-12-30&gt;</p>
+<p>The same code fragment can be interpreted in several ways.</p>
+<p>The most common interpreter executes the program with the intended semantics. Example: a Python interpreter interprets the Python program &quot;print 'foo'&quot; as printing the string.</p>
+<p>Write an abstract interpreter that emits code when interpreting. An interpreter that interprets the Python program &quot;print 'foo'&quot; as &quot;emit a Ruby statement that prints 'foo' to screen when executed&quot;.</p>
+<h3 id="begin-with-an-interpreter-not-a-compiler"><span class="section_number">12.8</span><span class="section_title">Begin with an interpreter, not a compiler</span></h3>
+<ul>
+<li>Don't make a compiler? Make an interpreter instead, and stage it? Turn an interpreter into a compiler for free?</li>
+<li>&quot;To stage an interpreter&quot; is to add staging annotations to the code of the interpreter.</li>
+<li>Staging is similar to quoting in Lisp/Scheme.</li>
+<li>2004 article &quot;A Gentle Introduction to Multi-stage Programming&quot; <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.103.2543&amp;rep=rep1&amp;type=pdf">pdf</a>
+<ul>
+<li>Basic Problems in Building Program Generators</li>
+<li>part 2 <a href="https://pdfs.semanticscholar.org/aa3c/d4233f7c0db95e5c38d5b8fc1d199df21857.pdf">https://pdfs.semanticscholar.org/aa3c/d4233f7c0db95e5c38d5b8fc1d199df21857.pdf</a></li>
+</ul></li>
+<li>multi-stage programming for Scala <a href="https://scala-lms.github.io/">https://scala-lms.github.io/</a></li>
+<li>2006 article &quot;A Verified Staged Interpreter is a Verified Compiler&quot; <a href="https://www.researchgate.net/profile/Kevin_Hammond/publication/221108683_A_verified_staged_interpreter_is_a_verified_compiler/links/00b7d517ede725c057000000.pdf">pdf</a></li>
+</ul>
+<h3 id="making-compilers"><span class="section_number">12.9</span><span class="section_title">Making compilers?</span></h3>
+<p>Every compiler does name resolution / symbol table. Is there a compiler that doesn't do that? <a href="https://www.reddit.com/r/Forth/comments/695oik/advances_in_forth_language_design/dh454oq/">Forth?</a></p>
+<ul>
+<li><a href="https://www.reddit.com/r/haskell/comments/4jhhrj/anders_hejlsberg_on_modern_compiler_construction/">https://www.reddit.com/r/haskell/comments/4jhhrj/anders_hejlsberg_on_modern_compiler_construction/</a></li>
+<li><a href="https://cs.stackexchange.com/questions/63018/visual-programming-tools-why-don-t-they-work-with-the-ast-directly">https://cs.stackexchange.com/questions/63018/visual-programming-tools-why-don-t-they-work-with-the-ast-directly</a></li>
+<li><p>compiling with continuations</p>
+<ul>
+<li><p>Why use CPS (continuation passing style) as intermediate form?</p>
+<ul>
+<li><a href="http://matt.might.net/articles/cps-conversion/">http://matt.might.net/articles/cps-conversion/</a></li>
+<li><a href="https://www.microsoft.com/en-us/research/publication/compiling-with-continuations-continued/">https://www.microsoft.com/en-us/research/publication/compiling-with-continuations-continued/</a></li>
+<li><a href="https://news.ycombinator.com/item?id=7150095">https://news.ycombinator.com/item?id=7150095</a></li>
+</ul></li>
+<li><p>2003, retrospective: the essence of compiling with continuations <a href="https://users.soe.ucsc.edu/~cormac/papers/best-pldi.pdf">https://users.soe.ucsc.edu/~cormac/papers/best-pldi.pdf</a></p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/A-normal_form">https://en.wikipedia.org/wiki/A-normal_form</a></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="piggybacking-a-host-language"><span class="section_number">12.10</span><span class="section_title">Piggybacking a host language</span></h3>
+<h3 id="how-should-lambda-calculus-be-implemented"><span class="section_number">12.11</span><span class="section_title">How should lambda-calculus be implemented?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">12.11.1</span><span class="section_title"><a href="#what-is-an-operational-semantics-of-lambda-calculus">What is an operational semantics of lambda calculus?</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">12.11.2</span><span class="section_title"><a href="#how">How?</a></span><span class="word_count">(97w~1m)</span></li>
+</ul>
+</div>
+<h4 id="what-is-an-operational-semantics-of-lambda-calculus"><span class="section_number">12.11.1</span><span class="section_title">What is an operational semantics of lambda calculus?</span></h4>
+<h4 id="how"><span class="section_number">12.11.2</span><span class="section_title">How?</span></h4>
+<p>Normal-order reduction enables us to write fixed points. Should we let the programmer choose the evaluation strategy? Currying simplifies reasoning but complicates implementation (because applications may then nest deeply to the left). What is optimal reduction?<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a><a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a></p>
+<p>Lambda-calculus is unsound.<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a> What does that imply about programming languages containing lambda calculus?</p>
+<p>Let <span class="math inline">\( A[B := C] \)</span> mean <span class="math inline">\(A\)</span> but with each free occurrence of <span class="math inline">\(B\)</span> replaced with <span class="math inline">\(C\)</span>. Let <span class="math inline">\( eval(A,B) \)</span> means that <span class="math inline">\(A\)</span> normalizes to <span class="math inline">\(B\)</span>.</p>
+<p>Applicative-order evaluation is the easiest to implement.</p>
+<p>Where do these things fit in the big picture of lambda-calculus implementations? G-machine, STG, GRIN<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a>.</p>
+<p>Reading queue:</p>
+<ul>
+<li><a href="https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently">https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently</a></li>
+<li><a href="https://www.researchgate.net/publication/312462365_About_the_efficient_reduction_of_lambda_terms">https://www.researchgate.net/publication/312462365_About_the_efficient_reduction_of_lambda_terms</a></li>
+<li><a href="https://www.reddit.com/r/haskell/comments/2zqtfk/why_isnt_anyone_talking_about_optimal_lambda/">https://www.reddit.com/r/haskell/comments/2zqtfk/why_isnt_anyone_talking_about_optimal_lambda/</a></li>
+<li>compiling monads <a href="https://www.irif.fr/~mellies/mpri/mpri-ens/articles/danvy-koslowski-malmkjaer-compiling-monads.pdf">https://www.irif.fr/~mellies/mpri/mpri-ens/articles/danvy-koslowski-malmkjaer-compiling-monads.pdf</a></li>
+<li>modular monadic semantics <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.136.1656&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.136.1656&amp;rep=rep1&amp;type=pdf</a></li>
+</ul>
+<h2 id="language-mixing-issues"><span class="section_number">13</span><span class="section_title">Language mixing issues</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">13.1</span><span class="section_title"><a href="#why-cant-we-mix-programming-languages">Why can't we mix programming languages?</a></span><span class="word_count">(106w~1m)</span></li>
+<li><span class="section_number">13.2</span><span class="section_title"><a href="#how-should-languages-interoperate">How should languages interoperate?</a></span><span class="word_count">(23w~1m)</span></li>
+</ul>
+</div>
+<h3 id="why-cant-we-mix-programming-languages"><span class="section_number">13.1</span><span class="section_title">Why can't we mix programming languages?</span></h3>
+<p>Multilingual people routinely mix languages. For example, compare the English &quot;Why is your shirt very fancy today?&quot; and the English-in-Indonesian &quot;Hari ini baju kamu kok very fancy?&quot;</p>
+<p>Natural languages are so mixable because their syntax are similar and they share the same semantics.</p>
+<p>Why can't we mix programming languages as easily as we mix natural languages? Why don't programming languages <em>compose</em>?</p>
+<p>We <em>can</em> mix programming languages. The problem is that existing tools don't support such mixing. The problem is that it is very hard to make such tools.</p>
+<p>We need something like a lathe, a machine that we can use to make more sophisticated machines.</p>
+<h3 id="how-should-languages-interoperate"><span class="section_number">13.2</span><span class="section_title">How should languages interoperate?</span></h3>
+<p>Can we do it semantically?</p>
+<p>Can we do better than FFI (foreign function interface)?</p>
+<p>Languages are usually small. Standard libraries are huge.</p>
+<h2 id="enhancing-existing-languages"><span class="section_number">14</span><span class="section_title">Enhancing existing languages</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">14.1</span><span class="section_title"><a href="#prolog-second-order-logic-enhancements">Prolog, second-order logic enhancements</a></span><span class="word_count">(192w~1m)</span></li>
+<li><span class="section_number">14.2</span><span class="section_title"><a href="#ml">ML</a></span><span class="word_count">(9w~1m)</span></li>
+</ul>
+</div>
+<h3 id="prolog-second-order-logic-enhancements"><span class="section_number">14.1</span><span class="section_title">Prolog, second-order logic enhancements</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">14.1.1</span><span class="section_title"><a href="#what-language-is-like-prolog-but-has-anonymous-predicates-and-anonymous-modules">What language is like Prolog but has anonymous predicates and anonymous modules?</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">14.1.2</span><span class="section_title"><a href="#reducing-functional-form-and-alternative-proof-strategies">Reducing functional form, and alternative proof strategies</a></span><span class="word_count">(159w~1m)</span></li>
+<li><span class="section_number">14.1.3</span><span class="section_title"><a href="#enhancing-name-separating-prolog-with-anonymous-predicates-and-modules">Enhancing (name-separating) Prolog with anonymous predicates and modules</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">14.1.4</span><span class="section_title"><a href="#how-declarative-is-prolog">How declarative is Prolog?</a></span><span class="word_count">(6w~1m)</span></li>
+</ul>
+</div>
+<h4 id="what-language-is-like-prolog-but-has-anonymous-predicates-and-anonymous-modules"><span class="section_number">14.1.1</span><span class="section_title">What language is like Prolog but has anonymous predicates and anonymous modules?</span></h4>
+<p>We are <a href="prolog.html">using Prolog</a>, but we are unsatisfied.</p>
+<h4 id="reducing-functional-form-and-alternative-proof-strategies"><span class="section_number">14.1.2</span><span class="section_title">Reducing functional form, and alternative proof strategies</span></h4>
+<p>Prolog does not reduce any functional term.</p>
+<p>Update &lt;2019-03-04&gt;: We can achieve that with goal_expansion/2. We thought Prolog was too weak. goal_expansion/2 is more powerful than a global interpretation of function symbols. goal_expansion/2 enables contextual interpretation of functional terms: the interpretation may depend on the outer logical term that contains the functional term. For example, the same f in pred1(f(1)) and pred2(f(2)) may be interpreted differently.</p>
+<p>Our biggest worry: What if we made a mistake in our goal_expansion/2? How are we going to know where the mistake is?</p>
+<p>We can specify the interpretation of functional terms. The following reduce/2 is a relation from a functional term to its Prolog meaning (a Prolog value, an element of Prolog's domain of discourse).</p>
+<pre class="example"><code>reduce(f(A),B) :- B is A+1.
+</code></pre>
+<p>One possible solution: reduce/2 and meta-predicate for determining predicate parameter reduction. Now a parameter mode has direction and reduction mode.</p>
+<pre class="example"><code>:- multifile(reduce/2).
+:- dynamic(reduce/2).
+reduce(f(A), B) :- integer(A), B is A + 1.
+
+normalize(A,B) :- reduce(A,R), !, normalize(R,B).
+normalize(A,B) :- A = B.
+
+:- reduction(predicate(none,normalize,none)).
+predicate(A,B,C) :- ...
+</code></pre>
+<p>Even more general than that, another possible solution: Custom proof strategy with prove/1 meta-predicate/hook. Isn't this just goal_expansion/2?</p>
+<pre class="example"><code>prove(predicate(A,B,C)) :- normalize(B,B0), predicate(A,B0,C).
+</code></pre>
+<h4 id="enhancing-name-separating-prolog-with-anonymous-predicates-and-modules"><span class="section_number">14.1.3</span><span class="section_title">Enhancing (name-separating) Prolog with anonymous predicates and modules</span></h4>
+<pre class="example"><code>let([
+    pred = (X =&gt; Y =&gt; (male app X) and (child app X app Y))
+], pred app bar)
+</code></pre>
+<h4 id="how-declarative-is-prolog"><span class="section_number">14.1.4</span><span class="section_title">How declarative is Prolog?</span></h4>
+<p>Apt 1993 <span class="citation" data-cites="apt1993declarative">[<a href="#ref-apt1993declarative">1</a>]</span></p>
+<h3 id="ml"><span class="section_number">14.2</span><span class="section_title">ML</span></h3>
+<p>Rossberg 2018 <span class="citation" data-cites="rossberg20181ml">[<a href="#ref-rossberg20181ml">11</a>]</span> 1ML enhances ML with first-class modules.</p>
+<h2 id="complexity"><span class="section_number">15</span><span class="section_title">Complexity</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">15.1</span><span class="section_title"><a href="#how-should-program-complexity-be-measured">How should program complexity be measured?</a></span><span class="word_count">(15w~1m)</span></li>
+</ul>
+</div>
+<h3 id="how-should-program-complexity-be-measured"><span class="section_number">15.1</span><span class="section_title">How should program complexity be measured?</span></h3>
+<p>&quot;A Denotational Approach to Measuring Complexity in Functional Programs&quot; <a href="http://www.cs.cmu.edu/afs/cs/user/brookes/www/papers/CMU-CS-03-150.pdf">http://www.cs.cmu.edu/afs/cs/user/brookes/www/papers/CMU-CS-03-150.pdf</a></p>
+<h2 id="enterprise-application-programming"><span class="section_number">16</span><span class="section_title">Enterprise application programming</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">16.1</span><span class="section_title"><a href="#what-is-an-enterprise-application">What is an enterprise application?</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">16.2</span><span class="section_title"><a href="#enterprise-applications-model-extrinsic-properties">Enterprise applications model extrinsic properties</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">16.3</span><span class="section_title"><a href="#enterprise-programming-language-enterprise-meta-language">Enterprise programming language? Enterprise meta-language?</a></span><span class="word_count">(258w~2m)</span></li>
+<li><span class="section_number">16.4</span><span class="section_title"><a href="#saving-java-programmers">Saving Java programmers?</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">16.5</span><span class="section_title"><a href="#dsl-in-java">DSL in Java?</a></span><span class="word_count">(22w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-is-an-enterprise-application"><span class="section_number">16.1</span><span class="section_title">What is an enterprise application?</span></h3>
+<p>Enterprise application is about using computers to enhance business operation. The usage of computers is an accidental complexity.</p>
+<p>Whereas factory machines enhance physical production, computers enhance mental production.</p>
+<p>If we treat each of us as an enterprise, then enterprise application is scaled-up personal programming.</p>
+<h3 id="enterprise-applications-model-extrinsic-properties"><span class="section_number">16.2</span><span class="section_title">Enterprise applications model extrinsic properties</span></h3>
+<p>Specification language Attempto Controlled English</p>
+<p>Parsing with Prolog DCGs</p>
+<p><a href="https://philpapers.org/browse/ontology-of-mathematics">https://philpapers.org/browse/ontology-of-mathematics</a></p>
+<p>&quot;Advances in a DSL for Application Integration&quot;</p>
+<p><a href="https://www.itu.int/ITU-D/tech/OLD_TND_WEBSITE/network-infrastructure_OLD/Bangkok-02/5-5_Demo.pdf">https://www.itu.int/ITU-D/tech/OLD_TND_WEBSITE/network-infrastructure_OLD/Bangkok-02/5-5_Demo.pdf</a> <a href="http://www.inquisition.ca/en/info/gepsypl/rules.htm">http://www.inquisition.ca/en/info/gepsypl/rules.htm</a></p>
+<p>Enterprise applications model extrinsic properties. The name of a person is an extrinsic property.</p>
+<p>Google search of software modeling language <a href="https://en.wikipedia.org/wiki/Modeling_language">https://en.wikipedia.org/wiki/Modeling_language</a> <a href="https://en.wikipedia.org/wiki/EXPRESS_(data_modeling_language)">https://en.wikipedia.org/wiki/EXPRESS_(data_modeling_language)</a> <a href="https://www.martinfowler.com/articles/languageWorkbench.html">https://www.martinfowler.com/articles/languageWorkbench.html</a></p>
+<h3 id="enterprise-programming-language-enterprise-meta-language"><span class="section_number">16.3</span><span class="section_title">Enterprise programming language? Enterprise meta-language?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">16.3.1</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(80w~1m)</span></li>
+<li><span class="section_number">16.3.2</span><span class="section_title"><a href="#table-expression-language">Table expression language</a></span><span class="word_count">(175w~1m)</span></li>
+</ul>
+</div>
+<h4 id="what"><span class="section_number">16.3.1</span><span class="section_title">What?</span></h4>
+<ul>
+<li>Describe data shapes.</li>
+<li>Describe databases.</li>
+<li>Describe how the user should interact with the application.</li>
+<li>Describe CRUD: describe views that read from or write to databases.</li>
+<li>Describe business logic.</li>
+<li>Parallelize unrelated database queries.</li>
+<li>Translate to Java and interoperate with Java.</li>
+</ul>
+<p>We naturally think of mathematical objects as tuples/sequences or dictionaries. Each entry of the dictionary represents a property of the object.</p>
+<p>Are these the criteria of a good meta-language?</p>
+<ul>
+<li>algebraic data types and pattern-matching</li>
+<li>set-theoretic type system</li>
+<li>tree manipulation</li>
+</ul>
+<p>Will we end up reinventing C# LINQ?</p>
+<p>Enterprise programming language contains sublanguages that work together.</p>
+<h4 id="table-expression-language"><span class="section_number">16.3.2</span><span class="section_title">Table expression language</span></h4>
+<p>The semantics of a table expression is a sequence of rows. The sequence may be infinite.</p>
+<p>The operational semantics is to lazily evaluate the minimum number of rows.</p>
+<p>A table has column names.</p>
+<p>&quot;empty&quot; means the empty table.</p>
+<p>&quot;project(C,T)&quot; means table T but with only the columns in C.</p>
+<p>&quot;all(T)&quot; means all rows of table named T. Each row is a dictionary.</p>
+<p>&quot;filter(P,T)&quot; means all rows of T that satisfy P.</p>
+<p>&quot;first(N,A)&quot; means the first N rows of table A.</p>
+<p>&quot;product(A,B)&quot; means Cartesian product.</p>
+<p>&quot;foldl(R_0,F,T)&quot; is left-fold: R_k = F(T<sub>k-1</sub>,R<sub>k-1</sub>)  where  k ≥ 1 The result is R_n where n is the number of rows in T. T must be finite.</p>
+<p>Should collapse as much as possible to SQL.</p>
+<p><a href="https://www.postgresql.org/docs/current/sql-select.html">https://www.postgresql.org/docs/current/sql-select.html</a></p>
+<p>plan : table_exp -&gt; sql_select % select(Columns,From,Where,Group,Having,Order,Limit,Offset) % select_modifywhere(S1,W1,S2,W2) n means not present plan(all(N),select(C,T?,n,n,n,n,n,n)) :- table_columns(N,C). plan(project(C,T), select(C, T, ))</p>
+<p>Prolog type system <a href="https://github.com/SWI-Prolog/roadmap/wiki/Prolog-type-system">https://github.com/SWI-Prolog/roadmap/wiki/Prolog-type-system</a></p>
+<p>any : any value atom : any atom literal(A) : atom or number or string that equals A literal_in(Vals): in list Vals; each Val is a literal functor(Name,ArgTypes) list(T) : list in which each element has type T union(Types) : disjunction intersection(Types) predicate(ArgTypes)</p>
+<h3 id="saving-java-programmers"><span class="section_number">16.4</span><span class="section_title">Saving Java programmers?</span></h3>
+<p>We want something like this, to free the Java programmers: &quot;Java program representation and manipulation in Prolog&quot;<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a></p>
+<h3 id="dsl-in-java"><span class="section_number">16.5</span><span class="section_title">DSL in Java?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">16.5.1</span><span class="section_title"><a href="#some-options-for-modeling-the-ast">Some options for modeling the AST</a></span><span class="word_count">(20w~1m)</span></li>
+</ul>
+</div>
+<h4 id="some-options-for-modeling-the-ast"><span class="section_number">16.5.1</span><span class="section_title">Some options for modeling the AST</span></h4>
+<ol>
+<li><p>Each class is an AST node type</p>
+<pre class="example"><code>final class Const { ... }
+final class Add { ... }
+
+Object eval (Exp x) {
+  if (x instanceof Const) {
+    return ((Const)x).value;
+  }
+  if (x instanceof Add) {
+    final Add y = (Add) x;
+    return (int)eval(y.left) + (int)eval(y.right);
+  }
+  throw new IllegalArgumentException(&quot;&quot; + x);
+}
+</code></pre></li>
+<li><p>One class Ast_node</p>
+<pre class="example"><code>final class Ast_node {
+  static final int CONST = 0;
+  static final int ADD = 1;
+  // ...
+  final int type;
+  final Object[] arg;
+  // ...
+}
+</code></pre>
+<p>Then we need a way to pattern-match.</p></li>
+</ol>
+<h2 id="gui-programming"><span class="section_number">17</span><span class="section_title">GUI programming?</span></h2>
+<p>We dream of demystifying and simplifying GUI programming. What is the essence of GUI programming? Can we do better than FRP (functional reactive programming)? Can we do declarative GUI programming better than HTML+CSS? If UX is the next UI, then is there UX programming instead of UI programming? GUX instead of GUI?</p>
+<p>How do we formalize user experience? How do we program user experience? Can a programming language facilitate good programmer experience and good end-user experience?</p>
+<h2 id="human-and-social-aspects-of-computer-programming"><span class="section_number">18</span><span class="section_title">Human and social aspects of computer programming</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">18.1</span><span class="section_title"><a href="#software-user-experience-human-computer-interface">Software user experience? Human-computer interface?</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">18.2</span><span class="section_title"><a href="#do-computers-handicap-non-verbal-people">&lt;2019-02-12&gt; Do computers handicap non-verbal people?</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">18.3</span><span class="section_title"><a href="#how-do-we-use-programming-languages">How do we use programming languages?</a></span><span class="word_count">(233w~2m)</span></li>
+<li><span class="section_number">18.4</span><span class="section_title"><a href="#increasing-language-adoption">Increasing language adoption</a></span><span class="word_count">(278w~2m)</span></li>
+</ul>
+</div>
+<h3 id="software-user-experience-human-computer-interface"><span class="section_number">18.1</span><span class="section_title">Software user experience? Human-computer interface?</span></h3>
+<p>Jef Raskin <a href="http://wiki.c2.com/?TheHumaneInterface">http://wiki.c2.com/?TheHumaneInterface</a></p>
+<h3 id="do-computers-handicap-non-verbal-people"><span class="section_number">18.2</span><span class="section_title">&lt;2019-02-12&gt; Do computers handicap non-verbal people?</span></h3>
+<p>Computer programming forces people to think in words. What about people who think in pictures? What about people who think in sounds?</p>
+<p>UX for the blind<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a></p>
+<h3 id="how-do-we-use-programming-languages"><span class="section_number">18.3</span><span class="section_title">How do we use programming languages?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">18.3.1</span><span class="section_title"><a href="#most-people-stick-to-languages-they-are-familiar-with">Most people stick to languages they are familiar with</a></span><span class="word_count">(228w~2m)</span></li>
+</ul>
+</div>
+<h4 id="most-people-stick-to-languages-they-are-familiar-with"><span class="section_number">18.3.1</span><span class="section_title">Most people stick to languages they are familiar with</span></h4>
+<p>They prefer shitty-but-familiar to great-but-unfamiliar. They condemn themselves to apathy and mediocrity. They never wonder whether there is a better way.</p>
+<p>Science (evolution and neuroscience) explains why people stick to shitty-but-predictable languages</p>
+<p>The brain reward system rewards correct predictions. If person P finds language L predictable (according to P's background knowledge), then P will like L. Procedural languages are predictable. Thus people stick to them, no matter how shitty those languages are. People prefer predictable shitty things to unpredictable great things. People are risk-averse.</p>
+<p>Curiosity of finding a better way to program is the exception; the norm is &quot;we have always done it this way&quot;.</p>
+<p>We can dumb down the language, or we can smart up the people, but people are naturally lazy, because laziness promotes survival.</p>
+<p>&quot;David Liddle's idea on application user interfaces give us a clue as to why lower-level languages draw more people in than higher-level ones (Liddle, 1989). He claims that the most important aspect of a good user interface is how well it leads the user to an accurate conceptual model of how the application works. If the user develops an accurate conceptual model, then the application works as expected. This leads the user to try more things, which also work as expected, leading to an even better understanding, thus drawing the user further and further into the tool.&quot; <a href="https://www.amzi.com/articles/prolog_under_the_hood.htm">https://www.amzi.com/articles/prolog_under_the_hood.htm</a></p>
+<h3 id="increasing-language-adoption"><span class="section_number">18.4</span><span class="section_title">Increasing language adoption</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">18.4.1</span><span class="section_title"><a href="#what-1">What</a></span><span class="word_count">(266w~2m)</span></li>
+<li><span class="section_number">18.4.2</span><span class="section_title"><a href="#other-peoples-opinions">Other people's opinions</a></span><span class="word_count">(11w~1m)</span></li>
+</ul>
+</div>
+<h4 id="what-1"><span class="section_number">18.4.1</span><span class="section_title">What</span></h4>
+<p>In order for a language to be adopted, people must perceive its risk as low.</p>
+<p>The language must work with existing codebases.</p>
+<p>The language designer must think from the language user's point of view. Let's say I have 100,000 lines of Java that I've been writing and testing for the past 5 years. Are you expecting me throw away all of them?</p>
+<p>Thus the language must work with C, C++, C#, Java, Go, JavaScript, Python, Ruby, and everything else. This should be possible because the essence of all programming languages is the same: every programming language is a formal system. It should be possible to translate a program P1 in language L1 to program P2 in language L2 with the same semantics.</p>
+<p>Improve/enhance, not supersede.</p>
+<p>Mixing languages should be easy.</p>
+<p>2013, article, &quot;Empirical analysis of programming language adoption&quot;, <a href="http://sns.cs.princeton.edu/docs/asr-oopsla13.pdf">pdf</a></p>
+<p>The language must be suitable for systems programming. - System programming is hardware-aware programming. Application programming assumes abstract machine, infinite memory, and all convenience provided by the operating system. - Why do we make this distinction?</p>
+<p>The language must facilitate metaprogramming. Everything must be a first-class citizen. It has to have EVAL. The language must provide a way for interpreting/compiling/loading a program at runtime. The compiler becomes a part of every program.</p>
+<p>What is the reason for the name &quot;metacircular evaluator&quot;? What is circular? What is metacircular?</p>
+<p>To make syntax first-class, we need QUOTE and UNQUOTE (such as in Lisp/Scheme)?</p>
+<p>To prevent syntax flamewar, we should define the canonical linearization of the abstract syntax tree. Go does this with <code>go fmt</code>. I think that is wise.</p>
+<ul>
+<li>Basic assumptions
+<ul>
+<li>Computer (machine) is embodied formal system.
+<ul>
+<li>Assume no hardware fault.</li>
+</ul></li>
+<li>Software is executable mathematics.</li>
+</ul></li>
+</ul>
+<h4 id="other-peoples-opinions"><span class="section_number">18.4.2</span><span class="section_title">Other people's opinions</span></h4>
+<ul>
+<li>2012 article &quot;Socio-PLT: Principles for Programming Language Adoption&quot; <a href="https://lmeyerov.github.io/projects/socioplt/paper0413.pdf">pdf</a></li>
+</ul>
+<h2 id="memory-management"><span class="section_number">19</span><span class="section_title">Memory management</span></h2>
+<p>Is there a lambda-calculus interpreter without garbage collection? Is that PreScheme<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>? PreScheme is limited Scheme with manual memory management.</p>
+<p>Stack allocation is simple and nice.</p>
+<p>Is dynamic memory allocation really necessary?</p>
+<p>Suppose we are writing a program that asks the user for a line of strings.</p>
+<pre class="example"><code>int read_line (char*, size_t);
+</code></pre>
+<p>What if the buffer not big enough? Return ENOMEM or EAGAIN?</p>
+<p>How do we make a console to-do list application without dynamic memory management?</p>
+<p>How do we make an in-memory database without dynamic memory management?</p>
+<p>That is only one function. What if there are several functions?</p>
+<p>If every function is restartable/continuable, then it simplifies memory allocation?</p>
+<p>How can we manage memory in programming?</p>
+<ul>
+<li>manual and static, like in embedded programming</li>
+<li>manual and dynamic, C malloc and free</li>
+<li>Rust borrow</li>
+<li>garbage collection</li>
+<li>allocate and never free, useful in programs that run for a short time</li>
+</ul>
+<p>What are the consequences of not wanting manual memory management?</p>
+<ul>
+<li>garbage collection</li>
+<li>Rust-style management?</li>
+</ul>
+<p>If a process lives short enough, then it can allocate memory without freeing, and all the memory it uses can be freed when it ends.</p>
+<p>We can write a program that sorts an array of 100 integers. But what if there are more than 100 integers?</p>
+<p>How can we manage memory sanely?</p>
+<ul>
+<li>one-more-indirection principle: pass an allocator to every class/subroutine that needs to allocate memory</li>
+<li>restartable architecture; a subroutine never allocates memory; a subroutine throws an exception when the memory allocated by the parent is insufficient; the root method allocates memory, and re-calls everything in the call tree; use dependency injection</li>
+</ul>
+<p>Why is there no memory management in lambda calculus? Is it possible to implement lambda calculus without garbage collection?</p>
+<p>Simplifying C style:</p>
+<ul>
+<li>Every function must free everything that it mallocs.</li>
+<li>Everything else must be passed pre-allocated by a caller in the call stack.</li>
+<li>If there is no enough memory, a function must return ENOMEM.</li>
+<li>Reify the state into a struct.</li>
+</ul>
+<p>Example of state reification:</p>
+<pre class="example"><code>// The function
+
+int indexof (char* s, char* c) {
+    for (int i = 0; s[i] != 0; ++i) {
+        if (s[i] == c) { return i; }
+    }
+    return -1;
+}
+
+// becomes the class
+
+struct indexof {
+    char* s;
+    char c;
+    int i;
+    indexof (char* s_, char c_) : s(s_), c(c_), i(0) {}
+
+    int step () {
+        if (s[i] == 0) { i = -1; return 0; }
+        if (s[i] == c) { return 0; }
+        ++i;
+        return EAGAIN;
+    }
+};
+</code></pre>
+<p>Allocating memory is easy. The hard thing is deciding when to free it. We have several choices:</p>
+<ul>
+<li>Never free.</li>
+<li>Who allocates always frees.</li>
+<li>Caller always frees?</li>
+</ul>
+<h2 id="games-and-crashes"><span class="section_number">20</span><span class="section_title">Games and crashes?</span></h2>
+<p>Suppose that you are a game programmer, and you have just released your game.</p>
+<p>If a few gamers complain about irreproducible crashes, then it may be a hardware issue or driver issue in the gamer's machine. Or, it's too difficult to report crashes, and people are asking for refunds in anger. Make it easy to report crashes.</p>
+<p>If a lot of gamers complain about crashes, then it's probably a programming error in your part.</p>
+<p>If your game does not contain sensitive information, you should always ship your game with automatic crash dump, always show a message with clear reporting instructions when the program crashes.</p>
+<h2 id="modules"><span class="section_number">21</span><span class="section_title">Modules</span></h2>
+<p>What problem does module solve? Why do we have modules?</p>
+<p>Separate compilation.</p>
+<p>Why?</p>
+<p>Because it is slow to recompile the whole program.</p>
+<p>Why?</p>
+<p>Because we don't want to ship the compiler with the program, because it either bloats the program or complicates distribution? But why can't we distribute the compiler in a slightly less stupid way? And why can't we make small compilers?</p>
+<p>Thus, we don't need separate compilation if we compile fragments just-in-time at runtime, and if we ship the compiler with the program. I think we should do that.</p>
+<p>Thus, the only reasons left for having modules are namespacing (avoiding name collision), local reasoning, unit testing, implementation hiding (selective exports), dependency management (explicit imports and exports).</p>
+<p>But must all of those features be coupled to modules? Why can't (or shouldn't) dependency management be per-function instead of per-module?</p>
+<p>All programming features should be made with the purpose of alleviating mental burden?</p>
+<p>Features should be designed to play nice with each other and to avoid incomprehensible interactions?</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">22</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-apt1993declarative">
+<p>[1] Apt, K.R. 1993. <em>Declarative programming in prolog</em>. Centrum voor Wiskunde en Informatica. url: &lt;<a href="https://ir.cwi.nl/pub/10456/10456D.pdf">https://ir.cwi.nl/pub/10456/10456D.pdf</a>&gt;.</p>
+</div>
+<div id="ref-beeson2004lambda">
+<p>[2] Beeson, M. 2004. Lambda logic. <em>International joint conference on automated reasoning</em> (2004), 460–474. url: &lt;<a href="https://pdfs.semanticscholar.org/9721/c012782ef25023ac300e33d6ce34ffed7e18.pdf">https://pdfs.semanticscholar.org/9721/c012782ef25023ac300e33d6ce34ffed7e18.pdf</a>&gt;.</p>
+</div>
+<div id="ref-elliott2017compiling">
+<p>[3] Elliott, C. 2017. Compiling to categories. <em>Proceedings of the ACM on Programming Languages</em>. 1, ICFP (2017), 27. url: &lt;<a href="http://conal.net/papers/compiling-to-categories/compiling-to-categories.pdf">http://conal.net/papers/compiling-to-categories/compiling-to-categories.pdf</a>&gt;.</p>
+</div>
+<div id="ref-felleisen2018programmable">
+<p>[4] Felleisen, M. et al. 2018. A programmable programming language. <em>Commun. ACM</em>. 61, 3 (Feb. 2018), 62–71. DOI:<a href="https://doi.org/10.1145/3127323">https://doi.org/10.1145/3127323</a>. url: &lt;<a href="https://cacm.acm.org/magazines/2018/3/225475-a-programmable-programming-language/fulltext">https://cacm.acm.org/magazines/2018/3/225475-a-programmable-programming-language/fulltext</a>&gt;.</p>
+</div>
+<div id="ref-fischer2009purely">
+<p>[5] Fischer, S. et al. 2009. Purely functional lazy non-deterministic programming. <em>ACM sigplan notices</em> (2009), 11–22. url: &lt;<a href="http://users.eecs.northwestern.edu/~clk800/rand-test-study/_pflnp/pflnp-2009-10-8-12-02-00.pdf">http://users.eecs.northwestern.edu/~clk800/rand-test-study/_pflnp/pflnp-2009-10-8-12-02-00.pdf</a>&gt;.</p>
+</div>
+<div id="ref-hoare1998unifying">
+<p>[6] Hoare, C.A.R. and Jifeng, H. 1998. <em>Unifying theories of programming</em>. Prentice Hall Englewood Cliffs. url: &lt;<a href="ftp://ftp.cs.kent.ac.uk/people/staff/phw/utp/processed/hoare_start.pdf">ftp://ftp.cs.kent.ac.uk/people/staff/phw/utp/processed/hoare_start.pdf</a>&gt;.</p>
+</div>
+<div id="ref-kfoury1999beta">
+<p>[7] Kfoury, A. 1999. Beta-reduction as unification. <em>Banach Center Publications</em>. 46, 1 (1999), 137–158. url: &lt;<a href="http://matwbn.icm.edu.pl/ksiazki/bcp/bcp46/bcp4617.pdf">http://matwbn.icm.edu.pl/ksiazki/bcp/bcp46/bcp4617.pdf</a>&gt;.</p>
+</div>
+<div id="ref-kutzner1998non">
+<p>[8] Kutzner, A. and Schmidt-Schauß, M. 1998. <em>A non-deterministic call-by-need lambda calculus</em>. ACM. url: &lt;<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.590.8440&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.590.8440&amp;rep=rep1&amp;type=pdf</a>&gt;.</p>
+</div>
+<div id="ref-lorenz2017application">
+<p>[9] Lorenz, D.H. and Rosenan, B. 2017. Application embedding: A language approach to declarative web programming. <em>arXiv preprint arXiv:1701.08119</em>. (2017). url: &lt;<a href="https://arxiv.org/pdf/1701.08119.pdf">https://arxiv.org/pdf/1701.08119.pdf</a>&gt;.</p>
+</div>
+<div id="ref-milicevic2015advancing">
+<p>[10] Milicevic, A. and others 2015. <em>Advancing declarative programming</em>. Massachusetts Institute of Technology. url: &lt;<a href="https://people.csail.mit.edu/aleks/website/papers/mit15-milicevic-phd.pdf">https://people.csail.mit.edu/aleks/website/papers/mit15-milicevic-phd.pdf</a>&gt;.</p>
+</div>
+<div id="ref-rossberg20181ml">
+<p>[11] Rossberg, A. 2018. 1ML–core and modules united. <em>Journal of Functional Programming</em>. 28, (2018). url: &lt;<a href="https://people.mpi-sws.org/~rossberg/papers/Rossberg%20-%201ML%20--%20Core%20and%20modules%20united%20[Draft].pdf">https://people.mpi-sws.org/~rossberg/papers/Rossberg%20-%201ML%20--%20Core%20and%20modules%20united%20[Draft].pdf</a>&gt;.</p>
+</div>
+<div id="ref-seres2001algebra">
+<p>[12] Seres, S. 2001. <em>The algebra of logic programming</em>. University of Oxford. url: &lt;<a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.108.6851&amp;rep=rep1&amp;type=pdf">https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.108.6851&amp;rep=rep1&amp;type=pdf</a>&gt;.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.cs.kent.ac.uk/research/groups/plas/researchinterests.html">https://www.cs.kent.ac.uk/research/groups/plas/researchinterests.html</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://www.wolfram.com/language/principles/">https://www.wolfram.com/language/principles/</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Pure_(programming_language)">https://en.wikipedia.org/wiki/Pure_(programming_language)</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Nondeterministic_programming">https://en.wikipedia.org/wiki/Nondeterministic_programming</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Program_synthesis">https://en.wikipedia.org/wiki/Program_synthesis</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Program_derivation">https://en.wikipedia.org/wiki/Program_derivation</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://www.reddit.com/r/math/comments/24wk6f/are_there_other_alternatives_to_set_theory/chboelc">https://www.reddit.com/r/math/comments/24wk6f/are_there_other_alternatives_to_set_theory/chboelc</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://www.reddit.com/r/askmath/comments/6zuiob/why_is_it_called_cardinality_and_not_length_or/">https://www.reddit.com/r/askmath/comments/6zuiob/why_is_it_called_cardinality_and_not_length_or/</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://math.stackexchange.com/questions/158602/number-of-elements-vs-cardinality-vs-size">https://math.stackexchange.com/questions/158602/number-of-elements-vs-cardinality-vs-size</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://en.wiktionary.org/wiki/length">https://en.wiktionary.org/wiki/length</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://www.etymonline.com/word/length">https://www.etymonline.com/word/length</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://en.wikipedia.org/wiki/Length">https://en.wikipedia.org/wiki/Length</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p><a href="http://wordnetweb.princeton.edu/perl/webwn?s=length">http://wordnetweb.princeton.edu/perl/webwn?s=length</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://www.dictionary.com/browse/length">https://www.dictionary.com/browse/length</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p><a href="https://www.etymonline.com/word/dimension">https://www.etymonline.com/word/dimension</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p><a href="https://en.wiktionary.org/wiki/dimension">https://en.wiktionary.org/wiki/dimension</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p><a href="https://en.wikipedia.org/wiki/Dimension">https://en.wikipedia.org/wiki/Dimension</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p><a href="https://www.etymonline.com/word/size">https://www.etymonline.com/word/size</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p><a href="https://en.wiktionary.org/wiki/size">https://en.wiktionary.org/wiki/size</a><a href="#fnref19" class="footnote-back">↩</a></p></li>
+<li id="fn20"><p><a href="https://www.psychologytoday.com/us/blog/the-superhuman-mind/201212/kim-peek-the-real-rain-man">https://www.psychologytoday.com/us/blog/the-superhuman-mind/201212/kim-peek-the-real-rain-man</a><a href="#fnref20" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p><a href="https://en.wikipedia.org/wiki/Kim_Peek">https://en.wikipedia.org/wiki/Kim_Peek</a><a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p><a href="http://itre.cis.upenn.edu/~myl/languagelog/archives/004655.html">http://itre.cis.upenn.edu/~myl/languagelog/archives/004655.html</a><a href="#fnref22" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p><a href="http://felleisen.org/matthias/manifesto/index.html">http://felleisen.org/matthias/manifesto/index.html</a><a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn24"><p><a href="https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently">https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently</a><a href="#fnref24" class="footnote-back">↩</a></p></li>
+<li id="fn25"><p><a href="https://en.wikipedia.org/wiki/Lambda_calculus#Optimal_reduction">https://en.wikipedia.org/wiki/Lambda_calculus#Optimal_reduction</a><a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn26"><p><a href="https://en.wikipedia.org/wiki/Fixed-point_combinator">https://en.wikipedia.org/wiki/Fixed-point_combinator</a><a href="#fnref26" class="footnote-back">↩</a></p></li>
+<li id="fn27"><p><a href="https://github.com/grin-tech/grin">https://github.com/grin-tech/grin</a><a href="#fnref27" class="footnote-back">↩</a></p></li>
+<li id="fn28"><p><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.158.4524&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.158.4524&amp;rep=rep1&amp;type=pdf</a><a href="#fnref28" class="footnote-back">↩</a></p></li>
+<li id="fn29"><p><a href="http://www.dinf.ne.jp/doc/english/Us_Eu/conf/csun_98/csun98_069.html">http://www.dinf.ne.jp/doc/english/Us_Eu/conf/csun_98/csun98_069.html</a><a href="#fnref29" class="footnote-back">↩</a></p></li>
+<li id="fn30"><p><a href="https://thintz.com/resources/prescheme-documentation">https://thintz.com/resources/prescheme-documentation</a><a href="#fnref30" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-02-07 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

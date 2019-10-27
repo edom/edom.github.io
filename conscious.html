@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On the word &quot;conscious&quot;</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On the word &quot;conscious&quot;</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#consciousness-is-the-ability-to-ken">Consciousness is the ability to ken</a></span><span class="word_count">(181w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#on-separating-the-double-meaning-of-consciousness">On separating the double meaning of &quot;consciousness&quot;</a></span><span class="word_count">(192w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#consciousness-and-epistemology">Consciousness and epistemology</a></span><span class="word_count">(56w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#how-do-we-measure-consciousness-ability-to-know">How do we measure consciousness (ability to know)?</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#hypothesis-consciousness-requires-sense-memory-and-feedback.">Hypothesis: Consciousness requires sense, memory, and feedback.</a></span><span class="word_count">(489w~3m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#what-do-others-say-about-consciousness">What do others say about consciousness?</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#brain-biology-materialism">Brain? Biology? Materialism?</a></span><span class="word_count">(41w~1m)</span></li>
+</ul>
+</div>
+<h2 id="consciousness-is-the-ability-to-ken"><span class="section_number">1</span><span class="section_title">Consciousness is the ability to ken</span></h2>
+<p><em>Consciousness</em> is the ability to ken, that is, to experience, but not necessarily to wit. Compare German <em>kennen</em> and <em>wissen</em>.</p>
+<p>In the rest of this document, when I use &quot;know&quot;, I usually mean &quot;ken&quot; only and not to mean &quot;wit&quot;.</p>
+<p>On the etymology of the word &quot;conscious&quot;, Wiktionary<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> says that it comes from Latin &quot;con-&quot; (together) and &quot;scire&quot; (to know).</p>
+<p>Something is <em>conscious</em> iff it <em>can know</em>.</p>
+<p>But that is trivial: If it knows, then it can know. I think we take it for granted as an axiom in alethic modal logic: If X is true, then X is possible.</p>
+<p>Therefore, we are interested is whether something <em>can</em> know, not whether something knows.</p>
+<p>While I'm sleeping, I'm <em>unconscious</em> (I have <em>low consciousness</em>), because I can only know very little while I'm sleeping.</p>
+<p>I have <em>more consciousness</em> when I'm awake than when I'm asleep, because I <em>can know more</em> when I'm awake than when I'm asleep. But is that true? What if I can know in my sleep, but I just don't remember it?</p>
+<p>Why are we so sure that a rock doesn't know anything?</p>
+<h2 id="on-separating-the-double-meaning-of-consciousness"><span class="section_number">2</span><span class="section_title">On separating the double meaning of &quot;consciousness&quot;</span></h2>
+<p>Confusingly, we use the word &quot;consciousness&quot; for the subjective experience itself, besides for the <em>ability</em> to have such subjective experience.</p>
+<p>We need two words for those two senses. What are good words?</p>
+<p>We use the word &quot;quale&quot; (&quot;qualia&quot;) for subjective experience.</p>
+<p>We use &quot;consciousness&quot; for the ability to have qualia.</p>
+<p>&quot;X can Y&quot; is true iff there is something X can do to make &quot;X does Y&quot; true.</p>
+<p>&quot;X can Y by Z&quot; is true iff X's doing Z makes &quot;X does Y&quot; true.</p>
+<p>&quot;X can Y&quot; is true iff there exists Z such that &quot;X can Y by Z&quot; is true.</p>
+<p>Example: Power is the ability to unleash harm, but is not harm itself. Indeed, when you unleash harm, your power is temporarily reduced, because you have to recharge your power for unleashing the next harm.</p>
+<p>That makes me think.</p>
+<p>A conscious being can unleash quale, in the same way a powerful being can unleash harm.</p>
+<p>A conscious being can experience, in the same way a powerful being can harm.</p>
+<p>How do we increase power? By weapons (harm multipliers), increasing our physical strength, and so on.</p>
+<p>How do we increase consciousness? What are the consciousness multipliers? Meditation?</p>
+<h2 id="consciousness-and-epistemology"><span class="section_number">3</span><span class="section_title">Consciousness and epistemology</span></h2>
+<p>In Kantian parlance, perhaps consciousness is the ability to have synthetic a-posteriori knowledge.</p>
+<p>Defining consciousness as &quot;the ability to know&quot; raises two questions: What does it mean to <em>know</em> something? What does it mean to be <em>able</em> to do something? Those questions are the questions that epistemology aims to answer. Thus defining consciousness requires epistemology.</p>
+<h2 id="how-do-we-measure-consciousness-ability-to-know"><span class="section_number">4</span><span class="section_title">How do we measure consciousness (ability to know)?</span></h2>
+<p>How do we measure whether X has more consciousness than Y?</p>
+<h2 id="hypothesis-consciousness-requires-sense-memory-and-feedback."><span class="section_number">5</span><span class="section_title">Hypothesis: Consciousness requires sense, memory, and feedback.</span></h2>
+<p>This hypothesis assumes materialism. This will be false if it turns out that consciousness is fundamental in Nature.</p>
+<ul>
+<li>Imagine something.</li>
+<li>Imagine that you are imagining something.</li>
+<li>Imagine that the imagined you are in turn imagining something else. Is this even possible?</li>
+<li>To manipulate your consciousness, you must consciously intend to manipulate your consciousness. Can you consciously manipulate your consciousness?</li>
+<li>Consciousness needs sensory input.</li>
+<li>Consciousness needs feedback.</li>
+<li>Self concept needs feedback.</li>
+<li>If there is not a feedback, a system cannot distinguish itself from its environment. The self concept will never arise.</li>
+<li>If a brain can immediately control a thing, then that thing is part of the brain's self concept. If the brain can't, it's not.</li>
+<li>If a brain often gets certain input shortly after it produces certain output, it will associate the output with its self concept.</li>
+<li>The self is the thing under conscious control.</li>
+<li>It seems that:
+<ul>
+<li>Consciousness requires sense.</li>
+<li>Consciousness requires memory.</li>
+<li>Consciousness requires feedback.</li>
+</ul></li>
+<li>It seems that consciousness is (itself, or is caused by?) the feedback of information from the immediate past.</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#memory-is-necessary-but-not-sufficient-for-consciousness.">Memory is necessary but not sufficient for consciousness.</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#identity">Identity?</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">5.3</span><span class="section_title"><a href="#prerequisites-of-consciousness">Prerequisites of consciousness?</a></span><span class="word_count">(171w~1m)</span></li>
+<li><span class="section_number">5.4</span><span class="section_title"><a href="#how-does-consciousness-arise-how-are-these-different-things-of-the-same-person-related-which-requires-which">How does consciousness arise? How are these different things of the same person related? Which requires which?</a></span><span class="word_count">(92w~1m)</span></li>
+</ul>
+</div>
+<h3 id="memory-is-necessary-but-not-sufficient-for-consciousness."><span class="section_number">5.1</span><span class="section_title">Memory is necessary but not sufficient for consciousness.</span></h3>
+<ul>
+<li>If I don't have memory, I can't bunch my past self and my present self into the same identity.</li>
+</ul>
+<h3 id="identity"><span class="section_number">5.2</span><span class="section_title">Identity?</span></h3>
+<ul>
+<li>Cutting off the legs of a person does not change the identity of that person. All of his memories are intact. Veterans who lost their legs in war retains their pre-war memories.</li>
+<li>Some brain damage changes the identity of the person.</li>
+</ul>
+<h3 id="prerequisites-of-consciousness"><span class="section_number">5.3</span><span class="section_title">Prerequisites of consciousness?</span></h3>
+<ul>
+<li>What is <em>necessary</em> for consciousness?
+<ul>
+<li>Thought experiment: If someone is born without any senses, it cannot be conscious?</li>
+<li>Thought experiment: Of an average adult, if all motor nerves are cut, and all sensor nerves are intact, then he is conscious intensionally but not extensionally?
+<ul>
+<li>If we cut all efferent nerve connections, the person will behave the same as the one in vegetative coma. If we remove the prefrontal cortex, the person will still show vital signs, but will be vegetative.</li>
+</ul></li>
+<li>Infer: Consciousness has something to do with the brain. (What is it?)
+<ul>
+<li>Observe: A brain-damaged person does not exhibit conscious behavior.</li>
+<li>Assume: Philosophical zombie does not exist.</li>
+<li>Assume: Trapped consciousness does not exist.</li>
+<li><a href="https://www.quora.com/Can-consciousness-exist-without-sensory-inputs">Quora: Can consciousness exist without sensory inputs?</a>
+<ul>
+<li>dissociative anesthesia? ketamine? sensory deprivation tank?</li>
+</ul></li>
+</ul></li>
+<li>Assume: There is no experiment that can decide between these two things: the absence of consciousness, and the absence of efferent nerves?</li>
+<li>Assume: My consciousness is tied to my body.</li>
+<li>Assume: When I sleep, my consciousness pauses.</li>
+</ul></li>
+<li>What is <em>sufficient</em> for consciousness?</li>
+<li>Unread
+<ul>
+<li><a href="http://about.elsevier.com/media/Chaos/p2_Allegrini.pdf">http://about.elsevier.com/media/Chaos/p2_Allegrini.pdf</a></li>
+<li><a href="https://www.researchgate.net/publication/283345070_Necessary_and_sufficient_conditions_for_consciousness_Extended_Dual-Aspect_Monism_framework">https://www.researchgate.net/publication/283345070_Necessary_and_sufficient_conditions_for_consciousness_Extended_Dual-Aspect_Monism_framework</a></li>
+<li><a href="http://www.terapiacognitiva.eu/cpc/dwl/embodied/Prinz.pdf">http://www.terapiacognitiva.eu/cpc/dwl/embodied/Prinz.pdf</a></li>
+<li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3501646/">2012, &quot;Neuronal function is necessary but not sufficient for consciousness: consciousness is necessary for will&quot;</a></li>
+</ul></li>
+</ul>
+<h3 id="how-does-consciousness-arise-how-are-these-different-things-of-the-same-person-related-which-requires-which"><span class="section_number">5.4</span><span class="section_title">How does consciousness arise? How are these different things of the same person related? Which requires which?</span></h3>
+<ul>
+<li>His brain.</li>
+<li>His mind / thought / soul / spirit.</li>
+<li>His behavior. (His externally visible behavior.)</li>
+<li>His memory.</li>
+<li>His identity.</li>
+</ul>
+<p>The questions:</p>
+<ul>
+<li>Which can exist without which?</li>
+<li>Which requires which? Which suffices which? Which is necessary but not sufficient for which? Which is sufficient for which?</li>
+</ul>
+<p><a href="https://www.quora.com/How-does-consciousness-arise-from-an-electrochemical-system-like-the-human-brain-What-is-the-expectation-that-artificial-intelligence-will-achieve-consciousness">https://www.quora.com/How-does-consciousness-arise-from-an-electrochemical-system-like-the-human-brain-What-is-the-expectation-that-artificial-intelligence-will-achieve-consciousness</a></p>
+<p><a href="https://www.iflscience.com/brain/long-term-memories-may-not-be-stored-synapses-afterall/">https://www.iflscience.com/brain/long-term-memories-may-not-be-stored-synapses-afterall/</a></p>
+<p><a href="https://www.scientificamerican.com/article/consciousness-does-not-reside-here/">https://www.scientificamerican.com/article/consciousness-does-not-reside-here/</a></p>
+<p><a href="http://science.sciencemag.org/content/210/4475/1232">http://science.sciencemag.org/content/210/4475/1232</a></p>
+<p>What we know: Altering the brain alters the behavior of the body that contains the brain. Machine analog: Physically altering the machine without altering the software alters the output of the machine. Example: Firing electrons at a transistor.</p>
+<h2 id="what-do-others-say-about-consciousness"><span class="section_number">6</span><span class="section_title">What do others say about consciousness?</span></h2>
+<p>TODO summarize:</p>
+<ul>
+<li>Vsauce video &quot;What is consciousness?&quot;<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></li>
+<li>2009, &quot;How to define consciousness—and how not to define consciousness&quot;, <a href="http://cogprints.org/6453/1/How_to_define_consciousness.pdf">pdf</a></li>
+</ul>
+<h2 id="brain-biology-materialism"><span class="section_number">7</span><span class="section_title">Brain? Biology? Materialism?</span></h2>
+<ul>
+<li>Does everyone have a fusiform gyrus? A prefrontal cortex?</li>
+<li><a href="https://www.youtube.com/watch?v=lyu7v7nWzfo">TED: Your brain hallucinates your conscious reality | Anil Seth</a></li>
+<li><a href="https://www.youtube.com/watch?v=SgOTaXhbqPQ">TED: What hallucination reveals about our minds | Oliver Sacks</a></li>
+<li>same video, different narrator
+<ul>
+<li><a href="https://www.youtube.com/watch?v=X_tYrnv_o6A">Veritasium: Your Amazing Molecular Machines</a></li>
+<li><a href="https://www.youtube.com/watch?v=WFCvkkDSfIU">Drew Berry: Animations of unseeable biology</a></li>
+</ul></li>
+</ul>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-10-27&gt; <a href="https://en.wiktionary.org/wiki/conscious">https://en.wiktionary.org/wiki/conscious</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://www.youtube.com/watch?v=qjfaoe847qQ">https://www.youtube.com/watch?v=qjfaoe847qQ</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2018-11-04 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
