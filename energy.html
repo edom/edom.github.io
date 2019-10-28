@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On energy, work, and power</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On energy, work, and power</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#energy-work-and-power-in-physics">Energy, work, and power, in physics</a></span><span class="word_count">(126w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#energy">Energy?</a></span><span class="word_count">(157w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#generalization">Generalization</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#power-in-physics-and-politics">Power in physics and politics</a></span><span class="word_count">(241w~2m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(29w~1m)</span></li>
+</ul>
+</div>
+<h2 id="energy-work-and-power-in-physics"><span class="section_number">1</span><span class="section_title">Energy, work, and power, in physics</span></h2>
+<p>Energy is the ability to do work.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p><em>Work</em> was defined as weight lifted through a height, by Coriolis in 1826 <span class="citation" data-cites="coriolis1829calcul">[<a href="#ref-coriolis1829calcul">1</a>]</span><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>, when it was common to use steam engines to pump water out of flooded mines.</p>
+<p>When were the modern notions of work and energy created?<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> Helmholtz 1847? Coriolis 1826?</p>
+<p>There is a proportional relation between the amount of work that such engine can do and the amount of fuel supplied to the engine. Thus we say that fuel contains energy, and we say that an engine converts such energy into work.</p>
+<p>Energy density is of interest to vehicle designers, especially when designing fuel and batteries. Higher energy density means easier storage and transport, but it can also mean bigger explosions in case of accidents.</p>
+<h2 id="energy"><span class="section_number">2</span><span class="section_title">Energy?</span></h2>
+<p><em>Energy</em> is the amount of work that <em>could</em> (potentially) be done, whereas work is what <em>is</em> (actually) done.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>That makes me think: Why is some of that potential not actualized?</p>
+<p>Energy is relative to observers?</p>
+<p>Energy is a mathematical concept and not a physical reality? Can a mathematical quantity be a physical reality? Is Platonism true?<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>For example of a conversion from potential energy to kinetic energy, observe a stone that is rolling downhill.</p>
+<p>&quot;Work&quot; readily generalizes from only weights to every <em>force</em>, because weight is just a gravitational force.</p>
+<p>What if the force and the displacement make an angle?</p>
+<p>Mathematically, we say that the amount of work <span class="math inline">\( F \cdot h \)</span> is done by lifting a weight <span class="math inline">\(F\)</span> so that its height increases by <span class="math inline">\(h\)</span>.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<p><em>Energy</em> is the ability to do work.</p>
+<p>History of energy?<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<p><em>Power</em> is work done per unit time: <span class="math inline">\( P = W / t \)</span>.<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> This means that a steam engine with twice the power will clean the same mine in half the time.</p>
+<h2 id="generalization"><span class="section_number">3</span><span class="section_title">Generalization</span></h2>
+<p>Work can be generalized to mean any result we desire, and energy can be generalized accordingly; the only constraint is that they are measured in the same unit.</p>
+<h2 id="power-in-physics-and-politics"><span class="section_number">4</span><span class="section_title">Power in physics and politics</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#political-power-as-a-special-case-of-physical-power">Political power as a special case of physical power</a></span><span class="word_count">(126w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#measuring-political-power-in-units-of-physical-power">Measuring political power in units of physical power</a></span><span class="word_count">(112w~1m)</span></li>
+</ul>
+</div>
+<h3 id="political-power-as-a-special-case-of-physical-power"><span class="section_number">4.1</span><span class="section_title">Political power as a special case of physical power</span></h3>
+<p>Political power is ultimately the ability to harm.</p>
+<p>Physical power is also the ability to harm. For example, you can give a man one gigajoule in any form, but his fate depends on your <em>power</em>, that is, your rate of energy transfer, how fast you give him that much energy. If the rate is one milliwatt and the transfer is unfocused, he will be fine for a long time. If the rate is one gigawatt, he will soon perish, regardless of the form of energy; one gigajoule in any form will annihilate a man if transferred instantly.<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
+<p>Indeed political power only exists as far as it is backed by physical power.</p>
+<p>Therefore, political power is a special case of physical power.</p>
+<h3 id="measuring-political-power-in-units-of-physical-power"><span class="section_number">4.2</span><span class="section_title">Measuring political power in units of physical power</span></h3>
+<p>In the previous section, we have shown that political power is a special case of physical power. That means we should be able to <em>measure political power in watts</em>, or any other unit of physical power.</p>
+<p>Perhaps it takes the same amount of time for both a bullet and a punch to transfer their kinetic energy, but the bullet has more energy to begin with, and thus more power (higher transfer rate of energy).</p>
+<p>Here is a comparison. A bullet's kinetic energy as it leaves the gun muzzle is about a few thousands of joules.<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>. One kilogram of TNT releases about 4 million joules when it explodes.<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a></p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">5</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-coriolis1829calcul">
+<p>[1] Coriolis, G. 1829. <em>Du calcul de l’effet des machines, ou, considerations sur l’emploi des moteurs et sur leur évaluation: Pour servir d’introduction a l’étude spéciale des machines</em>. Carilian-Goeury.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-10-28&gt; <a href="https://home.uni-leipzig.de/energy/energy-fundamentals/01.htm">https://home.uni-leipzig.de/energy/energy-fundamentals/01.htm</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-10-28&gt; <a href="https://en.wikipedia.org/wiki/Work_(physics)">https://en.wikipedia.org/wiki/Work_(physics)</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://hsm.stackexchange.com/questions/414/when-were-the-modern-notions-of-work-and-energy-created">https://hsm.stackexchange.com/questions/414/when-were-the-modern-notions-of-work-and-energy-created</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>Nick Lucid's &quot;What the HECK is Energy?&quot; <a href="https://www.youtube.com/watch?v=snj1wBtn6I8">https://www.youtube.com/watch?v=snj1wBtn6I8</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Max_Tegmark">https://en.wikipedia.org/wiki/Max_Tegmark</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Work_(physics)">https://en.wikipedia.org/wiki/Work_(physics)</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://en.wikipedia.org/wiki/History_of_energy">https://en.wikipedia.org/wiki/History_of_energy</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://en.wikipedia.org/wiki/Power_(physics)">https://en.wikipedia.org/wiki/Power_(physics)</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>&lt;2019-10-28&gt; <a href="https://en.wikipedia.org/wiki/Orders_of_magnitude_(energy)">https://en.wikipedia.org/wiki/Orders_of_magnitude_(energy)</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>&lt;2019-10-28&gt; <a href="https://en.wikipedia.org/wiki/Table_of_handgun_and_rifle_cartridges">https://en.wikipedia.org/wiki/Table_of_handgun_and_rifle_cartridges</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>&lt;2019-10-28&gt; <a href="https://en.wikipedia.org/wiki/TNT_equivalent">https://en.wikipedia.org/wiki/TNT_equivalent</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2018-04-11 04:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

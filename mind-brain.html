@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On mind-brain interaction</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On mind-brain interaction</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#on-the-interaction-between-mind-and-brain">On the interaction between mind and brain</a></span><span class="word_count">(105w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#on-mind-body-interaction-experiments-and-case-reports">On mind-body interaction experiments and case reports</a></span><span class="word_count">(290w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#on-classifying-mind-brain-interaction">On classifying mind-brain interaction</a></span><span class="word_count">(212w~2m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#sleep-deprivation-causes-difficulty-focusing-mental-muscles-mental-exertion-and-mental-analogs">Sleep deprivation causes difficulty focusing; mental muscles, mental exertion, and mental analogs</a></span><span class="word_count">(60w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#most-of-the-brain-is-not-for-consciousness">Most of the brain is not for consciousness</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#is-brainmind-analog-or-digital">Is brain/mind analog or digital?</a></span><span class="word_count">(19w~1m)</span></li>
+</ul>
+</div>
+<h2 id="on-the-interaction-between-mind-and-brain"><span class="section_number">1</span><span class="section_title">On the interaction between mind and brain</span></h2>
+<p>We know that mental stress can induce somatic illness.</p>
+<p>How do I distinguish between these two cases?</p>
+<ul>
+<li>I was conscious before I was born but I have no memory of it</li>
+<li>I was not conscious before I was born</li>
+</ul>
+<p>I know that I exist. I think I existed a few seconds ago because I have a memory of that. But how do i know that I <em>existed</em> a few hours ago? My memory is only an extremely simplified representation of what my past self perceived.</p>
+<p>Can a conscious being be unaware of itself, its own existence?</p>
+<p>Memory is necessary for consciousness?</p>
+<p>Hypothesis: A brain <em>traps</em> consciousness.</p>
+<h2 id="on-mind-body-interaction-experiments-and-case-reports"><span class="section_number">2</span><span class="section_title">On mind-body interaction experiments and case reports</span></h2>
+<p>Sperry, Libet, mentalism, and non-materialism</p>
+<p>What can we infer from these experiments? What are they trying to tell us?</p>
+<p>(Are there other scientific experiments? Search &quot;consciousness experiments&quot; on the Internet.)</p>
+<p>We want to infer from these things:</p>
+<ul>
+<li>the relationship between these concepts:
+<ul>
+<li>volition</li>
+<li>imagination, hallucination, illusion, delusion</li>
+<li>wake, sleep, dream</li>
+<li>intrusive thoughts</li>
+<li>three kinds of consciousness? <a href="https://www.sciencealert.com/artificial-intelligence-three-types-of-consciousness">https://www.sciencealert.com/artificial-intelligence-three-types-of-consciousness</a>
+<ul>
+<li>2017 &quot;What is consciousness, and could machines have it?&quot; <a href="http://science.sciencemag.org/content/358/6362/486">http://science.sciencemag.org/content/358/6362/486</a></li>
+<li>C0 = the problem solving our brains do without our awareness</li>
+<li><a href="https://en.wikipedia.org/wiki/Artificial_consciousness">https://en.wikipedia.org/wiki/Artificial_consciousness</a></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Category:Thought_experiments_in_philosophy_of_mind">https://en.wikipedia.org/wiki/Category:Thought_experiments_in_philosophy_of_mind</a></li>
+</ul></li>
+<li>brain experiments
+<ul>
+<li>Sperry's insightful experiments (paywall) <a href="https://www.sciencedirect.com/science/article/abs/pii/0306452280900986">https://www.sciencedirect.com/science/article/abs/pii/0306452280900986</a></li>
+<li><a href="http://www.informationphilosopher.com/freedom/libet_experiments.html">Libet experiments</a></li>
+<li>Split-brain (corpus callostomy)
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Split-brain">WP:Split-brain</a></li>
+<li><a href="https://faculty.washington.edu/chudler/split.html">Neuroscience for kids</a></li>
+<li><a href="https://embryo.asu.edu/pages/roger-sperrys-split-brain-experiments-1959-1968">Roger Sperry's split-brain experiments (1959–1968)</a></li>
+<li><a href="https://www.nobelprize.org/educational/medicine/split-brain/">https://www.nobelprize.org/educational/medicine/split-brain/</a></li>
+<li>How did we find out that corpus callostomy reduces epilepsy?</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>These experiments seem to support physicalism/materialism/reductionism/monism: reconstructing brain input from brain activity?</p>
+<ul>
+<li>1999, Scientists reconstruct picture from cat brain activity<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></li>
+<li>Scientists reconstruct movie from human brain activity<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></li>
+</ul>
+<p>What we may do with those things:</p>
+<ul>
+<li>formal concept analysis<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></li>
+<li>classification / dichotomization</li>
+</ul>
+<p>There is an idea that &quot;Your brain hallucinates your conscious reality&quot; (your brain hallucinates your subjective experience).<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<p>TODO Read Liber's &quot;A testable field theory of mind brain interaction&quot;</p>
+<p>Relevant phenomenons, experiments, reports, and cases:</p>
+<ul>
+<li>Phineas Gage changed after brain accident</li>
+<li>French civil servant with missing brain <a href="https://www.youtube.com/watch?v=_oXoMYJIvJ4">https://www.youtube.com/watch?v=_oXoMYJIvJ4</a>
+<ul>
+<li>&quot;A man in France continues to puzzle scientists nearly a decade after he was found to be living with just 10 percent of a typical human brain.&quot;</li>
+<li>&quot;Despite the reduced brain matter, the man lived a relatively normal life; he was a married civil servant with two kids. He also scored an IQ of 75 which is considered low but not disabled.&quot;</li>
+</ul></li>
+<li>Baby born without forebrain</li>
+</ul>
+<p>Transcranial magnetic stimulation<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> shows that some physical change on the brain affects subjective experience of the mind. The question: does the <em>same</em> magnetic stimulation cause the <em>same</em> change in subjective experience?</p>
+<p>Brain study, psychedelics, and anesthetics: We still don't know how psychedelics and anesthetics work.</p>
+<p>Hogan sisters' &quot;thalamic bridge&quot;<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#is-intrusive-thoughts-voluntary"><span class="todo TODO">TODO</span> Is intrusive thoughts voluntary?</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#what-i-think-we-know"><span class="todo TODO">TODO</span> What I think we know?</a></span><span class="word_count">(6w~1m)</span></li>
+</ul>
+</div>
+<h3 id="is-intrusive-thoughts-voluntary"><span class="section_number">2.1</span><span class="section_title"><span class="todo TODO">TODO</span> Is intrusive thoughts voluntary?</span></h3>
+<h3 id="what-i-think-we-know"><span class="section_number">2.2</span><span class="section_title"><span class="todo TODO">TODO</span> What I think we know?</span></h3>
+<h2 id="on-classifying-mind-brain-interaction"><span class="section_number">3</span><span class="section_title">On classifying mind-brain interaction</span></h2>
+<p>Here we classify mind-brain interaction by <em>origin</em> and <em>voluntariness</em>.</p>
+<p>We know that some changes in the brain cause some changes in the mind, and some changes in the mind cause some changes in the brain.</p>
+<p>Hallucination is when brain confuses input and output?</p>
+<p>I have experienced these first-hand:</p>
+<ul>
+<li>sleep paralysis: when going from sleep to wake, can move eyes, can breathe, but can't move other muscles, not even speak</li>
+<li>hypnagogic jerk: the feeling of falling when going from wake to sleep</li>
+</ul>
+<p>&lt;2018-11-07&gt; The difference between imagination and hallucination is <em>voluntary of existence</em>. We can start imagining at will. We can stop imagining at will. We cannot start hallucinating at will. We cannot stop hallucinating at will. &quot;At will&quot; means &quot;voluntarily&quot;, that is, &quot;by volition&quot;.</p>
+<p>Example. I can imagine an elephant for three seconds, and then stop imagining it. But, if I eat a psychedelic mushroom, I can't stop the hallucination by sheer will, but eventually my brain chemistry returns to normal and the hallucination ends.</p>
+<p>Imagination: mind affects brain. Hallucination: brain affects mind.</p>
+<p>This explains why people can't die <em>just by wanting</em> to die: because the mind does not fully control the brain.</p>
+<p>How do we complete this table?</p>
+<table>
+<thead>
+<tr class="header">
+<th>name</th>
+<th>can we start it at will?</th>
+<th>does it require our will (conscious mental effort) to start?</th>
+<th>can we stop it at will?</th>
+<th>origin</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>imagination</td>
+<td>yes</td>
+<td>yes</td>
+<td>yes</td>
+<td>mind</td>
+</tr>
+<tr class="even">
+<td>hallucination</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+<td>brain</td>
+</tr>
+<tr class="odd">
+<td>illusion</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+<td>?</td>
+</tr>
+<tr class="even">
+<td>delusion</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+<td>?</td>
+</tr>
+<tr class="odd">
+<td>intrusive thoughts</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+<td>?</td>
+</tr>
+<tr class="even">
+<td>delirium</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+<tr class="odd">
+<td>confusion</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+<tr class="even">
+<td>headache</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sleep-deprivation-causes-difficulty-focusing-mental-muscles-mental-exertion-and-mental-analogs"><span class="section_number">4</span><span class="section_title">Sleep deprivation causes difficulty focusing; mental muscles, mental exertion, and mental analogs</span></h2>
+<p>I find reading philosophical articles harder when I don't sleep enough the night before. I find it harder to focus. Sleep deprivation affects my ability to think, but not my ability to lift weights.</p>
+<p>Mental analogs?</p>
+<p>Key finding: Focus uses glucose? Cite?</p>
+<p>Key fact: Both physical exertion and mental exertion use glucose?</p>
+<h2 id="most-of-the-brain-is-not-for-consciousness"><span class="section_number">5</span><span class="section_title">Most of the brain is not for consciousness</span></h2>
+<p>&quot;What Is Consciousness?&quot; <a href="https://www.nature.com/articles/d41586-018-05097-x">https://www.nature.com/articles/d41586-018-05097-x</a></p>
+<h2 id="is-brainmind-analog-or-digital"><span class="section_number">6</span><span class="section_title">Is brain/mind analog or digital?</span></h2>
+<p>Our brain is analog, but our mind is digital? Is our brain analog or digital?<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a><a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a></p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.berkeley.edu/news/media/releases/99legacy/10-15-1999.html">https://www.berkeley.edu/news/media/releases/99legacy/10-15-1999.html</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://gizmodo.com/5843117/scientists-reconstruct-video-clips-from-brain-activity">https://gizmodo.com/5843117/scientists-reconstruct-video-clips-from-brain-activity</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>YT:Movie reconstruction from human brain activity <a href="https://www.youtube.com/watch?v=nsjDnYxJ0bo">https://www.youtube.com/watch?v=nsjDnYxJ0bo</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="http://news.berkeley.edu/2011/09/22/brain-movies/">http://news.berkeley.edu/2011/09/22/brain-movies/</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Formal_concept_analysis">https://en.wikipedia.org/wiki/Formal_concept_analysis</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://www.reddit.com/r/philosophy/comments/6rqq11/your_brain_hallucinates_your_conscious_reality/">https://www.reddit.com/r/philosophy/comments/6rqq11/your_brain_hallucinates_your_conscious_reality/</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://en.wikipedia.org/wiki/Transcranial_magnetic_stimulation">https://en.wikipedia.org/wiki/Transcranial_magnetic_stimulation</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="http://www.drhaseltine.com/six-brain-phenomena/">http://www.drhaseltine.com/six-brain-phenomena/</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://medium.com/the-spike/brains-as-analog-computers-fa297021f935">https://medium.com/the-spike/brains-as-analog-computers-fa297021f935</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://www.forbes.com/sites/quora/2016/09/27/is-the-human-brain-analog-or-digital/">https://www.forbes.com/sites/quora/2016/09/27/is-the-human-brain-analog-or-digital/</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2018-11-04 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
