@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Questions at my knowledge frontier</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Questions at my knowledge frontier</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#on-remote-viewing-psychicspiritual-developmentunfolding-and-meditation">On remote viewing, psychic/spiritual development/unfolding, and meditation</a></span><span class="word_count">(604w~4m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#on-consciousness">On consciousness</a></span><span class="word_count">(521w~3m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#on-traditions">On traditions</a></span><span class="word_count">(170w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#which-ions-experiments-are-relevant-to-my-research">&lt;2019-11-04&gt; Which IONS experiments are relevant to my research?</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(102w~1m)</span></li>
+</ul>
+</div>
+<h2 id="on-remote-viewing-psychicspiritual-developmentunfolding-and-meditation"><span class="section_number">1</span><span class="section_title">On remote viewing, psychic/spiritual development/unfolding, and meditation</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#how-does-remote-viewing-work">&lt;2019-11-04&gt; How does remote viewing work?</a></span><span class="word_count">(217w~2m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#does-psychic-functioning-require-meditation">&lt;2019-11-04&gt; Does psychic functioning require meditation?</a></span><span class="word_count">(76w~1m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#how-do-we-induce-theta-waves-in-the-brain">&lt;2019-11-02&gt; How do we induce theta waves in the brain?</a></span><span class="word_count">(108w~1m)</span></li>
+<li><span class="section_number">1.4</span><span class="section_title"><a href="#how-do-we-alter-consciousness-without-drugs-with-meditation">&lt;2019-09-28&gt; How do we alter consciousness without drugs? With meditation?</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">1.5</span><span class="section_title"><a href="#if-psychic-healing-is-possible-what-about-psychic-body-building">&lt;2019-10-01&gt; If psychic healing is possible, what about psychic body-building?</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">1.6</span><span class="section_title"><a href="#what-do-i-need-to-awaken-psychic-powers">&lt;2019-10-01&gt; What do I need to awaken psychic powers?</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">1.7</span><span class="section_title"><a href="#is-fasting-necessary-for-psychic">&lt;2019-10-01&gt; Is fasting necessary for psychic?</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">1.8</span><span class="section_title"><a href="#does-myopia-interfere-with-astral-travel">&lt;2019-10-01&gt; Does myopia interfere with astral travel?</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">1.9</span><span class="section_title"><a href="#other-questions">&lt;2019-10-01&gt; Other questions</a></span><span class="word_count">(55w~1m)</span></li>
+<li><span class="section_number">1.10</span><span class="section_title"><a href="#is-meditation-effective-for-entering-alpha-state-in-noisy-environment">&lt;2019-09-28&gt; Is meditation effective for entering alpha state in noisy environment?</a></span><span class="word_count">(20w~1m)</span></li>
+</ul>
+</div>
+<h3 id="how-does-remote-viewing-work"><span class="section_number">1.1</span><span class="section_title">&lt;2019-11-04&gt; How does remote viewing work?</span></h3>
+<p>Some writers have a peculiar writing style: they state hypotheses as if hypotheses were facts.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1.1</span><span class="section_title"><a href="#on-a-book-of-tim-rifat">&lt;2019-11-03&gt; On a book of Tim Rifat</a></span><span class="word_count">(190w~1m)</span></li>
+<li><span class="section_number">1.1.2</span><span class="section_title"><a href="#on-a-2007-book-of-morehouse">&lt;2019-11-04&gt; On a 2007 book of Morehouse</a></span><span class="word_count">(9w~1m)</span></li>
+</ul>
+</div>
+<h4 id="on-a-book-of-tim-rifat"><span class="section_number">1.1.1</span><span class="section_title">&lt;2019-11-03&gt; On a book of Tim Rifat</span></h4>
+<p>I read the book &quot;Remote Viewing&quot; (or whatever the title is) by Tim Rifat<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p>Here are some of his hypotheses:</p>
+<ul>
+<li>Remote viewing may require that the brain be in the &quot;theta state&quot;</li>
+<li>Stress levels may &quot;have to be lowered for paranormal abilities to show themselves&quot;</li>
+<li>Stress may interfere &quot;with the mechanism of remote viewing&quot;</li>
+<li>&quot;Autovisualization of the brain&quot; may induce &quot;the states needed for remote viewing&quot;</li>
+<li>Tesla coils tuned to 7.8 Hz<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> may induce &quot;a theta state in the remote viewer&quot;</li>
+</ul>
+<p>He also proposes some procedures and experiments:</p>
+<ul>
+<li>a relaxation technique<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></li>
+<li>&quot;a specialized technique […] to enter the theta state without electronic biofeedback&quot;<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></li>
+<li>a meditation technique he calls &quot;the cinema method&quot;<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>
+<ul>
+<li>&quot;The cinema method is such a powerful technique because it uses the potent meme of watching television to eradicate the internal-chatter meme. Since both memes are very powerful, they cancel each other out&quot;</li>
+</ul></li>
+<li>&quot;Try to stop thinking to yourself for ten seconds. You will find that internal mental silence is extremely difficult to achieve.&quot;</li>
+</ul>
+<p>He also has hypotheses about brains and quantum stuff but I skipped them because I lack the necessary background knowledge.</p>
+<p>Unfortunately the Google search result for &quot;theta wave&quot; is full of snake-oil sellers.</p>
+<h4 id="on-a-2007-book-of-morehouse"><span class="section_number">1.1.2</span><span class="section_title">&lt;2019-11-04&gt; On a 2007 book of Morehouse</span></h4>
+<p>Morehouse 2007 <span class="citation" data-cites="morehouse2007remote">[<a href="#ref-morehouse2007remote">4</a>]</span></p>
+<h3 id="does-psychic-functioning-require-meditation"><span class="section_number">1.2</span><span class="section_title">&lt;2019-11-04&gt; Does psychic functioning require meditation?</span></h3>
+<p>I think psychic functioning requires an altered state of consciousness, not meditation, and meditation is just one way of achieving an altered state of consciousness without material crutches.</p>
+<ul>
+<li>It seems that the consensus is that developing psychic abilities requires <a href="meditate.html">meditation</a> (having a still-and-focused mind). Why is that? &quot;To raise vibrational frequencies&quot;? Do people with poltergeists meditate inadvertently?</li>
+<li>Are psychic abilities just energy works?
+<ul>
+<li>Robert Bruce's &quot;N.E.W. Energy Ways&quot;?<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></li>
+<li>Nathaniel's writings?</li>
+<li>secret to magick: anchor and link?<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></li>
+</ul></li>
+</ul>
+<h3 id="how-do-we-induce-theta-waves-in-the-brain"><span class="section_number">1.3</span><span class="section_title">&lt;2019-11-02&gt; How do we induce theta waves in the brain?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.3.1</span><span class="section_title"><a href="#experiment-in-rapid-periodic-shifting-of-attention">&lt;2019-11-04&gt; Experiment in rapid periodic shifting of attention</a></span><span class="word_count">(99w~1m)</span></li>
+</ul>
+</div>
+<h4 id="experiment-in-rapid-periodic-shifting-of-attention"><span class="section_number">1.3.1</span><span class="section_title">&lt;2019-11-04&gt; Experiment in rapid periodic shifting of attention</span></h4>
+<p>If brain theta wave frequency is 4 Hz<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>, then, can we induce theta waves in the brain by repeatedly-and-rapidly shifting our attention (a few times per second)? For example, we pick two spots in our head, say X and Y, and we focus on X for T seconds (let T = 0.25 or 0.5 perhaps?), then we focus on Y for T seconds, and then we focus back on X for T seconds, and so on.</p>
+<p>Can we induce theta waves by imagining 4 Hz beat frequency? Visual beat frequency? Aural beat frequency?</p>
+<h3 id="how-do-we-alter-consciousness-without-drugs-with-meditation"><span class="section_number">1.4</span><span class="section_title">&lt;2019-09-28&gt; How do we alter consciousness without drugs? With meditation?</span></h3>
+<p>Tart 1975<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a></p>
+<p>I think, if the consensus reality of adults are fixed, then the only hope for adults with clashing consensus realities is either mass-segregation or mass-murder.</p>
+<h3 id="if-psychic-healing-is-possible-what-about-psychic-body-building"><span class="section_number">1.5</span><span class="section_title">&lt;2019-10-01&gt; If psychic healing is possible, what about psychic body-building?</span></h3>
+<p>If psychic healing is possible, then perhaps these things are also possible: psychic body-building, psychic penis-lengthening, psychic wrist-enlargement, and psychic selective-fat-burning?</p>
+<h3 id="what-do-i-need-to-awaken-psychic-powers"><span class="section_number">1.6</span><span class="section_title">&lt;2019-10-01&gt; What do I need to awaken psychic powers?</span></h3>
+<p>I think I only need two things: myself and time.</p>
+<h3 id="is-fasting-necessary-for-psychic"><span class="section_number">1.7</span><span class="section_title">&lt;2019-10-01&gt; Is fasting necessary for psychic?</span></h3>
+<h3 id="does-myopia-interfere-with-astral-travel"><span class="section_number">1.8</span><span class="section_title">&lt;2019-10-01&gt; Does myopia interfere with astral travel?</span></h3>
+<p>If you have poor vision, are you doomed to have poor psychic vision? How does psychic vision even work? What are the eyes for when we are out-of-body? Do congenitally blind people see when they astral-travel?</p>
+<h3 id="other-questions"><span class="section_number">1.9</span><span class="section_title">&lt;2019-10-01&gt; Other questions</span></h3>
+<p>If everybody is supposed to be psychic, but in reality few people are psychic, then, what is preventing most people from being psychic?</p>
+<p>Is it possible for mediums to contact a soul from the <em>future</em>?</p>
+<p>If remote viewing and reincarnation are possible, then perhaps there should exist souls <em>in the future</em> or <em>from the future</em>.</p>
+<h3 id="is-meditation-effective-for-entering-alpha-state-in-noisy-environment"><span class="section_number">1.10</span><span class="section_title">&lt;2019-09-28&gt; Is meditation effective for entering alpha state in noisy environment?</span></h3>
+<p>Is there an EEG of a meditator in noisy environment?</p>
+<h2 id="on-consciousness"><span class="section_number">2</span><span class="section_title">On consciousness</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#what-is-the-problem-with-kastrups-idea-individual-consciousness-dissociates-from-cosmicuniversal-consciousness">&lt;2019-11-04&gt; What is the problem with Kastrup's idea (individual consciousness dissociates from cosmic/universal consciousness)?</a></span><span class="word_count">(235w~2m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#what-are-the-problems-with-thomas-metzingers-transparent-self-model">&lt;2019-10-31&gt; What are the problems with Thomas Metzinger's transparent self-model?</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#why-do-all-human-brains-follow-the-same-layoutarchitectureblueprint">&lt;2019-11-04&gt; Why do all human brains follow the same layout/architecture/blueprint?</a></span><span class="word_count">(62w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#how-do-we-measure-consciousness-ability-to-know">&lt;2018-11-04&gt; How do we measure consciousness (ability to know)?</a></span><span class="word_count">(138w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#is-there-a-neural-correlate-for-poltergeist-or-telekinesis">&lt;2019-11-04&gt; Is there a neural correlate for poltergeist or telekinesis?</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">2.6</span><span class="section_title"><a href="#functional-imaging-of-brain-on-telepathy">&lt;2019-11-04&gt; Functional imaging of brain on telepathy?</a></span><span class="word_count">(24w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-is-the-problem-with-kastrups-idea-individual-consciousness-dissociates-from-cosmicuniversal-consciousness"><span class="section_number">2.1</span><span class="section_title">&lt;2019-11-04&gt; What is the problem with Kastrup's idea (individual consciousness dissociates from cosmic/universal consciousness)?</span></h3>
+<p>I got that idea from somewhere. I need to find the citations.</p>
+<p>If I am the only thing that exists, why can't I make the world do what I want? Two possibilities:</p>
+<ul>
+<li>I am not the only thing that exists, or</li>
+<li>I am not who I think I am; perhaps it is just my linguistic mind, which is only a part of me, and not I, that wants it, and thus it does not happen.</li>
+</ul>
+<p>Perhaps solipsism is right but our concept of &quot;I&quot; is wrong.</p>
+<p>Bernardo Kastrup proposes a solution to the mind-body problem. He proposes an ontology that is &quot;more parsimonious and empirically rigorous&quot; than mainstream ontologies are.<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a><a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a><a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> The key is the brain activity of people with <em>dissociative identity disorder</em>.<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a></p>
+<p>Its simplicity is genius?</p>
+<p>It has deep implications. If it becomes mainstream, we will witness a paradigm shift.</p>
+<p>It explains all paranormal phenomenons: reincarnation, anomalous cognition, psychokinesis, and so on.</p>
+<p>Perhaps it also answers Brian D. Josephson<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>'s &quot;mind-matter unification project&quot;.</p>
+<p>The difference between Kastrup and other philosophers is that his theory is based on <em>empirical evidence</em>, whereas other theories are based on thought experiments. Thus, I think we can just read Kastrup directly, skip Chalmers 2018 <span class="citation" data-cites="chalmers2018meta">[<a href="#ref-chalmers2018meta">1</a>]</span>, and skip the Part IV of a 2001 thick book <span class="citation" data-cites="moreira2011exploring">[<a href="#ref-moreira2011exploring">5</a>]</span>. Or perhaps I'm just in a honeymoon with a shiny new thing.</p>
+<p>What is it like, the subjective experience of the cosmic consciousness?</p>
+<h3 id="what-are-the-problems-with-thomas-metzingers-transparent-self-model"><span class="section_number">2.2</span><span class="section_title">&lt;2019-10-31&gt; What are the problems with Thomas Metzinger's transparent self-model?</span></h3>
+<p>&lt;2019-10-31&gt; <a href="https://www.edge.org/response-detail/10461">https://www.edge.org/response-detail/10461</a></p>
+<p>Metzinger 2004 <span class="citation" data-cites="metzinger2004being">[<a href="#ref-metzinger2004being">3</a>]</span>:</p>
+<blockquote>
+<p>[…] Its main thesis […] Nobody ever <em>was</em> or <em>had</em> a self. […] (p. 1)</p>
+</blockquote>
+<p>Materialist?</p>
+<h3 id="why-do-all-human-brains-follow-the-same-layoutarchitectureblueprint"><span class="section_number">2.3</span><span class="section_title">&lt;2019-11-04&gt; Why do all human brains follow the same layout/architecture/blueprint?</span></h3>
+<p>Because we share a common genetic code?</p>
+<p>For example, does everyone have a fusiform gyrus?</p>
+<p>Does each fusiform gyrus have the same relative location in each brain and have the same relative function (i.e. facial recognition) in each brain?</p>
+<p>Does everyone have a prefrontal cortex?</p>
+<p>Because they are programmed to do so? The genes are the program?</p>
+<h3 id="how-do-we-measure-consciousness-ability-to-know"><span class="section_number">2.4</span><span class="section_title">&lt;2018-11-04&gt; How do we measure consciousness (ability to know)?</span></h3>
+<p>How do we measure whether X has more consciousness than Y?</p>
+<p><em>Degree of consciousness is a continuum.</em></p>
+<p>I was conscious when I wrote this. There was a time after I was born but before I became conscious. There isn't any point in time when I suddenly become conscious.</p>
+<ul>
+<li><a href="https://www.quora.com/Do-babies-have-consciousness">Quora: Do babies have consciousness?</a>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Mirror_test">WP:Mirror test</a> tests visual self-awareness.</li>
+<li><a href="https://www.youtube.com/watch?v=k-_Lgg2D4kM">YT:Self-recognition test, aka the 'Rouge Test': Johnny and Eden at 15 months</a>
+<ul>
+<li>15-month-old babies might fail the test.</li>
+</ul></li>
+</ul></li>
+<li>Glasgow coma scale, operational definition of consciousness</li>
+<li><em>ConsScale</em> is a biologically-inspired scale for measuring cognitive development in natural and artificial creatures. <a href="http://www.conscious-robots.com/consscale/">http://www.conscious-robots.com/consscale/</a></li>
+<li>what? <a href="https://resonance.is/quantum-experiment-test-human-consciousness-beyond-physical-world/">https://resonance.is/quantum-experiment-test-human-consciousness-beyond-physical-world/</a></li>
+<li>How do we measure consciousness?
+<ul>
+<li>Extensional measurement
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Glasgow_Coma_Scale">WP:Glasgow Coma Scale</a>?</li>
+<li><a href="http://www.abiroh.com/en/what-science-has-forgotten/196.html">abiroh.com</a>: detect consciousness by anomaly in the output of a hardware random number generator</li>
+<li>Extensional measurement is unsatisfactory. It doesn't explain how consciousness works.</li>
+</ul></li>
+<li>Intensional measurement?
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Integrated_information_theory">WP:Integrated information theory</a>, 2004</li>
+</ul></li>
+</ul></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.4.1</span><span class="section_title"><a href="#glasgow-coma-scale">Glasgow coma scale?</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">2.4.2</span><span class="section_title"><a href="#tononi-et-al.-zap-and-zip-method">Tononi et al. zap-and-zip method</a></span><span class="word_count">(5w~1m)</span></li>
+</ul>
+</div>
+<h4 id="glasgow-coma-scale"><span class="section_number">2.4.1</span><span class="section_title">Glasgow coma scale?</span></h4>
+<h4 id="tononi-et-al.-zap-and-zip-method"><span class="section_number">2.4.2</span><span class="section_title">Tononi et al. zap-and-zip method</span></h4>
+<h3 id="is-there-a-neural-correlate-for-poltergeist-or-telekinesis"><span class="section_number">2.5</span><span class="section_title">&lt;2019-11-04&gt; Is there a neural correlate for poltergeist or telekinesis?</span></h3>
+<p>Poltergeist is due to the person, ghost is due to the place.</p>
+<p>Poltergeist is unconscious telekinesis.</p>
+<p>Is there a brain area or a pattern of brain activity responsible for poltergeists or telekinesis?</p>
+<h3 id="functional-imaging-of-brain-on-telepathy"><span class="section_number">2.6</span><span class="section_title">&lt;2019-11-04&gt; Functional imaging of brain on telepathy?</span></h3>
+<p>What journal is this? Who are these people? 2008 article &quot;Investigating paranormal phenomena: Functional brain imaging of telepathy&quot;<span class="citation" data-cites="venkatasubramanian2008investigating">[<a href="#ref-venkatasubramanian2008investigating">6</a>]</span>.</p>
+<h2 id="on-traditions"><span class="section_number">3</span><span class="section_title">On traditions</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#are-these-legitimate-daoism-qigong-neigong-chinese-stuff">&lt;2019-10-30&gt; Are these legitimate: Daoism, Qigong, Neigong, Chinese stuff?</a></span><span class="word_count">(144w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#is-there-scientific-spiritualism">&lt;2019-11-04&gt; Is there scientific spiritualism?</a></span><span class="word_count">(26w~1m)</span></li>
+</ul>
+</div>
+<h3 id="are-these-legitimate-daoism-qigong-neigong-chinese-stuff"><span class="section_number">3.1</span><span class="section_title">&lt;2019-10-30&gt; Are these legitimate: Daoism, Qigong, Neigong, Chinese stuff?</span></h3>
+<p>The pinyin spelling is &quot;dao&quot;.</p>
+<p>If Daodejing were a military manual, how on Earth did it become a bible?<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a> Or is it never a bible?</p>
+<p>On fapping and jing</p>
+<p>When ejaculating, does eating sperm preserve jing?</p>
+<p>Are there psychics who have sex/fap a lot? There are married psychics and they probably have sex?</p>
+<p>Real stuff, ancient fiction, or modern misinterpretation?</p>
+<p>Minimum jing requirement? <a href="http://projectavalon.net/forum4/showthread.php?87212-Living-Nei-Kung-schools--the-story-of-John-Chang-">http://projectavalon.net/forum4/showthread.php?87212-Living-Nei-Kung-schools--the-story-of-John-Chang-</a></p>
+<p>Evidence for jing, qi, shen, daoism? How do we test it?</p>
+<p>What?</p>
+<p><a href="https://www.aetherius.org/shop/unlock-your-psychic-powers/">https://www.aetherius.org/shop/unlock-your-psychic-powers/</a></p>
+<p><a href="https://flowingzen.com/17310/how-to-feel-qi-energy-without-waiting-years/">https://flowingzen.com/17310/how-to-feel-qi-energy-without-waiting-years/</a></p>
+<p>Claims to test:</p>
+<blockquote>
+<p>Having accumulated enough jing, you no longer think of sex; having accumulated enough qi, you no longer feel hungry; having accumulated enough shen, you no longer need to sleep. &lt;2019-10-03&gt; <a href="https://www.thedaobums.com/topic/28199-taoist-proof-that-we-cant-ignore/">https://www.thedaobums.com/topic/28199-taoist-proof-that-we-cant-ignore/</a></p>
+</blockquote>
+<p>What about the book <span class="citation" data-cites="danaos2000magus">[<a href="#ref-danaos2000magus">2</a>]</span>?</p>
+<p>It is Kosta Danaos's account of John Chang.</p>
+<p>John was a level-4-of-72 neigong master at the time that book was written.</p>
+<p>Kosta and John did some experiments and had some hypotheses about yin and yang.</p>
+<h3 id="is-there-scientific-spiritualism"><span class="section_number">3.2</span><span class="section_title">&lt;2019-11-04&gt; Is there scientific spiritualism?</span></h3>
+<p>How do we extract the scientifically testable parts of Daoism, Hinduism, Sufism, and other spiritual/mystical traditions? Is Theosophy free from kooky stuff?</p>
+<h2 id="which-ions-experiments-are-relevant-to-my-research"><span class="section_number">4</span><span class="section_title">&lt;2019-11-04&gt; Which IONS experiments are relevant to my research?</span></h2>
+<p>The Institute of Noetic Sciences (IONS) has <em>lots</em> of experiments and plans.<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a> Quantum what.<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a><a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a><a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a><a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a><a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a><a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a><a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a> Healing what.<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a> Statistics what.<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a><a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a> Psychophysiology what.<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a><a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a><a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a><a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a><a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a><a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a><a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a> Global what.<a href="#fn36" class="footnote-ref" id="fnref36"><sup>36</sup></a><a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a> What.<a href="#fn38" class="footnote-ref" id="fnref38"><sup>38</sup></a><a href="#fn39" class="footnote-ref" id="fnref39"><sup>39</sup></a><a href="#fn40" class="footnote-ref" id="fnref40"><sup>40</sup></a><a href="#fn41" class="footnote-ref" id="fnref41"><sup>41</sup></a><a href="#fn42" class="footnote-ref" id="fnref42"><sup>42</sup></a><a href="#fn43" class="footnote-ref" id="fnref43"><sup>43</sup></a><a href="#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a><a href="#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a><a href="#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a><a href="#fn47" class="footnote-ref" id="fnref47"><sup>47</sup></a><a href="#fn48" class="footnote-ref" id="fnref48"><sup>48</sup></a></p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">5</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-chalmers2018meta">
+<p>[1] Chalmers, D.J. 2018. The meta-problem of consciousness. <em>Journal of Consciousness Studies</em>. 25, 9-10 (2018), 6–61. url: &lt;<a href="https://philpapers.org/archive/CHATMO-32.pdf">https://philpapers.org/archive/CHATMO-32.pdf</a>&gt;.</p>
+</div>
+<div id="ref-danaos2000magus">
+<p>[2] Danaos, K. 2000. <em>The magus of java: Teachings of an authentic taoist immortal</em>. Simon; Schuster.</p>
+</div>
+<div id="ref-metzinger2004being">
+<p>[3] Metzinger, T. 2004. <em>Being no one: The self-model theory of subjectivity</em>. MIT Press.</p>
+</div>
+<div id="ref-morehouse2007remote">
+<p>[4] Morehouse, D. 2007. <em>Remote viewing: The complete user’s manual for coordinate remote viewing</em>. Sounds True.</p>
+</div>
+<div id="ref-moreira2011exploring">
+<p>[5] Moreira-Almeida, A. and Santos, F.S. eds. 2011. <em>Exploring frontiers of the mind-brain relationship</em>. Springer Science &amp; Business Media.</p>
+</div>
+<div id="ref-venkatasubramanian2008investigating">
+<p>[6] Venkatasubramanian, G. et al. 2008. Investigating paranormal phenomena: Functional brain imaging of telepathy. <em>International journal of yoga</em>. 1, 2 (2008), 66. url: &lt;<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3144613/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3144613/</a>&gt;.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-11-03&gt; <a href="https://www.bibliotecapleyades.net/vision_remota/esp_visionremota_9.htm">https://www.bibliotecapleyades.net/vision_remota/esp_visionremota_9.htm</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-11-02&gt; backup link <a href="http://www.pauladaunt.com/books/Banned%20books%20and%20conspiracy%20theories/Remote%20Viewing%20By%20Tim%20Rifat.pdf">http://www.pauladaunt.com/books/Banned%20books%20and%20conspiracy%20theories/Remote%20Viewing%20By%20Tim%20Rifat.pdf</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&lt;2019-11-02&gt; backup link <a href="http://fliphtml5.com/yfsq/knbz">http://fliphtml5.com/yfsq/knbz</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>&lt;2019-11-03&gt; <a href="https://en.wikipedia.org/wiki/Schumann_resonances">https://en.wikipedia.org/wiki/Schumann_resonances</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>&lt;2019-11-03&gt; <a href="https://www.bibliotecapleyades.net/vision_remota/esp_visionremota_9e.htm">https://www.bibliotecapleyades.net/vision_remota/esp_visionremota_9e.htm</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>&lt;2019-11-03&gt; <a href="https://www.bibliotecapleyades.net/vision_remota/esp_visionremota_9f.htm">https://www.bibliotecapleyades.net/vision_remota/esp_visionremota_9f.htm</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>&lt;2019-11-03&gt; <a href="https://www.bibliotecapleyades.net/vision_remota/esp_visionremota_9g.htm">https://www.bibliotecapleyades.net/vision_remota/esp_visionremota_9g.htm</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>&lt;2019-10-29&gt; <a href="http://www.innerworlddesigns.com/circle/book12/pdf/Robert%20Bruce%20-%20New%20Energy%20Ways.pdf">http://www.innerworlddesigns.com/circle/book12/pdf/Robert%20Bruce%20-%20New%20Energy%20Ways.pdf</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://robjo.files.wordpress.com/2007/10/stam.pdf">https://robjo.files.wordpress.com/2007/10/stam.pdf</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>&lt;2019-11-02&gt; <a href="https://en.wikipedia.org/wiki/Theta_wave">https://en.wikipedia.org/wiki/Theta_wave</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>&lt;2019-10-29&gt; <a href="http://www.psychedelic-library.org/soccont.htm">http://www.psychedelic-library.org/soccont.htm</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>&lt;2019-09-13&gt; <a href="https://www.freewiki.eu/en/index.php?title=Bernardo_Kastrup">https://www.freewiki.eu/en/index.php?title=Bernardo_Kastrup</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>&lt;2019-09-13&gt; What Can We Learn From Bizarre Phenomena? with Bernardo Kastrup <a href="https://www.youtube.com/watch?v=tWpKB7n4dRs">https://www.youtube.com/watch?v=tWpKB7n4dRs</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>&lt;2019-09-13&gt; <a href="https://www.bernardokastrup.com/p/papers.html">https://www.bernardokastrup.com/p/papers.html</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p>&lt;2019-09-13&gt; <a href="https://blogs.scientificamerican.com/observations/could-multiple-personality-disorder-explain-life-the-universe-and-everything/">https://blogs.scientificamerican.com/observations/could-multiple-personality-disorder-explain-life-the-universe-and-everything/</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p><a href="http://www.tcm.phy.cam.ac.uk/~bdj10/">http://www.tcm.phy.cam.ac.uk/~bdj10/</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p>&lt;2019-10-30&gt; <a href="https://taoism101.wordpress.com/2013/02/12/tao-te-ching-bullshit/">https://taoism101.wordpress.com/2013/02/12/tao-te-ching-bullshit/</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p><a href="https://noetic.org/science/experiments/">https://noetic.org/science/experiments/</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p><a href="https://noetic.org/research/next-generation-double-slit/">https://noetic.org/research/next-generation-double-slit/</a><a href="#fnref19" class="footnote-back">↩</a></p></li>
+<li id="fn20"><p><a href="https://noetic.org/research/multiple-entangled-photons/">https://noetic.org/research/multiple-entangled-photons/</a><a href="#fnref20" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p><a href="https://noetic.org/research/missing-photon-experiment/">https://noetic.org/research/missing-photon-experiment/</a><a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p><a href="https://noetic.org/research/double-slit-experiment/">https://noetic.org/research/double-slit-experiment/</a><a href="#fnref22" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p><a href="https://noetic.org/research/does-consciousness-interact-with-the-quantum-wavefunction/">https://noetic.org/research/does-consciousness-interact-with-the-quantum-wavefunction/</a><a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn24"><p><a href="https://noetic.org/research/quantum-observer-test/">https://noetic.org/research/quantum-observer-test/</a><a href="#fnref24" class="footnote-back">↩</a></p></li>
+<li id="fn25"><p><a href="https://noetic.org/research/entangled-photons/">https://noetic.org/research/entangled-photons/</a><a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn26"><p><a href="https://noetic.org/research/consciousness-and-breast-cancer/">https://noetic.org/research/consciousness-and-breast-cancer/</a><a href="#fnref26" class="footnote-back">↩</a></p></li>
+<li id="fn27"><p><a href="https://noetic.org/research/implicit-beliefs-in-the-study-of-experimenter-effects-in-the-replication-of-psi-experiments-a-global-initiative/">https://noetic.org/research/implicit-beliefs-in-the-study-of-experimenter-effects-in-the-replication-of-psi-experiments-a-global-initiative/</a><a href="#fnref27" class="footnote-back">↩</a></p></li>
+<li id="fn28"><p><a href="https://noetic.org/research/analysis-of-gotpsi-data/">https://noetic.org/research/analysis-of-gotpsi-data/</a><a href="#fnref28" class="footnote-back">↩</a></p></li>
+<li id="fn29"><p><a href="https://noetic.org/research/psi-performance-meditation-retreats/">https://noetic.org/research/psi-performance-meditation-retreats/</a><a href="#fnref29" class="footnote-back">↩</a></p></li>
+<li id="fn30"><p><a href="https://noetic.org/research/extraordinary-experiences-and-performance-on-psi-tasks-during-and-after-meditation-classes-and-retreats/">https://noetic.org/research/extraordinary-experiences-and-performance-on-psi-tasks-during-and-after-meditation-classes-and-retreats/</a><a href="#fnref30" class="footnote-back">↩</a></p></li>
+<li id="fn31"><p><a href="https://noetic.org/research/accuracy-and-neural-correlates-of-blinded-mediumship-compared-to-controls/">https://noetic.org/research/accuracy-and-neural-correlates-of-blinded-mediumship-compared-to-controls/</a><a href="#fnref31" class="footnote-back">↩</a></p></li>
+<li id="fn32"><p><a href="https://noetic.org/research/psychophysiological-correlates-of-nondual-states-of-awareness/">https://noetic.org/research/psychophysiological-correlates-of-nondual-states-of-awareness/</a><a href="#fnref32" class="footnote-back">↩</a></p></li>
+<li id="fn33"><p><a href="https://noetic.org/research/psychophysiology-spiritual-transmission-preliminary-investigation/">https://noetic.org/research/psychophysiology-spiritual-transmission-preliminary-investigation/</a><a href="#fnref33" class="footnote-back">↩</a></p></li>
+<li id="fn34"><p><a href="https://noetic.org/research/unconditional-love-in-silicon-valley/">https://noetic.org/research/unconditional-love-in-silicon-valley/</a><a href="#fnref34" class="footnote-back">↩</a></p></li>
+<li id="fn35"><p><a href="https://noetic.org/research/reproductive-hormonal-status-as-a-predictor-of-precognition/">https://noetic.org/research/reproductive-hormonal-status-as-a-predictor-of-precognition/</a><a href="#fnref35" class="footnote-back">↩</a></p></li>
+<li id="fn36"><p><a href="https://noetic.org/research/collective-consciousness/">https://noetic.org/research/collective-consciousness/</a><a href="#fnref36" class="footnote-back">↩</a></p></li>
+<li id="fn37"><p><a href="https://noetic.org/research/global-consciousness-project/">https://noetic.org/research/global-consciousness-project/</a><a href="#fnref37" class="footnote-back">↩</a></p></li>
+<li id="fn38"><p><a href="https://noetic.org/research/effects-virtual-reality-awe/">https://noetic.org/research/effects-virtual-reality-awe/</a><a href="#fnref38" class="footnote-back">↩</a></p></li>
+<li id="fn39"><p><a href="https://noetic.org/research/ions-channeling-research-program/">https://noetic.org/research/ions-channeling-research-program/</a><a href="#fnref39" class="footnote-back">↩</a></p></li>
+<li id="fn40"><p><a href="https://noetic.org/research/compassionate-intention-prayer-distant-healing/">https://noetic.org/research/compassionate-intention-prayer-distant-healing/</a><a href="#fnref40" class="footnote-back">↩</a></p></li>
+<li id="fn41"><p><a href="https://noetic.org/research/meeting-of-the-minds/">https://noetic.org/research/meeting-of-the-minds/</a><a href="#fnref41" class="footnote-back">↩</a></p></li>
+<li id="fn42"><p><a href="https://noetic.org/research/markov-chain/">https://noetic.org/research/markov-chain/</a><a href="#fnref42" class="footnote-back">↩</a></p></li>
+<li id="fn43"><p><a href="https://noetic.org/research/psi-arcade/">https://noetic.org/research/psi-arcade/</a><a href="#fnref43" class="footnote-back">↩</a></p></li>
+<li id="fn44"><p><a href="https://noetic.org/research/gaias-dreams/">https://noetic.org/research/gaias-dreams/</a><a href="#fnref44" class="footnote-back">↩</a></p></li>
+<li id="fn45"><p><a href="https://noetic.org/research/fred/">https://noetic.org/research/fred/</a><a href="#fnref45" class="footnote-back">↩</a></p></li>
+<li id="fn46"><p><a href="https://noetic.org/research/effects-of-distant-intention-on-water-crystal-formation/">https://noetic.org/research/effects-of-distant-intention-on-water-crystal-formation/</a><a href="#fnref46" class="footnote-back">↩</a></p></li>
+<li id="fn47"><p><a href="https://noetic.org/research/psiq/">https://noetic.org/research/psiq/</a><a href="#fnref47" class="footnote-back">↩</a></p></li>
+<li id="fn48"><p><a href="https://noetic.org/research/seeing-the-future/">https://noetic.org/research/seeing-the-future/</a><a href="#fnref48" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-11-04 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
