@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <div class="local_table_of_contents">
 <ul>
 <li><span class="section_number">1</span><span class="section_title"><a href="#introduction">Introduction</a></span><span class="word_count">(85w~1m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#starting-with-assembly">Starting with assembly</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#starting-with-assembly">Starting with assembly</a></span><span class="word_count">(260w~2m)</span></li>
 </ul>
 </div>
 <h2 id="introduction"><span class="section_number">1</span><span class="section_title">Introduction</span></h2>
@@ -198,7 +198,33 @@ document.addEventListener("DOMContentLoaded", function () {
 </code></pre>
 <p>Macro Assembler (MASM)? TASM, NASM, what?</p>
 <p>There does not exist a computer with infinite memory. Why do we pretend, with garbage collection, that the computer had infinite memory? Because it simplifies most problems?</p>
-<p>What is the problem with these: High-Level Assembly, Typed Assembly Language, LLVM IR, MSIL, JVM bytecodes?</p>
+<p>What is the problem with these: High-Level Assembly, typed assembly languages such as TALx86 <span class="citation" data-cites="crary1999talx86">[<a href="#ref-crary1999talx86">1</a>]</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, LLVM IR, MSIL, JVM bytecodes?</p>
+<p>We can add a type system to assembly language to enforce constraints like these:</p>
+<ul>
+<li>&quot;Add-integer&quot; takes two integers.</li>
+<li>&quot;Add-pointer&quot; takes a pointer of alignment N and an integer that is an integral multiple of N.</li>
+<li>It is illegal to add two pointers.</li>
+</ul>
+<p>For example, a type may be:</p>
+<ul>
+<li><code>Integer N</code> where N is 1, 2, 4, or 8</li>
+<li><code>Pointer A</code> where A is the alignment (1, 2, 4, or 8)</li>
+</ul>
+<p>One difficulty is that the same register may sometimes contain an integer and sometimes contain a pointer.</p>
+<p>We can &quot;solve&quot; that with Static Single Assignment (SSA) Form and automatic register allocation.</p>
+<p>But perhaps the bigger issue is to abstract away the difference between processors; why should we care if it is an Intel processor, a Motorola processor, a Symbolics Lisp machine, or something else?</p>
+<p>Even though the machine does not know about subroutines, we organize our programs into subroutines; we find it more convenient to work with subroutines than to work with instructions. We feel that the instructions are too finely-grained, unnecessarily detailed.</p>
+<div id="refs" class="references">
+<div id="ref-crary1999talx86">
+<p>[1] Crary, K. et al. 1999. TALx86: A realistic typed assembly language. <em>1999 acm sigplan workshop on compiler support for system software atlanta, ga, usa</em> (1999), 25–35.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-11-04&gt; <a href="https://www.cis.upenn.edu/~stevez/papers/MCGG99.pdf">https://www.cis.upenn.edu/~stevez/papers/MCGG99.pdf</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
                 </div>
             </div>
         </main>

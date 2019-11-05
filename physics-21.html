@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>(Draft) A crash course on 21st-century physics, with emphasis on modeling</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">(Draft) A crash course on 21st-century physics, with emphasis on modeling</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#to-understand-is-to-model-accurately">To understand is to model accurately</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#physics-and-mathematics">Physics and mathematics</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#euclidean-spaces-vs-real-tuple-spaces">Euclidean spaces vs real tuple spaces</a></span><span class="word_count">(32w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#newton-model-of-transverse-waves-or-surface-waves">Newton model of transverse waves or surface waves</a></span><span class="word_count">(213w~2m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#derivatives">Derivatives</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#modeling-the-evolution-of-a-many-body-system">Modeling the evolution of a many-body system</a></span><span class="word_count">(850w~5m)</span></li>
+</ul>
+</div>
+<h2 id="to-understand-is-to-model-accurately"><span class="section_number">1</span><span class="section_title">To understand is to model accurately</span></h2>
+<p>To understand something is to create a reasonably accurate model (internal mental model) of it.</p>
+<p>I want to write a physics book with emphasis in <em>modeling</em>, because that is what physics is.</p>
+<h2 id="physics-and-mathematics"><span class="section_number">2</span><span class="section_title">Physics and mathematics</span></h2>
+<p>Physics is about understanding (and therefore creating a reasonably accurate model of) reality, and mathematics is its tool for concise precise communication.</p>
+<h2 id="euclidean-spaces-vs-real-tuple-spaces"><span class="section_number">3</span><span class="section_title">Euclidean spaces vs real tuple spaces</span></h2>
+<p>They are isomorphic, but they are not the same.</p>
+<p>An Euclidean space is a set of points.</p>
+<p>A real tuple space is a set of tuples of real numbers.</p>
+<h2 id="newton-model-of-transverse-waves-or-surface-waves"><span class="section_number">4</span><span class="section_title">Newton model of transverse waves or surface waves</span></h2>
+<p>A wave is modeled by a function</p>
+<p>f : Position × Time → Amplitude</p>
+<p>The interpretation is: &quot;At time <span class="math inline">\(t\)</span>, the amplitude of the part of the wave at point <span class="math inline">\(x\)</span> is <span class="math inline">\(f(x,t)\)</span>&quot;.</p>
+<p>Amplitude is displacement from resting position.</p>
+<p>That is, a wave is often modeled as an <em>amplitude field</em>. (In mathematical physics, an &quot;X field&quot; is a function from position to X.)</p>
+<p>Example phenomena that can be modeled with periodic functions: the motion of a pendulum, the surface waves of water in a pond, the oscillation of a guitar string.</p>
+<p>Often, the wave is extrapolated to infinity. For example, when modeling a pond, we often assume that the pond is infinite, it has no edges, and waves do not reflect off the edges. We assume that wave propagate freely without hitting any obstacles, without reflection, without diffraction.</p>
+<p>If we use the simplifying assumption that a wave repeats infinitely in both space and time, then we can define wavelength and period:</p>
+<p>A wave has <em>wavelength</em> <span class="math inline">\( |dx| \)</span> iff <span class="math inline">\( dx \)</span> is a shortest vector (the shortest vector) such that <span class="math inline">\(f(x+dx,t) = f(x,t)\)</span> for all <span class="math inline">\( t \)</span>.</p>
+<p>A wave has <em>period</em> <span class="math inline">\( dt \)</span> iff <span class="math inline">\( dt \)</span> is the smallest positive number such that <span class="math inline">\(f(x,t+dt) = f(x,t)\)</span> for all <span class="math inline">\( x \)</span>.</p>
+<p>That is, wavelength is spatial periodicity, and period is temporal periodicity.</p>
+<h2 id="derivatives"><span class="section_number">5</span><span class="section_title">Derivatives</span></h2>
+<p>We define:</p>
+<span class="math display">\[\begin{align*}
+Df = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}
+\end{align*}
+\]</span>
+<p>Note that <span class="math inline">\(Df\)</span> notates a function, read &quot;derivative of <span class="math inline">\(f\)</span>&quot;, not &quot;<span class="math inline">\(D\)</span> multiplied by <span class="math inline">\(f\)</span>&quot;.</p>
+<p>Note that <span class="math inline">\([Df](x)\)</span> notates the output produced by function <span class="math inline">\(Df\)</span> for input <span class="math inline">\(x\)</span>.</p>
+<p>The concept of derivative is required for Newton's model of a many-body system.</p>
+<p>Exercise: If <span class="math inline">\(f(x) = x^2\)</span>, evaluate <span class="math inline">\([Df](5)\)</span>.</p>
+<h2 id="modeling-the-evolution-of-a-many-body-system"><span class="section_number">6</span><span class="section_title">Modeling the evolution of a many-body system</span></h2>
+<p>Consider a system that consists of several tiny bodies in motion.</p>
+<p>A body is presumed to be rigid, indivisible, to occupy no space. It is tacitly assumed that bodies do not collide with each other.</p>
+<p>(What is motion?)</p>
+<p>Newton, Lagrange, Hamilton, Schrödinger, and Einstein are about modeling the evolution of a many-body system. It is about identifying tacit simplifying assumptions and relaxing them. Relaxing a tacit simplifying assumption produces a theory that is more complex but more accurate.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#newton-model-of-a-many-body-system">Newton model of a many-body system</a></span><span class="word_count">(274w~2m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#lagrange-model-of-a-many-body-system">Lagrange model of a many-body system</a></span><span class="word_count">(98w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#hamilton-model-of-a-many-body-system">Hamilton model of a many-body system</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#schrödinger-model-of-a-many-body-system">Schrödinger model of a many-body system</a></span><span class="word_count">(121w~1m)</span></li>
+<li><span class="section_number">6.5</span><span class="section_title"><a href="#einstein-model-of-a-many-body-system">Einstein model of a many-body system</a></span><span class="word_count">(231w~2m)</span></li>
+<li><span class="section_number">6.6</span><span class="section_title"><a href="#the-next-model">The next model?</a></span><span class="word_count">(45w~1m)</span></li>
+</ul>
+</div>
+<h3 id="newton-model-of-a-many-body-system"><span class="section_number">6.1</span><span class="section_title">Newton model of a many-body system</span></h3>
+<p>The interpretation is: &quot;At time <span class="math inline">\( t \)</span>, the position of body <span class="math inline">\( k \)</span> is <span class="math inline">\( x_k(t) \)</span>&quot;.</p>
+<p>For each body <span class="math inline">\( k \)</span>, its trajectory is modeled as a function <span class="math inline">\(x_k\)</span> : Time → Position, where time is modeled as a real number, and a body's position is modeled as a point in a three-dimensional Euclidean space.</p>
+<p>Newton's second law: Iff <span class="math inline">\(F(t)\)</span> is the sum of all forces acting on an object at time <span class="math inline">\(t\)</span>, and iff <span class="math inline">\( p(t) \)</span> is the object's momentum at time <span class="math inline">\(t\)</span>, then <span class="math inline">\( F = Dp \)</span>.</p>
+<p>Iff <span class="math inline">\( x(t) \)</span> is an object's position at time <span class="math inline">\(t\)</span>, and <span class="math inline">\( p(t) \)</span> is the object's momentum at time <span class="math inline">\(t\)</span>, and iff the object's mass is constant <span class="math inline">\(m\)</span>, then <span class="math inline">\( p(t) = m \cdot [D x](t) \)</span>, or, <span class="math inline">\( p = m \cdot D x \)</span>, but note that <span class="math inline">\(m\)</span> is a scalar and <span class="math inline">\(Dx\)</span> is a function (which is a vector in a function space, in the generalized mathematical sense), and thus <span class="math inline">\(m \cdot Dx\)</span> can be thought of as &quot;<span class="math inline">\(Dx\)</span> scaled by <span class="math inline">\(m\)</span>&quot;.</p>
+<p><span class="math inline">\( F_k(t) \)</span> is the sum of forces acting on object <span class="math inline">\(k\)</span> at time <span class="math inline">\(t\)</span>.</p>
+<p>Because acceleration is the second time-derivative of position, we can substitute <span class="math inline">\( a_k = D(Dx_k) \)</span> into <span class="math inline">\( F_k = m_k \cdot a_k \)</span> to obtain <span class="math inline">\( F_k = m_k \cdot D(Dx_k) \)</span>.</p>
+<p>If the bodies are celestial objects, then the shape of <span class="math inline">\( F_k \)</span> is determined by Newton's law of universal gravitation.</p>
+<p>Thus, in the Newton model, the entire system of <span class="math inline">\( n \)</span> bodies is modeled as <span class="math inline">\( n \)</span> differential equations, in which each differential equation has the shape <span class="math inline">\( F_k(t) = m_k \cdot [D(Dx)](t) \)</span>, where the expression <span class="math inline">\( F_k \)</span> usually contains <span class="math inline">\( x_k \)</span>.</p>
+<p>One should not confuse a function and its expression.</p>
+<h3 id="lagrange-model-of-a-many-body-system"><span class="section_number">6.2</span><span class="section_title">Lagrange model of a many-body system</span></h3>
+<p>You may want to read Lagrange's own words (albeit translated from French into English)<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, from page 169. It has historical context. It may also describe Lagrange's train of thought. It can be downloaded as PDF.</p>
+<p>If the Newton model of an <span class="math inline">\(n\)</span>-body system consists of <span class="math inline">\(n\)</span> differential equations, the Lagrange model of the same system consists of <em>one</em> equation?</p>
+<p>The interpretation is &quot;At time <span class="math inline">\(t\)</span>, the position of body <span class="math inline">\(k\)</span> is <span class="math inline">\(x_k(q_k(t),t)\)</span>&quot;.</p>
+<p><span class="math inline">\( x_k \)</span> : GenCoord-k × Time → Position</p>
+<p>Each GenCoord-k is a real tuple space and may have a dimension different from other GenCoord-i spaces.</p>
+<h3 id="hamilton-model-of-a-many-body-system"><span class="section_number">6.3</span><span class="section_title">Hamilton model of a many-body system</span></h3>
+<h3 id="schrödinger-model-of-a-many-body-system"><span class="section_number">6.4</span><span class="section_title">Schrödinger model of a many-body system</span></h3>
+<p>In the wave-mechanics model, the position of a body is modeled as a parameter of the system's wave function.</p>
+<p>In the wave-mechanics model, the entire system of <span class="math inline">\( n \)</span> bodies is modeled as a function Position-1 × … × Position-n × Time → Complex.</p>
+<p><span class="math inline">\( \psi(x_1, \ldots, x_n, t) \)</span>.</p>
+<p>Key question: What do the parameters of <span class="math inline">\( \psi \)</span> represent?</p>
+<p>In the Schrödinger–Born model, the real number <span class="math inline">\( |\psi(x_1,\ldots,x_n,t)|^2 \)</span> represents the density of the probability of finding, at time <span class="math inline">\(t\)</span>, that body 1 is at <span class="math inline">\(x_1\)</span>, …, and body <span class="math inline">\(n\)</span> is at <span class="math inline">\(x_n\)</span>. That is, the positions of the bodies are not as separate as in the Newton model.</p>
+<p>Read Turgut 2005 crash course?<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>However, people fiercely disagree about the meaning of the wave function.</p>
+<h3 id="einstein-model-of-a-many-body-system"><span class="section_number">6.5</span><span class="section_title">Einstein model of a many-body system</span></h3>
+<p>All the above models of mechanics, both classical and quantum, make tacit assumptions about spacetime (space and time). In particular, they presume that spacetime is absolute and the same everywhere.</p>
+<p>Einstein models replaces the assumption of absolute spacetime (shared by all bodies) with relative (body-specific) spacetime.</p>
+<p>(Here I am using &quot;body&quot; as a synonym of &quot;observer&quot;.)</p>
+<p>In Einstein models, there is no such thing as &quot;the position of body <span class="math inline">\( k \)</span> at time <span class="math inline">\( t \)</span>&quot;; it is replaced with &quot;the position of body <span class="math inline">\( j \)</span> at time <span class="math inline">\( t \)</span> <em>according to body <span class="math inline">\( i \)</span></em>&quot;, that is, <em>both</em> the position and the time are as seen from body <span class="math inline">\(i\)</span>.</p>
+<p>Here we write <span class="math inline">\([i:x_j(t)]\)</span> to mean &quot;the position of body <span class="math inline">\(j\)</span> at time <span class="math inline">\(t\)</span> according to body <span class="math inline">\(i\)</span>&quot;.</p>
+<p>Newton models tacitly assume <span class="math inline">\([i:x_j(t)] = -[j:x_i(t)]\)</span>.</p>
+<p>What does &quot;simultaneous&quot; (&quot;at the same time&quot;) mean in this model?</p>
+<p>How do we know if two things are simultaneous?</p>
+<p>Einstein postulated the constancy of the speed of light in order to make Maxwell's equations to have the same form in all reference frames.</p>
+<p>In special relativity, each body has its own time.</p>
+<p>A body's time is defined operationally as whatever is measured by a clock attached to the body.</p>
+<p>How do we describe curvature?<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>(Notes to functional programmers: Types can help elucidate Einstein's field equations.)</p>
+<p>At the lowest layer, there are only numbers; vectors, matrices, and tensors can be thought of as a meaningful way of grouping numbers.</p>
+<h3 id="the-next-model"><span class="section_number">6.6</span><span class="section_title">The next model?</span></h3>
+<p>A common problem with <em>all</em> those model is that they tacitly assume that spacetime is infinitely divisible like the set of real numbers.</p>
+<p>But what would be the mathematics of non-continuous spaces be like? And what would it imply about the isotropy of space?</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-11-06&gt; <a href="https://archive.org/details/springer_10.1007-978-94-015-8903-1">https://archive.org/details/springer_10.1007-978-94-015-8903-1</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-11-05&gt; Turgut 2005, &quot;A Crash Course on Quantum Mechanics&quot; <a href="http://www.physics.metu.edu.tr/~sturgut/qm.pdf">http://www.physics.metu.edu.tr/~sturgut/qm.pdf</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&lt;2019-11-05&gt; <a href="https://physics.info/general-relativity/">https://physics.info/general-relativity/</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-11-05 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
