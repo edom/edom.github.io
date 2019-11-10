@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On programming language quality</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On programming language quality</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#how-should-we-judge-the-quality-of-a-language">How should we judge the quality of a language?</a></span><span class="word_count">(309w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#how-do-we-judge-or-measure-the-quality-of-a-programming-language">&lt;2019-11-07&gt; How do we judge or measure the quality of a programming language?</a></span><span class="word_count">(109w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#how-do-we-readunderstand-a-program">How do we read/understand a program?</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#promoting-program-analysisunderstanding-by-machines">Promoting program analysis/understanding by machines?</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#rosetta-stone-comparing-programs-that-do-the-same-thing-in-different-languages">Rosetta Stone: comparing programs that do the same thing in different languages</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#measuring-programming-language-quality-by-how-easy-is-it-to-do-the-right-thing">Measuring programming language quality by how easy is it to do the right thing?</a></span><span class="word_count">(48w~1m)</span></li>
+</ul>
+</div>
+<h2 id="how-should-we-judge-the-quality-of-a-language"><span class="section_number">1</span><span class="section_title">How should we judge the quality of a language?</span></h2>
+<p>Because the purpose of language is to communicate, a language should be judged by how much it makes communication efficient.</p>
+<p>Let <span class="math inline">\( L \)</span> be a language.</p>
+<p>Let <span class="math inline">\( T \)</span> be a proficient transmitter of <span class="math inline">\( L \)</span>.</p>
+<p>Let <span class="math inline">\( R \)</span> be a proficient receiver of <span class="math inline">\( L \)</span>.</p>
+<span class="math display">\[\begin{align*}
+\text{quality of language \( L \)} = \frac{\text{amount of meaning communicated successfully}}{\text{effort of \( T \)} + \text{effort of \( R \)}}
+\end{align*}
+\]</span>
+<p>But how do we measure the amount of meaning?</p>
+<p>Secondary criteria:</p>
+<ul>
+<li>expressivity</li>
+<li>learnability (for example, English orthography sucks so bad that native English speakers have difficulty spelling English words)</li>
+</ul>
+<p>One can choose to convey meaning by syntax or by vocabulary.</p>
+<p>My hypothesis:</p>
+<ul>
+<li>If the early speakers of a language need to communicate a concept, they will invent a word for it.</li>
+<li>If the early speakers of a language need to communicate a concept <em>very</em> much, they will invent a <em>syntax</em> (a grammatical construct) for it.</li>
+</ul>
+<p>For example, I think the early English speakers judged that the quantity of a noun is important and when something happens is important, so they embedded those concepts in the syntax instead of in the vocabulary. German speakers judge that the gender of nouns is important. The morphological features of a language reflects what its early speakers think is important to communicate. Hypothesis: The genders of nouns reflect the early speakers' idea of what male is and what female is.</p>
+<p>Does it make sense to ask which one is better between English, French, German, Spanish, and Chinese? Of course anyone can contrive a criterion that puts his own language at the top position.</p>
+<p>As someone whose first language is Indonesian and second language is English, I find it more convenient to use English for technical communication and Indonesian for jokes.</p>
+<p>C promotes memory manipulation. Haskell promotes functional programming. Prolog promotes database and inference.</p>
+<p>There is always a trade-off. If something is made easier, something else must be made harder. If something is encoded shorter, something else must be encoded longer. Language is like Huffman coding built into the brain.</p>
+<h2 id="how-do-we-judge-or-measure-the-quality-of-a-programming-language"><span class="section_number">2</span><span class="section_title">&lt;2019-11-07&gt; How do we judge or measure the quality of a programming language?</span></h2>
+<p>Do not confuse between a programming language and a programming language <em>implementation</em> (interpreters, compilers, etc.).</p>
+<p>It seems to me that most programming language designers neglect the human–human communication aspect of programming languages.</p>
+<p>But how does one <em>narrate</em> a computer program?</p>
+<p>But how does one make machines understand English?</p>
+<p>Should we write programs in Attempto Controlled English?</p>
+<p>A language is judged by how it promotes (or impedes) communication, that is, by how efficiently it transfers the intentions of the writer to the reader.</p>
+<p>An implementation is judged by its efficiency of execution, its speed, its resource usage, its faithfulness to the language it implements.</p>
+<h2 id="how-do-we-readunderstand-a-program"><span class="section_number">3</span><span class="section_title">How do we read/understand a program?</span></h2>
+<p>How do we construct an internal mental model of what a program does?</p>
+<p>First we ask, what does this program do (what does it compute)? We expect one sentence that explains it.</p>
+<p>For example, an explanation for a retail-chain's supply-chain-management program may be:</p>
+<blockquote>
+<p>This program computes (answers the question) &quot;Which things should be sent to which stores, in what quantity, at what time, by which route?&quot;</p>
+</blockquote>
+<h2 id="promoting-program-analysisunderstanding-by-machines"><span class="section_number">4</span><span class="section_title">Promoting program analysis/understanding by machines?</span></h2>
+<p>A programming language (implementation?) should make it easy for people to write programs that read/write/analyze programs.</p>
+<h2 id="what"><span class="section_number">5</span><span class="section_title">What?</span></h2>
+<p>Is there a programming language scoring system? Should we make one?</p>
+<ul>
+<li>Minimum IQ required to understand the language?</li>
+<li>Developer feeling/enjoyment</li>
+<li>Learnability, masterability, usability</li>
+<li>Maintenance cost: Cost due to runtime defects (defects discovered while the program is running in production environment)</li>
+<li><a href="https://en.wikipedia.org/wiki/Goodhart%27s_law">https://en.wikipedia.org/wiki/Goodhart%27s_law</a></li>
+<li><a href="https://medium.com/@richardeng/how-to-measure-programming-language-complexity-afe4f7e75786">https://medium.com/@richardeng/how-to-measure-programming-language-complexity-afe4f7e75786</a></li>
+<li><a href="https://medium.com/concerning-pharo/elegant-pharo-code-bb590f0856d0">https://medium.com/concerning-pharo/elegant-pharo-code-bb590f0856d0</a></li>
+<li>Development cost:
+<ul>
+<li>Length of program</li>
+<li>Development effort; number of people; amount of time</li>
+</ul></li>
+</ul>
+<h2 id="rosetta-stone-comparing-programs-that-do-the-same-thing-in-different-languages"><span class="section_number">6</span><span class="section_title">Rosetta Stone: comparing programs that do the same thing in different languages</span></h2>
+<p><a href="https://medium.com/concerning-pharo/elegant-pharo-code-bb590f0856d0">https://medium.com/concerning-pharo/elegant-pharo-code-bb590f0856d0</a></p>
+<h2 id="measuring-programming-language-quality-by-how-easy-is-it-to-do-the-right-thing"><span class="section_number">7</span><span class="section_title">Measuring programming language quality by how easy is it to do the right thing?</span></h2>
+<p>What is the right thing?</p>
+<p>By probability of error of random programs?</p>
+<p>How do we measure the probability that a program, uniformly randomly taken from the set of all legal programs in language L, contains an error?</p>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2018-12-15 01:35:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
