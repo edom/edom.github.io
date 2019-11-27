@@ -166,18 +166,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="post-content">
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#the-goals">The goals</a></span><span class="word_count">(14w~1m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#the-lazy-implementors-language">The lazy implementor's language</a></span><span class="word_count">(179w~1m)</span></li>
-<li><span class="section_number">3</span><span class="section_title"><a href="#guide-for-embedding-pl-0-in-c-programs">Guide for embedding PL-0 in C++ programs</a></span><span class="word_count">(404w~3m)</span></li>
-<li><span class="section_number">4</span><span class="section_title"><a href="#syntax-and-parsing">Syntax and parsing</a></span><span class="word_count">(359w~2m)</span></li>
-<li><span class="section_number">5</span><span class="section_title"><a href="#bottom-up-design">Bottom-up design?</a></span><span class="word_count">(328w~2m)</span></li>
-<li><span class="section_number">6</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#thought">&lt;2019-11-27&gt; Thought</a></span><span class="word_count">(111w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#the-goals">The goals</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#the-lazy-implementors-language">The lazy implementor's language</a></span><span class="word_count">(179w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#guide-for-embedding-pl-0-in-c-programs">Guide for embedding PL-0 in C++ programs</a></span><span class="word_count">(404w~3m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#the-problem-is-not-binding-the-problem-is-closures">&lt;2019-11-28&gt; The problem is not binding; the problem is closures</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#syntax-and-parsing">Syntax and parsing</a></span><span class="word_count">(359w~2m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#bottom-up-design">Bottom-up design?</a></span><span class="word_count">(328w~2m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(27w~1m)</span></li>
 </ul>
 </div>
-<h2 id="the-goals"><span class="section_number">1</span><span class="section_title">The goals</span></h2>
+<h2 id="thought"><span class="section_number">1</span><span class="section_title">&lt;2019-11-27&gt; Thought</span></h2>
+<p>It is easy to process a byte list into a token list.</p>
+<p>The question is: How should we interpret that token list? How should we ascribe meaning to that token list? How should we map tokens to values?</p>
+<p>The lowest layer is more like a library for manipulating tokens than a language.</p>
+<p>A stream of bytes is translated into a stream of tokens. A token is either <em>white</em> or <em>black</em>. A token has <em>location</em>. A token list has <em>location</em>.</p>
+<p>I want to use the same name &quot;append&quot; for appending lists and appending strings; I don't want &quot;list-append&quot; and &quot;string-append&quot;. We can implement this with types or namespaces. I'm fine with explicitly-prefixed namespaces like this:</p>
+<pre class="example"><code>(define (example)
+  (import list)
+  (import string)
+  (list:append &#39;(1) &#39;(2))
+  (string:append &quot;a&quot; &quot;b&quot;))
+</code></pre>
+<h2 id="the-goals"><span class="section_number">2</span><span class="section_title">The goals</span></h2>
 <p>PL-0 programs should be translatable to native code.</p>
 <p>Foreign function interface should be easy.</p>
-<h2 id="the-lazy-implementors-language"><span class="section_number">2</span><span class="section_title">The lazy implementor's language</span></h2>
+<h2 id="the-lazy-implementors-language"><span class="section_number">3</span><span class="section_title">The lazy implementor's language</span></h2>
 <p>PL-0 (not to be confused with Wirth's PL/0<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>) is a lazy implementor's programming language, where the language designers do not strive to please language users.</p>
 <p>The focus is on implementability, not usability.</p>
 <p>The implementation tries to be stupid, simple, predictable, understandable, not smart.</p>
@@ -191,25 +205,25 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>PL-0 is a stack-based virtual machine.</p>
 <p>PL-0 enables you to write unsafe programs that can crash. (This is not something to brag about?)</p>
 <p>PL-0 is like an interpreted assembly language, a scripting assembly language.</p>
-<h2 id="guide-for-embedding-pl-0-in-c-programs"><span class="section_number">3</span><span class="section_title">Guide for embedding PL-0 in C++ programs</span></h2>
+<h2 id="guide-for-embedding-pl-0-in-c-programs"><span class="section_number">4</span><span class="section_title">Guide for embedding PL-0 in C++ programs</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">3.1</span><span class="section_title"><a href="#pl-0-c-conventions">PL-0 C++ conventions</a></span><span class="word_count">(7w~1m)</span></li>
-<li><span class="section_number">3.2</span><span class="section_title"><a href="#creating-a-virtual-machine">Creating a virtual machine</a></span><span class="word_count">(35w~1m)</span></li>
-<li><span class="section_number">3.3</span><span class="section_title"><a href="#executing-programs">Executing programs</a></span><span class="word_count">(161w~1m)</span></li>
-<li><span class="section_number">3.4</span><span class="section_title"><a href="#creating-primitives">Creating primitives</a></span><span class="word_count">(20w~1m)</span></li>
-<li><span class="section_number">3.5</span><span class="section_title"><a href="#quoting">Quoting</a></span><span class="word_count">(20w~1m)</span></li>
-<li><span class="section_number">3.6</span><span class="section_title"><a href="#macros">Macros</a></span><span class="word_count">(29w~1m)</span></li>
-<li><span class="section_number">3.7</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(132w~1m)</span></li>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#pl-0-c-conventions">PL-0 C++ conventions</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#creating-a-virtual-machine">Creating a virtual machine</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#executing-programs">Executing programs</a></span><span class="word_count">(161w~1m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#creating-primitives">Creating primitives</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">4.5</span><span class="section_title"><a href="#quoting">Quoting</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">4.6</span><span class="section_title"><a href="#macros">Macros</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">4.7</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(132w~1m)</span></li>
 </ul>
 </div>
-<h3 id="pl-0-c-conventions"><span class="section_number">3.1</span><span class="section_title">PL-0 C++ conventions</span></h3>
+<h3 id="pl-0-c-conventions"><span class="section_number">4.1</span><span class="section_title">PL-0 C++ conventions</span></h3>
 <p>The C++ namespace is <code>stc_pl_0</code>.</p>
-<h3 id="creating-a-virtual-machine"><span class="section_number">3.2</span><span class="section_title">Creating a virtual machine</span></h3>
+<h3 id="creating-a-virtual-machine"><span class="section_number">4.2</span><span class="section_title">Creating a virtual machine</span></h3>
 <p>Each instance of the <code>Machine</code> class is a virtual machine with operand stack, dictionary stack, return stack, and heap. The size of each memory area is fixed when the <code>Machine</code> is instantiated.</p>
 <pre class="example"><code>Machine machine;
 </code></pre>
-<h3 id="executing-programs"><span class="section_number">3.3</span><span class="section_title">Executing programs</span></h3>
+<h3 id="executing-programs"><span class="section_number">4.3</span><span class="section_title">Executing programs</span></h3>
 <p>A <em>program</em> is a sequence of tokens. For example, &quot;1&quot; is a program that pushes the word 1 to the stack. The following is a program that consists of <em>six</em> tokens (1, space, 2, space, add, newline):</p>
 <pre class="example"><code>1 2 add
 </code></pre>
@@ -226,19 +240,19 @@ Token_Iterator&amp; Machine::pop_source ()
 </ul>
 <p><em>The <code>step</code> method executes at most one token.</em> If the meaning of the token is a token list, then <code>step</code> creates a call frame and arranges the next <code>step</code> call to execute the first token of the subroutine.</p>
 <p>The machine reads the current program from a token iterator.</p>
-<h3 id="creating-primitives"><span class="section_number">3.4</span><span class="section_title">Creating primitives</span></h3>
+<h3 id="creating-primitives"><span class="section_number">4.4</span><span class="section_title">Creating primitives</span></h3>
 <p>A <em>primitive</em> is a foreign procedure that may mutate the machine state.</p>
 <pre class="example"><code>using Prim = void (Machine&amp;);
 </code></pre>
 <p>A primitive must not throw any C++ exceptions.</p>
-<h3 id="quoting"><span class="section_number">3.5</span><span class="section_title">Quoting</span></h3>
+<h3 id="quoting"><span class="section_number">4.5</span><span class="section_title">Quoting</span></h3>
 <p>The program <code>quote W B</code> pushes <code>B</code> to the operand stack where <code>W</code> is expected to be a white token.</p>
-<h3 id="macros"><span class="section_number">3.6</span><span class="section_title">Macros</span></h3>
+<h3 id="macros"><span class="section_number">4.6</span><span class="section_title">Macros</span></h3>
 <p>A macro is a procedure that transforms a prefix of the remaining program token stream.</p>
 <p>A macro transforms a concrete syntax tree.</p>
 <p>Important: Whitespaces are tokens too.</p>
 <p>Macro : Cst -&gt; Cst</p>
-<h3 id="what"><span class="section_number">3.7</span><span class="section_title">What?</span></h3>
+<h3 id="what"><span class="section_number">4.7</span><span class="section_title">What?</span></h3>
 <pre class="example"><code>% A B C muladd -&gt; A*B+C
 
 quote muladd { mul add } def
@@ -258,16 +272,24 @@ end
 <p>If we want <code>read</code> to produce a value (not a type-value pair), then values must carry type information.</p>
 <p>In mathematics, it is natural to overload functions (such as +). Otherwise we would have +N, +Q, +R, etc. which is ugly. Do we care about what something is, or about what can we do with it?</p>
 <p>PostScript enables the programmer to choose between early binding and late binding.</p>
-<h2 id="syntax-and-parsing"><span class="section_number">4</span><span class="section_title">Syntax and parsing</span></h2>
+<h2 id="the-problem-is-not-binding-the-problem-is-closures"><span class="section_number">5</span><span class="section_title">&lt;2019-11-28&gt; The problem is not binding; the problem is closures</span></h2>
+<p>If we don't have closures, then it does not matter whether we use static (lexical) or dynamic binding; the result will be the same.</p>
+<p>The problem is not static vs dynamic binding. The problem is: Should we have closures or not?</p>
+<p>Why do we bother having closures if programmers can do explicit closure conversion? For example:</p>
+<pre class="example"><code>f x = \ y -&gt; x + y
+-- gets closure-converted to
+f x = (\ x y -&gt; x + y) x
+</code></pre>
+<h2 id="syntax-and-parsing"><span class="section_number">6</span><span class="section_title">Syntax and parsing</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">4.1</span><span class="section_title"><a href="#reversibility-information-preservation">Reversibility, information-preservation</a></span><span class="word_count">(151w~1m)</span></li>
-<li><span class="section_number">4.2</span><span class="section_title"><a href="#locations">Locations</a></span><span class="word_count">(24w~1m)</span></li>
-<li><span class="section_number">4.3</span><span class="section_title"><a href="#macro-reflection-reification-quoting">Macro, reflection, reification, quoting</a></span><span class="word_count">(22w~1m)</span></li>
-<li><span class="section_number">4.4</span><span class="section_title"><a href="#annotations-user-defined-metadata-attached-to-concrete-syntax-tree-nodes">Annotations: user-defined metadata attached to concrete syntax tree nodes</a></span><span class="word_count">(163w~1m)</span></li>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#reversibility-information-preservation">Reversibility, information-preservation</a></span><span class="word_count">(151w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#locations">Locations</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#macro-reflection-reification-quoting">Macro, reflection, reification, quoting</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#annotations-user-defined-metadata-attached-to-concrete-syntax-tree-nodes">Annotations: user-defined metadata attached to concrete syntax tree nodes</a></span><span class="word_count">(163w~1m)</span></li>
 </ul>
 </div>
-<h3 id="reversibility-information-preservation"><span class="section_number">4.1</span><span class="section_title">Reversibility, information-preservation</span></h3>
+<h3 id="reversibility-information-preservation"><span class="section_number">6.1</span><span class="section_title">Reversibility, information-preservation</span></h3>
 <p>I insist that the parser be reversible, because I want traceability and debuggability.</p>
 <p>Each stage must be reversible: it must either be a bijection or preserve enough information from the previous stage.</p>
 <p>The first stage is character + location (defined later).</p>
@@ -280,16 +302,16 @@ end
 <p>An AST node has a &quot;main&quot; CST node.</p>
 <p>An AST node has a &quot;preceding-whites&quot; (a list of whitespace CST nodes that precede that AST node) so that the AST node can be turned back into CST node (and so on until we reach the original substring that constitutes the CST node).</p>
 <p>The parser is a recursive descent parser because I don't know how to parse.</p>
-<h3 id="locations"><span class="section_number">4.2</span><span class="section_title">Locations</span></h3>
+<h3 id="locations"><span class="section_number">6.2</span><span class="section_title">Locations</span></h3>
 <p>A <em>location</em> is a tuple of path, line (0-based), column (0-based), byte-offset. This is like Racket srcloc.</p>
 <p><code>current-location</code> parameter</p>
 <p><code>read</code> from current location</p>
 <p><code>raise-parse-error</code> at current location</p>
-<h3 id="macro-reflection-reification-quoting"><span class="section_number">4.3</span><span class="section_title">Macro, reflection, reification, quoting</span></h3>
+<h3 id="macro-reflection-reification-quoting"><span class="section_number">6.3</span><span class="section_title">Macro, reflection, reification, quoting</span></h3>
 <p>The language should be a model of itself.</p>
 <p>The language should be able to describe itself.</p>
 <p>Does that cause a paradox?</p>
-<h3 id="annotations-user-defined-metadata-attached-to-concrete-syntax-tree-nodes"><span class="section_number">4.4</span><span class="section_title">Annotations: user-defined metadata attached to concrete syntax tree nodes</span></h3>
+<h3 id="annotations-user-defined-metadata-attached-to-concrete-syntax-tree-nodes"><span class="section_number">6.4</span><span class="section_title">Annotations: user-defined metadata attached to concrete syntax tree nodes</span></h3>
 <p>(Is this a good idea?)</p>
 <p>We add these expression syntax rules:</p>
 <ul>
@@ -313,14 +335,14 @@ end
 <p>This is like Java/C# annotation but more principled?</p>
 <p>Annotations are not types.</p>
 <p>This is an example of type annotation that our annotation above can't handle: <code>\ (x : T) -&gt; y</code>, because <code>x</code> is not an expression.</p>
-<h2 id="bottom-up-design"><span class="section_number">5</span><span class="section_title">Bottom-up design?</span></h2>
+<h2 id="bottom-up-design"><span class="section_number">7</span><span class="section_title">Bottom-up design?</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">5.1</span><span class="section_title"><a href="#example">Example</a></span><span class="word_count">(85w~1m)</span></li>
-<li><span class="section_number">5.2</span><span class="section_title"><a href="#starting-with-assembly">Starting with assembly</a></span><span class="word_count">(243w~2m)</span></li>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#example">Example</a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#starting-with-assembly">Starting with assembly</a></span><span class="word_count">(243w~2m)</span></li>
 </ul>
 </div>
-<h3 id="example"><span class="section_number">5.1</span><span class="section_title">Example</span></h3>
+<h3 id="example"><span class="section_number">7.1</span><span class="section_title">Example</span></h3>
 <ul>
 <li>Example of bottom-up language design and how each level reduces cognitive load:
 <ul>
@@ -341,7 +363,7 @@ end
 <li>End up with something like Randall Hyde's High Level Assembly?</li>
 </ul></li>
 </ul>
-<h3 id="starting-with-assembly"><span class="section_number">5.2</span><span class="section_title">Starting with assembly</span></h3>
+<h3 id="starting-with-assembly"><span class="section_number">7.2</span><span class="section_title">Starting with assembly</span></h3>
 <p>PL-0 is slightly more abstract than typed assembly languages (TALs).</p>
 <p>We may begin from x86 assembly.</p>
 <p>First we abstract away locations, registers, memory, so that we can write something like this:</p>
@@ -365,7 +387,7 @@ end
 <p>We can &quot;solve&quot; that with Static Single Assignment (SSA) Form and automatic register allocation.</p>
 <p>But perhaps the bigger issue is to abstract away the difference between processors; why should we care if it is an Intel processor, a Motorola processor, a Symbolics Lisp machine, or something else?</p>
 <p>Even though the machine does not know about subroutines, we organize our programs into subroutines; we find it more convenient to work with subroutines than to work with instructions. We feel that the instructions are too finely-grained, unnecessarily detailed.</p>
-<h2 id="bibliography" class="unnumbered"><span class="section_number">6</span><span class="section_title">Bibliography</span></h2>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">8</span><span class="section_title">Bibliography</span></h2>
 <div id="refs" class="references">
 <div id="ref-crary1999talx86">
 <p>[1] Crary, K. et al. 1999. TALx86: A realistic typed assembly language. <em>1999 acm sigplan workshop on compiler support for system software atlanta, ga, usa</em> (1999), 25–35.</p>

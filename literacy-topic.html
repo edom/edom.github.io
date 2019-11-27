@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Topics in literacy and meta-research</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Topics in literacy and meta-research</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#literacy-research-articles">Literacy research articles</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#writing-is-a-non-linear-process">&lt;2019-08-14&gt; Writing is a non-linear process</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#on-english-participles-and-gerunds">On English participles and gerunds</a></span><span class="word_count">(133w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#on-the-difference-between-change-alter-and-modify">On the difference between change, alter, and modify</a></span><span class="word_count">(82w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#abortion-is-a-linguistic-issue-not-a-moral-issue">&lt;2019-10-27&gt; Abortion is a linguistic issue, not a moral issue</a></span><span class="word_count">(395w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#meta-research">Meta-research</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#do-not-ask-google-or-anyone-else-questions-that-only-you-can-answer">&lt;2019-07-07&gt; Do not ask Google (or anyone else) questions that only you can answer</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#on-personal-knowledge-bases">On personal knowledge bases</a></span><span class="word_count">(84w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#on-hypertext">On hypertext</a></span><span class="word_count">(43w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#flat-earth-is-a-social-issue-not-a-scientific-issue">Flat Earth is a social issue, not a scientific issue</a></span><span class="word_count">(890w~5m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#organizing-knowledge">Organizing knowledge</a></span><span class="word_count">(568w~3m)</span></li>
+</ul>
+</div>
+<h2 id="literacy-research-articles"><span class="section_number">1</span><span class="section_title">Literacy research articles</span></h2>
+<ul>
+<li><a href="literacy.html">On literacy</a></li>
+<li><a href="dual-read-write.html">On the mathematical duality of reading and writing</a></li>
+<li><a href="writing.html">On writing</a></li>
+<li><a href="english-gender.html">A simple solution to the English singular gender-neutral pronoun problem</a></li>
+</ul>
+<h2 id="writing-is-a-non-linear-process"><span class="section_number">2</span><span class="section_title">&lt;2019-08-14&gt; Writing is a non-linear process</span></h2>
+<p>From <a href="https://macademic.org/2011/03/15/writing-philosophy/">https://macademic.org/2011/03/15/writing-philosophy/</a>:</p>
+<ul>
+<li>&quot;Combining these different pieces of information does not happen in an orderly linear process.&quot;</li>
+<li>&quot;Writer’s block often comes from being too closely linked to the linearity of a process and the inability to break out small pieces of text to work on and move with ideas.&quot;</li>
+</ul>
+<h2 id="on-english-participles-and-gerunds"><span class="section_number">3</span><span class="section_title">On English participles and gerunds</span></h2>
+<p>Both a participle and a gerund are formed from a verb, but a participle is an <em>adjective</em>, and a gerund is a <em>noun</em>.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>What is the difference between &quot;I don't like the <em>guy</em> wearing the green pants&quot; and &quot;I don't like the <em>guy's</em> wearing green pants&quot;?</p>
+<p>&quot;I don't like the <em>guy</em> wearing the green pants&quot; means you don't like <em>the guy himself</em>. You have a personal problem with the guy.</p>
+<p>&quot;I don't like the <em>guy's</em> wearing green pants&quot; means you don't like <em>what he does</em>: wearing green pants. You don't have a personal problem with the guy, but you think he shouldn't wear green pants. However, there is a better way to express this: Ask him &quot;What's the story behind these green pants?&quot; instead; you get a chance to better understand him.</p>
+<h2 id="on-the-difference-between-change-alter-and-modify"><span class="section_number">4</span><span class="section_title">On the difference between change, alter, and modify</span></h2>
+<p>Ontologically:</p>
+<p>A change changes the identity of the changed object.</p>
+<p>An alteration or modification changes some properties of the altered/modified object but does not change its identity.</p>
+<p>Examples:</p>
+<p>Modification: change the color of your car.</p>
+<p>Alteration: replace the engine of your car.</p>
+<p>Change: buy a new car.</p>
+<p>Dictionary?</p>
+<p>Source?</p>
+<p>To change = to swap, to replace</p>
+<p>Example: change clothes, change name, change mood</p>
+<p>To alter = to change the form or structure</p>
+<p>&lt;2019-10-26&gt; <a href="https://www.lexico.com/en/definition/alter">https://www.lexico.com/en/definition/alter</a></p>
+<p>Example: alter a building</p>
+<p>To modify = to make a partial or minor change</p>
+<p>&lt;2019-10-26&gt; <a href="https://www.lexico.com/en/definition/modify">https://www.lexico.com/en/definition/modify</a></p>
+<h2 id="abortion-is-a-linguistic-issue-not-a-moral-issue"><span class="section_number">5</span><span class="section_title">&lt;2019-10-27&gt; Abortion is a linguistic issue, not a moral issue</span></h2>
+<p>Abortion is not a moral issue. It is a <em>linguistic</em> issue.</p>
+<p>The root problem of the abortion issue is the non-existence of the definition of &quot;human&quot;.</p>
+<p>The question &quot;Should we allow abortion?&quot; actually reads &quot;What is a human?&quot;</p>
+<p>It is crazy that people can talk and shout for hours without agreeing on the meaning of the words that they use. It is exactly like watching someone who understands only Chinese argue with someone who understands only English: No communication happens, only noise and gestures of frustration.</p>
+<p>My suggestion is: Before everyone agrees on the same definition of &quot;human&quot;, avoid wasting time in abortion &quot;debates&quot;. No communication happens when people interpret words differently.</p>
+<p>What is a human? Nobody can satisfactorily define what a &quot;human&quot; is; they only &quot;know it when they see it&quot;. For every &quot;definition&quot; of human you come up with, I can point out a problem with it. I have tried to define &quot;human&quot; a few times, and failed.</p>
+<p>The same goes for &quot;baby&quot; and &quot;fetus&quot;.</p>
+<p>Where do you draw the line?</p>
+<p>This problem has a name: sorites paradox<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> (that is, paradox of the heap).</p>
+<p>Anyone who doesn't know the sorites paradox has no business talking about abortion.</p>
+<p>Anyone who thinks that every statement is either false or true has no business talking about abortion. In reality, every statement can be anywhere between 0 percent true and 100 percent true.</p>
+<p>Outlawing abortion now causes increased crime rate 20 years later.</p>
+<p>Outlawing abortion is condemning rape victims into living hell.</p>
+<p>Outlawing abortion saves some present lives but harms even more future lives.</p>
+<p>People reject abortion not because abortion is bad, but because <em>they believe</em> abortion is bad, and thus rejecting abortion makes them feel noble. They cannot distinguish between &quot;X is true&quot; and &quot;I believe X is true&quot;. Their reasoning is deficient.</p>
+<p>People have been having abortions since time immemorial. Why does it become a problem only recently?</p>
+<p>Just because you don't like it doesn't mean it should be illegal.</p>
+<p>But the state should also not always be utilitarian.</p>
+<p>I think it is dishonest to call our species <em>Homo sapiens</em>, the wise ones. I think it's more honest to call our species <em>Homo homicidalis</em>, that is, the ones who like to kill their own kind. I think we can admit that we have some people we'd like to kill; we just don't do it because we're afraid of the cops.</p>
+<p>See also: <a href="language.html">Language Research Group</a>.</p>
+<h2 id="meta-research"><span class="section_number">6</span><span class="section_title">Meta-research</span></h2>
+<p>See <a href="meta.html">file:meta.html</a>.</p>
+<h2 id="do-not-ask-google-or-anyone-else-questions-that-only-you-can-answer"><span class="section_number">7</span><span class="section_title">&lt;2019-07-07&gt; Do not ask Google (or anyone else) questions that only you can answer</span></h2>
+<p>Like &quot;If I am my own target audience, what should I write, for myself?&quot;</p>
+<h2 id="on-personal-knowledge-bases"><span class="section_number">8</span><span class="section_title">On personal knowledge bases</span></h2>
+<p>What is the most commonly used free-and-open-source one? There are too many solutions?</p>
+<p>If the graphical user interface cannot be standardized, at least the data format should be standardized.</p>
+<p>I'm using Org Mode and Pandoc.</p>
+<p>Wordpress?</p>
+<p>TiddlyWiki?</p>
+<p>I want free-and-open-source software because I want my data to be usable forever.</p>
+<p>Evernote is not FOSS.</p>
+<p><a href="https://www.ubuntupit.com/13-best-evernote-alternative-note-taking-apps-linux/">https://www.ubuntupit.com/13-best-evernote-alternative-note-taking-apps-linux/</a></p>
+<p><a href="https://opensource.com/article/17/12/joplin-open-source-evernote-alternative">https://opensource.com/article/17/12/joplin-open-source-evernote-alternative</a></p>
+<p>One can convert a dynamic website to a static website with a <em>website downloader</em>. You can point a website downloader to localhost.</p>
+<p>Should we build it on Pollen<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>? It was made for making web-based books.</p>
+<h2 id="on-hypertext"><span class="section_number">9</span><span class="section_title">On hypertext</span></h2>
+<p>Am I writing a non-linear online book?</p>
+<p>I think long linear text is not the best form of communication. Perhaps I should make a mind map, perhaps with graphviz? Or an entity-relationship diagram? Here I try hypertext (a graph of short linear-text documents).</p>
+<h2 id="flat-earth-is-a-social-issue-not-a-scientific-issue"><span class="section_number">10</span><span class="section_title">Flat Earth is a social issue, not a scientific issue</span></h2>
+<p>Flat-Earthers are merely looking for friends in this extremely power-unbalanced world. They have trust issues with authorities. I am also looking for friends who share my beliefs, and I also have trust issues with authorities, but the difference between a Flat-Earther and me is that I have trust issues with political authorities, whereas a Flat-Earther has a trust issue with scientific authorities. Thus, although I do not believe in Flat Earth, a Flat-Earther and I have more commonalities than differences. The same is true with Holocaust deniers and climate change deniers: it is a trust issue with some authorities.</p>
+<p>How did such trust issues arise? Our parents, for good reason, taught us not to trust strangers. Thus it is a logical consequence that we don't trust authorities: they are strangers! We don't know who they are, and yet they suddenly come down telling us what is right and what is wrong.</p>
+<p>How can two strangers be friends? By physical closeness (being at nearby location and time) and by mental closeness (having similar ideas and beliefs). How do we make sure that the people in power are not strangers? It is not feasible for one person to meet millions of people. Thus I have this corollary: <em>having power over more people always begets more trust issues</em>, simply because it is harder for the authority to not be strangers with its subjects. Perhaps it's just that power today is too centralized. But mass media enables centralization of power; the authority uses mass media to make its subjects feel that the authority is familiar. But mass communication is one-way communication. How does one-way communication build trust? In the same way an actor builds his fanbase of fans who trust him. First, the would-be fans have to fall in love with him from afar, be it due to his handsomeness, his charisma, or any aspect of him that resonates with them. But then this fanbase has to be maintained, and it is physically impossible for an actor with a million fans to be close to all of them. Therefore what is required to maintain the fanbase is a <em>mass illusion</em> of closeness: the actor has to behave in such a way that makes his fans <em>perceive</em> that he cares about <em>all</em> of them, whereas he can only <em>actually</em> care about <em>few</em> of them. The mass media only has to show the actor's interacting with <em>a few</em> of his fans, in order to make <em>all</em> of his fans feel that they have been interacted with. This is not because he is evil; he is just constrained by the laws of physics. This technique is a double-edged sword: it can be used to maintain political stability, but it can also be used to lie to millions of people. We need to teach people epistemology so that they can tell apart what they know and what they think they know. Mass media does not give any knowledge; it only gives an illusion of knowledge. Reading the news does not make us know anything; it only makes us think that we know. How do I know there is a disaster somewhere? I do not, because I can only know things near me, and it is not feasible for me to verify every claim in the news; I am merely assuming that the news is honest. Epistemology is more important than ever in this age of falsehood.</p>
+<p>There are some simple experiments that we can carry out to determine the curvature of the Earth. Reality itself has told us through those experiments that the Earth is not flat; it is up to us to listen to reality or ignore it at our own peril. We will make costly mistakes if we make antennas and satellites with Flat Earth theory.</p>
+<p>The theory makes sense and is a fine scientific theory: it is falsifiable. What does not make sense to me is the refusal to change one's beliefs despite being otherwise told by reality.</p>
+<p>My thought is exactly that of George Box and of Isaac Asimov.</p>
+<p>George Box: &quot;All models are wrong but some are useful.&quot;<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>Isaac Asimov: &quot;When people thought the Earth was flat, they were wrong. When people thought the Earth was spherical, they were wrong. But if you think that thinking the Earth is spherical is just as wrong as thinking the Earth is flat, then your view is wronger than both of them put together.&quot;<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>Thus, both the Flat Earth theory and the Spherical Earth theory are &quot;wrong&quot;, because they are only our descriptions of reality, and not reality itself. It's just that the Spherical Earth theory is useful in more cases, and Spherical Earth theory is useful in fewer cases. In software terms, we can think of Flat Earth theory as an &quot;alpha&quot; version of Spherical Earth theory, where the &quot;bugs&quot; are the mismatches with reality. Updating the &quot;software&quot; fixes some &quot;bugs&quot;, but the &quot;software&quot; becomes more complex.</p>
+<p>The Flat Earth theory does make testable predictions. But Round Earth <em>subsumes</em> Flat Earth, in the sense that:</p>
+<ul>
+<li>If Flat Earth predicts something correctly, then Round Earth predicts it correctly.</li>
+<li>There are some things correctly predicted by Round Earth that are not correctly predicted by Flat Earth.</li>
+</ul>
+<p>Both Flat Earth and Round Earth are models and are wrong; it's just that Round Earth subsumes Flat Earth, so we use Round Earth.</p>
+<h2 id="organizing-knowledge"><span class="section_number">11</span><span class="section_title">Organizing knowledge</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">11.1</span><span class="section_title"><a href="#what">what</a></span><span class="word_count">(457w~3m)</span></li>
+<li><span class="section_number">11.2</span><span class="section_title"><a href="#the-personal-knowledge-base">The personal knowledge base?</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">11.3</span><span class="section_title"><a href="#information-architecture">Information architecture</a></span><span class="word_count">(79w~1m)</span></li>
+<li><span class="section_number">11.4</span><span class="section_title"><a href="#kwic-key-word-in-context-indexing">KWIC (Key Word In Context) indexing?</a></span><span class="word_count">(10w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what"><span class="section_number">11.1</span><span class="section_title">what</span></h3>
+<ul>
+<li>Knowledge should be ordered descending by importance, from the most important?</li>
+<li>Knowledge should be ordered ascending by verifiability, from the easiest to verify?</li>
+<li><p>Knowledge should be grouped by usefulness?</p>
+<ul>
+<li>If both Y and Z are useful to X, then Y and Z should be put together.</li>
+</ul></li>
+<li><p>Why does someone need to know something?</p>
+<ul>
+<li>What is all the related things that he also needs to know?</li>
+</ul></li>
+<li><p>others</p>
+<ul>
+<li><a href="https://www.e-education.psu.edu/geog882/l3_p3.html">Kant's Three Ways of Ordering Knowledge</a></li>
+</ul></li>
+<li>In what sequence should we present knowledge for fastest learning?</li>
+<li><p>Example of primitive life (but not survivalism?)</p>
+<ul>
+<li><a href="https://www.youtube.com/user/laws507/videos">YT:Primitive Life</a></li>
+</ul></li>
+<li><p>information organization</p>
+<ul>
+<li><p>An information is a sentence, a paragraph, a picture, or anything that helps us accomplish something.</p>
+<ul>
+<li>Here &quot;information&quot; is a countable noun.</li>
+</ul></li>
+<li><p>Informations should be grouped by the task it helps us accomplish.</p>
+<ul>
+<li>Every task T requires a set of informations, which should be put together in one place.</li>
+<li>If doing task T requires informations J and K, then J and K should be grouped together.</li>
+<li><p>Duplication problem.</p>
+<ul>
+<li>Suppose: both task T and task U requires information J.</li>
+<li>Where should J be put?</li>
+</ul></li>
+</ul></li>
+<li>The value of information J should be measured by the ratio V/E, where V is the value of the task that J helps us accomplish, and E is our effort for obtaining J.</li>
+<li><p>Example of combinatorial explosion of categories.</p>
+<ul>
+<li><p>Which should a red car be grouped together with: a red hat or a blue car?</p>
+<ul>
+<li>Which should a big old man be grouped together with: a big old woman, a big young man, or a small old man?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>The information organization of this wiki</p>
+<ul>
+<li>At first I tried grouping by topic.</li>
+<li>Then I asked myself, &quot;Why am I collecting this information?&quot;</li>
+<li>Then I tried grouping by project (goals).</li>
+<li>I switched from lookup-oriented knowledge organization (organize knowledge for refindability (fast lookup)) to task-oriented (goal-oriented) knowledge organization (organize knowledge by the tasks that require the knowledge).</li>
+</ul></li>
+<li><p>Can machine organize information for us? Can machine cluster documents by the task they help accomplish?</p>
+<ul>
+<li><p>Internet search &quot;automatic clustering of wiki articles&quot;</p>
+<ul>
+<li>2017, article, &quot;Spectral Clustering Wikipedia Keyword-Based Search Results&quot;, <a href="https://www.frontiersin.org/articles/10.3389/frobt.2016.00078/full">html</a></li>
+<li>2016, article, &quot;WikiWrite: Generating Wikipedia Articles Automatically&quot;, <a href="https://www.ijcai.org/Proceedings/16/Papers/389.pdf">pdf</a></li>
+<li>2014, article, &quot;Text mining in R – Automatic categorization of Wikipedia articles&quot;, <a href="http://www.rexamine.com/2014/06/text-mining-in-r-automatic-categorization-of-wikipedia-articles/">html</a></li>
+<li>2011, article, &quot;Categorization of Wikipedia articles with spectral clustering&quot;, <a href="https://link.springer.com/content/pdf/10.1007/978-3-642-23878-9_14.pdf">pdf</a></li>
+<li>2007, article, &quot;Clustering Short Texts using Wikipedia&quot;, <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.188.1139&amp;rep=rep1&amp;type=pdf">pdf</a></li>
+<li><a href="https://www.quora.com/How-should-I-cluster-Wikipedia-articles">https://www.quora.com/How-should-I-cluster-Wikipedia-articles</a></li>
+<li><p>slightly different topics</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Document_clustering">https://en.wikipedia.org/wiki/Document_clustering</a></li>
+<li>2010, article, &quot;Exploiting Wikipedia Knowledge for Conceptual Hierarchical Clustering of Documents&quot;, <a href="https://www.researchgate.net/publication/221579515_Exploiting_Wikipedia_Knowledge_for_Conceptual_Hierarchical_Clustering_of_Documents">html</a></li>
+<li>2008, article, &quot;Clustering Documents with Active Learning Using Wikipedia&quot;, <a href="https://ieeexplore.ieee.org/document/4781188/">abstract</a></li>
+</ul></li>
+</ul></li>
+<li><p>Machine reading comprehension</p>
+<ul>
+<li><a href="http://www.msmarco.org/">MS MARCO: Microsoft MAchine Reading COmprehension Dataset</a></li>
+<li><a href="https://www.quora.com/What-is-the-difference-between-machine-comprehension-and-question-answering-in-NLP">https://www.quora.com/What-is-the-difference-between-machine-comprehension-and-question-answering-in-NLP</a></li>
+<li>2017, slides, &quot;Machine reading comprehension&quot;, <a href="http://tcci.ccf.org.cn/summit/2017/dlinfo/003.pdf">pdf</a></li>
+<li><a href="https://www.microsoft.com/en-us/research/blog/transfer-learning-machine-reading-comprehension/">https://www.microsoft.com/en-us/research/blog/transfer-learning-machine-reading-comprehension/</a></li>
+<li><a href="https://futurism.com/machines-beat-humans-stanford-reading-comprehension-test/">https://futurism.com/machines-beat-humans-stanford-reading-comprehension-test/</a></li>
+<li>2018, article, &quot;Adversarial reading networks for machine comprehension&quot;, <a href="https://openreview.net/forum?id=Hy3MvSlRW">review</a>, &quot;Interesting idea, unconvincing results&quot;</li>
+</ul></li>
+</ul></li>
+<li><p>2002, slides, <a href="http://mockus.us/papers/exbpresentation.pdf">&quot;Expertise browser: a quantitative approach to identifying expertise&quot;</a></p>
+<ul>
+<li><a href="http://mockus.org/ExV/index.html">http://mockus.org/ExV/index.html</a></li>
+</ul></li>
+<li><p>Undigested</p>
+<ul>
+<li><a href="https://pm.stackexchange.com/questions/2780/how-to-organize-knowledge-within-a-wiki">PMSE 2780: How to organize knowledge within a wiki?</a></li>
+<li><a href="https://www.quora.com/What-is-the-best-way-to-organize-a-company-wiki">https://www.quora.com/What-is-the-best-way-to-organize-a-company-wiki</a></li>
+</ul></li>
+<li><p>Knowledge is only as good as what it enables you.</p>
+<ul>
+<li>2013, article, <a href="https://www.k4health.org/blog/post/knowledge-no-longer-power-how-you-use-knowledge-power">Knowledge is no longer power; How you use knowledge is power!</a></li>
+</ul></li>
+<li><p>knowledge organization?</p>
+<ul>
+<li>2016, article, <a href="https://medium.com/airbnb-engineering/scaling-knowledge-at-airbnb-875d73eff091">Scaling Knowledge at Airbnb – Airbnb Engineering &amp; Data Science – Medium</a></li>
+<li>2018, article, <a href="https://blog.socialcops.com/technology/engineering/airbnb-knowledge-repository-scale-knowledge/">Using Airbnb's Knowledge Repository to Scale Your Organization's Knowledge - SocialCops</a></li>
+</ul></li>
+</ul>
+<h3 id="the-personal-knowledge-base"><span class="section_number">11.2</span><span class="section_title">The personal knowledge base?</span></h3>
+<p>See <a href="http://www.acuriousmix.com/2014/09/03/designing-a-personal-knowledgebase/">Designing a Personal Knowledgebase – A Curious Mix</a>.</p>
+<p>See also its HackerNews commend thread <a href="https://news.ycombinator.com/item?id=8270759">Designing a Personal Knowledgebase | Hacker News</a>.</p>
+<h3 id="information-architecture"><span class="section_number">11.3</span><span class="section_title">Information architecture</span></h3>
+<ul>
+<li><p>What does an information architect do?</p>
+<ul>
+<li>An information architect <em>plans the disclosure of information</em> so that users can get the information they need with minimum confusion.</li>
+</ul></li>
+<li><p>What concern such architect when he/she builds a store?</p>
+<ul>
+<li>How visitors find things.</li>
+</ul></li>
+<li><p>How do visitors find things in such store?</p>
+<ul>
+<li>Don't make them think. Group similar things together. Put text banners indicating categories. Let them ask anyone with uniform.</li>
+</ul></li>
+<li>We will confuse users if we dump all information in one page.</li>
+<li><p>LATCH: Location, Alphabet, Time, Category, or Hierarchy</p>
+<ul>
+<li><a href="https://uxplanet.org/design-principle-organizing-information-343a7ef936a8">https://uxplanet.org/design-principle-organizing-information-343a7ef936a8</a></li>
+</ul></li>
+</ul>
+<h3 id="kwic-key-word-in-context-indexing"><span class="section_number">11.4</span><span class="section_title">KWIC (Key Word In Context) indexing?</span></h3>
+<ul>
+<li>There is an example. <a href="https://en.wikipedia.org/wiki/Key_Word_in_Context">https://en.wikipedia.org/wiki/Key_Word_in_Context</a></li>
+</ul>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-09-29&gt; <a href="https://www.cliffsnotes.com/study-guides/english/verb/verbals-gerunds-infinitives-and-participles">https://www.cliffsnotes.com/study-guides/english/verb/verbals-gerunds-infinitives-and-participles</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-10-27&gt; <a href="https://en.wikipedia.org/wiki/Sorites_paradox">https://en.wikipedia.org/wiki/Sorites_paradox</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://docs.racket-lang.org/pollen/">https://docs.racket-lang.org/pollen/</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/All_models_are_wrong">https://en.wikipedia.org/wiki/All_models_are_wrong</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Wronger_than_wrong">https://en.wikipedia.org/wiki/Wronger_than_wrong</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-11-28 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
