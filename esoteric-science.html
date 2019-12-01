@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On esoteric science</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On esoteric science</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#teaser">Teaser</a></span><span class="word_count">(73w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#meditate">Meditate?</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#overview-of-esoteric-science">Overview of esoteric science</a></span><span class="word_count">(130w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#overview-of-mind-brain-self-soul-spirit-consciousness">Overview of mind, brain, self, soul, spirit, consciousness</a></span><span class="word_count">(84w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#on-minds-and-thoughts">On minds and thoughts</a></span><span class="word_count">(1133w~6m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#overview-of-consciousness">Overview of consciousness</a></span><span class="word_count">(267w~2m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#understanding-is-reasonably-accurate-modeling">Understanding is reasonably accurate modeling</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#other-peoples-esoteric-sciences">Other people's esoteric sciences</a></span><span class="word_count">(115w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#physics-blog">Physics blog</a></span><span class="word_count">(763w~4m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#is-psychology-science">&lt;2019-11-28&gt; Is psychology science?</a></span><span class="word_count">(84w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#mind-and-brain">Mind and brain?</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#editors-notes">Editor's notes</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#condemned-resources">Condemned resources?</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#editor-move-these-things-somewhere-else">Editor: Move these things somewhere else?</a></span><span class="word_count">(2291w~12m)</span></li>
+</ul>
+</div>
+<h2 id="teaser"><span class="section_number">1</span><span class="section_title">Teaser</span></h2>
+<p>Why do we strive to study things as far as the moon, if we have never even studied things as near as our own minds?</p>
+<p>Esoteric and exoteric science should be merged into a more complete science.</p>
+<p>At the intersection of the esoteric and the exoteric, there are biology and psychology.</p>
+<p><em>Practice</em> is important. Avoid getting so immersed in trying to read all esoteric literatures that you forget to practice anything; you will die in vain.</p>
+<h2 id="meditate"><span class="section_number">2</span><span class="section_title">Meditate?</span></h2>
+<p>Set a timer for 20 seconds. Count how many times you realize that you lost focus.</p>
+<p>Repeat.</p>
+<p>Increase the timer to 30 seconds.</p>
+<p>Increase to a minute.</p>
+<p>And so on.</p>
+<h2 id="overview-of-esoteric-science"><span class="section_number">3</span><span class="section_title">Overview of esoteric science</span></h2>
+<p>&quot;Esoteric&quot; <a href="https://www.etymonline.com/word/esoteric">means</a> &quot;inner&quot;.</p>
+<p>&quot;Exoteric&quot; <a href="https://www.etymonline.com/word/exoteric">means</a> &quot;outer&quot;.</p>
+<p>They have nothing to do with secrecy or obfuscation.</p>
+<p><em>Esoteric science</em> is the study of the mind. Of course one can experiment with one's own mind using the scientific method. The problem is everyone's mind is different, so there are as many theories as there are people.</p>
+<p><em>Exoteric science</em> is what most people mean when they say &quot;science&quot; in 2019.</p>
+<p>&quot;Normal&quot; <a href="https://www.etymonline.com/word/normal">means</a> &quot;common&quot;.</p>
+<p>&quot;Paranormal&quot; <a href="https://www.etymonline.com/word/paranormal">means</a> &quot;beside normal&quot;. It means happenings not yet explainable by our common mental model. What we call &quot;paranormal&quot; is normal to people who experience it daily. Thus normality is relative.</p>
+<p>The prefix &quot;para-&quot; <a href="https://en.wiktionary.org/wiki/παρά">means</a> &quot;beside&quot;, such as in <a href="https://en.wikipedia.org/wiki/Arene_substitution_pattern">chemistry</a>, the word <a href="https://www.etymonline.com/word/paragraph">&quot;paragraph&quot;</a> (&quot;beside-writing&quot;), and the word <a href="https://www.etymonline.com/word/parallel">&quot;parallel&quot;</a> (&quot;beside one another&quot;).</p>
+<p>&quot;Occult&quot; <a href="https://www.etymonline.com/word/occult">means</a> &quot;hidden&quot;. Or does it mean &quot;concealed (intentionally hidden)&quot;?</p>
+<p>TODO: Define.</p>
+<p>mystic, mysticism</p>
+<p>magic (magick)</p>
+<p><a href="https://heterodoxology.com/2016/02/24/the-scholastic-imagination/">catapathic vs apophatic</a></p>
+<h2 id="overview-of-mind-brain-self-soul-spirit-consciousness"><span class="section_number">4</span><span class="section_title">Overview of mind, brain, self, soul, spirit, consciousness</span></h2>
+<p><em>Minds</em> contain thoughts and feelings, as implied by our saying &quot;What is in your mind?&quot; Synonyms: Latin <a href="https://en.wiktionary.org/wiki/mens#Latin">mens</a>, <a href="https://en.wiktionary.org/wiki/νόος">Greek</a> <a href="https://en.wiktionary.org/wiki/nous">nous</a>. &quot;Mental&quot; is the adjective that means &quot;related to the mind&quot;.</p>
+<p><em>Brains</em> contain brain matter.</p>
+<p><em>Soul</em>. Greek psyche.</p>
+<p><em>Consciousness</em> is the ability to ken. For more explanation, see <a href="conscious.html">file:conscious.html</a>.</p>
+<p>&quot;Spirit&quot; <a href="https://www.etymonline.com/word/spirit">means</a> breath. &quot;Spirit&quot; may also mean idea, essence, intention, or meaning, such as in &quot;spirit of the law&quot;, as opposed to &quot;letter of the law&quot;, which is the mere appearance. Greek pneuma.</p>
+<h2 id="on-minds-and-thoughts"><span class="section_number">5</span><span class="section_title">On minds and thoughts</span></h2>
+<p>What is the relationship between mind and thought? Which are correct?</p>
+<ul>
+<li>Thoughts appear in minds?</li>
+<li>Thoughts enters minds?</li>
+<li>Minds create/generate thoughts?</li>
+<li>Minds receive/transmit thoughts?</li>
+</ul>
+<p>My mind thinks. I do not think. So what do I do then? I merely exist. How do I know I exist? Thought is not required. But how can I know I exist if I cannot feel anything? Without language, I can still know I exist; I will merely be unable to tell others.</p>
+<p>Attention. Focus.</p>
+<p>Intention.</p>
+<p>Expectation.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#our-surface-experience-of-our-minds">Our surface experience of our minds</a></span><span class="word_count">(151w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#knowing-our-minds-more-deeply">Knowing our minds more deeply</a></span><span class="word_count">(818w~5m)</span></li>
+<li><span class="section_number">5.3</span><span class="section_title"><a href="#my-personal-discoveries">My personal discoveries</a></span><span class="word_count">(90w~1m)</span></li>
+</ul>
+</div>
+<h3 id="our-surface-experience-of-our-minds"><span class="section_number">5.1</span><span class="section_title">Our surface experience of our minds</span></h3>
+<p><em>Mind</em> is what contains thoughts. Mind is what thinks thoughts?</p>
+<p>The <em>meaning</em> of X for an agent A is A's mind's interpretation of X.</p>
+<p>The meaning of X for us is our mind's interpretation of X.</p>
+<p>Undefined terms: to <em>feel</em>, to <em>think</em>, to <em>experience</em>, to <em>remember</em>, to <em>recall</em>.</p>
+<p>A <em>feeling</em> is what is felt.</p>
+<p>A <em>thought</em> is what is thought.</p>
+<p>To <em>infer</em> is to reason according to a <a href="https://en.wikipedia.org/wiki/Formal_system">formal system</a>. Inference is formal/syntactic manipulation, a strict adherence to some inference rules. It does not involve semantics/meaning.</p>
+<p>There are at least two kinds of thinking:</p>
+<ul>
+<li>thinking without language, such as imagining the a visual object or a sound; imagining something</li>
+<li>thinking with language, commentary, labeling, inference</li>
+</ul>
+<p>Imagination.</p>
+<p>To infer is not to assume.</p>
+<p>Memory.</p>
+<p>Undefined terms: time, past, present, future?</p>
+<p>When a thought is bothering you, you can't erase it by trying not to think it; you can only bury it with another thought or by not trying to thinking anything.</p>
+<h3 id="knowing-our-minds-more-deeply"><span class="section_number">5.2</span><span class="section_title">Knowing our minds more deeply</span></h3>
+<p><em>meditation.html</em></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.2.1</span><span class="section_title"><a href="#enligtenment-ego-death">Enligtenment? Ego death?</a></span><span class="word_count">(697w~4m)</span></li>
+<li><span class="section_number">5.2.2</span><span class="section_title"><a href="#idea-measuring-the-depth-of-meditation">&lt;2019-11-27&gt; Idea: Measuring the depth of meditation</a></span><span class="word_count">(107w~1m)</span></li>
+<li><span class="section_number">5.2.3</span><span class="section_title"><a href="#urge-surfing">Urge surfing</a></span><span class="word_count">(12w~1m)</span></li>
+</ul>
+</div>
+<h4 id="enligtenment-ego-death"><span class="section_number">5.2.1</span><span class="section_title">Enligtenment? Ego death?</span></h4>
+<p>Horgan 2017<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>:</p>
+<blockquote>
+<p>And if you really experience nothing, how can you remember the experience? How do you emerge from this state of oblivion back into ordinary consciousness?</p>
+</blockquote>
+<p>Does this <a href="https://hackspirit.com/ego-death-7-stages-to-the-obliteration-of-the-self/">ego-death attainment procedure</a> work? (From Google search &quot;how to ego death without drugs&quot;.)</p>
+<p>Possibly enlightenment?<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Note that the subjects themselves do not label the experience as &quot;enlightenment&quot;, but apparently all of them at least experience temporary ego death.</p>
+<p>Sometimes I imagine something so fun that I lost sense of time (1–2 hours had passed, whereas I think it was only 15–30 minutes). Is that ego death? But I don't feel extreme bliss.</p>
+<p>Enlightenment?<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>People &quot;who are congenitally blind for organic reasons and have never been able to see anything in their entire lives can perceive the environment when their non-local consciousness detaches from their bodies during various life-threatening situations.&quot;<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> If blind people can do that, then myopia should be a trivial obstacle. Seeing without eyes is not crazy if you already know remote viewing. Also see Katharina Friedrich's &quot;seeing without eyes&quot;<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> (&quot;Sehen ohne Augen&quot;). Are there English videos? What are her experiments and theories?</p>
+<p>Remote viewing is similar to automatic writing/drawing in that both of them use the subconscious. How do we distinguish these cases?</p>
+<ol>
+<li>The viewer's consciousness goes to the target.</li>
+<li>The viewer and the target communicate by telepathy.</li>
+<li>The viewer reads some Akashic records about the target.</li>
+<li>The viewer is let know by a spirit/disembodied consciousness.</li>
+</ol>
+<p>What is the evidence for auras? What does Kirlian photography actually capture? Biofield evidence?<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<p>What is the evidence for chakras?</p>
+<p><em>Why does all psychic development book boil down to deep meditation and visualization</em>? If they work, how do they work?</p>
+<p>I am reading David DeBold's &quot;Miracle mastery&quot; book? There seem to be <a href="https://healingtaousa.com/topic/miracle-mastery-by-david-debold-has-anyone-read-this-text/">other readers</a> too.</p>
+<p>What are Paramahansa Yogananda's &quot;scientific techniques for attaining direct personal experience of God&quot;<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>?</p>
+<p>Is the goal of null-domain meditation (empty-mind meditation) ego death?</p>
+<p>Does an enlightened man know that he is enlightened? To be enlightened is to know reality directly without the material senses?</p>
+<p>If an enlightened person cannot be disturbed<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>, then what is the difference between enlightenment and apathy?</p>
+<p>Some of the quickly visible effects of meditation are reduced stress and increased ability to maintain focus.</p>
+<p>Is meditation about focus, about relaxation, or about quieting the mind?</p>
+<p>Read Quora psychics-related topic, and perhaps Reddit, but Quora is more structured (question-answer).</p>
+<p>Is Patanjali<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> right? Did he know what he was talking about?</p>
+<p>Does myopia hamper aura-seeing? Do we use eyes to see aura? If not, then myopia should not hamper aura-seeing.</p>
+<p>(On telekinesis and the conservation of energy.) Where does the energy come from? Does the practitioner become tired? Is energy conserved?</p>
+<p>A plan of the table of contents:</p>
+<ul>
+<li>Evolution of the brain. What questions about the brain can evolution answer? Why do brain parts specialize into functional areas? Speculations on the non-uniformity of the brain. Encephalization quotient? Why have humans built more variety of tools than elephants have?</li>
+<li>Dissociative identity disorder. Kastrup's hypothesis of individual consciousness as dissociation of cosmic consciousness. Is there an identity dissociation that is not a disorder?</li>
+<li>Disembodied consciousness, mediumship, life after death, out-of-body experiences, near-death experiences, shared death experiences, anomalous cognition.</li>
+<li>Remote viewing, energy works, psychic abilities/functioning, paranormal phenomena, poltergeist vs haunting.
+<ul>
+<li><a href="remote-viewing.html">On remote viewing</a></li>
+</ul></li>
+<li>What can cybernetics tell us about the brain? Good regulator theorem?
+<ul>
+<li>Anapoiesis reconstructs knowledge &quot;from long-term memory to working memory&quot;? &lt;2019-11-05&gt; <a href="https://arxiv.org/ftp/arxiv/papers/1402/1402.5332.pdf">https://arxiv.org/ftp/arxiv/papers/1402/1402.5332.pdf</a></li>
+</ul></li>
+<li>Psi research around the world: USA, USSR, China, etc.? <a href="question.html">file:question.html</a></li>
+<li>Memory. Hypothesis: Temporal ordering enhances recall. Perception of time. <a href="question.html">file:question.html</a></li>
+<li><a href="physics-21.html">A crash course on 21st century physics, with emphasis on modeling</a>. Quantum mechanics. Relativity.</li>
+<li>Borderline crackpot territory.
+<ul>
+<li>Quantum-physical hypotheses of the workings of the brain, consciousness, whatever.</li>
+<li>Religion as technology for communicating with God. Jesus as a democratization of the access to God (from select shamans then to everyone now)?</li>
+</ul></li>
+<li>I have some <a href="question.html">unanswered questions</a>.</li>
+<li><a href="energy.html">Energy</a> is the ability to do work. Power is the rate of energy transfer. (If you wish to detour to politics, see <a href="power.html">On political power</a>.)</li>
+<li>There is enough paranormal evidence. We need a <a href="anomaly-theory.html">theory</a>.</li>
+<li>Everyone should develop psychic abilities?
+<ul>
+<li><a href="book.html">Summary of some books</a> (deprecated)</li>
+</ul></li>
+<li><a href="anomaly.html">On anomalies</a></li>
+<li>Philosophy should use <a href="philo.html">simple language</a>.</li>
+<li><a href="religion.html">Religion</a> is a technology for communicating with God?</li>
+</ul>
+<p>What?</p>
+<p>Precognition indicates consciousness? Animals precognize. Human consciousness can interfere in consciousness experiments.<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a></p>
+<p>Perhaps we prayed because it will rain; perhaps the future affects the past.</p>
+<p>I declare &lt;2019-11-25&gt; as my day one of consciousness experiments. By then I had been meditating lightly for a few days.</p>
+<h4 id="idea-measuring-the-depth-of-meditation"><span class="section_number">5.2.2</span><span class="section_title">&lt;2019-11-27&gt; Idea: Measuring the depth of meditation</span></h4>
+<p>The depth of meditation can be subjectively measured by the <em>rate of internal distraction</em> (number of internal distractions per unit time). For example, a newbie meditator may be distracted 20 times per minute, and an expert meditator may be distracted 1 time per 15 minutes. One internal distraction is one time realizing that one has been distracted. External distraction does not always translate to internal distraction. For example, when someone talks to me while I am reading an article, I may fail to respond to the other person.</p>
+<p>The depth of meditation can be objectively measured by frequency analysis of brain waves?</p>
+<h4 id="urge-surfing"><span class="section_number">5.2.3</span><span class="section_title">Urge surfing</span></h4>
+<p>Interesting!</p>
+<p>This is a special case of mindfulness, applied mindfulness.</p>
+<p><a href="https://med.dartmouth-hitchcock.org/documents/Urge-Surfing.pdf">https://med.dartmouth-hitchcock.org/documents/Urge-Surfing.pdf</a></p>
+<p>&lt;2019-11-30&gt; via <em><a href="https://www.youtube.com/watch?v=m-OomGSciTY">https://www.youtube.com/watch?v=m-OomGSciTY</a></em>.</p>
+<h3 id="my-personal-discoveries"><span class="section_number">5.3</span><span class="section_title">My personal discoveries</span></h3>
+<p>I think these will apply to you too.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.3.1</span><span class="section_title"><a href="#how-to-anger-me">How to anger me</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">5.3.2</span><span class="section_title"><a href="#how-to-scare-me">How to scare me</a></span><span class="word_count">(19w~1m)</span></li>
+</ul>
+</div>
+<h4 id="how-to-anger-me"><span class="section_number">5.3.1</span><span class="section_title">How to anger me</span></h4>
+<p>How to surprise me: Violate my guesses.</p>
+<p>How to anger me: Violate my expectations.</p>
+<p>How to arouse resentment in me: Violate my expectations, and give me no control to change it.</p>
+<p>&lt;2019-11-28&gt;</p>
+<p>Especially good at angering me are shitty computer systems. My shitty bank's shitty website. Gojek's shitty behavior (giving drivers 2 km away).</p>
+<p>When I'm angry, cussing helps diffuse the urge to destroy things.</p>
+<h4 id="how-to-scare-me"><span class="section_number">5.3.2</span><span class="section_title">How to scare me</span></h4>
+<p>How to make me fear: Put me in a dark outdoor place with no street lights.</p>
+<h2 id="overview-of-consciousness"><span class="section_number">6</span><span class="section_title">Overview of consciousness</span></h2>
+<p>Is there any meaningful difference between subconscious and unconscious?</p>
+<p>If Consciousness = ability to know (introspectability?) then Subconsciousness = <em>reduced</em> ability to know, and Unconsciousness = inability to know, lack of ability to know.</p>
+<p>Cognition and recognition</p>
+<p>cogito comes from from con- (from cum-, with) and agito (agere, to do) &lt;2019-11-05&gt; <a href="https://en.wiktionary.org/wiki/cogito#Latin">https://en.wiktionary.org/wiki/cogito#Latin</a></p>
+<p>Cognizance, cogitate</p>
+<p>Cogito = I think</p>
+<p>X recognizes Y iff X cognizes that X cognizes Y.</p>
+<p>For example, we see a photo of a distant acquaintance that we last met 40 years ago. We immediately <em>cognize</em> this person, in the sense that we immediately feel that we know this person (we have seen this person somewhere before); but for a moment we strive to think who this person is and where we met this person: it takes us some time to <em>recognize</em> this person.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#an-analogy-of-consciousness-a-person-in-a-stream-full-of-fish">An analogy of consciousness: a person in a stream full of fish</a></span><span class="word_count">(117w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#what-do-others-say-about-consciousness">What do others say about consciousness?</a></span><span class="word_count">(21w~1m)</span></li>
+</ul>
+</div>
+<h3 id="an-analogy-of-consciousness-a-person-in-a-stream-full-of-fish"><span class="section_number">6.1</span><span class="section_title">An analogy of consciousness: a person in a stream full of fish</span></h3>
+<p>How accurate is this analogy?</p>
+<p>My consciousness, my awareness, my perception of what I think is the present, my existence, is like trying to catch as many fish as possible in a rapid stream of water full of fish swimming along in the current. There are so many fish that my conscious mind does not see. When I silence my mind, it is as if I let the fish swim, not catch them, not interfere with their natural trajectories.</p>
+<p>The fish in my hand is my conscious mind.</p>
+<p>The fish I glimpse in my peripheral vision is my subconscious mind.</p>
+<p>The fish swimming under the water is my unconscious mind.</p>
+<h3 id="what-do-others-say-about-consciousness"><span class="section_number">6.2</span><span class="section_title">What do others say about consciousness?</span></h3>
+<p>TODO summarize:</p>
+<ul>
+<li>Vsauce video &quot;What is consciousness?&quot;<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></li>
+<li>2009, &quot;How to define consciousness—and how not to define consciousness&quot;, <a href="http://cogprints.org/6453/1/How_to_define_consciousness.pdf">pdf</a></li>
+</ul>
+<h2 id="understanding-is-reasonably-accurate-modeling"><span class="section_number">7</span><span class="section_title">Understanding is reasonably accurate modeling</span></h2>
+<p>To <em>understand</em> something is to have a reasonably accurate <em>model</em> of it.</p>
+<p>X <em>understands</em> Y iff X has a reasonably accurate model of Y.</p>
+<h2 id="other-peoples-esoteric-sciences"><span class="section_number">8</span><span class="section_title">Other people's esoteric sciences</span></h2>
+<p>Rudolf Steiner's book &quot;An outline of esoteric science&quot;?</p>
+<p>esoteric science? occult experiments? <a href="http://www.kheper.net/essays/Esoteric_Science.html">http://www.kheper.net/essays/Esoteric_Science.html</a></p>
+<p>Should all scientists meditate, so that they directly know?</p>
+<p>Desda Zuckerman published her 2012 book &quot;Your Sacred Anatomy: An Owner's Guide To The Human Energy Structure&quot;. Is &quot;spiritual anatomy&quot;<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> a theory of psychic functioning? It looks scientific: she did some tests, standardizations, and replications. It started from her observations.</p>
+<p>Its thickness is quite intimidating; it took her decades to write, but I think it can be slimmed down, or perhaps split into a few books, each with narrower focus.</p>
+<p>She uses the scientific method: observe, hypothesize, experiment. But the subject is her inner experience; how do we directly experience the inner experience of others?</p>
+<h2 id="physics-blog"><span class="section_number">9</span><span class="section_title">Physics blog</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#some-physics-questions">&lt;2019-11-27&gt; Some physics questions</a></span><span class="word_count">(175w~1m)</span></li>
+<li><span class="section_number">9.2</span><span class="section_title"><a href="#comparing-classical-mechanics-and-quantum-mechanics">&lt;2019-11-27&gt; Comparing classical mechanics and quantum mechanics</a></span><span class="word_count">(82w~1m)</span></li>
+<li><span class="section_number">9.3</span><span class="section_title"><a href="#is-motion-continuous">&lt;2019-11-27&gt; Is motion continuous?</a></span><span class="word_count">(67w~1m)</span></li>
+<li><span class="section_number">9.4</span><span class="section_title"><a href="#on-unifying-quantum-mechanics-and-relativity-and-linguistic-issues">&lt;2019-11-27&gt; On unifying quantum mechanics and relativity, and linguistic issues</a></span><span class="word_count">(173w~1m)</span></li>
+<li><span class="section_number">9.5</span><span class="section_title"><a href="#on-the-epistemology-and-ontology-of-spacetime">&lt;2019-11-27&gt; On the epistemology and ontology of spacetime</a></span><span class="word_count">(184w~1m)</span></li>
+<li><span class="section_number">9.6</span><span class="section_title"><a href="#electromagnetic-wave">&lt;2019-08-14&gt; Electromagnetic wave</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">9.7</span><span class="section_title"><a href="#on-the-discreteness-of-length-and-the-isotropy-of-space">On the discreteness of length and the isotropy of space</a></span><span class="word_count">(62w~1m)</span></li>
+</ul>
+</div>
+<h3 id="some-physics-questions"><span class="section_number">9.1</span><span class="section_title">&lt;2019-11-27&gt; Some physics questions</span></h3>
+<p>If matter is congealed energy, and a wave is a disturbance that moves energy without moving matter, then what?</p>
+<p>Let not-you be everything else in the Universe except you.</p>
+<p>Moving yourself with velocity v is the same as moving not-you by -v. That is, our ability to move ourselves is the same ability to move the entire Universe. Your gaining kinetic energy mv2 is equivalent to not-you gaining kinetic energy Mv2 where m is your mass and M is the mass of not-you.</p>
+<p>But why, accelerating you by a is not the same as accelerating not-you by -a? That is, we can tell who is accelerating by finding out who feels a force.</p>
+<p>We cannot tell who is moving, but we can tell who is accelerating. Why is that?</p>
+<p>That is, I know a way to move all stars in the sky, but I know no way to move only some stars without moving everything else.</p>
+<p>Acceleration is the rate of change of velocity.</p>
+<p>Accelerometer measures force, not acceleration.</p>
+<p>Or should we redefine acceleration as whatever measured by an accelerometer?</p>
+<h3 id="comparing-classical-mechanics-and-quantum-mechanics"><span class="section_number">9.2</span><span class="section_title">&lt;2019-11-27&gt; Comparing classical mechanics and quantum mechanics</span></h3>
+<p>In Newton-style mechanics, an n-body system is modeled as (x1,ldots,xn) where xk R to R3. The interpretation is &quot;At time t, body 1 is at x1(t) and … and body n is at xn(t)&quot;</p>
+<p>In Schrödinger-style mechanics, an n-body system is modeled as psi(x1,ldots,xn) where xk in R3. The interpretation is &quot;At time t, there is a probability density of sqr abs psi(x1,ldots,xn,t) that body 1 is at x1 and … and body n is at xn&quot;</p>
+<p><a href="https://en.wikipedia.org/wiki/Wave_function">https://en.wikipedia.org/wiki/Wave_function</a></p>
+<h3 id="is-motion-continuous"><span class="section_number">9.3</span><span class="section_title">&lt;2019-11-27&gt; Is motion continuous?</span></h3>
+<p>A <em>movement</em> is a change in position.</p>
+<p>A <em>motion</em> is a <em>continuous</em> movement (a continuous change in position). But is it appropriate to model continuous movement with continuous functions (continuous in the sense of real analysis)? Is spacetime infinitely divisible?</p>
+<p>Classical mechanics makes the ontological commitment that spacetime is infinitely divisible.</p>
+<p>A simplifying assumption may be an ontological commitment.</p>
+<p>Quantum mechanics has more ontological parsimony than classical mechanics.</p>
+<h3 id="on-unifying-quantum-mechanics-and-relativity-and-linguistic-issues"><span class="section_number">9.4</span><span class="section_title">&lt;2019-11-27&gt; On unifying quantum mechanics and relativity, and linguistic issues</span></h3>
+<p>Perhaps the key to unifying quantum mechanics and relativity is to determine a more correct concept of spacetime.</p>
+<p>The key issue is language: the same word &quot;time&quot; is used to mean different things in those theories.</p>
+<p>Quantum mechanics still assumes Newtonian absolute spacetime. Relativity assumes locality but experiments show that reality is non-local. Perhaps we must relax both of those assumptions. We need a theory that explains both quantum entanglement and spacetime curvature.</p>
+<p>We know that something is in the past because we remember it or because we believe someone else who remembers it. But our memory of the past is not what the past actually is.</p>
+<p>The way we use a word implies our mental model of its meaning.</p>
+<p>How we use a word implies what we think of it.</p>
+<p>The usage of a word implies its meaning (how we interpret the word, how we ascribe meaning to the word).</p>
+<p>The meaning of a word is determined by the circumstances in which it is used, not by the word itself.</p>
+<h3 id="on-the-epistemology-and-ontology-of-spacetime"><span class="section_number">9.5</span><span class="section_title">&lt;2019-11-27&gt; On the epistemology and ontology of spacetime</span></h3>
+<p>What does our usage of English imply about how we think of spacetime?</p>
+<p>We say:</p>
+<ul>
+<li>Time passes, time flies</li>
+<li>The first time, the second time</li>
+<li>One time, two times</li>
+<li>What time is it</li>
+</ul>
+<p>There are several meanings.</p>
+<p>Space is the separation between matter, and time is the separation between events?</p>
+<p>Which one is right:</p>
+<ul>
+<li>Matter occupies space (space contains matter)</li>
+<li>Space separates matter</li>
+<li>Neither of them</li>
+</ul>
+<p>Space is the ability to contain, and time is the ability to endure?</p>
+<p>What does it mean to bend spacetime? How do we know?</p>
+<p>It seems that our minds expect the entropy of the system it observes to always increase.</p>
+<p>A gas expands to fill its container. The arrow of time is the direction of time in which the gas seems to expand. The arrow of time is the direction in which entropy increases.</p>
+<p>We seem to perceive time to be moving in one direction. Why is that?</p>
+<p>We know the speed of the passage of time by looking at the rate of change of things around us.</p>
+<p>We define space by the size of an object? The amount of space occupied by an object</p>
+<p>But what is time itself?</p>
+<h3 id="electromagnetic-wave"><span class="section_number">9.6</span><span class="section_title">&lt;2019-08-14&gt; Electromagnetic wave</span></h3>
+<p>In Maxwell's theory, an electric charge instantaneously affects all of space, and an electromagnetic wave is not something emitted by an electric charge.</p>
+<h3 id="on-the-discreteness-of-length-and-the-isotropy-of-space"><span class="section_number">9.7</span><span class="section_title">On the discreteness of length and the isotropy of space</span></h3>
+<p>If length is discrete, than space cannot be both isotropic and Euclidean, because not all angles are possible. But what if space is discrete and everything is a field/wave? Space would look isotropic?</p>
+<p>What about this?</p>
+<p>&quot;Is Space-Time Discrete or Continuous? An Empirical Question&quot;, Peter Forrest, Synthese, Vol. 103, No. 3 (Jun., 1995), pp. 327-354.</p>
+<h2 id="is-psychology-science"><span class="section_number">10</span><span class="section_title">&lt;2019-11-28&gt; Is psychology science?</span></h2>
+<p>There are psychological experiments and theories that try to explain those experiments, but do those theories predict anything?</p>
+<p>Is psychology falsifiable?</p>
+<p>There are some interesting experiments and applications. Asch conformity experiment, Stanford prison experiment. Using stories to change minds. Hostage negotiation techniques. Pavlovian conditioning, Skinnerian conditioning. Rat heaven experiment. Monkey mother experiment.</p>
+<p><em>But what is the underlying science?</em> Biology, genetics, hormones, epigenetics, neuroscience, and so on.</p>
+<p>Psychology can be thought of as applied biology.</p>
+<p>Everyone capable of some empathy has an intuitive understanding of basic psychology.</p>
+<h2 id="mind-and-brain"><span class="section_number">11</span><span class="section_title">Mind and brain?</span></h2>
+<p>&lt;2018-10-03&gt; <a href="https://www.sciencealert.com/brain-to-brain-mind-connection-lets-three-people-share-thoughts">brain-to-brain interface?</a></p>
+<p>Mind-brain relationship: Gage, Sperry, Libet, corpus callostomy, &quot;thalamic bridge&quot;, etc.</p>
+<p>Minds and brains <a href="mind-brain.html">interact</a>, but we <a href="mind.html">don't really know how</a>.</p>
+<h2 id="editors-notes"><span class="section_number">12</span><span class="section_title">Editor's notes</span></h2>
+<p>Alternative titles:</p>
+<ul>
+<li><em>introspection</em></li>
+<li>mind/mental/introspection/personal-psychology <em>experiments</em></li>
+<li><em>unified</em> esoteric-exoteric science</li>
+<li>inner <em>science</em>; science of the subjective experience</li>
+</ul>
+<h2 id="condemned-resources"><span class="section_number">13</span><span class="section_title">Condemned resources?</span></h2>
+<p>Pam Grout's 2013 book (&quot;[…] Nine Do-It-Yourself Energy Experiments […]&quot;) gives some spiritual experiments that everyone can do on their own. But there are lots of <a href="https://www.amazon.com/product-reviews/1401938906/?filterByStar=critical&amp;pageNumber=1">damning reviews</a>, so I did not read the book.</p>
+<h2 id="editor-move-these-things-somewhere-else"><span class="section_number">14</span><span class="section_title">Editor: Move these things somewhere else?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">14.1</span><span class="section_title"><a href="#why-are-we-so-angry">Why are we so angry?</a></span><span class="word_count">(55w~1m)</span></li>
+<li><span class="section_number">14.2</span><span class="section_title"><a href="#what-psychology">What psychology?</a></span><span class="word_count">(554w~3m)</span></li>
+<li><span class="section_number">14.3</span><span class="section_title"><a href="#fear-explains-everything">Fear explains everything?</a></span><span class="word_count">(86w~1m)</span></li>
+<li><span class="section_number">14.4</span><span class="section_title"><a href="#why-does-darkness-inconvenience-us">&lt;2019-11-28&gt; Why does darkness inconvenience us?</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">14.5</span><span class="section_title"><a href="#artificial">Artificial?</a></span><span class="word_count">(129w~1m)</span></li>
+<li><span class="section_number">14.6</span><span class="section_title"><a href="#on-beginner-resources-for-psychic-power-spiritual-journey-etc.">On beginner resources for psychic power, spiritual journey, etc.</a></span><span class="word_count">(32w~1m)</span></li>
+<li><span class="section_number">14.7</span><span class="section_title"><a href="#esoteric-science-going-mainstream">Esoteric science going mainstream?</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">14.8</span><span class="section_title"><a href="#on-refusing-reincarnation">&lt;2019-11-27&gt; On refusing reincarnation</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">14.9</span><span class="section_title"><a href="#using-analytic-philosophy-to-clarify-and-navigate-social-relationships">Using analytic philosophy to clarify and navigate social relationships</a></span><span class="word_count">(384w~2m)</span></li>
+<li><span class="section_number">14.10</span><span class="section_title"><a href="#mostly-physics">Mostly physics</a></span><span class="word_count">(50w~1m)</span></li>
+<li><span class="section_number">14.11</span><span class="section_title"><a href="#blog-about-biology-health-and-beauty">Blog about biology, health, and beauty</a></span><span class="word_count">(563w~3m)</span></li>
+<li><span class="section_number">14.12</span><span class="section_title"><a href="#on-living-on-earth">On living on Earth</a></span><span class="word_count">(354w~2m)</span></li>
+</ul>
+</div>
+<h3 id="why-are-we-so-angry"><span class="section_number">14.1</span><span class="section_title">Why are we so angry?</span></h3>
+<ul>
+<li><a href="https://www.nhs.uk/conditions/stress-anxiety-depression/about-anger/">https://www.nhs.uk/conditions/stress-anxiety-depression/about-anger/</a>
+<ul>
+<li>&quot;being treated unfairly and feeling powerless to do anything about it&quot;
+<ul>
+<li>Is it really unfairness that bothers me, or do I have the wrong sense of fairness? Does fairness even exist?</li>
+</ul></li>
+</ul></li>
+<li><a href="https://psychcentral.com/blog/angry-all-the-time-for-no-reason-this-might-be-why/">https://psychcentral.com/blog/angry-all-the-time-for-no-reason-this-might-be-why/</a>
+<ul>
+<li>'Anger also “stems from wanting to control what is outside of us,” said Michelle Farris, LMFT, a psychotherapist in San Jose, Calif.'</li>
+</ul></li>
+</ul>
+<h3 id="what-psychology"><span class="section_number">14.2</span><span class="section_title">What psychology?</span></h3>
+<ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Psychology_of_collecting">WP:Psychology of collecting</a></p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Compulsive_hoarding">WP:Compulsive hoarding</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Digital_hoarding">WP:Digital hoarding</a></li>
+</ul></li>
+<li><p>Undigested</p>
+<ul>
+<li><a href="http://www.apa.org/monitor/nov02/gomad.aspx">2002, Jennifer Daw, Why and how normal people go mad</a></li>
+<li><p>advertising, propaganda</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=nj_UWbifM2U">How One Man Manipulated All of America</a>, 12 minutes, too long, about <a href="https://en.wikipedia.org/wiki/Edward_Bernays">WP: Edward Bernays</a></li>
+</ul></li>
+<li><p>Persuasion, changing minds</p>
+<ul>
+<li><a href="https://viaconflict.wordpress.com/2014/10/26/the-behavioral-change-stairway-model/">The Behavioral Change Stairway Model</a>, can be used for hostage negotiation, suicide prevention, terrorist deradicalization</li>
+<li><p>changingminds.org</p>
+<ul>
+<li><a href="http://changingminds.org/techniques/general/overall/overall.htm">http://changingminds.org/techniques/general/overall/overall.htm</a></li>
+<li><a href="http://changingminds.org/techniques/general/cialdini/cialdini.htm">http://changingminds.org/techniques/general/cialdini/cialdini.htm</a></li>
+<li><a href="http://changingminds.org/techniques/general/kellerman/kellerman.htm">http://changingminds.org/techniques/general/kellerman/kellerman.htm</a></li>
+<li><a href="http://changingminds.org/techniques/general/being_right/being_right.htm">http://changingminds.org/techniques/general/being_right/being_right.htm</a></li>
+<li><a href="http://changingminds.org/techniques/general/ingratiation/ingratiation.htm">http://changingminds.org/techniques/general/ingratiation/ingratiation.htm</a></li>
+<li><a href="http://changingminds.org/techniques/how_to/trust_me/trust_me.htm">http://changingminds.org/techniques/how_to/trust_me/trust_me.htm</a></li>
+</ul></li>
+<li><p>The key to persuasion is <strong>think as the target</strong>. Think what he/she wants and hates.</p>
+<ul>
+<li><p>Application to politics:</p>
+<ul>
+<li><a href="https://qz.com/525132/the-smartest-most-effective-way-to-win-any-political-argument/">Frame your persuasion in the target's morality</a>.</li>
+<li><a href="https://www.nytimes.com/2015/11/15/opinion/sunday/the-key-to-political-persuasion.html">Same</a>.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>A <em>market</em> is where things are bought and sold.</li>
+<li>To <em>market</em> something is to try to sell that thing.</li>
+<li>Marketing is about inducing people to buy something?</li>
+<li><p>Sometimes being agreeable is more important than being correct.</p>
+<ul>
+<li>Other people's feelings are more important than the truth?</li>
+</ul></li>
+<li><p><a href="https://qz.com/881289/a-new-study-linking-profanity-to-honesty-shows-people-who-curse-are-more-authentic/">https://qz.com/881289/a-new-study-linking-profanity-to-honesty-shows-people-who-curse-are-more-authentic/</a></p></li>
+</ul></li>
+<li><p>How the Nazis might have made the German people accept Nazism</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/The_Wave_%282008_film%29">https://en.wikipedia.org/wiki/The_Wave_%282008_film%29</a></li>
+<li><a href="https://en.wikipedia.org/wiki/The_Third_Wave_(experiment)">https://en.wikipedia.org/wiki/The_Third_Wave_(experiment)</a></li>
+</ul></li>
+<li><p>Why do people kill?</p>
+<ul>
+<li>Anger? Envy? Hatred?</li>
+</ul></li>
+<li><p>Why do people rape?</p>
+<ul>
+<li><p>Is it about beauty?</p>
+<ul>
+<li><p>No?</p>
+<ul>
+<li>There are ugly people who get raped.</li>
+<li>There are beautiful people who don't get raped.</li>
+</ul></li>
+</ul></li>
+<li>Is it about getting satisfaction from unconsenting victim?</li>
+<li>Is rape a power trip?</li>
+<li><p>Is there any relationship between grandiosity and rape?</p></li>
+</ul></li>
+<li><p>Why do people commit crimes?</p>
+<ul>
+<li><p>Do they know the penalties?</p>
+<ul>
+<li>If yes, why do they still commit crimes?</li>
+</ul></li>
+</ul></li>
+<li><a href="https://www.beeminder.com/home">beeminder.com: use loss aversion to trick yourself to accomplishing goals</a></li>
+<li><p><a href="https://www.youtube.com/watch?v=WEvqMN75sCI">Does your job match your personality? | Jordan Peterson</a></p>
+<ul>
+<li><p>axis: complexity</p>
+<ul>
+<li>high complexity requires high cognitive function level</li>
+</ul></li>
+<li><p>axis: creative/entrepreneurial vs managerial/administrative</p>
+<ul>
+<li><p>big five personality trait</p>
+<ul>
+<li>C/E requires &quot;openness to experience&quot;</li>
+<li>M/A requires conscientiousness</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="https://www.youtube.com/watch?v=-moW9jvvMr4">A simple way to break a bad habit | Judson Brewer</a>: by being curiously aware</li>
+<li><a href="https://www.youtube.com/watch?v=xp0O2vi8DX4">How to motivate yourself to change your behavior | Tali Sharot | TEDxCambridge</a></li>
+<li><p><a href="https://www.washingtonpost.com/news/storyline/wp/2014/12/04/people-around-you-control-your-mind-the-latest-evidence/?utm_term=.40265b80e149">https://www.washingtonpost.com/news/storyline/wp/2014/12/04/people-around-you-control-your-mind-the-latest-evidence/?utm_term=.40265b80e149</a></p>
+<ul>
+<li><a href="https://news.ycombinator.com/item?id=12698204">https://news.ycombinator.com/item?id=12698204</a></li>
+</ul></li>
+<li><p><a href="https://www.youtube.com/watch?v=kyioZODhKbE">Facts Don't Win Fights: Here's How to Cut Through Confirmation Bias - Tali Sharot - YouTube</a></p>
+<ul>
+<li>To polarize someone is to make him more confident (about a belief).</li>
+<li><p>Confirmation bias: People hear what they want to hear.</p>
+<ul>
+<li>People filter incoming information.</li>
+<li>People bend incoming information to conform with their preexisting beliefs.</li>
+<li>Agreements polarize people, but disagreements don't depolarize people.</li>
+<li>Information agreeing with preexisting belief polarize the believer.</li>
+<li>Information disagreeing with preexisting belief is filtered out and doesn't depolarize the believer.</li>
+</ul></li>
+<li><p>Key insight: We can change people's behavior without changing their beliefs.</p></li>
+</ul></li>
+<li><p><a href="https://www.youtube.com/watch?v=WAL7Pz1i1jU">How to Persuade Others with the Right Questions: Jedi Mind Tricks from Daniel H. Pink</a></p>
+<ul>
+<li><p>how to get your daughter to clean her room</p>
+<ul>
+<li>the comment section is pessimistic</li>
+</ul></li>
+</ul></li>
+<li><p>2018-08-29 What I learned today.</p>
+<ul>
+<li><p>To temporarily defuse your enemy's hatred of you, find another enemy that is common to both of you.</p>
+<ul>
+<li>These happens in quick succession: Coworker A offended me. Then coworker B came and offended A in front of me. Then I offend coworker B in front of A. Then I can feel some agreement with coworker A.</li>
+</ul></li>
+<li><p>The perception of having a common enemy unites people, even if the enemy is fake.</p></li>
+</ul></li>
+<li><p><a href="https://www.youtube.com/watch?v=nknYtlOvaQ0">Why obvious lies make great propaganda - YouTube</a></p>
+<ul>
+<li><p><a href="https://www.rand.org/pubs/perspectives/PE198.html">The Russian &quot;Firehose of Falsehood&quot; Propaganda Model: Why It Might Work and Options to Counter It | RAND</a></p>
+<ul>
+<li>This has a concrete recommendations for countering the firehose of falsehood.</li>
+</ul></li>
+<li>Trump and Putin use &quot;firehose of falsehood&quot; to assert power, in the same way school bullies do.</li>
+<li>The only way to take power from them is to dismiss them. Media should stop giving them a platform. We should refuse to hear them. We should not fact-check, because by fact-checking we affirm that they have power. We should simply dismiss everything they say. Their competitors should counter-flood the media with their own firehoses.</li>
+<li>I'm sure Trump and Putin are not the only people using that technique. I suspect that PKS may be using that technique in mosques in West Java.</li>
+<li>Can <a href="https://en.wikipedia.org/wiki/Gaslighting">WP:Gaslighting</a> be used to unplant false beliefs?</li>
+</ul></li>
+</ul>
+<h3 id="fear-explains-everything"><span class="section_number">14.3</span><span class="section_title">Fear explains everything?</span></h3>
+<p>There are only two ways to make people do something:</p>
+<ul>
+<li>Make them want it.</li>
+<li>Make them fear the consequences of not doing it.</li>
+</ul>
+<p><a href="https://en.wikipedia.org/wiki/Fear_appeal">https://en.wikipedia.org/wiki/Fear_appeal</a></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">14.3.1</span><span class="section_title"><a href="#explaining-loveattachment-as-fear-of-loss">Explaining love/attachment as fear of loss…</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">14.3.2</span><span class="section_title"><a href="#intrinsic-motivation-to-do-x-is-fear-of-the-consequences-of-not-doing-x.">Intrinsic motivation to do X is fear of the consequences of not doing X.</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">14.3.3</span><span class="section_title"><a href="#to-want-x-is-to-fear-not-getting-x.">To want X is to fear not getting X.</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">14.3.4</span><span class="section_title"><a href="#we-eat-because-we-fear-death.-we-eat-because-we-fear-regretting-not-tasting-the-delicious-looking-food.">We eat because we fear death. We eat because we fear regretting not tasting the delicious-looking food.</a></span><span class="word_count">(17w~1m)</span></li>
+<li><span class="section_number">14.3.5</span><span class="section_title"><a href="#it-is-the-terroristsextremists-who-are-afraid-of-us-in-the-same-way-a-cornered-rat-biting-us-is-afraid-of-us">It is the terrorists/extremists who are afraid of us, in the same way a cornered rat biting us is afraid of us?</a></span><span class="word_count">(22w~1m)</span></li>
+</ul>
+</div>
+<h4 id="explaining-loveattachment-as-fear-of-loss"><span class="section_number">14.3.1</span><span class="section_title">Explaining love/attachment as fear of loss…</span></h4>
+<h4 id="intrinsic-motivation-to-do-x-is-fear-of-the-consequences-of-not-doing-x."><span class="section_number">14.3.2</span><span class="section_title">Intrinsic motivation to do X is fear of the consequences of not doing X.</span></h4>
+<h4 id="to-want-x-is-to-fear-not-getting-x."><span class="section_number">14.3.3</span><span class="section_title">To want X is to fear not getting X.</span></h4>
+<h4 id="we-eat-because-we-fear-death.-we-eat-because-we-fear-regretting-not-tasting-the-delicious-looking-food."><span class="section_number">14.3.4</span><span class="section_title">We eat because we fear death. We eat because we fear regretting not tasting the delicious-looking food.</span></h4>
+<h4 id="it-is-the-terroristsextremists-who-are-afraid-of-us-in-the-same-way-a-cornered-rat-biting-us-is-afraid-of-us"><span class="section_number">14.3.5</span><span class="section_title">It is the terrorists/extremists who are afraid of us, in the same way a cornered rat biting us is afraid of us?</span></h4>
+<h3 id="why-does-darkness-inconvenience-us"><span class="section_number">14.4</span><span class="section_title">&lt;2019-11-28&gt; Why does darkness inconvenience us?</span></h3>
+<p>Street lights went out. I feel somewhat uneasy; I had to consciously calm myself, although there is nothing unusual. Why does darkness inconvenience us?</p>
+<h3 id="artificial"><span class="section_number">14.5</span><span class="section_title">Artificial?</span></h3>
+<p>We say that something is &quot;artificial&quot; iff it is highly unlikely to exist without being created by a human. We say that something is &quot;natural&quot; iff it is not artificial. But, if artificial urea and natural urea are exactly the same thing with the same properties, why do we bother?</p>
+<p>Why do we assume that some things will not come into existence if there are no humans to create it?</p>
+<p>Is it possible that somewhere out there in the vast outer space, there is a jet aircraft formed spontaneously by natural processes such as explosion of stars?</p>
+<p>Is it possible that there is a teapot-shaped space rock formed by natural processes?</p>
+<p>Why are most objects in outer space relatively simple compared to artificial objects? Or are things not as simple as they seem?</p>
+<h3 id="on-beginner-resources-for-psychic-power-spiritual-journey-etc."><span class="section_number">14.6</span><span class="section_title">On beginner resources for psychic power, spiritual journey, etc.</span></h3>
+<p><a href="https://www.youtube.com/watch?v=bRYHmniQnA8">Robert Bruce advises astral travel beginners</a>: As one is about to leave the body, one must stay calm and focused, and not get excited.</p>
+<h3 id="esoteric-science-going-mainstream"><span class="section_number">14.7</span><span class="section_title">Esoteric science going mainstream?</span></h3>
+<p>Is <a href="https://www.sciencedirect.com/science/article/pii/S1550830718300685">Krippner et al. 2019</a> a sign that remote viewing is going mainstream?</p>
+<h3 id="on-refusing-reincarnation"><span class="section_number">14.8</span><span class="section_title">&lt;2019-11-27&gt; On refusing reincarnation</span></h3>
+<p>bhagavad gita <a href="https://asitis.com/15">https://asitis.com/15</a></p>
+<p>Krishna meditation, 6:13-14, dhyana yoga <a href="https://vedabase.io/en/library/bg/6/">https://vedabase.io/en/library/bg/6/</a></p>
+<p>The light at the end of the tunnel is the birth canal? What theory is this? <a href="https://www.quora.com/What-if-you-dont-want-to-be-reincarnated">https://www.quora.com/What-if-you-dont-want-to-be-reincarnated</a></p>
+<p>Is life a gift, a trap, a prison, a test, or what? Is it what you make of it?</p>
+<p><a href="https://www.reddit.com/r/spirituality/top/?t=all">https://www.reddit.com/r/spirituality/top/?t=all</a></p>
+<h3 id="using-analytic-philosophy-to-clarify-and-navigate-social-relationships"><span class="section_number">14.9</span><span class="section_title">Using analytic philosophy to clarify and navigate social relationships</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">14.9.1</span><span class="section_title"><a href="#friendship">Friendship</a></span><span class="word_count">(221w~2m)</span></li>
+<li><span class="section_number">14.9.2</span><span class="section_title"><a href="#defining-boss">Defining &quot;boss&quot;</a></span><span class="word_count">(110w~1m)</span></li>
+<li><span class="section_number">14.9.3</span><span class="section_title"><a href="#happiness">Happiness</a></span><span class="word_count">(47w~1m)</span></li>
+</ul>
+</div>
+<h4 id="friendship"><span class="section_number">14.9.1</span><span class="section_title">Friendship</span></h4>
+<ol>
+<li><p>What is a friend?</p>
+<p>Your friends are those who sacrifice for you. The greater the sacrifice, the greater the friendship. How do we measure a sacrifice?</p></li>
+<li><p>How do we measure friendship?</p>
+<p>In theory, we define <span class="math inline">\(F(A,B)\)</span> (the <em>friendship measure from A to B</em>) as how much sacrifice that A is willing to make for B.</p>
+<p>(Is the direction correct? Is that backwards?)</p>
+<p>Thus measuring friendship boils down to valuating sacrifices.</p>
+<p><span class="math inline">\(F(A,B)\)</span> can be approximated by an equivalent amount of money.</p>
+<p>How do we measure friendship in practice?</p>
+<p>Foot-in-the-door: let A ask B to make bigger and bigger sacrifices until B refuses. Then we have found <span class="math inline">\(F(A,B)\)</span>.</p>
+<p>Door-in-the-face: let A ask B to make a sacrifice so big that B refuses, and then let A ask B to make smaller and smaller sacrifices until B accepts. Then we have found <span class="math inline">\(F(A,B)\)</span>.</p>
+<p>Those results may differ, but <span class="math inline">\(F(A,B)\)</span> should lie somewhere between those two points. We can also average them, take the maximum, take the minimum, use interval arithmetics, or describe the result using a statistical distribution, for example.</p></li>
+<li><p>Properties of friendship</p>
+<p>Friendship is circumstantial: <span class="math inline">\(F(A,B)\)</span> changes over time.</p>
+<p>Friendship is usually asymmetric: <span class="math inline">\(F(A,B) \neq F(B,A)\)</span>.</p></li>
+<li><p>Questions</p>
+<p>What is self-friendship? What is <span class="math inline">\(F(A,A)\)</span>? How much is one willing to sacrifice for oneself? Does this question even make sense?</p></li>
+<li><p>Links</p>
+<ul>
+<li><a href="http://www.abc.net.au/news/2015-10-29/friendship-theory-developed-by-sydneysider-goes-viral/6897402#theory">Mobinah Ahmad's 6-level relationship categorization</a></li>
+<li><a href="https://kenanddot.wordpress.com/2007/03/21/the-asymmetry-of-friendship/">&quot;Ken writes: Isn't it strange that although friendships are obviously asymmetrical this isn't unambiguously reflected in language?&quot;</a></li>
+</ul></li>
+</ol>
+<h4 id="defining-boss"><span class="section_number">14.9.2</span><span class="section_title">Defining &quot;boss&quot;</span></h4>
+<ul>
+<li><p>What is a boss?</p>
+<ol>
+<li>X is a <em>boss</em> of Y iff X can affect Y's salary, even if X does it indirectly.</li>
+<li>X is a <em>strong boss</em> of Y iff X has the authority to change Y's salary.</li>
+<li>X is a <em>weak boss</em> of Y iff X is a boss, but not a strong boss, of Y.</li>
+</ol></li>
+<li><p>Example:</p>
+<ul>
+<li>Everyone who can fire you is your strong boss.</li>
+<li>Everyone who can get you fired (complain to someone who can fire you) is your weak boss.</li>
+</ul></li>
+<li>The stronger a boss is, the more seriously you should treat him/her.</li>
+<li>Don't bite the hand that feeds you.</li>
+</ul>
+<ol>
+<li><p>Another definition, based on fear: X is a boss of Y if Y fears X.</p></li>
+</ol>
+<h4 id="happiness"><span class="section_number">14.9.3</span><span class="section_title">Happiness</span></h4>
+<p>Happiness = Reality - Expectation.</p>
+<p>To be more happy, raise reality, lower expectation, or do both.</p>
+<p>Pain also reduces happiness.</p>
+<p>Money cannot buy happiness, but it can buys things that will make you happier.</p>
+<p>Money helps, but after you have enough to make your life comfortable, adding money doesn't add happiness.</p>
+<h3 id="mostly-physics"><span class="section_number">14.10</span><span class="section_title">Mostly physics</span></h3>
+<ul>
+<li><a href="nature.html">A physics book draft</a> (should be split into articles instead)</li>
+<li><a href="chemistry-ontology.html">On the evolution of the ontology of chemistry</a></li>
+<li><a href="save.html">On my plan to save myself and perhaps some people</a></li>
+</ul>
+<p>Are black holes the key to unifying general relativity and quantum field theory?</p>
+<p>&quot;Realistic Simulation: Inside a Black Hole - New Universe through White Hole?&quot;<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></p>
+<h3 id="blog-about-biology-health-and-beauty"><span class="section_number">14.11</span><span class="section_title">Blog about biology, health, and beauty</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">14.11.1</span><span class="section_title"><a href="#on-myopia">&lt;2019-08-17&gt; On myopia</a></span><span class="word_count">(70w~1m)</span></li>
+<li><span class="section_number">14.11.2</span><span class="section_title"><a href="#appeal-to-evolution-weakens-the-theory-that-irregular-eating-causes-gastritis">Appeal-to-evolution weakens the theory that irregular eating causes gastritis</a></span><span class="word_count">(120w~1m)</span></li>
+<li><span class="section_number">14.11.3</span><span class="section_title"><a href="#others-articles-about-gastritis">Others' articles about gastritis</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">14.11.4</span><span class="section_title"><a href="#on-atherosclerosis">On atherosclerosis</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">14.11.5</span><span class="section_title"><a href="#on-gut-microbiome">On gut microbiome?</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">14.11.6</span><span class="section_title"><a href="#on-the-science-of-diets">On the science of diets</a></span><span class="word_count">(126w~1m)</span></li>
+<li><span class="section_number">14.11.7</span><span class="section_title"><a href="#a-clean-eating-protocol">A clean eating protocol</a></span><span class="word_count">(164w~1m)</span></li>
+<li><span class="section_number">14.11.8</span><span class="section_title"><a href="#on-skin-wrapping-for-skin-tightening-occlusion-cuff-training-and-blood-flow-restriction-training">&lt;2019-08-20&gt; ? On skin-wrapping for skin-tightening, occlusion cuff training, and blood flow restriction training</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">14.11.9</span><span class="section_title"><a href="#urban-planning-should-include-nutrient-cycle.">&lt;2019-10-28&gt; Urban planning should include nutrient cycle.</a></span><span class="word_count">(7w~1m)</span></li>
+</ul>
+</div>
+<h4 id="on-myopia"><span class="section_number">14.11.1</span><span class="section_title">&lt;2019-08-17&gt; On myopia</span></h4>
+<p>I hypothesize that myopia has lower prevalency in the population of drivers because drivers refocus their eyes a lot.</p>
+<p>black-on-white promotes myopia, white-on-black inhibits myopia? <a href="https://www.nature.com/articles/s41598-018-28904-x">https://www.nature.com/articles/s41598-018-28904-x</a></p>
+<p><a href="https://biology.stackexchange.com/questions/24589/how-does-the-eye-know-whether-to-focus-further-out-or-nearer-in-order-to-bring-a">https://biology.stackexchange.com/questions/24589/how-does-the-eye-know-whether-to-focus-further-out-or-nearer-in-order-to-bring-a</a></p>
+<p><a href="https://photo.stackexchange.com/questions/105433/can-you-tell-from-a-blurry-photo-if-focus-was-too-close-or-too-far">https://photo.stackexchange.com/questions/105433/can-you-tell-from-a-blurry-photo-if-focus-was-too-close-or-too-far</a></p>
+<p>Hypothesis: The brain uses the chromatic aberration of the eye lens in order to detect whether the focus is too near or too far. Green fringing means that the focus is too ??? Purple fringing means that the focus is too ??? <a href="https://photographylife.com/what-is-chromatic-aberration">https://photographylife.com/what-is-chromatic-aberration</a> <a href="https://en.m.wikipedia.org/wiki/Circle_of_confusion">https://en.m.wikipedia.org/wiki/Circle_of_confusion</a></p>
+<h4 id="appeal-to-evolution-weakens-the-theory-that-irregular-eating-causes-gastritis"><span class="section_number">14.11.2</span><span class="section_title">Appeal-to-evolution weakens the theory that irregular eating causes gastritis</span></h4>
+<p>&lt;2019-08-17&gt;</p>
+<p>The <em>appeal-to-evolution</em> is this argument: <em>If a trait would hamper the survival of a species, then that species would not have evolved that trait.</em></p>
+<p>It is a heuristic. It is not always correct. For example, it cannot explain peacock tails. However, it seems reasonable in absence of other information.</p>
+<p>The appeal-to-evolution weakens the theory that irregular eating causes gastritis as follows.</p>
+<p>Perhaps the very early hunter-gatherer humans ate irregularly; they were always a few days away from starvation, they did not have a secure food supply, they depend very much on their surroundings. <em>Having gastritis due to irregular eating would hamper their survival.</em> Therefore they probably evolved such that irregular eating does not cause gastritis.</p>
+<h4 id="others-articles-about-gastritis"><span class="section_number">14.11.3</span><span class="section_title">Others' articles about gastritis</span></h4>
+<p>&quot;Coadaptation of <em>Helicobacter pylori</em> and humans: ancient history, modern implications&quot;<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a></p>
+<p>&quot;The Iceman had a tummy bug&quot;<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a></p>
+<p>1998 &quot;Helicobacter pylori in vivo causes structural changes in the adherent gastric mucus layer but barrier thickness is not compromised&quot;<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a></p>
+<h4 id="on-atherosclerosis"><span class="section_number">14.11.4</span><span class="section_title">On atherosclerosis</span></h4>
+<p>Atherosclerosis or arteriosclerosis? <a href="https://amp.theguardian.com/science/2019/jun/11/mystery-arteries-harden-cracked-scientists-calcium-deposits">https://amp.theguardian.com/science/2019/jun/11/mystery-arteries-harden-cracked-scientists-calcium-deposits</a></p>
+<h4 id="on-gut-microbiome"><span class="section_number">14.11.5</span><span class="section_title">On gut microbiome?</span></h4>
+<p><a href="https://www.prebiotin.com/prebiotin-academy/what-are-prebiotics/dietary-fiber/">https://www.prebiotin.com/prebiotin-academy/what-are-prebiotics/dietary-fiber/</a></p>
+<p><a href="https://medium.com/boosted/intermittent-fasting-your-thyroid-and-your-immune-system-ec8f5f02d997">https://medium.com/boosted/intermittent-fasting-your-thyroid-and-your-immune-system-ec8f5f02d997</a> <a href="https://www.sciencedirect.com/science/article/pii/S0924224414002386">https://www.sciencedirect.com/science/article/pii/S0924224414002386</a> <a href="https://mennohenselmans.com/protein-is-not-more-satiating-than-carbs-and-fats/">https://mennohenselmans.com/protein-is-not-more-satiating-than-carbs-and-fats/</a> <a href="https://www.ncbi.nlm.nih.gov/pubmed/8695595/">https://www.ncbi.nlm.nih.gov/pubmed/8695595/</a> <a href="https://www.shape.com/latest-news-trends/go-veggie-gain-weight-heres-why-it-can-happen">https://www.shape.com/latest-news-trends/go-veggie-gain-weight-heres-why-it-can-happen</a> <a href="https://www.livestrong.com/article/1011649-6-reasons-people-gain-weight-after-going-vegetarian/">https://www.livestrong.com/article/1011649-6-reasons-people-gain-weight-after-going-vegetarian/</a> <a href="https://www.healthline.com/health/food-nutrition/becoming-vegetarian-tips">https://www.healthline.com/health/food-nutrition/becoming-vegetarian-tips</a> <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4564526/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4564526/</a> <a href="https://selfhacked.com/blog/how-your-gut-microbiota-can-make-you-fat-or-thin/">https://selfhacked.com/blog/how-your-gut-microbiota-can-make-you-fat-or-thin/</a> <a href="https://www.ncbi.nlm.nih.gov/pubmed/30336163">https://www.ncbi.nlm.nih.gov/pubmed/30336163</a> <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6036887/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6036887/</a></p>
+<h4 id="on-the-science-of-diets"><span class="section_number">14.11.6</span><span class="section_title">On the science of diets</span></h4>
+<p>Conservation of mass.</p>
+<p>Body mass is gained by food and drinks, and lost by exhalation and excretion.</p>
+<p>The question is the <em>composition</em> of those mass.</p>
+<p>If I weigh 70 kg and both my legs weigh 20 kg, then a squat consumes at least 50 kg * 10 m/s2 * 0.5 m = 200 J = 0.0478 kcal. That's a tiny amount relative to the calories in the food we eat! We can easily eat 300 kcal in one meal. Thus, if the human body were 100% efficient, I would have to squat <em>6,276 times</em> to burn that one meal!</p>
+<p>Thus the biggest energy consumer is the basal metabolic processes.</p>
+<p>The proximal cause is the combination of nutrition and hormones. Hormones are affected by nutrition, activity, and genetics.</p>
+<h4 id="a-clean-eating-protocol"><span class="section_number">14.11.7</span><span class="section_title">A clean eating protocol</span></h4>
+<p>Combine <em>nutrition science</em> and <em>psychology</em>.</p>
+<p>For two weeks.</p>
+<p>Pay attention to gut microbiome.</p>
+<p>No sugar; no condiments bought from supermarket because they all have sugar. No flour. No carb. No food that is processed more than one step from its original form. No refined foods. No extracts. Sugar is not OK because it is concentrated sugarcane plant extract. Cooked meat is very OK, but sausage is not. White rice is not OK. Green vegetables OK.</p>
+<p>Anytime you're hungry, just eat; there is no time restriction; the only restriction is that you eat real fat/protein.</p>
+<p>Everytime you eat, you must send a photograph of what you eat to me. It is not for approval, but for commentary, and for <em>psychology</em>, for accountability, so that you feel that you are doing it for me, so that you don't prematurely abandon your effort.</p>
+<p>You can drink anything as long it has no sugar in it. Just drink plain water. Drinks from the supermarket are not OK; they all have sugar.</p>
+<h4 id="on-skin-wrapping-for-skin-tightening-occlusion-cuff-training-and-blood-flow-restriction-training"><span class="section_number">14.11.8</span><span class="section_title">&lt;2019-08-20&gt; ? On skin-wrapping for skin-tightening, occlusion cuff training, and blood flow restriction training</span></h4>
+<p>Do they work? How do they work? What is the science?</p>
+<h4 id="urban-planning-should-include-nutrient-cycle."><span class="section_number">14.11.9</span><span class="section_title">&lt;2019-10-28&gt; Urban planning should include nutrient cycle.</span></h4>
+<h3 id="on-living-on-earth"><span class="section_number">14.12</span><span class="section_title">On living on Earth</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">14.12.1</span><span class="section_title"><a href="#on-living-sanely-peacefully-and-sustainably">On living sanely, peacefully, and sustainably</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">14.12.2</span><span class="section_title"><a href="#why-do-i-wear-long-hair">Why do I wear long hair?</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">14.12.3</span><span class="section_title"><a href="#the-importance-of-monuments-and-folklores-especially-at-disaster-sites">The importance of monuments and folklores, especially at disaster sites</a></span><span class="word_count">(62w~1m)</span></li>
+<li><span class="section_number">14.12.4</span><span class="section_title"><a href="#a-rather-dystopian-prophecy-three-groups-of-people">A rather dystopian prophecy: three groups of people</a></span><span class="word_count">(77w~1m)</span></li>
+<li><span class="section_number">14.12.5</span><span class="section_title"><a href="#friendship-is-fluid-and-circumstantial">&lt;2019-07-06&gt; Friendship is fluid and circumstantial</a></span><span class="word_count">(97w~1m)</span></li>
+<li><span class="section_number">14.12.6</span><span class="section_title"><a href="#two-approaches-to-living-here-first-and-there-first">&lt;2019-07-06&gt; Two approaches to living: here-first and there-first</a></span><span class="word_count">(56w~1m)</span></li>
+<li><span class="section_number">14.12.7</span><span class="section_title"><a href="#on-alternative-societies">&lt;2019-11-27&gt; On alternative societies</a></span><span class="word_count">(22w~1m)</span></li>
+</ul>
+</div>
+<h4 id="on-living-sanely-peacefully-and-sustainably"><span class="section_number">14.12.1</span><span class="section_title">On living sanely, peacefully, and sustainably</span></h4>
+<ul>
+<li><a href="groom.html">Grooming</a></li>
+<li><a href="subsist.html">On living sanely</a></li>
+</ul>
+<h4 id="why-do-i-wear-long-hair"><span class="section_number">14.12.2</span><span class="section_title">Why do I wear long hair?</span></h4>
+<ul>
+<li>To repel close-minded people.</li>
+<li>To know when I have lost in life, when I can no longer do things as I wish, be it due to biological, political, or economical reasons.</li>
+</ul>
+<h4 id="the-importance-of-monuments-and-folklores-especially-at-disaster-sites"><span class="section_number">14.12.3</span><span class="section_title">The importance of monuments and folklores, especially at disaster sites</span></h4>
+<p>To pass on the knowledge to future generations, so that we do not forget, so that we do not waste lives.<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a></p>
+<p>Monuments, folklores, and histories are trans-generational memory. It is what enables the human race to advance: Because humans can build on their predecessors' work and do not repeat everything that their predecessors did.</p>
+<h4 id="a-rather-dystopian-prophecy-three-groups-of-people"><span class="section_number">14.12.4</span><span class="section_title">A rather dystopian prophecy: three groups of people</span></h4>
+<p>In the future, society will split into three groups:</p>
+<ol>
+<li>The masters: The people who program the system (tell the system what to do). Governments, computer programmers, wealthy people.</li>
+<li>The slaves: The people who are programmed by the system (are told to do what to do by the system). Citizens, online taxi drivers, workers.</li>
+<li>The outcasts: The people who refuse to participate in the system.</li>
+</ol>
+<p>The system consists of people, computers, other machines, and weapons.</p>
+<h4 id="friendship-is-fluid-and-circumstantial"><span class="section_number">14.12.5</span><span class="section_title">&lt;2019-07-06&gt; Friendship is fluid and circumstantial</span></h4>
+<p>At 10 years old, we are friends because we are in the same class, and we don't have better things to do. Simple physical proximity. But we stop being friends as soon as we graduate out of school.</p>
+<p>At 20 years old, we are friends because we are in the same company. We stop being friends as soon as we resign.</p>
+<p>At 30 years, we are friends because we share a goal or hobby or problem, because we care about a common thing. We stop being friends as soon as our problem is solved.</p>
+<h4 id="two-approaches-to-living-here-first-and-there-first"><span class="section_number">14.12.6</span><span class="section_title">&lt;2019-07-06&gt; Two approaches to living: here-first and there-first</span></h4>
+<p>There are two approaches to living:</p>
+<ul>
+<li>There-first: Start with what you want, and find what you should have: Find what things have to exist in order to satisfy the goal.</li>
+<li>Here-first: Start with what you have, and find what you should want: Find what can be done with what already exists.</li>
+</ul>
+<h4 id="on-alternative-societies"><span class="section_number">14.12.7</span><span class="section_title">&lt;2019-11-27&gt; On alternative societies</span></h4>
+<p>Gather the people tired of the rat race.</p>
+<p>There is no point in working beyond what is necessary for sustenance.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-11-27&gt; <a href="https://blogs.scientificamerican.com/cross-check/what-does-it-feel-like-to-be-enlightened/">https://blogs.scientificamerican.com/cross-check/what-does-it-feel-like-to-be-enlightened/</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-11-28&gt; Enlightened Beings Share Their Awakening, Mystical Experiences <a href="https://www.youtube.com/watch?v=f54jAzYawZk">https://www.youtube.com/watch?v=f54jAzYawZk</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&lt;2019-11-28&gt; How Do You Recognize An Enlightened Being? - Sadhguru <a href="https://www.youtube.com/watch?v=VQrhl7KJ0m4">https://www.youtube.com/watch?v=VQrhl7KJ0m4</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>&lt;2019-11-27&gt; <a href="https://www.consciouslifestylemag.com/non-local-consciousness-and-the-brain/">https://www.consciouslifestylemag.com/non-local-consciousness-and-the-brain/</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>&lt;2019-11-27&gt; <a href="https://seeingwithouteyes.com.au/dr-katharina-friedrich/">https://seeingwithouteyes.com.au/dr-katharina-friedrich/</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>&lt;2019-11-27&gt; <a href="https://seeingwithouteyes.com.au/">https://seeingwithouteyes.com.au/</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>&lt;2019-11-27&gt; <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4654779/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4654779/</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>&lt;2019-11-08&gt; <a href="https://en.wikipedia.org/wiki/Paramahansa_Yogananda">https://en.wikipedia.org/wiki/Paramahansa_Yogananda</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>&lt;2019-11-27&gt; Sri Avinash's opinion <a href="https://www.youtube.com/watch?v=KxUPSRgLIGE">https://www.youtube.com/watch?v=KxUPSRgLIGE</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>&lt;2019-11-27&gt; <a href="http://www.rainbowbody.net/HeartMind/Yogasut_plain.htm">http://www.rainbowbody.net/HeartMind/Yogasut_plain.htm</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>&lt;2019-09-28&gt; Machine Consciousness: Experimental Evidence | Garret Moddel <a href="https://www.youtube.com/watch?v=4H5GDQ7u_iE">https://www.youtube.com/watch?v=4H5GDQ7u_iE</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://www.youtube.com/watch?v=qjfaoe847qQ">https://www.youtube.com/watch?v=qjfaoe847qQ</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>&lt;2019-11-27&gt; Spiritual Anatomy with Desda Zuckerman <a href="https://www.youtube.com/watch?v=e4xuBYfI0n4">https://www.youtube.com/watch?v=e4xuBYfI0n4</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://www.youtube.com/watch?v=iUr8Obv_DeA">https://www.youtube.com/watch?v=iUr8Obv_DeA</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2735910/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2735910/</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p><a href="https://www.sciencemag.org/news/2016/01/iceman-had-tummy-bug">https://www.sciencemag.org/news/2016/01/iceman-had-tummy-bug</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p><a href="https://gut.bmj.com/content/43/4/470">https://gut.bmj.com/content/43/4/470</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p><a href="https://99percentinvisible.org/article/tsunami-stones-ancient-japanese-markers-warn-builders-high-water/">https://99percentinvisible.org/article/tsunami-stones-ancient-japanese-markers-warn-builders-high-water/</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-11-28 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
