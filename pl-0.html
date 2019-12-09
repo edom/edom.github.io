@@ -166,17 +166,62 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="post-content">
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#thought">&lt;2019-11-27&gt; Thought</a></span><span class="word_count">(123w~1m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#the-goals">The goals</a></span><span class="word_count">(14w~1m)</span></li>
-<li><span class="section_number">3</span><span class="section_title"><a href="#the-lazy-implementors-language">The lazy implementor's language</a></span><span class="word_count">(179w~1m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#overview">Overview</a></span><span class="word_count">(290w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#low-level-run-time-system">Low-level run-time system</a></span><span class="word_count">(179w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#thought">&lt;2019-11-27&gt; Thought</a></span><span class="word_count">(123w~1m)</span></li>
 <li><span class="section_number">4</span><span class="section_title"><a href="#guide-for-embedding-pl-0-in-c-programs">Guide for embedding PL-0 in C++ programs</a></span><span class="word_count">(404w~3m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#the-problem-is-not-binding-the-problem-is-closures">&lt;2019-11-28&gt; The problem is not binding; the problem is closures</a></span><span class="word_count">(63w~1m)</span></li>
 <li><span class="section_number">6</span><span class="section_title"><a href="#syntax-and-parsing">Syntax and parsing</a></span><span class="word_count">(359w~2m)</span></li>
 <li><span class="section_number">7</span><span class="section_title"><a href="#bottom-up-design">Bottom-up design?</a></span><span class="word_count">(328w~2m)</span></li>
-<li><span class="section_number">8</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(45w~1m)</span></li>
 </ul>
 </div>
-<h2 id="thought"><span class="section_number">1</span><span class="section_title">&lt;2019-11-27&gt; Thought</span></h2>
+<h2 id="overview"><span class="section_number">1</span><span class="section_title">Overview</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#what-we-are-going-to-do-here">What we are going to do here</a></span><span class="word_count">(87w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#the-lazy-implementors-language">The lazy implementor's language</a></span><span class="word_count">(204w~2m)</span></li>
+</ul>
+</div>
+<h3 id="what-we-are-going-to-do-here"><span class="section_number">1.1</span><span class="section_title">What we are going to do here</span></h3>
+<p>Here we design a <a href="https://en.wikipedia.org/wiki/Lisp_(programming_language)">Lisp</a> and design its interpreter. (Note that Lisp now<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> means a family of languages, not a particular language.)</p>
+<p>We name our language &quot;PL-0&quot; (not to be confused with Wirth's PL/0<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>).</p>
+<p>We want a programming language for implementing programming languages.</p>
+<p>We choose C++ as the implementation language because we don't know any better. We considered Rust and Go but we could not make up our minds. We refuse C because we want namespaces; we refuse to manually prefix every procedure name.</p>
+<h3 id="the-lazy-implementors-language"><span class="section_number">1.2</span><span class="section_title">The lazy implementor's language</span></h3>
+<p>PL-0 is a lazy implementor's programming language, where the language designers do not strive to please language users.</p>
+<p>The focus is on implementability, not usability.</p>
+<p>The implementation tries to be stupid, simple, predictable, understandable, not smart.</p>
+<p>Our motto is &quot;we only do what we understand&quot; (read: &quot;we only do easy things&quot;).</p>
+<p>Here are examples of our incompetence:</p>
+<ul>
+<li>We don't implement many modern language features like closures, continuations, proper tail calls, and type checking, because we think they are hard to implement. We have not tried to actually implement them; we are spooked by the mere thought of having to implement them.</li>
+<li>Parsing is hard, so we only do lexical analysis. The token list becomes the degenerate concrete syntax tree.</li>
+<li>Writing a compiler is hard, so we write an interpreter.</li>
+</ul>
+<p>We thought of making a stack-based language such as Forth<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> or PostScript, but we don't know how to implement <em>implicit arguments</em> (optional arguments) in a stack-based language, other than by explicitly passing a possibly empty list, so we choose to make a Lisp instead.</p>
+<p>The question of Forth vs Lisp is: How hard do we allow the user to crash without foreign procedures: just an exit due to an unhandled exception (Lisp), or an abort due to a segmentation fault (Forth)?</p>
+<h2 id="low-level-run-time-system"><span class="section_number">2</span><span class="section_title">Low-level run-time system</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#memory-management">Memory management</a></span><span class="word_count">(177w~1m)</span></li>
+</ul>
+</div>
+<h3 id="memory-management"><span class="section_number">2.1</span><span class="section_title">Memory management</span></h3>
+<p>We use a <em>garbage collector</em> because we believe that that garbage collection greatly simplifies the language semantics. Also, we don't know how to implement a Lisp without garbage collection like <a href="https://github.com/wolfgangj/bone-lisp/">Bone Lisp</a>, Pre-Scheme, Carp, newLISP, Linear Lisp, and ThinLisp.</p>
+<p>We use a <em>copying garbage collector</em> because we are convinced by Appel 1987 <span class="citation" data-cites="appel1987garbage">[<a href="#ref-appel1987garbage">1</a>]</span><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> that &quot;[naïve copying] garbage collection can be faster than stack allocation&quot;.</p>
+<p>The drawbacks of our simple choices are:</p>
+<ul>
+<li>We have to overprovision physical memory if we want our programs to run at a reasonable speed.</li>
+<li>We lose real-time guarantee; the program may pause for an unpredictable duration at inopportune times.</li>
+</ul>
+<p>We may wish to do these later:</p>
+<ul>
+<li>Improve the garbage collector to be generational and concurrent. Currently we stop the world while we collect garbage because we don't know how to do it concurrently.</li>
+<li>Implement alternative garbage collectors and let the programmer choose.</li>
+<li>Write a compiler for, say, PL-1, a language with manual memory management, and probably also static typing, on top of PL-0. Thus the real-time part of the program can be written in PL-1 while seamlessly interoperating with PL-0.</li>
+</ul>
+<h2 id="thought"><span class="section_number">3</span><span class="section_title">&lt;2019-11-27&gt; Thought</span></h2>
 <p>It is easy to process a byte list into a token list.</p>
 <p>The question is: How should we interpret that token list? How should we ascribe meaning to that token list? How should we map tokens to values?</p>
 <p>The lowest layer is more like a library for manipulating tokens than a language.</p>
@@ -189,23 +234,6 @@ document.addEventListener("DOMContentLoaded", function () {
   (string:append &quot;a&quot; &quot;b&quot;))
 </code></pre>
 <p>Peter Van Roy's &quot;Programming Paradigms for Dummies: What Every Programmer Should Know&quot; <a href="https://www.info.ucl.ac.be/~pvr/VanRoyChapter.pdf">https://www.info.ucl.ac.be/~pvr/VanRoyChapter.pdf</a></p>
-<h2 id="the-goals"><span class="section_number">2</span><span class="section_title">The goals</span></h2>
-<p>PL-0 programs should be translatable to native code.</p>
-<p>Foreign function interface should be easy.</p>
-<h2 id="the-lazy-implementors-language"><span class="section_number">3</span><span class="section_title">The lazy implementor's language</span></h2>
-<p>PL-0 (not to be confused with Wirth's PL/0<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>) is a lazy implementor's programming language, where the language designers do not strive to please language users.</p>
-<p>The focus is on implementability, not usability.</p>
-<p>The implementation tries to be stupid, simple, predictable, understandable, not smart.</p>
-<p>Our motto is &quot;we only do what we understand&quot; (read: &quot;we only do easy things&quot;). Here are examples of our incompetence:</p>
-<ul>
-<li>We don't implement many modern language features like closures, continuations, proper tail calls, and type checking, because we think they are hard to implement. We have not tried to actually implement them; we are spooked by the mere thought of having to implement them.</li>
-<li>Parsing is hard, so we only do lexical analysis. The token list becomes the degenerate concrete syntax tree.</li>
-<li>Writing a compiler is hard, so we write an interpreter.</li>
-</ul>
-<p>We think we will end up reimplementing Forth<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> or PostScript or something very similar to them.</p>
-<p>PL-0 is a stack-based virtual machine.</p>
-<p>PL-0 enables you to write unsafe programs that can crash. (This is not something to brag about?)</p>
-<p>PL-0 is like an interpreted assembly language, a scripting assembly language.</p>
 <h2 id="guide-for-embedding-pl-0-in-c-programs"><span class="section_number">4</span><span class="section_title">Guide for embedding PL-0 in C++ programs</span></h2>
 <div class="local_table_of_contents">
 <ul>
@@ -372,7 +400,7 @@ f x = (\ x y -&gt; x + y) x
 </code></pre>
 <p>Macro Assembler (MASM)? TASM, NASM, what?</p>
 <p>There does not exist a computer with infinite memory. Why do we pretend, with garbage collection, that the computer had infinite memory? Because it simplifies most problems?</p>
-<p>What is the problem with these: High-Level Assembly, typed assembly languages such as TALx86 <span class="citation" data-cites="crary1999talx86">[<a href="#ref-crary1999talx86">1</a>]</span><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>, LLVM IR, MSIL, JVM bytecodes?</p>
+<p>What is the problem with these: High-Level Assembly, typed assembly languages such as TALx86 <span class="citation" data-cites="crary1999talx86">[<a href="#ref-crary1999talx86">2</a>]</span><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>, LLVM IR, MSIL, JVM bytecodes?</p>
 <p>We can add a type system to assembly language to enforce constraints like these:</p>
 <ul>
 <li>&quot;Add-integer&quot; takes two integers.</li>
@@ -390,16 +418,21 @@ f x = (\ x y -&gt; x + y) x
 <p>Even though the machine does not know about subroutines, we organize our programs into subroutines; we find it more convenient to work with subroutines than to work with instructions. We feel that the instructions are too finely-grained, unnecessarily detailed.</p>
 <h2 id="bibliography" class="unnumbered"><span class="section_number">8</span><span class="section_title">Bibliography</span></h2>
 <div id="refs" class="references">
+<div id="ref-appel1987garbage">
+<p>[1] Appel, A.W. 1987. Garbage collection can be faster than stack allocation. <em>Information Processing Letters</em>. 25, 4 (1987), 275–279.</p>
+</div>
 <div id="ref-crary1999talx86">
-<p>[1] Crary, K. et al. 1999. TALx86: A realistic typed assembly language. <em>1999 acm sigplan workshop on compiler support for system software atlanta, ga, usa</em> (1999), 25–35.</p>
+<p>[2] Crary, K. et al. 1999. TALx86: A realistic typed assembly language. <em>1999 acm sigplan workshop on compiler support for system software atlanta, ga, usa</em> (1999), 25–35.</p>
 </div>
 </div>
 <section class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>&lt;2019-11-18&gt; <a href="https://en.wikipedia.org/wiki/PL/0">https://en.wikipedia.org/wiki/PL/0</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>&lt;2019-11-18&gt; <a href="https://en.wikipedia.org/wiki/Forth_(programming_language)">https://en.wikipedia.org/wiki/Forth_(programming_language)</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>&lt;2019-11-04&gt; <a href="https://www.cis.upenn.edu/~stevez/papers/MCGG99.pdf">https://www.cis.upenn.edu/~stevez/papers/MCGG99.pdf</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>&lt;2019-12-10&gt;<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-11-18&gt; <a href="https://en.wikipedia.org/wiki/PL/0">https://en.wikipedia.org/wiki/PL/0</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&lt;2019-11-18&gt; <a href="https://en.wikipedia.org/wiki/Forth_(programming_language)">https://en.wikipedia.org/wiki/Forth_(programming_language)</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>via <a href="https://softwareengineering.stackexchange.com/questions/364371/type-based-memory-safety-without-manual-memory-manage-or-runtime-garbage-collect">Basile Starynkevitch</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>&lt;2019-11-04&gt; <a href="https://www.cis.upenn.edu/~stevez/papers/MCGG99.pdf">https://www.cis.upenn.edu/~stevez/papers/MCGG99.pdf</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
