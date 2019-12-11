@@ -166,29 +166,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="post-content">
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#overview">Overview</a></span><span class="word_count">(290w~2m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#low-level-run-time-system">Low-level run-time system</a></span><span class="word_count">(244w~2m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#overview">Overview</a></span><span class="word_count">(362w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#run-time-system">Run-time system</a></span><span class="word_count">(618w~4m)</span></li>
 <li><span class="section_number">3</span><span class="section_title"><a href="#semantics">Semantics</a></span><span class="word_count">(577w~3m)</span></li>
 <li><span class="section_number">4</span><span class="section_title"><a href="#syntax-and-parsing">Syntax and parsing</a></span><span class="word_count">(370w~2m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#thought">&lt;2019-11-27&gt; Thought</a></span><span class="word_count">(123w~1m)</span></li>
 <li><span class="section_number">6</span><span class="section_title"><a href="#guide-for-embedding-pl-0-in-c-programs">Guide for embedding PL-0 in C++ programs</a></span><span class="word_count">(404w~3m)</span></li>
 <li><span class="section_number">7</span><span class="section_title"><a href="#the-problem-is-not-binding-the-problem-is-closures">&lt;2019-11-28&gt; The problem is not binding; the problem is closures</a></span><span class="word_count">(63w~1m)</span></li>
 <li><span class="section_number">8</span><span class="section_title"><a href="#bottom-up-design">Bottom-up design?</a></span><span class="word_count">(328w~2m)</span></li>
-<li><span class="section_number">9</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(105w~1m)</span></li>
 </ul>
 </div>
 <h2 id="overview"><span class="section_number">1</span><span class="section_title">Overview</span></h2>
+<p>Alternative title: &quot;Exploring the programming language design space&quot;</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1.1</span><span class="section_title"><a href="#what-we-are-going-to-do-here">What we are going to do here</a></span><span class="word_count">(87w~1m)</span></li>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#what-we-are-going-to-do-here">What we are going to do here</a></span><span class="word_count">(152w~1m)</span></li>
 <li><span class="section_number">1.2</span><span class="section_title"><a href="#the-lazy-implementors-language">The lazy implementor's language</a></span><span class="word_count">(204w~2m)</span></li>
 </ul>
 </div>
 <h3 id="what-we-are-going-to-do-here"><span class="section_number">1.1</span><span class="section_title">What we are going to do here</span></h3>
-<p>Here we design a <a href="https://en.wikipedia.org/wiki/Lisp_(programming_language)">Lisp</a> and design its interpreter. (Note that Lisp now<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> means a family of languages, not a particular language.)</p>
-<p>We name our language &quot;PL-0&quot; (not to be confused with Wirth's PL/0<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>).</p>
+<p>Here we design a <a href="https://en.wikipedia.org/wiki/Lisp_(programming_language)">Lisp</a>, its semantics, and its interpreter. (Note that, in the 21st century, Lisp means a family of languages, not a particular language.)</p>
+<p>We design a Lisp because we want to focus on semantics; we can always dress up the syntax later.</p>
+<p>We name our language &quot;PL-0&quot; (not to be confused with <a href="https://en.wikipedia.org/wiki/PL/0">Wirth's PL/0</a>).</p>
 <p>We want a programming language for implementing programming languages.</p>
 <p>We choose C++ as the implementation language because we don't know any better. We considered Rust and Go but we could not make up our minds. We refuse C because we want namespaces; we refuse to manually prefix every procedure name.</p>
+<p>To consider: <a href="http://tomasp.net/blog/2017/design-side-of-pl/">Petricek 2017</a> (about programming language design). <span class="citation" data-cites="ingalls1981design">[<a href="#ref-ingalls1981design">5</a>]</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. <span class="citation" data-cites="coblenz2018interdisciplinary">[<a href="#ref-coblenz2018interdisciplinary">3</a>]</span>.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> <a href="https://leastfixedpoint.com/tonyg/kcbbs/projects/thing.html">Tony's Programming Language Experiments</a>. <a href="http://lisp-univ-etc.blogspot.com/2012/04/lisp-hackers-pascal-costanza.html">3-Lisp's tower of interpreters</a>.</p>
+<p>We can begin designing from the semantics (our desire) or from the run-time system (our constraints). All design is a compromise between the ideal and the practical.</p>
 <h3 id="the-lazy-implementors-language"><span class="section_number">1.2</span><span class="section_title">The lazy implementor's language</span></h3>
 <p>PL-0 is a lazy implementor's programming language, where the language designers do not strive to please language users.</p>
 <p>The focus is on implementability, not usability.</p>
@@ -200,19 +204,23 @@ document.addEventListener("DOMContentLoaded", function () {
 <li>Parsing is hard, so we only do lexical analysis. The token list becomes the degenerate concrete syntax tree.</li>
 <li>Writing a compiler is hard, so we write an interpreter.</li>
 </ul>
-<p>We thought of making a stack-based language such as Forth<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> or PostScript, but we don't know how to implement <em>implicit arguments</em> (optional arguments) in a stack-based language, other than by explicitly passing a possibly empty list, so we choose to make a Lisp instead.</p>
+<p>We thought of making a stack-based language such as Forth<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> or PostScript, but we don't know how to implement <em>implicit arguments</em> (optional arguments) in a stack-based language, other than by explicitly passing a possibly empty list, so we choose to make a Lisp instead.</p>
 <p>The question of Forth vs Lisp is: How hard do we allow the user to crash without foreign procedures: just an exit due to an unhandled exception (Lisp), or an abort due to a segmentation fault (Forth)?</p>
-<h2 id="low-level-run-time-system"><span class="section_number">2</span><span class="section_title">Low-level run-time system</span></h2>
+<h2 id="run-time-system"><span class="section_number">2</span><span class="section_title">Run-time system</span></h2>
+<p><a href="https://drops.dagstuhl.de/opus/volltexte/2015/5475/pdf/4.pdf">Belikov 2015</a> <span class="citation" data-cites="belikov2015language">[<a href="#ref-belikov2015language">2</a>]</span></p>
 <div class="local_table_of_contents">
 <ul>
 <li><span class="section_number">2.1</span><span class="section_title"><a href="#memory-management">Memory management</a></span><span class="word_count">(177w~1m)</span></li>
-<li><span class="section_number">2.2</span><span class="section_title"><a href="#values">Values</a></span><span class="word_count">(28w~1m)</span></li>
-<li><span class="section_number">2.3</span><span class="section_title"><a href="#representation-of-values">Representation of values</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#converting-c-types">Converting C types</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#foreign-interface-mostly-c">Foreign interface, mostly C</a></span><span class="word_count">(116w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#values">Values</a></span><span class="word_count">(141w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#do-we-need-generic-functions-the-case-of-append">Do we need generic functions? The case of &quot;append&quot;</a></span><span class="word_count">(119w~1m)</span></li>
+<li><span class="section_number">2.6</span><span class="section_title"><a href="#representation-of-values">Representation of values</a></span><span class="word_count">(57w~1m)</span></li>
 </ul>
 </div>
 <h3 id="memory-management"><span class="section_number">2.1</span><span class="section_title">Memory management</span></h3>
 <p>We use a <em>garbage collector</em> because we believe that that garbage collection greatly simplifies the language semantics. Also, we don't know how to implement a Lisp without garbage collection like <a href="https://github.com/wolfgangj/bone-lisp/">Bone Lisp</a>, Pre-Scheme, Carp, newLISP, Linear Lisp, and ThinLisp.</p>
-<p>We use a <em>copying garbage collector</em> because we are convinced by Appel 1987 <span class="citation" data-cites="appel1987garbage">[<a href="#ref-appel1987garbage">1</a>]</span><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> that &quot;[naïve copying] garbage collection can be faster than stack allocation&quot;.</p>
+<p>We use a <em>copying garbage collector</em> because we are convinced by Appel 1987 <span class="citation" data-cites="appel1987garbage">[<a href="#ref-appel1987garbage">1</a>]</span><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> that &quot;[naïve copying] garbage collection can be faster than stack allocation&quot;.</p>
 <p>The drawbacks of our simple choices are:</p>
 <ul>
 <li>We have to overprovision physical memory if we want our programs to run at a reasonable speed.</li>
@@ -224,20 +232,95 @@ document.addEventListener("DOMContentLoaded", function () {
 <li>Implement alternative garbage collectors and let the programmer choose.</li>
 <li>Write a compiler for, say, PL-1, a language with manual memory management, and probably also static typing, on top of PL-0. Thus the real-time part of the program can be written in PL-1 while seamlessly interoperating with PL-0.</li>
 </ul>
-<h3 id="values"><span class="section_number">2.2</span><span class="section_title">Values</span></h3>
+<h3 id="converting-c-types"><span class="section_number">2.2</span><span class="section_title">Converting C types</span></h3>
+<p>void, uintN<sub>t</sub>, intN<sub>t</sub>, intptr<sub>t</sub>, for N in {8,16,32,64}.</p>
+<h3 id="foreign-interface-mostly-c"><span class="section_number">2.3</span><span class="section_title">Foreign interface, mostly C</span></h3>
+<p>We do not expect users to use this directly. The ideal thing for user is to make PL-0 understand C header files. That is, PL-0 should come with a C parser and preprocessor that translate signatures to PL-0 bridges. Compare: <a href="http://www.swig.org/">SWIG</a>. (But why stop there; why not go all the way and write a C interpreter/compiler in PL-0?)</p>
+<p>We should use <a href="https://sourceware.org/libffi/">libffi</a> for portability.</p>
+<p>Compare: <a href="https://docs.racket-lang.org/foreign/index.html">Racket Foreign Interface</a>.</p>
+<p>Suppose there is a C procedure whose declaration is</p>
+<pre class="example"><code>Ret proc(Arg-1, ..., Arg-n)
+</code></pre>
+<p>and we want to call it from PL-0.</p>
+<p>With power comes responsibility: The foreign interface enables users to crash the program.</p>
+<p>We must represent the <em>type</em> and construct the <em>reference</em>.</p>
+<p>A <code>Type</code> is any of these:</p>
+<pre class="example"><code>char
+int
+(unsigned int)
+int32_t
+uint32_t
+(procedure Type (Type-1 ... Type-n))
+(struct (Field-1 ... Field-k))
+    where each Field-k is a list [name Type]
+(union (Type-1 ... Type-n))
+</code></pre>
+<p>Reference constructors:</p>
+<pre class="example"><code>(ref Type Address)
+</code></pre>
+<p>Actions:</p>
+<pre class="example"><code>(read Ref) -&gt; Val
+(write Ref) -&gt; Val
+(call Ref) -&gt; Val
+</code></pre>
+<p>We can obtain symbol addresses with <code>dlsym</code>.</p>
+<h3 id="values"><span class="section_number">2.4</span><span class="section_title">Values</span></h3>
+<p>What should the set of values (the irreducible meanings) in a programming language be?</p>
+<p>Perhaps we all agree that the set of values must include at least some integers.</p>
 <p>A <em>value</em> (an <em>object</em>) is any of these:</p>
 <ul>
-<li>an <em>integer</em></li>
-<li>a <em>byte string</em></li>
+<li>a representation of a mathematical object:
+<ul>
+<li>an <em>integer</em> (of arbitrary precision)</li>
 <li>a <em>pair</em> (a <em>cons cell</em>)</li>
+<li>a <em>unit</em> (like C void)</li>
+<li>a <em>boolean</em> (false or true)</li>
+<li>a <em>byte string</em></li>
+</ul></li>
+<li>a generic data structure:
+<ul>
 <li>a <em>list</em></li>
 <li>a <em>vector</em> (a <em>heterogenous array</em>)</li>
 <li>a <em>hash table</em></li>
+</ul></li>
+<li>a structure used by the interpreter:
+<ul>
+<li>a <em>namespace</em></li>
+<li>an <em>environment</em> (a <em>context</em>)</li>
+<li>a <em>rule</em>, function, macro, AST transformer</li>
+<li>a <em>type</em></li>
+</ul></li>
+<li>a structure used by the parser:
+<ul>
+<li>a <em>location</em></li>
+<li>a <em>concrete syntax tree</em> (CST)</li>
+<li>an <em>abstract syntax tree</em> (AST)</li>
+</ul></li>
+<li>a structure used by the C interface
+<ul>
+<li>a C type representation</li>
+<li>a C reference (a type and an address)</li>
+</ul></li>
 </ul>
-<p>Lists and pairs should not be conflated.</p>
-<h3 id="representation-of-values"><span class="section_number">2.3</span><span class="section_title">Representation of values</span></h3>
+<p>There are so many values; are we sure that all of them should be primitives?</p>
+<p>Difference from common Lisps:</p>
+<ul>
+<li>In PL-0, lists and pairs are different things.</li>
+<li>PL-0 does not have <em>nil</em>.</li>
+</ul>
+<h3 id="do-we-need-generic-functions-the-case-of-append"><span class="section_number">2.5</span><span class="section_title">Do we need generic functions? The case of &quot;append&quot;</span></h3>
+<p>I want to write just <code>append</code> instead of <code>list-append</code>, <code>vector-append</code>, <code>bytestring-append</code>, etc. In other words, want <code>append</code> to be <em>polymorphic</em>.</p>
+<p>What are my choices?</p>
+<p>I can define <code>append</code> with <code>cond</code>.</p>
+<p>But what if users also want to customize <code>append</code>?</p>
+<p>They can define their own <code>append</code> using <code>cond</code> in their own namespaces and fall-back to the standard <code>append</code>.</p>
+<p>Or I can define <code>append</code> to be a generic function.</p>
+<p>But generic function becomes extremely tricky with subtyping. Julia solves this with a complete lattice of types. But do we have to deal with the unholy interaction between generics/polymorphism/multiple-dispatch and subtyping?</p>
+<p>A combination of namespaces and <code>cond</code> is simpler than generic functions, and achieves closed ad-hoc polymorphism, but is it better?</p>
+<h3 id="representation-of-values"><span class="section_number">2.6</span><span class="section_title">Representation of values</span></h3>
 <p><code>read-cst</code> is similar to Racket's <code>read-syntax</code>, but <code>read-cst</code> reads comments, and the result of <code>read-cst</code> can be turned back to source code (textual representation).</p>
 <p><code>read</code> is implemented by calling <code>read-cst</code> and recursively discarding location information and comment nodes.</p>
+<p>Unlike in other Lisps, in PL-0, the external representation of a pair is <code>#pair(head tail)</code>, not <code>(head . tail)</code>.</p>
 <h2 id="semantics"><span class="section_number">3</span><span class="section_title">Semantics</span></h2>
 <p>What should a symbol mean? It usually means a hash-table lookup, where the symbol is the key and the environment is the hash table. But is there a better semantics?</p>
 <p>In human languages, the meaning of a symbol is usually determined by agreement/consensus between the users of the symbol. For example, I can define &quot;foobar&quot; to mean &quot;table&quot; in a document, and the readers will be able to understand the document if they play along.</p>
@@ -486,7 +569,7 @@ f x = (\ x y -&gt; x + y) x
 </code></pre>
 <p>Macro Assembler (MASM)? TASM, NASM, what?</p>
 <p>There does not exist a computer with infinite memory. Why do we pretend, with garbage collection, that the computer had infinite memory? Because it simplifies most problems?</p>
-<p>What is the problem with these: High-Level Assembly, typed assembly languages such as TALx86 <span class="citation" data-cites="crary1999talx86">[<a href="#ref-crary1999talx86">2</a>]</span><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>, LLVM IR, MSIL, JVM bytecodes?</p>
+<p>What is the problem with these: High-Level Assembly, typed assembly languages such as TALx86 <span class="citation" data-cites="crary1999talx86">[<a href="#ref-crary1999talx86">4</a>]</span><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>, LLVM IR, MSIL, JVM bytecodes?</p>
 <p>We can add a type system to assembly language to enforce constraints like these:</p>
 <ul>
 <li>&quot;Add-integer&quot; takes two integers.</li>
@@ -507,18 +590,28 @@ f x = (\ x y -&gt; x + y) x
 <div id="ref-appel1987garbage">
 <p>[1] Appel, A.W. 1987. Garbage collection can be faster than stack allocation. <em>Information Processing Letters</em>. 25, 4 (1987), 275–279.</p>
 </div>
+<div id="ref-belikov2015language">
+<p>[2] Belikov, E. 2015. Language run-time systems: An overview. <em>2015 imperial college computing student workshop (iccsw 2015)</em> (2015).</p>
+</div>
+<div id="ref-coblenz2018interdisciplinary">
+<p>[3] Coblenz, M. et al. 2018. Interdisciplinary programming language design. <em>Proceedings of the 2018 acm sigplan international symposium on new ideas, new paradigms, and reflections on programming and software</em> (2018), 133–146.</p>
+</div>
 <div id="ref-crary1999talx86">
-<p>[2] Crary, K. et al. 1999. TALx86: A realistic typed assembly language. <em>1999 acm sigplan workshop on compiler support for system software atlanta, ga, usa</em> (1999), 25–35.</p>
+<p>[4] Crary, K. et al. 1999. TALx86: A realistic typed assembly language. <em>1999 acm sigplan workshop on compiler support for system software atlanta, ga, usa</em> (1999), 25–35.</p>
+</div>
+<div id="ref-ingalls1981design">
+<p>[5] Ingalls, D.H. 1981. Design principles behind smalltalk. <em>BYTE magazine</em>. 6, 8 (1981), 286–298.</p>
 </div>
 </div>
 <section class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>&lt;2019-12-10&gt;<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>&lt;2019-11-18&gt; <a href="https://en.wikipedia.org/wiki/PL/0">https://en.wikipedia.org/wiki/PL/0</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>&lt;2019-11-18&gt; <a href="https://en.wikipedia.org/wiki/Forth_(programming_language)">https://en.wikipedia.org/wiki/Forth_(programming_language)</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>via <a href="https://softwareengineering.stackexchange.com/questions/364371/type-based-memory-safety-without-manual-memory-manage-or-runtime-garbage-collect">Basile Starynkevitch</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>&lt;2019-11-04&gt; <a href="https://www.cis.upenn.edu/~stevez/papers/MCGG99.pdf">https://www.cis.upenn.edu/~stevez/papers/MCGG99.pdf</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>&lt;2019-12-11&gt; <a href="https://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html">mirror 1 (html)</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-12-11&gt; <a href="https://cs.pomona.edu/classes/cs131/readings/ingalls.pdf">mirror 2 (pdf)</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&lt;2019-12-11&gt; <a href="http://www.cs.cmu.edu/~NatProg/papers/onward18essays-p7-p-682d101-38832-final.pdf">mirror (pdf)</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>&lt;2019-11-18&gt; <a href="https://en.wikipedia.org/wiki/Forth_(programming_language)">https://en.wikipedia.org/wiki/Forth_(programming_language)</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>via <a href="https://softwareengineering.stackexchange.com/questions/364371/type-based-memory-safety-without-manual-memory-manage-or-runtime-garbage-collect">Basile Starynkevitch</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>&lt;2019-11-04&gt; <a href="https://www.cis.upenn.edu/~stevez/papers/MCGG99.pdf">https://www.cis.upenn.edu/~stevez/papers/MCGG99.pdf</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
