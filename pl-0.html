@@ -166,59 +166,135 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="post-content">
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#overview">Overview</a></span><span class="word_count">(362w~2m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#run-time-system">Run-time system</a></span><span class="word_count">(618w~4m)</span></li>
-<li><span class="section_number">3</span><span class="section_title"><a href="#semantics">Semantics</a></span><span class="word_count">(577w~3m)</span></li>
-<li><span class="section_number">4</span><span class="section_title"><a href="#syntax-and-parsing">Syntax and parsing</a></span><span class="word_count">(370w~2m)</span></li>
-<li><span class="section_number">5</span><span class="section_title"><a href="#thought">&lt;2019-11-27&gt; Thought</a></span><span class="word_count">(123w~1m)</span></li>
-<li><span class="section_number">6</span><span class="section_title"><a href="#guide-for-embedding-pl-0-in-c-programs">Guide for embedding PL-0 in C++ programs</a></span><span class="word_count">(404w~3m)</span></li>
-<li><span class="section_number">7</span><span class="section_title"><a href="#the-problem-is-not-binding-the-problem-is-closures">&lt;2019-11-28&gt; The problem is not binding; the problem is closures</a></span><span class="word_count">(63w~1m)</span></li>
-<li><span class="section_number">8</span><span class="section_title"><a href="#bottom-up-design">Bottom-up design?</a></span><span class="word_count">(328w~2m)</span></li>
-<li><span class="section_number">9</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(105w~1m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#overview">Overview</a></span><span class="word_count">(407w~3m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#an-example-of-building-a-programming-language">An example of building a programming language</a></span><span class="word_count">(399w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#run-time-system">Run-time system</a></span><span class="word_count">(725w~4m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#semantics">Semantics</a></span><span class="word_count">(577w~3m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#syntax-and-parsing">Syntax and parsing</a></span><span class="word_count">(370w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#thought">&lt;2019-11-27&gt; Thought</a></span><span class="word_count">(123w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#guide-for-embedding-pl-0-in-c-programs">Guide for embedding PL-0 in C++ programs</a></span><span class="word_count">(404w~3m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#the-problem-is-not-binding-the-problem-is-closures">&lt;2019-11-28&gt; The problem is not binding; the problem is closures</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#bottom-up-design">Bottom-up design?</a></span><span class="word_count">(328w~2m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(134w~1m)</span></li>
 </ul>
 </div>
 <h2 id="overview"><span class="section_number">1</span><span class="section_title">Overview</span></h2>
 <p>Alternative title: &quot;Exploring the programming language design space&quot;</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1.1</span><span class="section_title"><a href="#what-we-are-going-to-do-here">What we are going to do here</a></span><span class="word_count">(152w~1m)</span></li>
-<li><span class="section_number">1.2</span><span class="section_title"><a href="#the-lazy-implementors-language">The lazy implementor's language</a></span><span class="word_count">(204w~2m)</span></li>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#what-we-are-going-to-do-here">What we are going to do here</a></span><span class="word_count">(135w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#how-do-we-design-a-programming-language">How do we design a programming language?</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#forth-or-lisp">Forth or Lisp?</a></span><span class="word_count">(82w~1m)</span></li>
+<li><span class="section_number">1.4</span><span class="section_title"><a href="#for-hygiene-resolve-references-before-expanding-macros">&lt;2019-12-12&gt; For hygiene, resolve references before expanding macros</a></span><span class="word_count">(149w~1m)</span></li>
 </ul>
 </div>
 <h3 id="what-we-are-going-to-do-here"><span class="section_number">1.1</span><span class="section_title">What we are going to do here</span></h3>
 <p>Here we design a <a href="https://en.wikipedia.org/wiki/Lisp_(programming_language)">Lisp</a>, its semantics, and its interpreter. (Note that, in the 21st century, Lisp means a family of languages, not a particular language.)</p>
 <p>We design a Lisp because we want to focus on semantics; we can always dress up the syntax later.</p>
 <p>We name our language &quot;PL-0&quot; (not to be confused with <a href="https://en.wikipedia.org/wiki/PL/0">Wirth's PL/0</a>).</p>
-<p>We want a programming language for implementing programming languages.</p>
+<p>We want a programming language for implementing programming languages. We want to easily specify alternative semantics.</p>
 <p>We choose C++ as the implementation language because we don't know any better. We considered Rust and Go but we could not make up our minds. We refuse C because we want namespaces; we refuse to manually prefix every procedure name.</p>
-<p>To consider: <a href="http://tomasp.net/blog/2017/design-side-of-pl/">Petricek 2017</a> (about programming language design). <span class="citation" data-cites="ingalls1981design">[<a href="#ref-ingalls1981design">5</a>]</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. <span class="citation" data-cites="coblenz2018interdisciplinary">[<a href="#ref-coblenz2018interdisciplinary">3</a>]</span>.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> <a href="https://leastfixedpoint.com/tonyg/kcbbs/projects/thing.html">Tony's Programming Language Experiments</a>. <a href="http://lisp-univ-etc.blogspot.com/2012/04/lisp-hackers-pascal-costanza.html">3-Lisp's tower of interpreters</a>.</p>
-<p>We can begin designing from the semantics (our desire) or from the run-time system (our constraints). All design is a compromise between the ideal and the practical.</p>
-<h3 id="the-lazy-implementors-language"><span class="section_number">1.2</span><span class="section_title">The lazy implementor's language</span></h3>
-<p>PL-0 is a lazy implementor's programming language, where the language designers do not strive to please language users.</p>
-<p>The focus is on implementability, not usability.</p>
-<p>The implementation tries to be stupid, simple, predictable, understandable, not smart.</p>
-<p>Our motto is &quot;we only do what we understand&quot; (read: &quot;we only do easy things&quot;).</p>
-<p>Here are examples of our incompetence:</p>
+<p>To consider: <a href="http://tomasp.net/blog/2017/design-side-of-pl/">Petricek 2017</a> (about programming language design). <span class="citation" data-cites="ingalls1981design">[<a href="#ref-ingalls1981design">6</a>]</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. <span class="citation" data-cites="coblenz2018interdisciplinary">[<a href="#ref-coblenz2018interdisciplinary">3</a>]</span>.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> <a href="https://leastfixedpoint.com/tonyg/kcbbs/projects/thing.html">Tony's Programming Language Experiments</a>. <a href="http://lisp-univ-etc.blogspot.com/2012/04/lisp-hackers-pascal-costanza.html">3-Lisp's tower of interpreters</a>.</p>
+<p><a href="https://en.wikipedia.org/wiki/Subject-oriented_programming">Subject-Oriented Programming</a> <span class="citation" data-cites="harrison1993subject">[<a href="#ref-harrison1993subject">5</a>]</span>?</p>
+<h3 id="how-do-we-design-a-programming-language"><span class="section_number">1.2</span><span class="section_title">How do we design a programming language?</span></h3>
+<p>TODO:</p>
 <ul>
-<li>We don't implement many modern language features like closures, continuations, proper tail calls, and type checking, because we think they are hard to implement. We have not tried to actually implement them; we are spooked by the mere thought of having to implement them.</li>
-<li>Parsing is hard, so we only do lexical analysis. The token list becomes the degenerate concrete syntax tree.</li>
-<li>Writing a compiler is hard, so we write an interpreter.</li>
+<li>What is a good language.</li>
 </ul>
+<p>We can begin designing from the semantics (our desires) or from the run-time system (our constraints). All design is a compromise between the ideal and the practical.</p>
+<h3 id="forth-or-lisp"><span class="section_number">1.3</span><span class="section_title">Forth or Lisp?</span></h3>
 <p>We thought of making a stack-based language such as Forth<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> or PostScript, but we don't know how to implement <em>implicit arguments</em> (optional arguments) in a stack-based language, other than by explicitly passing a possibly empty list, so we choose to make a Lisp instead.</p>
 <p>The question of Forth vs Lisp is: How hard do we allow the user to crash without foreign procedures: just an exit due to an unhandled exception (Lisp), or an abort due to a segmentation fault (Forth)?</p>
-<h2 id="run-time-system"><span class="section_number">2</span><span class="section_title">Run-time system</span></h2>
+<h3 id="for-hygiene-resolve-references-before-expanding-macros"><span class="section_number">1.4</span><span class="section_title">&lt;2019-12-12&gt; For hygiene, resolve references before expanding macros</span></h3>
+<p>For hygiene, references must be resolved (bound) before macros are expanded.</p>
+<p>Example:</p>
+<pre class="example"><code>A = &quot;There is Andrew.&quot;
+B = &quot;There is Bob. He is talking.&quot;
+A B = &quot;There is Andrew. There is Bob. He is talking.&quot;
+</code></pre>
+<p>Naïve syntactical concatenation of and A and B causes ambiguity.</p>
+<p>But not if we resolve the references first.</p>
+<pre class="example"><code>RA = &quot;There is Andrew.&quot;
+RB = &quot;There is Bob. He(Bob) is talking.&quot;
+RA RB = &quot;There is Andrew. There is Bob. He(Bob) is talking.&quot;
+</code></pre>
+<p>Ambiguity: The expression <code>(f x)</code> is ambiguous. If <code>f</code> refers to a procedure, the expression means &quot;evaluate x to ex and then compute f(ex)&quot;. If <code>f</code> refers to a macro, the expression means &quot;expand (f y) where y is a reference to x&quot;.</p>
+<p>Term-rewriting rules / fexprs unify procedures and macros? The problem is we want to let the programmers how and when a fragment is expanded?</p>
+<p>But it is possible to write an AST transformer that produces an invalid AST. For example, one can pull out a lexically scoped variable out of its scope.</p>
+<p>We let the programmers decide. If they want hygiene, they can use AST transformers. If they don't want hygiene, they can use CST transformers.</p>
+<h2 id="an-example-of-building-a-programming-language"><span class="section_number">2</span><span class="section_title">An example of building a programming language</span></h2>
+<p>There are several starting point candidates: machine code or mathematics. Where should we begin?</p>
+<p>Should we bet our future on the engineers, the scientists, the philosophers, or the mathematicians?</p>
+<p>Originally, computers were invented to help people do arithmetics, which is a part of mathematics. Does it mean that we should start from mathematics?</p>
+<p>Another point of view is that programming languages are invented to make it easier to generate machine code.</p>
+<p>Suppose that we start with an arithmetic expression evaluator.</p>
+<pre class="example"><code>(evaluate (* (+ 2 3) (+ 2 3)))
+</code></pre>
+<p>We don't want to repeat ourselves, so we add these features to our language: factoring, references, and substitutions.</p>
+<pre class="example"><code>(evaluate
+  (let [(x 2)
+        (y 3)
+        (z (+ x y))]
+    (* z z)))
+</code></pre>
+<p>Not only do we want the computer to compute, but we also want it to <em>show</em> the result:</p>
+<pre class="example"><code>(print (evaluate (+ 1 2)))
+</code></pre>
+<p>We want to &quot;solve&quot; a differential equation.</p>
+<p>We create some things: a representation for differential equations, and a compiler (a translator) that, given a differential equation and its initial conditions, generates what? A procedure? A generator? A list of numbers?</p>
+<pre class="example"><code>;; 0 = Df(x) + 2 * f(x)
+(approximate
+  (differential-equation
+    (= 0 (+ ([d f] x) (* 2 [f x])))
+    functions (f)
+    variables (x))
+  method [euler
+    initial-conditions [(x 0)]
+    step-size 1.0e-6])
+</code></pre>
+<p>But the form is rather inflexible: What if the users want to implement their own methods? With if the users want to approximate other things, such as a system of equations?</p>
+<p>We also want to plot the result…</p>
+<p>We also want to implement iterative approximation algorithms, etc.</p>
+<p>Then we want to parse.</p>
+<p>Note the reference to <code>my-char</code> in the <code>parse:interpret</code> block.</p>
+<pre class="example"><code>(define-function (f port)
+  (define-local-variables my-char my-string)
+  (parse:interpret program (sequence
+      (char) ;; read any char
+      (set! my-char char) ;; read any char and store it to my-char
+      (set! my-string (string of length 8))
+      (char y)
+      (char #\z)
+      (char 0)
+      (char code 32)
+      (set! my-choice (choose (char x) (char y)))
+      eof)
+    with-input-from port))
+</code></pre>
+<p>Can we generate a pretty printer and a parser from a common description?</p>
+<p>Informally, a printer is an inverse parser. For example: In a parser, the program <code>(set! x char)</code> reads a char from the stream and mutates x to refer to the char. In a printer, the same program dereferences a char from x and writes the char to the stream.</p>
+<p>Note that in <code>(define x 1)</code>, we do not set <code>x</code> to <em>contain</em> 1, but we set <code>x</code> to <em>refer</em> to 1.</p>
+<p>Then we also want computers to store data, etc.</p>
+<p>Computers are machines that help us do mathematics.</p>
+<p>Mathematics is not limited to numbers. Mathematics is about unambiguous abstract thinking.</p>
+<p>Computer manipulates bits; humans give meaning to computation (what a computer does).</p>
+<p>I am impressed by how van Roy &amp; Haridi 2004 <span class="citation" data-cites="van2004concepts">[<a href="#ref-van2004concepts">7</a>]</span> come up with alternative semantics.</p>
+<p>We should not only make computers <em>do</em> something, but we should also make computers <em>understand</em> something, so that they can help us make them do something. When I first saw the delayed concurrent variable assignment semantics, I was amazed.</p>
+<p>…</p>
+<p>Finally, after all that hard work, we want to share our work. We want to improve our lives together.</p>
+<h2 id="run-time-system"><span class="section_number">3</span><span class="section_title">Run-time system</span></h2>
 <p><a href="https://drops.dagstuhl.de/opus/volltexte/2015/5475/pdf/4.pdf">Belikov 2015</a> <span class="citation" data-cites="belikov2015language">[<a href="#ref-belikov2015language">2</a>]</span></p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">2.1</span><span class="section_title"><a href="#memory-management">Memory management</a></span><span class="word_count">(177w~1m)</span></li>
-<li><span class="section_number">2.2</span><span class="section_title"><a href="#converting-c-types">Converting C types</a></span><span class="word_count">(10w~1m)</span></li>
-<li><span class="section_number">2.3</span><span class="section_title"><a href="#foreign-interface-mostly-c">Foreign interface, mostly C</a></span><span class="word_count">(116w~1m)</span></li>
-<li><span class="section_number">2.4</span><span class="section_title"><a href="#values">Values</a></span><span class="word_count">(141w~1m)</span></li>
-<li><span class="section_number">2.5</span><span class="section_title"><a href="#do-we-need-generic-functions-the-case-of-append">Do we need generic functions? The case of &quot;append&quot;</a></span><span class="word_count">(119w~1m)</span></li>
-<li><span class="section_number">2.6</span><span class="section_title"><a href="#representation-of-values">Representation of values</a></span><span class="word_count">(57w~1m)</span></li>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#memory-management">Memory management</a></span><span class="word_count">(284w~2m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#converting-c-types">Converting C types</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#foreign-interface-mostly-c">Foreign interface, mostly C</a></span><span class="word_count">(116w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#values">Values</a></span><span class="word_count">(141w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#do-we-need-generic-functions-the-case-of-append">Do we need generic functions? The case of &quot;append&quot;</a></span><span class="word_count">(119w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#representation-of-values">Representation of values</a></span><span class="word_count">(57w~1m)</span></li>
 </ul>
 </div>
-<h3 id="memory-management"><span class="section_number">2.1</span><span class="section_title">Memory management</span></h3>
+<h3 id="memory-management"><span class="section_number">3.1</span><span class="section_title">Memory management</span></h3>
 <p>We use a <em>garbage collector</em> because we believe that that garbage collection greatly simplifies the language semantics. Also, we don't know how to implement a Lisp without garbage collection like <a href="https://github.com/wolfgangj/bone-lisp/">Bone Lisp</a>, Pre-Scheme, Carp, newLISP, Linear Lisp, and ThinLisp.</p>
 <p>We use a <em>copying garbage collector</em> because we are convinced by Appel 1987 <span class="citation" data-cites="appel1987garbage">[<a href="#ref-appel1987garbage">1</a>]</span><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> that &quot;[naïve copying] garbage collection can be faster than stack allocation&quot;.</p>
 <p>The drawbacks of our simple choices are:</p>
@@ -232,9 +308,36 @@ document.addEventListener("DOMContentLoaded", function () {
 <li>Implement alternative garbage collectors and let the programmer choose.</li>
 <li>Write a compiler for, say, PL-1, a language with manual memory management, and probably also static typing, on top of PL-0. Thus the real-time part of the program can be written in PL-1 while seamlessly interoperating with PL-0.</li>
 </ul>
-<h3 id="converting-c-types"><span class="section_number">2.2</span><span class="section_title">Converting C types</span></h3>
+<p>How do we trace the references?</p>
+<p>What is a reasonably simple implementation?</p>
+<pre class="example"><code>class Object {
+    // How do we maintain iterator state without new/malloc?
+    // Can we just assume that the iterator state is always an intptr_t?
+    // That holds for pair, list, vector, hash-table, but it does not hold for all types (CST)?
+
+    What_Should_This_Be begin_tracing_references();
+
+    // Or should we just abort when there is not enough C++ stack space?
+
+    trace_references(Stack&amp;);
+
+    // Or should we invert the control?
+    // In action, copy the object if it has not been visited.
+
+    void for_each_reachable_object_do(Consumer&lt;Object_Id&gt; action);
+};
+
+class Pair : public Object {
+    Pair_Tracing_Iterator_State tracing_iterator_state;
+};
+</code></pre>
+<p>If we assume that garbage collection is single-threaded, we can put the iterator state in each instance of Object.</p>
+<p>Perhaps it is obvious that, for simplicity, <em>the garbage collection process itself should never allocate any heap memory</em>.</p>
+<p>I can't think how to do garbage collection (with depth-first search) without stack memory, so the program should just abort if it runs out of stack.</p>
+<p>We want precise garbage collection. The price to pay is an extra level of indirection: Objects can only be indirectly accessed by passing an Object<sub>Id</sub> to a World method, and cannot be directly accessed by raw C pointers.</p>
+<h3 id="converting-c-types"><span class="section_number">3.2</span><span class="section_title">Converting C types</span></h3>
 <p>void, uintN<sub>t</sub>, intN<sub>t</sub>, intptr<sub>t</sub>, for N in {8,16,32,64}.</p>
-<h3 id="foreign-interface-mostly-c"><span class="section_number">2.3</span><span class="section_title">Foreign interface, mostly C</span></h3>
+<h3 id="foreign-interface-mostly-c"><span class="section_number">3.3</span><span class="section_title">Foreign interface, mostly C</span></h3>
 <p>We do not expect users to use this directly. The ideal thing for user is to make PL-0 understand C header files. That is, PL-0 should come with a C parser and preprocessor that translate signatures to PL-0 bridges. Compare: <a href="http://www.swig.org/">SWIG</a>. (But why stop there; why not go all the way and write a C interpreter/compiler in PL-0?)</p>
 <p>We should use <a href="https://sourceware.org/libffi/">libffi</a> for portability.</p>
 <p>Compare: <a href="https://docs.racket-lang.org/foreign/index.html">Racket Foreign Interface</a>.</p>
@@ -264,7 +367,7 @@ uint32_t
 (call Ref) -&gt; Val
 </code></pre>
 <p>We can obtain symbol addresses with <code>dlsym</code>.</p>
-<h3 id="values"><span class="section_number">2.4</span><span class="section_title">Values</span></h3>
+<h3 id="values"><span class="section_number">3.4</span><span class="section_title">Values</span></h3>
 <p>What should the set of values (the irreducible meanings) in a programming language be?</p>
 <p>Perhaps we all agree that the set of values must include at least some integers.</p>
 <p>A <em>value</em> (an <em>object</em>) is any of these:</p>
@@ -308,7 +411,7 @@ uint32_t
 <li>In PL-0, lists and pairs are different things.</li>
 <li>PL-0 does not have <em>nil</em>.</li>
 </ul>
-<h3 id="do-we-need-generic-functions-the-case-of-append"><span class="section_number">2.5</span><span class="section_title">Do we need generic functions? The case of &quot;append&quot;</span></h3>
+<h3 id="do-we-need-generic-functions-the-case-of-append"><span class="section_number">3.5</span><span class="section_title">Do we need generic functions? The case of &quot;append&quot;</span></h3>
 <p>I want to write just <code>append</code> instead of <code>list-append</code>, <code>vector-append</code>, <code>bytestring-append</code>, etc. In other words, want <code>append</code> to be <em>polymorphic</em>.</p>
 <p>What are my choices?</p>
 <p>I can define <code>append</code> with <code>cond</code>.</p>
@@ -317,11 +420,11 @@ uint32_t
 <p>Or I can define <code>append</code> to be a generic function.</p>
 <p>But generic function becomes extremely tricky with subtyping. Julia solves this with a complete lattice of types. But do we have to deal with the unholy interaction between generics/polymorphism/multiple-dispatch and subtyping?</p>
 <p>A combination of namespaces and <code>cond</code> is simpler than generic functions, and achieves closed ad-hoc polymorphism, but is it better?</p>
-<h3 id="representation-of-values"><span class="section_number">2.6</span><span class="section_title">Representation of values</span></h3>
+<h3 id="representation-of-values"><span class="section_number">3.6</span><span class="section_title">Representation of values</span></h3>
 <p><code>read-cst</code> is similar to Racket's <code>read-syntax</code>, but <code>read-cst</code> reads comments, and the result of <code>read-cst</code> can be turned back to source code (textual representation).</p>
 <p><code>read</code> is implemented by calling <code>read-cst</code> and recursively discarding location information and comment nodes.</p>
 <p>Unlike in other Lisps, in PL-0, the external representation of a pair is <code>#pair(head tail)</code>, not <code>(head . tail)</code>.</p>
-<h2 id="semantics"><span class="section_number">3</span><span class="section_title">Semantics</span></h2>
+<h2 id="semantics"><span class="section_number">4</span><span class="section_title">Semantics</span></h2>
 <p>What should a symbol mean? It usually means a hash-table lookup, where the symbol is the key and the environment is the hash table. But is there a better semantics?</p>
 <p>In human languages, the meaning of a symbol is usually determined by agreement/consensus between the users of the symbol. For example, I can define &quot;foobar&quot; to mean &quot;table&quot; in a document, and the readers will be able to understand the document if they play along.</p>
 <p>The meaning of a symbol may be defined in terms of the meaning of other symbols. For example, &quot;<em>chair</em>&quot; may be defined as a &quot;<em>seat</em> with <em>back rest</em>&quot;.</p>
@@ -378,28 +481,28 @@ interpret : Abstract-Syntax -&gt; Semantics
 <p>What should a list such as <code>(x y)</code> mean?</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">3.1</span><span class="section_title"><a href="#term-rewriting-semantics">Term rewriting semantics?</a></span><span class="word_count">(36w~1m)</span></li>
-<li><span class="section_number">3.2</span><span class="section_title"><a href="#graph-reduction-semantics">Graph reduction semantics?</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#term-rewriting-semantics">Term rewriting semantics?</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#graph-reduction-semantics">Graph reduction semantics?</a></span><span class="word_count">(36w~1m)</span></li>
 </ul>
 </div>
-<h3 id="term-rewriting-semantics"><span class="section_number">3.1</span><span class="section_title">Term rewriting semantics?</span></h3>
+<h3 id="term-rewriting-semantics"><span class="section_number">4.1</span><span class="section_title">Term rewriting semantics?</span></h3>
 <p>For efficiency, we require that the head of a rule begins with a <em>literal</em>, so that we can <em>index</em> the rules for fast matching/retrieval.</p>
 <p>The programmers are responsible for ensuring confluence by avoiding ambiguous/overlapping rules.</p>
-<h3 id="graph-reduction-semantics"><span class="section_number">3.2</span><span class="section_title">Graph reduction semantics?</span></h3>
+<h3 id="graph-reduction-semantics"><span class="section_number">4.2</span><span class="section_title">Graph reduction semantics?</span></h3>
 <p>Should the semantics be formulated in terms of expression graph reductions/transformations?</p>
 <p>An S-expression can be thought of representing a <em>tree</em> (or, more precisely, a <em>graph</em>).</p>
 <p>A value can be thought of as an irreducible one-vertex graph.</p>
-<h2 id="syntax-and-parsing"><span class="section_number">4</span><span class="section_title">Syntax and parsing</span></h2>
+<h2 id="syntax-and-parsing"><span class="section_number">5</span><span class="section_title">Syntax and parsing</span></h2>
 <p>We use a recursive descent parser because we don't know any better.</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">4.1</span><span class="section_title"><a href="#reversibility-information-preservation">Reversibility, information-preservation</a></span><span class="word_count">(151w~1m)</span></li>
-<li><span class="section_number">4.2</span><span class="section_title"><a href="#locations">Locations</a></span><span class="word_count">(24w~1m)</span></li>
-<li><span class="section_number">4.3</span><span class="section_title"><a href="#macro-reflection-reification-quoting">Macro, reflection, reification, quoting</a></span><span class="word_count">(22w~1m)</span></li>
-<li><span class="section_number">4.4</span><span class="section_title"><a href="#annotations-user-defined-metadata-attached-to-concrete-syntax-tree-nodes">Annotations: user-defined metadata attached to concrete syntax tree nodes</a></span><span class="word_count">(163w~1m)</span></li>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#reversibility-information-preservation">Reversibility, information-preservation</a></span><span class="word_count">(151w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#locations">Locations</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">5.3</span><span class="section_title"><a href="#macro-reflection-reification-quoting">Macro, reflection, reification, quoting</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">5.4</span><span class="section_title"><a href="#annotations-user-defined-metadata-attached-to-concrete-syntax-tree-nodes">Annotations: user-defined metadata attached to concrete syntax tree nodes</a></span><span class="word_count">(163w~1m)</span></li>
 </ul>
 </div>
-<h3 id="reversibility-information-preservation"><span class="section_number">4.1</span><span class="section_title">Reversibility, information-preservation</span></h3>
+<h3 id="reversibility-information-preservation"><span class="section_number">5.1</span><span class="section_title">Reversibility, information-preservation</span></h3>
 <p>I insist that the parser be reversible, because I want traceability and debuggability.</p>
 <p>Each stage must be reversible: it must either be a bijection or preserve enough information from the previous stage.</p>
 <p>The first stage is character + location (defined later).</p>
@@ -412,16 +515,16 @@ interpret : Abstract-Syntax -&gt; Semantics
 <p>An AST node has a &quot;main&quot; CST node.</p>
 <p>An AST node has a &quot;preceding-whites&quot; (a list of whitespace CST nodes that precede that AST node) so that the AST node can be turned back into CST node (and so on until we reach the original substring that constitutes the CST node).</p>
 <p>The parser is a recursive descent parser because I don't know how to parse.</p>
-<h3 id="locations"><span class="section_number">4.2</span><span class="section_title">Locations</span></h3>
+<h3 id="locations"><span class="section_number">5.2</span><span class="section_title">Locations</span></h3>
 <p>A <em>location</em> is a tuple of path, line (0-based), column (0-based), byte-offset. This is like Racket srcloc.</p>
 <p><code>current-location</code> parameter</p>
 <p><code>read</code> from current location</p>
 <p><code>raise-parse-error</code> at current location</p>
-<h3 id="macro-reflection-reification-quoting"><span class="section_number">4.3</span><span class="section_title">Macro, reflection, reification, quoting</span></h3>
+<h3 id="macro-reflection-reification-quoting"><span class="section_number">5.3</span><span class="section_title">Macro, reflection, reification, quoting</span></h3>
 <p>The language should be a model of itself.</p>
 <p>The language should be able to describe itself.</p>
 <p>Does that cause a paradox?</p>
-<h3 id="annotations-user-defined-metadata-attached-to-concrete-syntax-tree-nodes"><span class="section_number">4.4</span><span class="section_title">Annotations: user-defined metadata attached to concrete syntax tree nodes</span></h3>
+<h3 id="annotations-user-defined-metadata-attached-to-concrete-syntax-tree-nodes"><span class="section_number">5.4</span><span class="section_title">Annotations: user-defined metadata attached to concrete syntax tree nodes</span></h3>
 <p>(Is this a good idea?)</p>
 <p>We add these expression syntax rules:</p>
 <ul>
@@ -445,7 +548,7 @@ interpret : Abstract-Syntax -&gt; Semantics
 <p>This is like Java/C# annotation but more principled?</p>
 <p>Annotations are not types.</p>
 <p>This is an example of type annotation that our annotation above can't handle: <code>\ (x : T) -&gt; y</code>, because <code>x</code> is not an expression.</p>
-<h2 id="thought"><span class="section_number">5</span><span class="section_title">&lt;2019-11-27&gt; Thought</span></h2>
+<h2 id="thought"><span class="section_number">6</span><span class="section_title">&lt;2019-11-27&gt; Thought</span></h2>
 <p>It is easy to process a byte list into a token list.</p>
 <p>The question is: How should we interpret that token list? How should we ascribe meaning to that token list? How should we map tokens to values?</p>
 <p>The lowest layer is more like a library for manipulating tokens than a language.</p>
@@ -458,25 +561,25 @@ interpret : Abstract-Syntax -&gt; Semantics
   (string:append &quot;a&quot; &quot;b&quot;))
 </code></pre>
 <p>Peter Van Roy's &quot;Programming Paradigms for Dummies: What Every Programmer Should Know&quot; <a href="https://www.info.ucl.ac.be/~pvr/VanRoyChapter.pdf">https://www.info.ucl.ac.be/~pvr/VanRoyChapter.pdf</a></p>
-<h2 id="guide-for-embedding-pl-0-in-c-programs"><span class="section_number">6</span><span class="section_title">Guide for embedding PL-0 in C++ programs</span></h2>
+<h2 id="guide-for-embedding-pl-0-in-c-programs"><span class="section_number">7</span><span class="section_title">Guide for embedding PL-0 in C++ programs</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">6.1</span><span class="section_title"><a href="#pl-0-c-conventions">PL-0 C++ conventions</a></span><span class="word_count">(7w~1m)</span></li>
-<li><span class="section_number">6.2</span><span class="section_title"><a href="#creating-a-virtual-machine">Creating a virtual machine</a></span><span class="word_count">(35w~1m)</span></li>
-<li><span class="section_number">6.3</span><span class="section_title"><a href="#executing-programs">Executing programs</a></span><span class="word_count">(161w~1m)</span></li>
-<li><span class="section_number">6.4</span><span class="section_title"><a href="#creating-primitives">Creating primitives</a></span><span class="word_count">(20w~1m)</span></li>
-<li><span class="section_number">6.5</span><span class="section_title"><a href="#quoting">Quoting</a></span><span class="word_count">(20w~1m)</span></li>
-<li><span class="section_number">6.6</span><span class="section_title"><a href="#macros">Macros</a></span><span class="word_count">(29w~1m)</span></li>
-<li><span class="section_number">6.7</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(132w~1m)</span></li>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#pl-0-c-conventions">PL-0 C++ conventions</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#creating-a-virtual-machine">Creating a virtual machine</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">7.3</span><span class="section_title"><a href="#executing-programs">Executing programs</a></span><span class="word_count">(161w~1m)</span></li>
+<li><span class="section_number">7.4</span><span class="section_title"><a href="#creating-primitives">Creating primitives</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">7.5</span><span class="section_title"><a href="#quoting">Quoting</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">7.6</span><span class="section_title"><a href="#macros">Macros</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">7.7</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(132w~1m)</span></li>
 </ul>
 </div>
-<h3 id="pl-0-c-conventions"><span class="section_number">6.1</span><span class="section_title">PL-0 C++ conventions</span></h3>
+<h3 id="pl-0-c-conventions"><span class="section_number">7.1</span><span class="section_title">PL-0 C++ conventions</span></h3>
 <p>The C++ namespace is <code>stc_pl_0</code>.</p>
-<h3 id="creating-a-virtual-machine"><span class="section_number">6.2</span><span class="section_title">Creating a virtual machine</span></h3>
+<h3 id="creating-a-virtual-machine"><span class="section_number">7.2</span><span class="section_title">Creating a virtual machine</span></h3>
 <p>Each instance of the <code>Machine</code> class is a virtual machine with operand stack, dictionary stack, return stack, and heap. The size of each memory area is fixed when the <code>Machine</code> is instantiated.</p>
 <pre class="example"><code>Machine machine;
 </code></pre>
-<h3 id="executing-programs"><span class="section_number">6.3</span><span class="section_title">Executing programs</span></h3>
+<h3 id="executing-programs"><span class="section_number">7.3</span><span class="section_title">Executing programs</span></h3>
 <p>A <em>program</em> is a sequence of tokens. For example, &quot;1&quot; is a program that pushes the word 1 to the stack. The following is a program that consists of <em>six</em> tokens (1, space, 2, space, add, newline):</p>
 <pre class="example"><code>1 2 add
 </code></pre>
@@ -493,19 +596,19 @@ Token_Iterator&amp; Machine::pop_source ()
 </ul>
 <p><em>The <code>step</code> method executes at most one token.</em> If the meaning of the token is a token list, then <code>step</code> creates a call frame and arranges the next <code>step</code> call to execute the first token of the subroutine.</p>
 <p>The machine reads the current program from a token iterator.</p>
-<h3 id="creating-primitives"><span class="section_number">6.4</span><span class="section_title">Creating primitives</span></h3>
+<h3 id="creating-primitives"><span class="section_number">7.4</span><span class="section_title">Creating primitives</span></h3>
 <p>A <em>primitive</em> is a foreign procedure that may mutate the machine state.</p>
 <pre class="example"><code>using Prim = void (Machine&amp;);
 </code></pre>
 <p>A primitive must not throw any C++ exceptions.</p>
-<h3 id="quoting"><span class="section_number">6.5</span><span class="section_title">Quoting</span></h3>
+<h3 id="quoting"><span class="section_number">7.5</span><span class="section_title">Quoting</span></h3>
 <p>The program <code>quote W B</code> pushes <code>B</code> to the operand stack where <code>W</code> is expected to be a white token.</p>
-<h3 id="macros"><span class="section_number">6.6</span><span class="section_title">Macros</span></h3>
+<h3 id="macros"><span class="section_number">7.6</span><span class="section_title">Macros</span></h3>
 <p>A macro is a procedure that transforms a prefix of the remaining program token stream.</p>
 <p>A macro transforms a concrete syntax tree.</p>
 <p>Important: Whitespaces are tokens too.</p>
 <p>Macro : Cst -&gt; Cst</p>
-<h3 id="what"><span class="section_number">6.7</span><span class="section_title">What?</span></h3>
+<h3 id="what"><span class="section_number">7.7</span><span class="section_title">What?</span></h3>
 <pre class="example"><code>% A B C muladd -&gt; A*B+C
 
 quote muladd { mul add } def
@@ -525,7 +628,7 @@ end
 <p>If we want <code>read</code> to produce a value (not a type-value pair), then values must carry type information.</p>
 <p>In mathematics, it is natural to overload functions (such as +). Otherwise we would have +N, +Q, +R, etc. which is ugly. Do we care about what something is, or about what can we do with it?</p>
 <p>PostScript enables the programmer to choose between early binding and late binding.</p>
-<h2 id="the-problem-is-not-binding-the-problem-is-closures"><span class="section_number">7</span><span class="section_title">&lt;2019-11-28&gt; The problem is not binding; the problem is closures</span></h2>
+<h2 id="the-problem-is-not-binding-the-problem-is-closures"><span class="section_number">8</span><span class="section_title">&lt;2019-11-28&gt; The problem is not binding; the problem is closures</span></h2>
 <p>If we don't have closures, then it does not matter whether we use static (lexical) or dynamic binding; the result will be the same.</p>
 <p>The problem is not static vs dynamic binding. The problem is: Should we have closures or not?</p>
 <p>Why do we bother having closures if programmers can do explicit closure conversion? For example:</p>
@@ -533,14 +636,14 @@ end
 -- gets closure-converted to
 f x = (\ x y -&gt; x + y) x
 </code></pre>
-<h2 id="bottom-up-design"><span class="section_number">8</span><span class="section_title">Bottom-up design?</span></h2>
+<h2 id="bottom-up-design"><span class="section_number">9</span><span class="section_title">Bottom-up design?</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">8.1</span><span class="section_title"><a href="#example">Example</a></span><span class="word_count">(85w~1m)</span></li>
-<li><span class="section_number">8.2</span><span class="section_title"><a href="#starting-with-assembly">Starting with assembly</a></span><span class="word_count">(243w~2m)</span></li>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#example">Example</a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">9.2</span><span class="section_title"><a href="#starting-with-assembly">Starting with assembly</a></span><span class="word_count">(243w~2m)</span></li>
 </ul>
 </div>
-<h3 id="example"><span class="section_number">8.1</span><span class="section_title">Example</span></h3>
+<h3 id="example"><span class="section_number">9.1</span><span class="section_title">Example</span></h3>
 <ul>
 <li>Example of bottom-up language design and how each level reduces cognitive load:
 <ul>
@@ -561,7 +664,7 @@ f x = (\ x y -&gt; x + y) x
 <li>End up with something like Randall Hyde's High Level Assembly?</li>
 </ul></li>
 </ul>
-<h3 id="starting-with-assembly"><span class="section_number">8.2</span><span class="section_title">Starting with assembly</span></h3>
+<h3 id="starting-with-assembly"><span class="section_number">9.2</span><span class="section_title">Starting with assembly</span></h3>
 <p>PL-0 is slightly more abstract than typed assembly languages (TALs).</p>
 <p>We may begin from x86 assembly.</p>
 <p>First we abstract away locations, registers, memory, so that we can write something like this:</p>
@@ -585,7 +688,7 @@ f x = (\ x y -&gt; x + y) x
 <p>We can &quot;solve&quot; that with Static Single Assignment (SSA) Form and automatic register allocation.</p>
 <p>But perhaps the bigger issue is to abstract away the difference between processors; why should we care if it is an Intel processor, a Motorola processor, a Symbolics Lisp machine, or something else?</p>
 <p>Even though the machine does not know about subroutines, we organize our programs into subroutines; we find it more convenient to work with subroutines than to work with instructions. We feel that the instructions are too finely-grained, unnecessarily detailed.</p>
-<h2 id="bibliography" class="unnumbered"><span class="section_number">9</span><span class="section_title">Bibliography</span></h2>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">10</span><span class="section_title">Bibliography</span></h2>
 <div id="refs" class="references">
 <div id="ref-appel1987garbage">
 <p>[1] Appel, A.W. 1987. Garbage collection can be faster than stack allocation. <em>Information Processing Letters</em>. 25, 4 (1987), 275–279.</p>
@@ -599,8 +702,14 @@ f x = (\ x y -&gt; x + y) x
 <div id="ref-crary1999talx86">
 <p>[4] Crary, K. et al. 1999. TALx86: A realistic typed assembly language. <em>1999 acm sigplan workshop on compiler support for system software atlanta, ga, usa</em> (1999), 25–35.</p>
 </div>
+<div id="ref-harrison1993subject">
+<p>[5] Harrison, W. and Ossher, H. 1993. <em>Subject-oriented programming: A critique of pure objects</em>. Citeseer.</p>
+</div>
 <div id="ref-ingalls1981design">
-<p>[5] Ingalls, D.H. 1981. Design principles behind smalltalk. <em>BYTE magazine</em>. 6, 8 (1981), 286–298.</p>
+<p>[6] Ingalls, D.H. 1981. Design principles behind smalltalk. <em>BYTE magazine</em>. 6, 8 (1981), 286–298.</p>
+</div>
+<div id="ref-van2004concepts">
+<p>[7] Van-Roy, P. and Haridi, S. 2004. <em>Concepts, techniques, and models of computer programming</em>. MIT press.</p>
 </div>
 </div>
 <section class="footnotes">
