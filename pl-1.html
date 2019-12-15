@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">5</span><span class="section_title"><a href="#object-property-system">Object-property system</a></span><span class="word_count">(9w~1m)</span></li>
 <li><span class="section_number">6</span><span class="section_title"><a href="#gui-programming">GUI programming</a></span><span class="word_count">(66w~1m)</span></li>
 <li><span class="section_number">7</span><span class="section_title"><a href="#idea-explicit-evaluation">Idea: Explicit evaluation</a></span><span class="word_count">(122w~1m)</span></li>
-<li><span class="section_number">8</span><span class="section_title"><a href="#designing-the-implementation">Designing the implementation</a></span><span class="word_count">(952w~5m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#designing-the-implementation">Designing the implementation</a></span><span class="word_count">(253w~2m)</span></li>
 <li><span class="section_number">9</span><span class="section_title"><a href="#maintainability">Maintainability?</a></span><span class="word_count">(10w~1m)</span></li>
 <li><span class="section_number">10</span><span class="section_title"><a href="#interactive-programming-serialization-and-state-restoration">Interactive programming, serialization, and state restoration</a></span><span class="word_count">(368w~2m)</span></li>
 <li><span class="section_number">11</span><span class="section_title"><a href="#threading">Threading</a></span><span class="word_count">(18w~1m)</span></li>
@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><span class="section_number">22</span><span class="section_title"><a href="#convenience-language">Convenience language</a></span><span class="word_count">(23w~1m)</span></li>
 <li><span class="section_number">23</span><span class="section_title"><a href="#concepts">Concepts?</a></span><span class="word_count">(4117w~21m)</span></li>
 <li><span class="section_number">24</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(655w~4m)</span></li>
-<li><span class="section_number">25</span><span class="section_title"><a href="#a-business-oriented-variant">A business-oriented variant</a></span><span class="word_count">(348w~2m)</span></li>
+<li><span class="section_number">25</span><span class="section_title"><a href="#a-business-oriented-variant">A business-oriented variant</a></span><span class="word_count">(329w~2m)</span></li>
 </ul>
 </div>
 <h2 id="goals"><span class="section_number">1</span><span class="section_title">Goals</span></h2>
@@ -277,9 +277,8 @@ document.addEventListener("DOMContentLoaded", function () {
 <ul>
 <li><span class="section_number">8.1</span><span class="section_title"><a href="#implementation-requirements">Implementation requirements</a></span><span class="word_count">(39w~1m)</span></li>
 <li><span class="section_number">8.2</span><span class="section_title"><a href="#sketch">Sketch</a></span><span class="word_count">(17w~1m)</span></li>
-<li><span class="section_number">8.3</span><span class="section_title"><a href="#programming-language-implementation">Programming language implementation?</a></span><span class="word_count">(700w~4m)</span></li>
-<li><span class="section_number">8.4</span><span class="section_title"><a href="#ideas-and-reading-list">Ideas and reading list</a></span><span class="word_count">(45w~1m)</span></li>
-<li><span class="section_number">8.5</span><span class="section_title"><a href="#embed-lambda-calculus">Embed lambda calculus</a></span><span class="word_count">(148w~1m)</span></li>
+<li><span class="section_number">8.3</span><span class="section_title"><a href="#ideas-and-reading-list">Ideas and reading list</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">8.4</span><span class="section_title"><a href="#embed-lambda-calculus">Embed lambda calculus</a></span><span class="word_count">(148w~1m)</span></li>
 </ul>
 </div>
 <h3 id="implementation-requirements"><span class="section_number">8.1</span><span class="section_title">Implementation requirements</span></h3>
@@ -287,148 +286,12 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>It is also important to have fast build if there is a build step.</p>
 <h3 id="sketch"><span class="section_number">8.2</span><span class="section_title">Sketch</span></h3>
 <p>I am thinking of building the interpreter on top of Racket or Scheme or Lisp or Prolog.</p>
-<h3 id="programming-language-implementation"><span class="section_number">8.3</span><span class="section_title">Programming language implementation?</span></h3>
-<div class="local_table_of_contents">
-<ul>
-<li><span class="section_number">8.3.1</span><span class="section_title"><a href="#how-should-we-make-programming-tools-such-as-compilers-interpreters-and-editors">How should we make programming tools such as compilers, interpreters, and editors?</a></span><span class="word_count">(12w~1m)</span></li>
-<li><span class="section_number">8.3.2</span><span class="section_title"><a href="#what-meta-programming-tools-exist">What meta-programming tools exist?</a></span><span class="word_count">(126w~1m)</span></li>
-<li><span class="section_number">8.3.3</span><span class="section_title"><a href="#meta-programming-and-language-oriented-programming">Meta-programming and language-oriented programming?</a></span><span class="word_count">(162w~1m)</span></li>
-<li><span class="section_number">8.3.4</span><span class="section_title"><a href="#implementing-programming-languages">Implementing programming languages</a></span><span class="word_count">(3w~1m)</span></li>
-<li><span class="section_number">8.3.5</span><span class="section_title"><a href="#should-we-use-prolog">Should we use Prolog?</a></span><span class="word_count">(115w~1m)</span></li>
-<li><span class="section_number">8.3.6</span><span class="section_title"><a href="#write-abstract-interpreters-not-compilers">Write abstract interpreters, not compilers?</a></span><span class="word_count">(67w~1m)</span></li>
-<li><span class="section_number">8.3.7</span><span class="section_title"><a href="#begin-with-an-interpreter-not-a-compiler">Begin with an interpreter, not a compiler</a></span><span class="word_count">(74w~1m)</span></li>
-<li><span class="section_number">8.3.8</span><span class="section_title"><a href="#making-compilers">Making compilers?</a></span><span class="word_count">(36w~1m)</span></li>
-<li><span class="section_number">8.3.9</span><span class="section_title"><a href="#piggybacking-a-host-language">Piggybacking a host language</a></span><span class="word_count">(4w~1m)</span></li>
-<li><span class="section_number">8.3.10</span><span class="section_title"><a href="#how-should-lambda-calculus-be-implemented">How should lambda-calculus be implemented?</a></span><span class="word_count">(108w~1m)</span></li>
-</ul>
-</div>
-<h4 id="how-should-we-make-programming-tools-such-as-compilers-interpreters-and-editors"><span class="section_number">8.3.1</span><span class="section_title">How should we make programming tools such as compilers, interpreters, and editors?</span></h4>
-<h4 id="what-meta-programming-tools-exist"><span class="section_number">8.3.2</span><span class="section_title">What meta-programming tools exist?</span></h4>
-<ol>
-<li><p>Rascal MPL</p>
-<p><a href="https://www.rascal-mpl.org/">https://www.rascal-mpl.org/</a></p></li>
-<li><p>Eclipse Xtext</p></li>
-<li><p>JetBrains MPS</p>
-<p>MPS is &quot;Meta Programming System&quot;.</p>
-<p>A concept can have properties. Each property has a type. The property type system is limited to int, string, and regex-constrained string.</p>
-<p>A member in a model is an <em>instance</em> of a concept, similar to how an object is an instance of a class in Java.</p>
-<p>MPS is a <em>tree</em> editor, not a text editor.</p>
-<p>A concept is an AST (abstract syntax tree) node type.</p>
-<p>On 2017-08-12, MPS 2017.2 doesn't support Java 7 try-with-resources statements.</p>
-<p>The MPS IntelliJ IDEA plugin allows you to use a language from IDEA, but not defining your own language. You need the MPS IDE for that.</p>
-<p>External links:</p>
-<ul>
-<li><a href="https://confluence.jetbrains.com/display/MPSD20172/Using+MPS+inside+IntelliJ+IDEA">Using MPS inside IntelliJ IDEA</a></li>
-<li><a href="https://confluence.jetbrains.com/pages/viewpage.action?pageId=93128576">MPS user guide for Java developers (IntelliJ IDEA)</a> (long)</li>
-<li><a href="https://confluence.jetbrains.com/display/MPSD20172/Finding+your+way+out">What to do when there is a problem</a></li>
-</ul></li>
-</ol>
-<h4 id="meta-programming-and-language-oriented-programming"><span class="section_number">8.3.3</span><span class="section_title">Meta-programming and language-oriented programming?</span></h4>
-<p>The Racket manifesto<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>: programming-language programming language</p>
-<p>miniKanren, scheme logic programming <a href="http://minikanren.org/">http://minikanren.org/</a> <a href="https://github.com/clojure/core.logic/wiki/A-Core.logic-Primer">https://github.com/clojure/core.logic/wiki/A-Core.logic-Primer</a></p>
-<p>2000 article &quot;Domain Specific Meta Languages&quot; <a href="https://www-users.cs.umn.edu/~evw/pubs/vanwyk00sac/vanwyk00sac.pdf">https://www-users.cs.umn.edu/~evw/pubs/vanwyk00sac/vanwyk00sac.pdf</a></p>
-<p>1996 book &quot;Advanced programming language design&quot; 2008 article &quot;Position paper: Practical foundations for programming languages&quot; 2012 book &quot;Practical Foundations for Programming Languages&quot; Version 1.32 of 05.15.2012 <a href="http://profs.sci.univr.it/~merro/files/harper.pdf">http://profs.sci.univr.it/~merro/files/harper.pdf</a></p>
-<p>University of Arizona, Spring 2006, CS 520 Principles of Programming Languages - Lecture 04: Types and Polymorphism <a href="https://www2.cs.arizona.edu/classes/cs520/spring06/04types.pdf">https://www2.cs.arizona.edu/classes/cs520/spring06/04types.pdf</a> from &quot;Lecture 4: higher polymorphism&quot; <a href="https://blog.inf.ed.ac.uk/apl16/archives/178/comment-page-1">https://blog.inf.ed.ac.uk/apl16/archives/178/comment-page-1</a></p>
-<p>Programming Language Foundations in Agda <a href="https://plfa.github.io/">https://plfa.github.io/</a></p>
-<p>2018 article &quot;Logic Programming as a Service&quot; <a href="https://arxiv.org/abs/1806.02577">https://arxiv.org/abs/1806.02577</a></p>
-<p>Liber amicorum for Doaitse Swierstra <a href="https://www.reddit.com/r/haskell/comments/1hmc9t/pdf_liber_a_for_doaitse_swierstra_read_free/">https://www.reddit.com/r/haskell/comments/1hmc9t/pdf_liber_a_for_doaitse_swierstra_read_free/</a></p>
-<p>1994 article &quot;Efficient Self-Interpretation in Lambda Calculus&quot; <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.56.4382&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.56.4382&amp;rep=rep1&amp;type=pdf</a></p>
-<p>Lambda the Ultimate: Meta-programming <a href="http://lambda-the-ultimate.org/taxonomy/term/15">http://lambda-the-ultimate.org/taxonomy/term/15</a></p>
-<p>2009 article &quot;Directly Reflective Meta-Programming&quot; <a href="http://homepage.divms.uiowa.edu/~astump/papers/archon.pdf">http://homepage.divms.uiowa.edu/~astump/papers/archon.pdf</a></p>
-<p>Footnote F from <span class="citation" data-cites="felleisen2018programmable">[<a href="#ref-felleisen2018programmable">5</a>]</span>:</p>
-<blockquote>
-<p>Language workbenches (such as Spoofax) deal with conventional syntax for DSLs but do not support the incremental modification of existing languages. A 2015 report suggests, however, these tool chains are also converging toward the idea of language creation as language modification. We conjecture that, given sufficient time, development of Racket and language workbenches will converge on similar designs.</p>
-</blockquote>
-<h4 id="implementing-programming-languages"><span class="section_number">8.3.4</span><span class="section_title">Implementing programming languages</span></h4>
-<h4 id="should-we-use-prolog"><span class="section_number">8.3.5</span><span class="section_title">Should we use Prolog?</span></h4>
-<p>We should prototype our language in Prolog.</p>
-<p>We should implement our language in Prolog.</p>
-<ul>
-<li>2004, parsing in Prolog, &quot;Parsing and Semantics in DCGs&quot; <a href="http://www.inf.ed.ac.uk/teaching/courses/aipp/lecture_slides/11_PS_DCGs.pdf">http://www.inf.ed.ac.uk/teaching/courses/aipp/lecture_slides/11_PS_DCGs.pdf</a></li>
-<li>Prolog DCG (definite clause grammar) facilitates writing an attribute grammar.</li>
-<li><a href="https://en.wikipedia.org/wiki/Definite_clause_grammar">https://en.wikipedia.org/wiki/Definite_clause_grammar</a></li>
-</ul>
-<p>Erlang started out as a DSL in Prolog. See 1992 article &quot;Use of Prolog for developing a new programming language&quot;.</p>
-<p>&lt;2018-10-20&gt; Change of opinion: we should write the language in Prolog instead of Haskell.</p>
-<ul>
-<li>&quot;Ott is a tool for writing definitions of programming languages and calculi. It takes as input a definition of a language syntax and semantics, in a concise and readable ASCII notation that is close to what one would write in informal mathematics.&quot; <a href="https://www.cl.cam.ac.uk/~pes20/ott/">https://www.cl.cam.ac.uk/~pes20/ott/</a></li>
-</ul>
-<p>&lt;2018-12-11&gt; My current answer: Prolog.</p>
-<p>My previous answers:</p>
-<ul>
-<li>Haskell</li>
-<li>Racket</li>
-<li>Scheme</li>
-<li>Java</li>
-<li>C</li>
-<li>C++</li>
-</ul>
-<p>Other people?</p>
-<ul>
-<li><a href="https://hackernoon.com/the-programming-language-im-looking-for-948d93f7a396">https://hackernoon.com/the-programming-language-im-looking-for-948d93f7a396</a></li>
-</ul>
-<h4 id="write-abstract-interpreters-not-compilers"><span class="section_number">8.3.6</span><span class="section_title">Write abstract interpreters, not compilers?</span></h4>
-<p>&lt;2018-12-30&gt;</p>
-<p>The same code fragment can be interpreted in several ways.</p>
-<p>The most common interpreter executes the program with the intended semantics. Example: a Python interpreter interprets the Python program &quot;print 'foo'&quot; as printing the string.</p>
-<p>Write an abstract interpreter that emits code when interpreting. An interpreter that interprets the Python program &quot;print 'foo'&quot; as &quot;emit a Ruby statement that prints 'foo' to screen when executed&quot;.</p>
-<h4 id="begin-with-an-interpreter-not-a-compiler"><span class="section_number">8.3.7</span><span class="section_title">Begin with an interpreter, not a compiler</span></h4>
-<ul>
-<li>Don't make a compiler? Make an interpreter instead, and stage it? Turn an interpreter into a compiler for free?</li>
-<li>&quot;To stage an interpreter&quot; is to add staging annotations to the code of the interpreter.</li>
-<li>Staging is similar to quoting in Lisp/Scheme.</li>
-<li>2004 article &quot;A Gentle Introduction to Multi-stage Programming&quot; <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.103.2543&amp;rep=rep1&amp;type=pdf">pdf</a>
-<ul>
-<li>Basic Problems in Building Program Generators</li>
-<li>part 2 <a href="https://pdfs.semanticscholar.org/aa3c/d4233f7c0db95e5c38d5b8fc1d199df21857.pdf">https://pdfs.semanticscholar.org/aa3c/d4233f7c0db95e5c38d5b8fc1d199df21857.pdf</a></li>
-</ul></li>
-<li>multi-stage programming for Scala <a href="https://scala-lms.github.io/">https://scala-lms.github.io/</a></li>
-<li>2006 article &quot;A Verified Staged Interpreter is a Verified Compiler&quot; <a href="https://www.researchgate.net/profile/Kevin_Hammond/publication/221108683_A_verified_staged_interpreter_is_a_verified_compiler/links/00b7d517ede725c057000000.pdf">pdf</a></li>
-</ul>
-<h4 id="making-compilers"><span class="section_number">8.3.8</span><span class="section_title">Making compilers?</span></h4>
-<p>Every compiler does name resolution / symbol table. Is there a compiler that doesn't do that? <a href="https://www.reddit.com/r/Forth/comments/695oik/advances_in_forth_language_design/dh454oq/">Forth?</a></p>
-<ul>
-<li><a href="https://www.reddit.com/r/haskell/comments/4jhhrj/anders_hejlsberg_on_modern_compiler_construction/">https://www.reddit.com/r/haskell/comments/4jhhrj/anders_hejlsberg_on_modern_compiler_construction/</a></li>
-<li><a href="https://cs.stackexchange.com/questions/63018/visual-programming-tools-why-don-t-they-work-with-the-ast-directly">https://cs.stackexchange.com/questions/63018/visual-programming-tools-why-don-t-they-work-with-the-ast-directly</a></li>
-<li><p>compiling with continuations</p>
-<ul>
-<li><p>Why use CPS (continuation passing style) as intermediate form?</p>
-<ul>
-<li><a href="http://matt.might.net/articles/cps-conversion/">http://matt.might.net/articles/cps-conversion/</a></li>
-<li><a href="https://www.microsoft.com/en-us/research/publication/compiling-with-continuations-continued/">https://www.microsoft.com/en-us/research/publication/compiling-with-continuations-continued/</a></li>
-<li><a href="https://news.ycombinator.com/item?id=7150095">https://news.ycombinator.com/item?id=7150095</a></li>
-</ul></li>
-<li><p>2003, retrospective: the essence of compiling with continuations <a href="https://users.soe.ucsc.edu/~cormac/papers/best-pldi.pdf">https://users.soe.ucsc.edu/~cormac/papers/best-pldi.pdf</a></p>
-<ul>
-<li><a href="https://en.wikipedia.org/wiki/A-normal_form">https://en.wikipedia.org/wiki/A-normal_form</a></li>
-</ul></li>
-</ul></li>
-</ul>
-<h4 id="piggybacking-a-host-language"><span class="section_number">8.3.9</span><span class="section_title">Piggybacking a host language</span></h4>
-<h4 id="how-should-lambda-calculus-be-implemented"><span class="section_number">8.3.10</span><span class="section_title">How should lambda-calculus be implemented?</span></h4>
-<ol>
-<li><p>What is an operational semantics of lambda calculus?</p></li>
-<li><p>How?</p>
-<p>Normal-order reduction enables us to write fixed points. Should we let the programmer choose the evaluation strategy? Currying simplifies reasoning but complicates implementation (because applications may then nest deeply to the left). What is optimal reduction?<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
-<p>Lambda-calculus is unsound.<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> What does that imply about programming languages containing lambda calculus?</p>
-<p>Let <span class="math inline">\( A[B := C] \)</span> mean <span class="math inline">\(A\)</span> but with each free occurrence of <span class="math inline">\(B\)</span> replaced with <span class="math inline">\(C\)</span>. Let <span class="math inline">\( eval(A,B) \)</span> means that <span class="math inline">\(A\)</span> normalizes to <span class="math inline">\(B\)</span>.</p>
-<p>Applicative-order evaluation is the easiest to implement.</p>
-<p>Where do these things fit in the big picture of lambda-calculus implementations? G-machine, STG, GRIN<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
-<p>Reading queue:</p>
-<ul>
-<li><a href="https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently">https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently</a></li>
-<li><a href="https://www.researchgate.net/publication/312462365_About_the_efficient_reduction_of_lambda_terms">https://www.researchgate.net/publication/312462365_About_the_efficient_reduction_of_lambda_terms</a></li>
-<li><a href="https://www.reddit.com/r/haskell/comments/2zqtfk/why_isnt_anyone_talking_about_optimal_lambda/">https://www.reddit.com/r/haskell/comments/2zqtfk/why_isnt_anyone_talking_about_optimal_lambda/</a></li>
-<li>compiling monads <a href="https://www.irif.fr/~mellies/mpri/mpri-ens/articles/danvy-koslowski-malmkjaer-compiling-monads.pdf">https://www.irif.fr/~mellies/mpri/mpri-ens/articles/danvy-koslowski-malmkjaer-compiling-monads.pdf</a></li>
-<li>modular monadic semantics <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.136.1656&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.136.1656&amp;rep=rep1&amp;type=pdf</a></li>
-</ul></li>
-</ol>
-<h3 id="ideas-and-reading-list"><span class="section_number">8.4</span><span class="section_title">Ideas and reading list</span></h3>
+<h3 id="ideas-and-reading-list"><span class="section_number">8.3</span><span class="section_title">Ideas and reading list</span></h3>
 <p>Perhaps the easiest way to make a programming language is to extend lambda calculus?</p>
 <p>The easiest extension is some constants.</p>
 <p>How do we let the programmers choose the reduction strategy?</p>
 <p>1982 A consistent extension of the lambda-calculus as a base for functional programming languages <a href="https://www.sciencedirect.com/science/article/pii/S0019995882904582">https://www.sciencedirect.com/science/article/pii/S0019995882904582</a></p>
-<h3 id="embed-lambda-calculus"><span class="section_number">8.5</span><span class="section_title">Embed lambda calculus</span></h3>
+<h3 id="embed-lambda-calculus"><span class="section_number">8.4</span><span class="section_title">Embed lambda calculus</span></h3>
 <p>(What is this? Design and implementation.)</p>
 <p>I think I'll begin by sketching a lambda-calculus interpreter in Racket.</p>
 <p>Suppose that we want to write an interpreter for language G (guest) in language H (host).</p>
@@ -488,7 +351,7 @@ a = (cons 1 a) = (1 1 1 ...)
 <p>(Compare: fixed point operator, μ-regular expressions)</p>
 <p>The meaning of <span class="math inline">\( \mu x . y \)</span> is the <span class="math inline">\( z \)</span> that is <span class="math inline">\( y \)</span> but with all bound occurrence of <span class="math inline">\( x \)</span> replaced with <span class="math inline">\( z \)</span>. By &quot;bound&quot;, we mean that <span class="math inline">\( \mu \)</span> binds the same way <span class="math inline">\( \lambda \)</span> does.</p>
 <p><span class="math inline">\( \mu x . y \)</span> can be thought of as <code>(named x y)</code> where every bound occurrence of <code>x</code> in <code>y</code> refers to (is the name of) the entire expression <code>(named x y)</code> itself.</p>
-<p>That is, <span class="math inline">\( \mu x . y = fix (\lambda x . y) \)</span> where fix is a fixed-point combinator<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> (fix(f) = f(fix(f))).</p>
+<p>That is, <span class="math inline">\( \mu x . y = fix (\lambda x . y) \)</span> where fix is a fixed-point combinator<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> (fix(f) = f(fix(f))).</p>
 <h3 id="for-interactive-programming-all-states-must-be-serializable"><span class="section_number">10.4</span><span class="section_title">For interactive programming, all states must be serializable</span></h3>
 <p>All states must be serializable (dumpable and restorable).</p>
 <p>Each global variable should declare how to initialize and snapshot itself.</p>
@@ -508,7 +371,7 @@ a = (cons 1 a) = (1 1 1 ...)
 <p>Question: Should the binding information also include types, for overloading (ad-hoc polymorphism)? Do we want overloading?</p>
 <h2 id="macros"><span class="section_number">13</span><span class="section_title">Macros</span></h2>
 <p>Macros are replaced with explicit program transformations?</p>
-<p>Scheme's magic ellipsis comes from Kohlbecker &amp; Wand 1987 <span class="citation" data-cites="kohlbecker1987macro">[<a href="#ref-kohlbecker1987macro">6</a>]</span><a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a><a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>. <span class="citation" data-cites="culpepper2007advanced">[<a href="#ref-culpepper2007advanced">4</a>]</span><a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
+<p>Scheme's magic ellipsis comes from Kohlbecker &amp; Wand 1987 <span class="citation" data-cites="kohlbecker1987macro">[<a href="#ref-kohlbecker1987macro">5</a>]</span><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. <span class="citation" data-cites="culpepper2007advanced">[<a href="#ref-culpepper2007advanced">4</a>]</span><a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
 <p>Scheme macros are call-by-name; Scheme procedures are call-by-value.</p>
 <p>Perhaps macros should be replaced with explicit evaluation; perhaps the language should enable the programmer to choose evaluation strategies such as normal-order and applicative-order.</p>
 <h2 id="namespaces"><span class="section_number">14</span><span class="section_title">Namespaces</span></h2>
@@ -585,13 +448,13 @@ a = (cons 1 a) = (1 1 1 ...)
 <p>They complicate implementation and analysis? Or do they simplify?</p>
 <p>They don't interact nicely with other language features? They have difficult corner cases?</p>
 <p>Why do we want continuations? What benefit does it bring that justifies its cost?</p>
-<p>Continuations enable us to give meaning to imperative control constructs using denotational semantics which were commonly used to give meaning to functional programs? <span class="citation" data-cites="reynolds1993discoveries">[<a href="#ref-reynolds1993discoveries">8</a>]</span><a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></p>
+<p>Continuations enable us to give meaning to imperative control constructs using denotational semantics which were commonly used to give meaning to functional programs? <span class="citation" data-cites="reynolds1993discoveries">[<a href="#ref-reynolds1993discoveries">7</a>]</span><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
 <p>But is that good enough?</p>
 <h2 id="multi-processing-and-isolation"><span class="section_number">18</span><span class="section_title">Multi-processing and isolation?</span></h2>
 <p>If you have a C program that has global variables, and you need to run two instances of it, then you may run two OS processes from the same binary, if the program does not write any files.</p>
 <p>Can a program have no absolute file system paths?</p>
 <h2 id="example-fragment"><span class="section_number">19</span><span class="section_title">Example fragment?</span></h2>
-<p>This is similar to, if not inspired by, Moseley &amp; Marks 2006 <span class="citation" data-cites="moseley2006out">[<a href="#ref-moseley2006out">7</a>]</span>.</p>
+<p>This is similar to, if not inspired by, Moseley &amp; Marks 2006 <span class="citation" data-cites="moseley2006out">[<a href="#ref-moseley2006out">6</a>]</span>.</p>
 <p>The essence of data is what can be done with it, not what it is? Only database designers care about how data is stored. Database users care about what can be done with the data in a reasonable amount of time.</p>
 <p>Balzer 1967 <span class="citation" data-cites="balzer1967dataless">[<a href="#ref-balzer1967dataless">1</a>]</span>?</p>
 <p>The goal is to come up with an expressive enough specification language whose specifications happen to be translatable to reasonably efficient implementations. The goal is to make a specification language whose denotational semantics nicely coincide with its operational semantics. The goal is to make a specification language that happens to also be a programming language.</p>
@@ -658,12 +521,12 @@ let h = quotient of f by replacing natural arithmetic with overflow-checked unsi
 <li>Specify use cases and business logic.</li>
 <li>Generate a Java program and a PostgreSQL database implementing the specification.</li>
 </ul>
-<p>What is XL<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>?</p>
+<p>What is XL<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>?</p>
 <h2 id="kernelcore-language"><span class="section_number">21</span><span class="section_title">Kernel/core language</span></h2>
 <p>The core language is intended for machines. Humans should use the convenient language.</p>
 <p>Each expression carries its own type.</p>
 <p>Combine lambda calculus and relational calculus/algebra.</p>
-<p>Should we use relational algebra or relational calculus<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>? Codd's theorem<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a> says that they are equivalent. Relational model<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>? Codd prefers relational calculus<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>? What is a relational database?<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a></p>
+<p>Should we use relational algebra or relational calculus<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>? Codd's theorem<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> says that they are equivalent. Relational model<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>? Codd prefers relational calculus<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>? What is a relational database?<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a></p>
 <div class="local_table_of_contents">
 <ul>
 <li><span class="section_number">21.1</span><span class="section_title"><a href="#lambda-calculus">Lambda calculus</a></span><span class="word_count">(18w~1m)</span></li>
@@ -1785,7 +1648,7 @@ interface Node_desugar extends Node_parse {
 <p>The computer, with some hints, should be able to derive a finite model from a specification.</p>
 <p>The primary tools for formalizing an ontology are logic and set theory.</p>
 <h3 id="universal-meta-model-example-upper-ontology"><span class="section_number">24.4</span><span class="section_title">Universal meta model? Example upper ontology?</span></h3>
-<p>In other words, we are looking for an upper ontology<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a> of program translation.</p>
+<p>In other words, we are looking for an upper ontology<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a> of program translation.</p>
 <p>&quot;X <em>is a</em> Y&quot; means X is an element of the set Y.</p>
 <p>&quot;Every X <em>has a</em> Y&quot; means there is a <em>projection</em> from the set X to the set Y.</p>
 <p>Everything has a <em>type</em>.</p>
@@ -1859,17 +1722,14 @@ interface Node_desugar extends Node_parse {
 <div id="ref-culpepper2007advanced">
 <p>[4] Culpepper, R. et al. 2007. Advanced macrology and the implementation of typed scheme. <em>Workshop on scheme and functional programming</em> (2007).</p>
 </div>
-<div id="ref-felleisen2018programmable">
-<p>[5] Felleisen, M. et al. 2018. A programmable programming language. <em>Commun. ACM</em>. 61, 3 (Feb. 2018), 62–71. DOI:<a href="https://doi.org/10.1145/3127323">https://doi.org/10.1145/3127323</a>. url: &lt;<a href="https://cacm.acm.org/magazines/2018/3/225475-a-programmable-programming-language/fulltext">https://cacm.acm.org/magazines/2018/3/225475-a-programmable-programming-language/fulltext</a>&gt;.</p>
-</div>
 <div id="ref-kohlbecker1987macro">
-<p>[6] Kohlbecker, E.E. and Wand, M. 1987. Macro-by-example: Deriving syntactic transformations from their specifications. <em>Proceedings of the 14th acm sigact-sigplan symposium on principles of programming languages</em> (1987), 77–84.</p>
+<p>[5] Kohlbecker, E.E. and Wand, M. 1987. Macro-by-example: Deriving syntactic transformations from their specifications. <em>Proceedings of the 14th acm sigact-sigplan symposium on principles of programming languages</em> (1987), 77–84.</p>
 </div>
 <div id="ref-moseley2006out">
-<p>[7] Moseley, B. and Marks, P. 2006. Out of the tar pit. <em>Software Practice Advancement (SPA)</em>. 2006, (2006). url: &lt;<a href="https://pdfs.semanticscholar.org/0f27/8cf94ac0d7fe15a7c4e0f283446e9fc07474.pdf?_ga=2.208528338.1128729619.1551205683-948180562.1545583661">https://pdfs.semanticscholar.org/0f27/8cf94ac0d7fe15a7c4e0f283446e9fc07474.pdf?_ga=2.208528338.1128729619.1551205683-948180562.1545583661</a>&gt;.</p>
+<p>[6] Moseley, B. and Marks, P. 2006. Out of the tar pit. <em>Software Practice Advancement (SPA)</em>. 2006, (2006). url: &lt;<a href="https://pdfs.semanticscholar.org/0f27/8cf94ac0d7fe15a7c4e0f283446e9fc07474.pdf?_ga=2.208528338.1128729619.1551205683-948180562.1545583661">https://pdfs.semanticscholar.org/0f27/8cf94ac0d7fe15a7c4e0f283446e9fc07474.pdf?_ga=2.208528338.1128729619.1551205683-948180562.1545583661</a>&gt;.</p>
 </div>
 <div id="ref-reynolds1993discoveries">
-<p>[8] Reynolds, J.C. 1993. The discoveries of continuations. <em>Lisp and symbolic computation</em>. 6, 3-4 (1993), 233–247.</p>
+<p>[7] Reynolds, J.C. 1993. The discoveries of continuations. <em>Lisp and symbolic computation</em>. 6, 3-4 (1993), 233–247.</p>
 </div>
 </div>
 <section class="footnotes">
@@ -1879,23 +1739,18 @@ interface Node_desugar extends Node_parse {
 <li id="fn2"><p>&lt;2019-11-15&gt; <a href="https://www.ercim.eu/publication/Ercim_News/enw36/haridi.html">https://www.ercim.eu/publication/Ercim_News/enw36/haridi.html</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
 <li id="fn3"><p>&lt;2019-11-15&gt; <a href="http://dream.inf.ed.ac.uk/computing/installed/mozart/doc/tutorial/index.html">http://dream.inf.ed.ac.uk/computing/installed/mozart/doc/tutorial/index.html</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
 <li id="fn4"><p>&lt;2019-11-15&gt; <a href="https://www.info.ucl.ac.be/~pvr/VanRoyChapter.pdf">https://www.info.ucl.ac.be/~pvr/VanRoyChapter.pdf</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p><a href="http://felleisen.org/matthias/manifesto/index.html">http://felleisen.org/matthias/manifesto/index.html</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p><a href="https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently">https://stackoverflow.com/questions/31223539/is-it-possible-to-evaluate-lambda-calculus-terms-efficiently</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p><a href="https://en.wikipedia.org/wiki/Lambda_calculus#Optimal_reduction">https://en.wikipedia.org/wiki/Lambda_calculus#Optimal_reduction</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p><a href="https://en.wikipedia.org/wiki/Fixed-point_combinator">https://en.wikipedia.org/wiki/Fixed-point_combinator</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p><a href="https://github.com/grin-tech/grin">https://github.com/grin-tech/grin</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>&lt;2019-11-10&gt; <a href="https://en.wikipedia.org/wiki/Fixed-point_combinator">https://en.wikipedia.org/wiki/Fixed-point_combinator</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>&lt;2019-11-04&gt; <a href="https://www.cs.indiana.edu/ftp/techreports/TR206.pdf">https://www.cs.indiana.edu/ftp/techreports/TR206.pdf</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>&lt;2019-11-04&gt; backup link <a href="ftp://jcmc.indiana.edu/pub/techreports/TR206.pdf">ftp://jcmc.indiana.edu/pub/techreports/TR206.pdf</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>&lt;2019-11-04&gt; <a href="https://thomas.gilray.org/scheme-2019/culpepper.pdf">https://thomas.gilray.org/scheme-2019/culpepper.pdf</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>&lt;2019-11-11&gt; <a href="http://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf">http://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
-<li id="fn15"><p><a href="https://en.wikipedia.org/wiki/XL_(programming_language)">https://en.wikipedia.org/wiki/XL_(programming_language)</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
-<li id="fn16"><p><a href="https://en.wikipedia.org/wiki/Relational_calculus">https://en.wikipedia.org/wiki/Relational_calculus</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
-<li id="fn17"><p><a href="https://en.wikipedia.org/wiki/Codd%27s_theorem">https://en.wikipedia.org/wiki/Codd%27s_theorem</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
-<li id="fn18"><p><a href="https://en.wikipedia.org/wiki/Relational_model">https://en.wikipedia.org/wiki/Relational_model</a><a href="#fnref18" class="footnote-back">↩</a></p></li>
-<li id="fn19"><p><a href="https://en.wikipedia.org/wiki/Alpha_(programming_language)">https://en.wikipedia.org/wiki/Alpha_(programming_language)</a><a href="#fnref19" class="footnote-back">↩</a></p></li>
-<li id="fn20"><p><a href="https://en.wikipedia.org/wiki/Codd%27s_12_rules">https://en.wikipedia.org/wiki/Codd%27s_12_rules</a><a href="#fnref20" class="footnote-back">↩</a></p></li>
-<li id="fn21"><p><a href="https://en.wikipedia.org/wiki/Upper_ontology">https://en.wikipedia.org/wiki/Upper_ontology</a><a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>&lt;2019-11-10&gt; <a href="https://en.wikipedia.org/wiki/Fixed-point_combinator">https://en.wikipedia.org/wiki/Fixed-point_combinator</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>&lt;2019-11-04&gt; <a href="https://www.cs.indiana.edu/ftp/techreports/TR206.pdf">https://www.cs.indiana.edu/ftp/techreports/TR206.pdf</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>&lt;2019-11-04&gt; backup link <a href="ftp://jcmc.indiana.edu/pub/techreports/TR206.pdf">ftp://jcmc.indiana.edu/pub/techreports/TR206.pdf</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>&lt;2019-11-04&gt; <a href="https://thomas.gilray.org/scheme-2019/culpepper.pdf">https://thomas.gilray.org/scheme-2019/culpepper.pdf</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>&lt;2019-11-11&gt; <a href="http://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf">http://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://en.wikipedia.org/wiki/XL_(programming_language)">https://en.wikipedia.org/wiki/XL_(programming_language)</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://en.wikipedia.org/wiki/Relational_calculus">https://en.wikipedia.org/wiki/Relational_calculus</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://en.wikipedia.org/wiki/Codd%27s_theorem">https://en.wikipedia.org/wiki/Codd%27s_theorem</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p><a href="https://en.wikipedia.org/wiki/Relational_model">https://en.wikipedia.org/wiki/Relational_model</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://en.wikipedia.org/wiki/Alpha_(programming_language)">https://en.wikipedia.org/wiki/Alpha_(programming_language)</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p><a href="https://en.wikipedia.org/wiki/Codd%27s_12_rules">https://en.wikipedia.org/wiki/Codd%27s_12_rules</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p><a href="https://en.wikipedia.org/wiki/Upper_ontology">https://en.wikipedia.org/wiki/Upper_ontology</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
                 </div>
