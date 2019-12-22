@@ -166,8 +166,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="post-content">
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#overview">Overview</a></span><span class="word_count">(336w~2m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#semantics">Semantics</a></span><span class="word_count">(2457w~13m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#overview">Overview</a></span><span class="word_count">(375w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#collecting-the-semantic-design-puzzle-pieces">Collecting the semantic design puzzle pieces</a></span><span class="word_count">(2722w~14m)</span></li>
 <li><span class="section_number">3</span><span class="section_title"><a href="#run-time-system">Run-time system</a></span><span class="word_count">(769w~4m)</span></li>
 <li><span class="section_number">4</span><span class="section_title"><a href="#syntax-and-parsing">Syntax and parsing</a></span><span class="word_count">(370w~2m)</span></li>
 <li><span class="section_number">5</span><span class="section_title"><a href="#thought">&lt;2019-11-27&gt; Thought</a></span><span class="word_count">(123w~1m)</span></li>
@@ -183,18 +183,16 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>Alternative title: &quot;Exploring the programming language design space&quot;</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1.1</span><span class="section_title"><a href="#how-do-we-design-a-programming-language">How do we design a programming language?</a></span><span class="word_count">(87w~1m)</span></li>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#how-do-we-design-a-programming-language">How do we design a programming language?</a></span><span class="word_count">(84w~1m)</span></li>
 <li><span class="section_number">1.2</span><span class="section_title"><a href="#what-are-some-recent-developments">What are some recent developments?</a></span><span class="word_count">(21w~1m)</span></li>
 <li><span class="section_number">1.3</span><span class="section_title"><a href="#what-we-are-going-to-do-here">What we are going to do here</a></span><span class="word_count">(93w~1m)</span></li>
 <li><span class="section_number">1.4</span><span class="section_title"><a href="#should-we-make-a-forth-or-a-lisp">Should we make a Forth or a Lisp?</a></span><span class="word_count">(107w~1m)</span></li>
-<li><span class="section_number">1.5</span><span class="section_title"><a href="#important-psychological-issues">Important psychological issues</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">1.5</span><span class="section_title"><a href="#important-psychological-issues">Important psychological issues</a></span><span class="word_count">(67w~1m)</span></li>
 </ul>
 </div>
 <h3 id="how-do-we-design-a-programming-language"><span class="section_number">1.1</span><span class="section_title">How do we design a programming language?</span></h3>
-<p>How should we design programming languages?</p>
-<p>Start by designing the <em>semantics</em> (meanings).</p>
-<p>What is a good language?</p>
-<p>It efficiently represents meanings.</p>
+<p>I think we should begin by designing the <em>semantics</em> (meanings).</p>
+<p>A good language efficiently represents meanings.</p>
 <p>We can begin designing from the semantics (our desires) or from the run-time system (our constraints). All design is a compromise between the ideal and the practical. But if the ideal needs to be compromised, is it truly ideal?</p>
 <p>When DSL? Mernik et al. 2005 <span class="citation" data-cites="mernik2005and">[<a href="#ref-mernik2005and">12</a>]</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <p>To consider: <a href="http://tomasp.net/blog/2017/design-side-of-pl/">Petricek 2017</a> (about programming language design). <span class="citation" data-cites="ingalls1981design">[<a href="#ref-ingalls1981design">9</a>]</span><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. <span class="citation" data-cites="coblenz2018interdisciplinary">[<a href="#ref-coblenz2018interdisciplinary">3</a>]</span>.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> <a href="https://leastfixedpoint.com/tonyg/kcbbs/projects/thing.html">Tony's Programming Language Experiments</a>. <a href="http://lisp-univ-etc.blogspot.com/2012/04/lisp-hackers-pascal-costanza.html">3-Lisp's tower of interpreters</a>.</p>
@@ -214,28 +212,38 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>But, why not both? Why not make a Lisp interpreter on Forth?</p>
 <p>The question of Forth vs Lisp is: How hard should we allow the user to crash without foreign procedures: just an exit due to an unhandled exception (Lisp), or an abort due to a segmentation fault (Forth)?</p>
 <h3 id="important-psychological-issues"><span class="section_number">1.5</span><span class="section_title">Important psychological issues</span></h3>
-<p>The language <em>must</em> come with a <em>benevolent dictator</em> and an <em>official formatter</em> (like <code>gofmt</code>). Otherwise people will waste energy bickering about code style.</p>
-<h2 id="semantics"><span class="section_number">2</span><span class="section_title">Semantics</span></h2>
+<p>The language must come with a <em>benevolent dictator</em>.</p>
+<p>The language must come with an <em>official formatter</em> (like <code>gofmt</code>). Otherwise people will waste energy bickering about code style. With an official formatter, we can use authority to nip such wasteful debates in the bud.</p>
+<p>The official formatter does not have to be the best, but should be <em>good enough</em> to prevent others from wasting energy writing competing formatters.</p>
+<h2 id="collecting-the-semantic-design-puzzle-pieces"><span class="section_number">2</span><span class="section_title">Collecting the semantic design puzzle pieces</span></h2>
 <p>How should we define the semantics? What properties do we want? Composability/compositionality?</p>
+<p>How to design language: Ask <em>critical questions</em> and find <em>corner cases</em>. The answers constrain the language and justify the design.</p>
+<p>Here we collect pieces of the semantic design puzzle.</p>
+<p>There are several starting point candidates: machine code or mathematics. Where should we begin?</p>
+<p>Should we bet our future on the engineers, the scientists, the philosophers, or the mathematicians?</p>
 <p>In this section, we motivate and define this:</p>
 <pre class="example"><code>meaning : (Expr,State) -&gt; (Expr,State)
 </code></pre>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">2.1</span><span class="section_title"><a href="#motivation-generalizing-calculator-expressions">Motivation: Generalizing calculator expressions</a></span><span class="word_count">(130w~1m)</span></li>
-<li><span class="section_number">2.2</span><span class="section_title"><a href="#an-interpreter-is-a-state-endofunction">An interpreter is a state endofunction</a></span><span class="word_count">(485w~3m)</span></li>
-<li><span class="section_number">2.3</span><span class="section_title"><a href="#how-should-we-delimit-scopes">How should we delimit scopes?</a></span><span class="word_count">(9w~1m)</span></li>
-<li><span class="section_number">2.4</span><span class="section_title"><a href="#quoting-language-semantics">Quoting, language, semantics</a></span><span class="word_count">(387w~2m)</span></li>
-<li><span class="section_number">2.5</span><span class="section_title"><a href="#semantics-1">Semantics</a></span><span class="word_count">(577w~3m)</span></li>
-<li><span class="section_number">2.6</span><span class="section_title"><a href="#an-example-of-building-a-programming-language">An example of building a programming language</a></span><span class="word_count">(399w~2m)</span></li>
-<li><span class="section_number">2.7</span><span class="section_title"><a href="#security-considerations">Security considerations</a></span><span class="word_count">(310w~2m)</span></li>
-<li><span class="section_number">2.8</span><span class="section_title"><a href="#for-hygiene-resolve-references-before-expanding-macros">&lt;2019-12-12&gt; For hygiene, resolve references before expanding macros</a></span><span class="word_count">(149w~1m)</span></li>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#motivation-from-a-humble-calculator">Motivation: From a humble calculator</a></span><span class="word_count">(152w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#an-example-of-building-a-programming-language">An example of building a programming language</a></span><span class="word_count">(32w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#an-interpreter-is-a-state-endofunction">An interpreter is a state endofunction</a></span><span class="word_count">(489w~3m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#how-should-we-delimit-scopes">How should we delimit scopes?</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#quotation">Quotation</a></span><span class="word_count">(366w~2m)</span></li>
+<li><span class="section_number">2.6</span><span class="section_title"><a href="#let-binding-substitution-maximal-sharing-graphs-factoring">Let, binding, substitution, maximal sharing, graphs, factoring</a></span><span class="word_count">(244w~2m)</span></li>
+<li><span class="section_number">2.7</span><span class="section_title"><a href="#printing-externalization-representation">Printing, externalization, representation</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">2.8</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(284w~2m)</span></li>
+<li><span class="section_number">2.9</span><span class="section_title"><a href="#for-hygiene-resolve-references-before-expanding-macros">&lt;2019-12-12&gt; For hygiene, resolve references before expanding macros</a></span><span class="word_count">(149w~1m)</span></li>
+<li><span class="section_number">2.10</span><span class="section_title"><a href="#semantics">Semantics</a></span><span class="word_count">(577w~3m)</span></li>
+<li><span class="section_number">2.11</span><span class="section_title"><a href="#security-considerations">Security considerations</a></span><span class="word_count">(310w~2m)</span></li>
+<li><span class="section_number">2.12</span><span class="section_title"><a href="#arranging-the-puzzle-pieces">Arranging the puzzle pieces?</a></span><span class="word_count">(24w~1m)</span></li>
 </ul>
 </div>
-<h3 id="motivation-generalizing-calculator-expressions"><span class="section_number">2.1</span><span class="section_title">Motivation: Generalizing calculator expressions</span></h3>
+<h3 id="motivation-from-a-humble-calculator"><span class="section_number">2.1</span><span class="section_title">Motivation: From a humble calculator</span></h3>
 <p><em>Computers can be thought of as calculators with state.</em> By &quot;state&quot;, we mean &quot;memory&quot; or &quot;storage&quot;. So, we begin by modeling a stateless calculator, and then we gradually add features.</p>
-<p>We begin by writing a function that evaluates calculator expressions, and then we generalize that.</p>
-<p>Let us name the function &quot;meaning : Exp -&gt; Val&quot;. That function may be defined like this:</p>
+<p>Originally, computers were invented to help people do arithmetics, which is a part of mathematics. Thus we should start from mathematics.</p>
+<p>We begin by writing a function that evaluates calculator expressions, and then we generalize that. Let us name the function &quot;meaning : Exp -&gt; Val&quot;. That function may be defined like this:</p>
 <pre class="example"><code>Val = Int
 
 x:Val   =&gt; x:Exp
@@ -257,7 +265,12 @@ x,y:Exp =&gt; meaning (x*y) = meaning x * meaning y
 <p>Because Val is a subset of Exp, we generalize &quot;Val&quot; to &quot;Exp&quot;.</p>
 <p>Then we add state. This generalizes &quot;Bindings&quot; to &quot;State&quot;.</p>
 <p>We can rearrange &quot;meaning : State -&gt; Exp -&gt; Val&quot; to &quot;meaning : (State,Exp) -&gt; (State,Exp)&quot;. Then we can rearrange it further to &quot;meaning : State' -&gt; State'&quot; with &quot;current-expression : State' -&gt; Exp&quot;.</p>
-<h3 id="an-interpreter-is-a-state-endofunction"><span class="section_number">2.2</span><span class="section_title">An interpreter is a state endofunction</span></h3>
+<h3 id="an-example-of-building-a-programming-language"><span class="section_number">2.2</span><span class="section_title">An example of building a programming language</span></h3>
+<p>Another point of view is that programming languages are invented to make it easier to generate machine code.</p>
+<p>Suppose that we start with an arithmetic expression evaluator.</p>
+<pre class="example"><code>(evaluate (* (+ 2 3) (+ 2 3)))
+</code></pre>
+<h3 id="an-interpreter-is-a-state-endofunction"><span class="section_number">2.3</span><span class="section_title">An interpreter is a state endofunction</span></h3>
 <p>When you interpret a paragraph, you interpret each sentence sequentially. When you interpret a sentence, you change your internal state.</p>
 <blockquote>
 <p>Let X be 10. Compute 2*X. Forget it. Let X be 20. Compute 3*X.</p>
@@ -304,6 +317,7 @@ meaning (Before x y) s =
 <p>What are GHC's primitives?</p>
 <p>Scheme? Kernel language? Qi/Shen?</p>
 <p><a href="https://web.cs.wpi.edu/~jshutt/kernel.html">John N. Shutt</a> &quot;Kernel is a conservative, Scheme-like dialect of Lisp in which everything is a first-class object.&quot; What does he mean by &quot;everything&quot;?</p>
+<p><a href="https://eighty-twenty.org/2011/09/29/fexprs-remain-inscrutable">Problems with the Kernel language</a></p>
 <p>I think we want these forms, and there is no other way to implement these forms other than by primitives:</p>
 <pre class="example"><code>(current-state) ;; This is where we differ from other Lisps?
 (quote Expr) ;; We also differ by making (quote 1) not equal to 1
@@ -379,14 +393,13 @@ meaning (Before x y) s =
 </code></pre>
 <p>When should an expression be rewritten?</p>
 <p>Perhaps we all agree that <code>(calculate (+ 1 2))</code> should evaluate to <code>3</code>.</p>
-<h3 id="how-should-we-delimit-scopes"><span class="section_number">2.3</span><span class="section_title">How should we delimit scopes?</span></h3>
+<h3 id="how-should-we-delimit-scopes"><span class="section_number">2.4</span><span class="section_title">How should we delimit scopes?</span></h3>
 <p>TODO:</p>
 <ul>
 <li>Constructs for delimiting scope/context</li>
 <li>First-class scope</li>
 </ul>
-<h3 id="quoting-language-semantics"><span class="section_number">2.4</span><span class="section_title">Quoting, language, semantics</span></h3>
-<p>How to design language: Ask <em>critical questions</em> and find <em>corner cases</em>. The answers constrain the language and justify the design.</p>
+<h3 id="quotation"><span class="section_number">2.5</span><span class="section_title">Quotation</span></h3>
 <p>Quoting is not only a feature of written language, but also of spoken language, although it is more pronounced in written language. In spoken language, quoting is indicated by intonation, gestures, or additional clarifying words. For example: When we say if John says to Mary &quot;write the name of your dog&quot;, and Mary's dog's name is &quot;Doggy&quot;, then Mary usually interprets the utterance as &quot;Write 'Doggy'&quot; and not &quot;Write 'the name of your dog'&quot;, unless Mary is joking or uncooperative. However, if John says &quot;write as i dictate &lt;pause&gt; the name of your dog&quot;, then he may mean it literally. In spoken language, pragmatics plays more role than syntax. In written language, we elaborate syntax to compensate for missing intonation and gestures.</p>
 <p>Example: Suppose Alice says to Bob, &quot;Management hates it.&quot; If Bob writes &quot;Alice said to me that management isn't too fond of it&quot;, he is not lying, although he could use another word like &quot;hinted&quot; or &quot;suggested&quot; instead of &quot;said&quot;. If Bob writes &quot;Alice said to me, 'Management isn't too fond of it'&quot;, he is lying.</p>
 <p>Critical thoughts:</p>
@@ -415,7 +428,102 @@ A: 20.
 different from: (let ((x 10)) (calculate (+ x x)))
 (calculate (let ((f (lambda (x) (+ x 1)))) (f (f x))))
 </code></pre>
-<h3 id="semantics-1"><span class="section_number">2.5</span><span class="section_title">Semantics</span></h3>
+<h3 id="let-binding-substitution-maximal-sharing-graphs-factoring"><span class="section_number">2.6</span><span class="section_title">Let, binding, substitution, maximal sharing, graphs, factoring</span></h3>
+<p>Here we motivate why <code>let</code> should be lazy and should introduce maximal sharing.</p>
+<p>We begin by the problem in which a meaningful expression L(x,1/0) has a meaningless subexpression 1/0.</p>
+<p>Suppose we have defined L(x,y) = x. The question: What should be the meaning of L(x,1/0)? We know that 1/0 is syntactically valid but is meaningless. Solution: We add a <em>bottom value</em> (⊥) to the Universe. The bottom value represents errors. A bottom means an error, but the details of the error is ignored by the &quot;meaning&quot; function.</p>
+<pre class="example"><code>L x y = x
+L x (1/0) = ?
+let y = 1/0 in L(x,y)
+</code></pre>
+<p>I think we expect these to have the same meaning:</p>
+<pre class="example"><code>f x
+let x&#39; = x in f x&#39;
+</code></pre>
+<p>That is, &quot;f(x)&quot; should have the same meaning as &quot;let x' = x in f(x')&quot;. Therefore, &quot;let&quot; must do substitution, not evaluation. But naïve substitution is inefficient. But maximal sharing has the same semantics as substitution and is efficient.</p>
+<p>However, we don't always want &quot;let&quot; to introduce maximal sharing. Sometimes we want &quot;let&quot; to evaluate the binding before evaluating the body. We have two choices: do strictness analysis like GHC, or let the programmers choose which one they want.</p>
+<p>Thus, <code>let</code> should internalize the expression into a graph with maximal sharing. Each variable is evaluated at most once. At-most-once semantics. &quot;before&quot; can be used to order evaluation. Note that ordering evaluation does not mean forcing evaluation.</p>
+<pre class="example"><code>meaning(x/0) = ⊥
+if L(x,y) = x then
+  meaning(L(x,y)) = meaning(x)
+  meaning(L(x,⊥)) = meaning(x)
+  meaning(L) = (U2,U,SetBuilder ((x,y),x) x,y in U)?
+  meaning(L(x)) = ??? Currying?
+??? (normalize-in-normal-order (L x y)) ???
+</code></pre>
+<p><a href="https://en.wikipedia.org/wiki/Church%E2%80%93Rosser_theorem">Church–Rosser theorem</a>? In total functional programming, both eager and lazy evaluation produces the same result?</p>
+<p>We don't want to repeat ourselves, so we add these features to our language: factoring, references, and substitutions.</p>
+<pre class="example"><code>(evaluate
+  (let [(x 2)
+        (y 3)
+        (z (+ x y))]
+    (* z z)))
+</code></pre>
+<h3 id="printing-externalization-representation"><span class="section_number">2.7</span><span class="section_title">Printing, externalization, representation</span></h3>
+<p>Not only do we want the computer to compute, but we also want it to <em>show</em> the result:</p>
+<pre class="example"><code>(print (evaluate (+ 1 2)))
+</code></pre>
+<h3 id="what"><span class="section_number">2.8</span><span class="section_title">What?</span></h3>
+<p>We want to &quot;solve&quot; a differential equation.</p>
+<p>We create some things: a representation for differential equations, and a compiler (a translator) that, given a differential equation and its initial conditions, generates what? A procedure? A generator? A list of numbers?</p>
+<pre class="example"><code>;; 0 = Df(x) + 2 * f(x)
+(approximate
+  (differential-equation
+    (= 0 (+ ([d f] x) (* 2 [f x])))
+    functions (f)
+    variables (x))
+  method [euler
+    initial-conditions [(x 0)]
+    step-size 1.0e-6])
+</code></pre>
+<p>But the form is rather inflexible: What if the users want to implement their own methods? With if the users want to approximate other things, such as a system of equations?</p>
+<p>We also want to plot the result…</p>
+<p>We also want to implement iterative approximation algorithms, etc.</p>
+<p>Then we want to parse.</p>
+<p>Note the reference to <code>my-char</code> in the <code>parse:interpret</code> block.</p>
+<pre class="example"><code>(define-function (f port)
+  (define-local-variables my-char my-string)
+  (parse:interpret program (sequence
+      (char) ;; read any char
+      (set! my-char char) ;; read any char and store it to my-char
+      (set! my-string (string of length 8))
+      (char y)
+      (char #\z)
+      (char 0)
+      (char code 32)
+      (set! my-choice (choose (char x) (char y)))
+      eof)
+    with-input-from port))
+</code></pre>
+<p>Can we generate a pretty printer and a parser from a common description?</p>
+<p>Informally, a printer is an inverse parser. For example: In a parser, the program <code>(set! x char)</code> reads a char from the stream and mutates x to refer to the char. In a printer, the same program dereferences a char from x and writes the char to the stream.</p>
+<p>Note that in <code>(define x 1)</code>, we do not set <code>x</code> to <em>contain</em> 1, but we set <code>x</code> to <em>refer</em> to 1.</p>
+<p>Then we also want computers to store data, etc.</p>
+<p>Computers are machines that help us do mathematics.</p>
+<p>Mathematics is not limited to numbers. Mathematics is about unambiguous abstract thinking.</p>
+<p>Computer manipulates bits; humans give meaning to computation (what a computer does).</p>
+<p>I am impressed by how van Roy &amp; Haridi 2004 <span class="citation" data-cites="van2004concepts">[<a href="#ref-van2004concepts">13</a>]</span> come up with alternative semantics.</p>
+<p>We should not only make computers <em>do</em> something, but we should also make computers <em>understand</em> something, so that they can help us make them do something. When I first saw the delayed concurrent variable assignment semantics, I was amazed.</p>
+<p>…</p>
+<p>Finally, after all that hard work, we want to share our work. We want to improve our lives together.</p>
+<h3 id="for-hygiene-resolve-references-before-expanding-macros"><span class="section_number">2.9</span><span class="section_title">&lt;2019-12-12&gt; For hygiene, resolve references before expanding macros</span></h3>
+<p>For hygiene, references must be resolved (bound) before macros are expanded.</p>
+<p>Example:</p>
+<pre class="example"><code>A = &quot;There is Andrew.&quot;
+B = &quot;There is Bob. He is talking.&quot;
+A B = &quot;There is Andrew. There is Bob. He is talking.&quot;
+</code></pre>
+<p>Naïve syntactical concatenation of and A and B causes ambiguity.</p>
+<p>But not if we resolve the references first.</p>
+<pre class="example"><code>RA = &quot;There is Andrew.&quot;
+RB = &quot;There is Bob. He(Bob) is talking.&quot;
+RA RB = &quot;There is Andrew. There is Bob. He(Bob) is talking.&quot;
+</code></pre>
+<p>Ambiguity: The expression <code>(f x)</code> is ambiguous. If <code>f</code> refers to a procedure, the expression means &quot;evaluate x to ex and then compute f(ex)&quot;. If <code>f</code> refers to a macro, the expression means &quot;expand (f y) where y is a reference to x&quot;.</p>
+<p>Term-rewriting rules / fexprs unify procedures and macros? The problem is we want to let the programmers how and when a fragment is expanded?</p>
+<p>But it is possible to write an AST transformer that produces an invalid AST. For example, one can pull out a lexically scoped variable out of its scope.</p>
+<p>We let the programmers decide. If they want hygiene, they can use AST transformers. If they don't want hygiene, they can use CST transformers.</p>
+<h3 id="semantics"><span class="section_number">2.10</span><span class="section_title">Semantics</span></h3>
 <p>What should a symbol mean? It usually means a hash-table lookup, where the symbol is the key and the environment is the hash table. But is there a better semantics?</p>
 <p>In human languages, the meaning of a symbol is usually determined by agreement/consensus between the users of the symbol. For example, I can define &quot;foobar&quot; to mean &quot;table&quot; in a document, and the readers will be able to understand the document if they play along.</p>
 <p>The meaning of a symbol may be defined in terms of the meaning of other symbols. For example, &quot;<em>chair</em>&quot; may be defined as a &quot;<em>seat</em> with <em>back rest</em>&quot;.</p>
@@ -472,78 +580,18 @@ interpret : Abstract-Syntax -&gt; Semantics
 <p>What should a list such as <code>(x y)</code> mean?</p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">2.5.1</span><span class="section_title"><a href="#term-rewriting-semantics">Term rewriting semantics?</a></span><span class="word_count">(36w~1m)</span></li>
-<li><span class="section_number">2.5.2</span><span class="section_title"><a href="#graph-reduction-semantics">Graph reduction semantics?</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">2.10.1</span><span class="section_title"><a href="#term-rewriting-semantics">Term rewriting semantics?</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">2.10.2</span><span class="section_title"><a href="#graph-reduction-semantics">Graph reduction semantics?</a></span><span class="word_count">(36w~1m)</span></li>
 </ul>
 </div>
-<h4 id="term-rewriting-semantics"><span class="section_number">2.5.1</span><span class="section_title">Term rewriting semantics?</span></h4>
+<h4 id="term-rewriting-semantics"><span class="section_number">2.10.1</span><span class="section_title">Term rewriting semantics?</span></h4>
 <p>For efficiency, we require that the head of a rule begins with a <em>literal</em>, so that we can <em>index</em> the rules for fast matching/retrieval.</p>
 <p>The programmers are responsible for ensuring confluence by avoiding ambiguous/overlapping rules.</p>
-<h4 id="graph-reduction-semantics"><span class="section_number">2.5.2</span><span class="section_title">Graph reduction semantics?</span></h4>
+<h4 id="graph-reduction-semantics"><span class="section_number">2.10.2</span><span class="section_title">Graph reduction semantics?</span></h4>
 <p>Should the semantics be formulated in terms of expression graph reductions/transformations?</p>
 <p>An S-expression can be thought of representing a <em>tree</em> (or, more precisely, a <em>graph</em>).</p>
 <p>A value can be thought of as an irreducible one-vertex graph.</p>
-<h3 id="an-example-of-building-a-programming-language"><span class="section_number">2.6</span><span class="section_title">An example of building a programming language</span></h3>
-<p>There are several starting point candidates: machine code or mathematics. Where should we begin?</p>
-<p>Should we bet our future on the engineers, the scientists, the philosophers, or the mathematicians?</p>
-<p>Originally, computers were invented to help people do arithmetics, which is a part of mathematics. Does it mean that we should start from mathematics?</p>
-<p>Another point of view is that programming languages are invented to make it easier to generate machine code.</p>
-<p>Suppose that we start with an arithmetic expression evaluator.</p>
-<pre class="example"><code>(evaluate (* (+ 2 3) (+ 2 3)))
-</code></pre>
-<p>We don't want to repeat ourselves, so we add these features to our language: factoring, references, and substitutions.</p>
-<pre class="example"><code>(evaluate
-  (let [(x 2)
-        (y 3)
-        (z (+ x y))]
-    (* z z)))
-</code></pre>
-<p>Not only do we want the computer to compute, but we also want it to <em>show</em> the result:</p>
-<pre class="example"><code>(print (evaluate (+ 1 2)))
-</code></pre>
-<p>We want to &quot;solve&quot; a differential equation.</p>
-<p>We create some things: a representation for differential equations, and a compiler (a translator) that, given a differential equation and its initial conditions, generates what? A procedure? A generator? A list of numbers?</p>
-<pre class="example"><code>;; 0 = Df(x) + 2 * f(x)
-(approximate
-  (differential-equation
-    (= 0 (+ ([d f] x) (* 2 [f x])))
-    functions (f)
-    variables (x))
-  method [euler
-    initial-conditions [(x 0)]
-    step-size 1.0e-6])
-</code></pre>
-<p>But the form is rather inflexible: What if the users want to implement their own methods? With if the users want to approximate other things, such as a system of equations?</p>
-<p>We also want to plot the result…</p>
-<p>We also want to implement iterative approximation algorithms, etc.</p>
-<p>Then we want to parse.</p>
-<p>Note the reference to <code>my-char</code> in the <code>parse:interpret</code> block.</p>
-<pre class="example"><code>(define-function (f port)
-  (define-local-variables my-char my-string)
-  (parse:interpret program (sequence
-      (char) ;; read any char
-      (set! my-char char) ;; read any char and store it to my-char
-      (set! my-string (string of length 8))
-      (char y)
-      (char #\z)
-      (char 0)
-      (char code 32)
-      (set! my-choice (choose (char x) (char y)))
-      eof)
-    with-input-from port))
-</code></pre>
-<p>Can we generate a pretty printer and a parser from a common description?</p>
-<p>Informally, a printer is an inverse parser. For example: In a parser, the program <code>(set! x char)</code> reads a char from the stream and mutates x to refer to the char. In a printer, the same program dereferences a char from x and writes the char to the stream.</p>
-<p>Note that in <code>(define x 1)</code>, we do not set <code>x</code> to <em>contain</em> 1, but we set <code>x</code> to <em>refer</em> to 1.</p>
-<p>Then we also want computers to store data, etc.</p>
-<p>Computers are machines that help us do mathematics.</p>
-<p>Mathematics is not limited to numbers. Mathematics is about unambiguous abstract thinking.</p>
-<p>Computer manipulates bits; humans give meaning to computation (what a computer does).</p>
-<p>I am impressed by how van Roy &amp; Haridi 2004 <span class="citation" data-cites="van2004concepts">[<a href="#ref-van2004concepts">13</a>]</span> come up with alternative semantics.</p>
-<p>We should not only make computers <em>do</em> something, but we should also make computers <em>understand</em> something, so that they can help us make them do something. When I first saw the delayed concurrent variable assignment semantics, I was amazed.</p>
-<p>…</p>
-<p>Finally, after all that hard work, we want to share our work. We want to improve our lives together.</p>
-<h3 id="security-considerations"><span class="section_number">2.7</span><span class="section_title">Security considerations</span></h3>
+<h3 id="security-considerations"><span class="section_number">2.11</span><span class="section_title">Security considerations</span></h3>
 <p>See <a href="secure.html">file:secure.html</a>.</p>
 <p>The situation:</p>
 <ul>
@@ -567,23 +615,8 @@ interpret : Abstract-Syntax -&gt; Semantics
 </ul>
 <p>However, even though Familyspeak prevents <em>words</em> inappropriate for children, it does not prevent <em>ideas</em> inappropriate for children. For example, Familyspeak syntax may allow the words &quot;eat&quot;, &quot;your&quot;, and &quot;parents&quot;, but the idea &quot;eat your parents&quot; is inappropriate for children. Appropriate words can be arranged to convey inappropriate ideas.</p>
 <p>We assume that user U's running programmer P's program proves that user U trusts programmer P. (What if U runs P's program accidentally or unknowingly?)</p>
-<h3 id="for-hygiene-resolve-references-before-expanding-macros"><span class="section_number">2.8</span><span class="section_title">&lt;2019-12-12&gt; For hygiene, resolve references before expanding macros</span></h3>
-<p>For hygiene, references must be resolved (bound) before macros are expanded.</p>
-<p>Example:</p>
-<pre class="example"><code>A = &quot;There is Andrew.&quot;
-B = &quot;There is Bob. He is talking.&quot;
-A B = &quot;There is Andrew. There is Bob. He is talking.&quot;
-</code></pre>
-<p>Naïve syntactical concatenation of and A and B causes ambiguity.</p>
-<p>But not if we resolve the references first.</p>
-<pre class="example"><code>RA = &quot;There is Andrew.&quot;
-RB = &quot;There is Bob. He(Bob) is talking.&quot;
-RA RB = &quot;There is Andrew. There is Bob. He(Bob) is talking.&quot;
-</code></pre>
-<p>Ambiguity: The expression <code>(f x)</code> is ambiguous. If <code>f</code> refers to a procedure, the expression means &quot;evaluate x to ex and then compute f(ex)&quot;. If <code>f</code> refers to a macro, the expression means &quot;expand (f y) where y is a reference to x&quot;.</p>
-<p>Term-rewriting rules / fexprs unify procedures and macros? The problem is we want to let the programmers how and when a fragment is expanded?</p>
-<p>But it is possible to write an AST transformer that produces an invalid AST. For example, one can pull out a lexically scoped variable out of its scope.</p>
-<p>We let the programmers decide. If they want hygiene, they can use AST transformers. If they don't want hygiene, they can use CST transformers.</p>
+<h3 id="arranging-the-puzzle-pieces"><span class="section_number">2.12</span><span class="section_title">Arranging the puzzle pieces?</span></h3>
+<p>Now that we have the pieces of the puzzle (quotation, maximal sharing), how do we arrange them into a coherent picture?</p>
 <h2 id="run-time-system"><span class="section_number">3</span><span class="section_title">Run-time system</span></h2>
 <p><a href="https://drops.dagstuhl.de/opus/volltexte/2015/5475/pdf/4.pdf">Belikov 2015</a> <span class="citation" data-cites="belikov2015language">[<a href="#ref-belikov2015language">2</a>]</span></p>
 <div class="local_table_of_contents">
@@ -807,7 +840,7 @@ uint32_t
 <li><span class="section_number">6.4</span><span class="section_title"><a href="#creating-primitives">Creating primitives</a></span><span class="word_count">(20w~1m)</span></li>
 <li><span class="section_number">6.5</span><span class="section_title"><a href="#quoting">Quoting</a></span><span class="word_count">(20w~1m)</span></li>
 <li><span class="section_number">6.6</span><span class="section_title"><a href="#macros">Macros</a></span><span class="word_count">(29w~1m)</span></li>
-<li><span class="section_number">6.7</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(132w~1m)</span></li>
+<li><span class="section_number">6.7</span><span class="section_title"><a href="#what-1">What?</a></span><span class="word_count">(132w~1m)</span></li>
 </ul>
 </div>
 <h3 id="pl-0-c-conventions"><span class="section_number">6.1</span><span class="section_title">PL-0 C++ conventions</span></h3>
@@ -845,7 +878,7 @@ Token_Iterator&amp; Machine::pop_source ()
 <p>A macro transforms a concrete syntax tree.</p>
 <p>Important: Whitespaces are tokens too.</p>
 <p>Macro : Cst -&gt; Cst</p>
-<h3 id="what"><span class="section_number">6.7</span><span class="section_title">What?</span></h3>
+<h3 id="what-1"><span class="section_number">6.7</span><span class="section_title">What?</span></h3>
 <pre class="example"><code>% A B C muladd -&gt; A*B+C
 
 quote muladd { mul add } def
