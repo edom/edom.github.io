@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>(Draft) A story of physics</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">(Draft) A story of physics</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#note-this-book-is-not-a-history-book">Note: This book is not a history book</a></span><span class="word_count">(91w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#the-story-and-the-characters">The story and the characters</a></span><span class="word_count">(529w~3m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#the-plot">— The plot —</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#act-classical-mechanics">Act: Classical mechanics</a></span><span class="word_count">(509w~3m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#act-analytic-mechanics">Act: Analytic mechanics</a></span><span class="word_count">(348w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#act-20th-century-physics">Act: 20th century physics</a></span><span class="word_count">(129w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#other-drafts">Other drafts</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#what-digressions">What digressions?</a></span><span class="word_count">(722w~4m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#physics-blog">Physics blog?</a></span><span class="word_count">(58w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(39w~1m)</span></li>
+</ul>
+</div>
+<h2 id="note-this-book-is-not-a-history-book"><span class="section_number">1</span><span class="section_title">Note: This book is not a history book</span></h2>
+<p>Historically, the development of physics and mathematics were intertwined, but, in hindsight, it is more efficient to develop mathematics first, and then do physics in it, because modern mathematical notation greatly boosts efficiency. We thank our ancestors for giving us hindsight.</p>
+<p>It is much more efficient to do physics in the language of mathematics (a domain-specific language embedded in English) than doing physics in plain English.</p>
+<p>By this book, we hope to come up with an optimal learning sequence for 21st century physics, in narrative form.</p>
+<h2 id="the-story-and-the-characters"><span class="section_number">2</span><span class="section_title">The story and the characters</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#the-characters-and-their-desires">The characters and their desires</a></span><span class="word_count">(97w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#which-should-be-the-protagonists-and-which-should-be-the-antagonists">Which should be the protagonists and which should be the antagonists?</a></span><span class="word_count">(304w~2m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#the-goal-the-purpose">? The goal, the purpose</a></span><span class="word_count">(72w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#how-to-read-this-book">? How to read this book?</a></span><span class="word_count">(55w~1m)</span></li>
+</ul>
+</div>
+<h3 id="the-characters-and-their-desires"><span class="section_number">2.1</span><span class="section_title">The characters and their desires</span></h3>
+<p>The <em>humans</em> want to know Nature. If that is impossible, then they at least want to understand Nature, to gradually build increasingly accurate models of Nature, to understand a little bit of quantum mechanics and general relativity. But the humans often thwart themselves: pride, egoism, infighting, dogmatism, refusal to change beliefs despite counterevidence.</p>
+<p>The <em>models</em> (the mathematical models) help the humans build great things, but sometimes the humans fall in love with the models and become too dogmatic and this halts progress.</p>
+<p><em>Nature</em> is not hiding its secrets; otherwise it would answer experiments with lies.</p>
+<h3 id="which-should-be-the-protagonists-and-which-should-be-the-antagonists"><span class="section_number">2.2</span><span class="section_title">Which should be the protagonists and which should be the antagonists?</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.2.1</span><span class="section_title"><a href="#pitting-the-humans-against-the-humans">Pitting the humans against the humans</a></span><span class="word_count">(57w~1m)</span></li>
+<li><span class="section_number">2.2.2</span><span class="section_title"><a href="#pitting-the-humans-against-the-models">Pitting the humans against the models</a></span><span class="word_count">(149w~1m)</span></li>
+<li><span class="section_number">2.2.3</span><span class="section_title"><a href="#pitting-the-models-against-the-humans">Pitting the models against the humans</a></span><span class="word_count">(52w~1m)</span></li>
+<li><span class="section_number">2.2.4</span><span class="section_title"><a href="#nature-is-not-a-character">Nature is not a character</a></span><span class="word_count">(39w~1m)</span></li>
+</ul>
+</div>
+<h4 id="pitting-the-humans-against-the-humans"><span class="section_number">2.2.1</span><span class="section_title">Pitting the humans against the humans</span></h4>
+<p>We can depend on humans to antagonize themselves. They are an inexhaustible source of antagonism.</p>
+<p>Examples: Bruno/Galileo vs the Roman Catholic church, prudent people vs the Indiana pi bill, scientists vs cranks, fringe scientists (e.g. Wegener of plate tectonics) vs old guards, young scientists vs non-random grants, honest academicians vs broken academic system.</p>
+<h4 id="pitting-the-humans-against-the-models"><span class="section_number">2.2.2</span><span class="section_title">Pitting the humans against the models</span></h4>
+<p>The protagonists are the humans, and their undergraduate-level math knowledge.</p>
+<p>The antagonists are the mathematical models of Nature, and all their associated mathematical objects, formalisms, knowledge.</p>
+<p>The climax is the &quot;battle&quot; against quantum mechanics and general relativity.</p>
+<p>This choice gives rise to the following natural plot.</p>
+<p>The models think they are real. The humans defeat the models by asking philosophical questions and showing experimental evidence against the models. Perhaps we need to resort to some cheesy personification here; we may personify a model as someone who dogmatically believes the model.</p>
+<p>But I don't want to write a <a href="https://en.wikipedia.org/wiki/Socratic_dialogue">Socratic dialogue</a> like this:</p>
+<blockquote>
+<p>Alice: &quot;O, Exalted Guy Bob, tell me, what is motion?&quot;</p>
+<p>Bob: &quot;O, Wise Girl Alice, motion is …&quot;</p>
+<p>Alice: &quot;But it doesn't make sense; …&quot;</p>
+<p>Bob: &quot;Indeed, but …&quot;</p>
+</blockquote>
+<p>I want the book to contain telepathic answers. I want the book to read the questions that appear in my mind as they arise.</p>
+<h4 id="pitting-the-models-against-the-humans"><span class="section_number">2.2.3</span><span class="section_title">Pitting the models against the humans</span></h4>
+<p>The protagonists are the mathematical models.</p>
+<p>The antagonists is the humans' ignorance. and all their associated mathematical objects, formalisms, knowledge.</p>
+<p>The climax is the &quot;battle&quot; against the humans' ignorance of quantum mechanics and general relativity.</p>
+<p>(Problem: Won't making the readers the antagonists antagonize the readers? They aren't going to read!)</p>
+<h4 id="nature-is-not-a-character"><span class="section_number">2.2.4</span><span class="section_title">Nature is not a character</span></h4>
+<p>It does not make sense for Nature to be a protagonist because Nature apparently does not develop its character.</p>
+<p>It also does not make sense for Nature to be an antagonist because Nature apparently is unbeatable.</p>
+<h3 id="the-goal-the-purpose"><span class="section_number">2.3</span><span class="section_title">? The goal, the purpose</span></h3>
+<p>The goal is not to understand all models, but to build enough habit of <em>mathematical thinking</em> so that we are <em>able</em> to understand models <em>as necessary</em>, in the same way the purpose of learning to punch is not to punch everything all the time, but to build enough habit so that we are <em>able</em> to punch <em>as necessary</em>.</p>
+<p>Drill down / flesh out / detail some of <a href="http://www.goodtheorist.science/">t'Hooft's advice</a>.</p>
+<h3 id="how-to-read-this-book"><span class="section_number">2.4</span><span class="section_title">? How to read this book?</span></h3>
+<p>(Will this still be valid? The book is changing to a narrative.)</p>
+<p>Skip everything until you find something you don't understand, and then begin reading from there. This should be possible, because the chapters have been ordered ascending by sophistication (both mathematical and physical). Each chapter builds on all previous chapters.</p>
+<h2 id="the-plot"><span class="section_number">3</span><span class="section_title">— The plot —</span></h2>
+<p>The plot serves as a plan/draft/sketch for/of the content of this book.</p>
+<p>The plot also serves to establish an optimal learning sequence, and as a table of contents for this book.</p>
+<p>The plot is <em>not</em> necessarily historical.</p>
+<h2 id="act-classical-mechanics"><span class="section_number">4</span><span class="section_title">Act: Classical mechanics</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#turning-point-settling-down">? Turning point: Settling down</a></span><span class="word_count">(122w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#turning-point-mathematical-language">Turning point: Mathematical language</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#turning-point-buoyancy-mass-and-weight">? Turning point: Buoyancy, mass, and weight</a></span><span class="word_count">(58w~1m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#turning-point-analytic-geometry">Turning point: Analytic geometry</a></span><span class="word_count">(72w~1m)</span></li>
+<li><span class="section_number">4.5</span><span class="section_title"><a href="#turning-point-calculus-real-analysis">Turning point: Calculus, real analysis</a></span><span class="word_count">(141w~1m)</span></li>
+<li><span class="section_number">4.6</span><span class="section_title"><a href="#turning-point-the-electrochemical-cell">Turning point: The electrochemical cell</a></span><span class="word_count">(88w~1m)</span></li>
+</ul>
+</div>
+<h3 id="turning-point-settling-down"><span class="section_number">4.1</span><span class="section_title">? Turning point: Settling down</span></h3>
+<p>(Does this go back too far away to the past?)</p>
+<p>They invent language.</p>
+<p>They do mathematics, but only as much as necessary for survival. They count people and animals.</p>
+<p>They begin manipulating Nature to simplify their survival.</p>
+<p>They settle down. They change from being nomadic to being sedentary.</p>
+<p>They build houses.</p>
+<p>They domesticate plants and animals.</p>
+<p>They farm, enabling them to build bigger and denser settlements.</p>
+<p>They invent writing. They invent paper. They build libraries. This enables knowledge to be preserved and carried over to the far future. Knowledge no longer dies with the people who have it.</p>
+<p><em>They solve hunger.</em> Survival no longer occupies their mind.</p>
+<p>They begin doing what they <em>want</em>, not what they <em>must</em>.</p>
+<p>They begin doing mathematics out of <em>curiosity</em>, not <em>necessity</em>.</p>
+<p>They do mathematics gratuitously.</p>
+<h3 id="turning-point-mathematical-language"><span class="section_number">4.2</span><span class="section_title">Turning point: Mathematical language</span></h3>
+<p>They invent a mathematical notation that greatly increases information density; thus such notation also increases information transfer rate. Such notation speeds up thought, after an initial learning curve.</p>
+<h3 id="turning-point-buoyancy-mass-and-weight"><span class="section_number">4.3</span><span class="section_title">? Turning point: Buoyancy, mass, and weight</span></h3>
+<p>They discover <em>buoyancy</em>: things are easier to lift in water than on land. This concept enables them to <em>distinguish between mass and weight</em>. They define that the <em>mass</em> of a thing is the <em>amount of matter</em> in it, whereas its <em>weight</em> is <em>what has to be overcome in order to lift</em> it.</p>
+<h3 id="turning-point-analytic-geometry"><span class="section_number">4.4</span><span class="section_title">Turning point: Analytic geometry</span></h3>
+<p>They want to name every point in space, because they want to answer where something is.</p>
+<p>They introduce <em>coordinate systems</em> to name every point and every vector. They introduce <em>vectors</em> to describe changes, displacements, movements.</p>
+<p>They marry analysis and geometry, begetting <em>analytic geometry</em>.</p>
+<p>They begin doing geometry with numbers instead of drawings.</p>
+<p>They begin describing shapes with algebraic equations instead of drawings.</p>
+<p>They invent Cartesian coordinate systems.</p>
+<p>They invent non-Cartesian coordinate systems.</p>
+<p>They invent coordinate transformations.</p>
+<h3 id="turning-point-calculus-real-analysis"><span class="section_number">4.5</span><span class="section_title">Turning point: Calculus, real analysis</span></h3>
+<p>They know real numbers, arithmetics, measurements, and algebra (variables).</p>
+<p>They model falling objects with a <em>quadratic equation</em>.</p>
+<p>They use <em>functions</em> to model motion with constant/uniform acceleration.</p>
+<p>They model space as a three-dimensional Euclidean space. They discover Newton's law of universal gravitation and Coulomb's law.</p>
+<p>They want not only the end points, but also the trajectory, all points in between.</p>
+<p>They introduce <em>functions</em> and <em>trajectories</em>.</p>
+<p>They model <em>motion</em>. They introduce <em>time</em>.</p>
+<p>They invent chemistry. They observe that chemical reactions <em>conserve</em> the mass of its reactants.</p>
+<p>They invent steam engines. They define &quot;work&quot; as &quot;weight lifted through a height&quot; <span class="citation" data-cites="coriolis1829calcul">[<a href="#ref-coriolis1829calcul">1</a>]</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. They realize that weight is a force. They generalize &quot;work&quot; to all forces.</p>
+<p>They model spaces and objects.</p>
+<p>When is something?</p>
+<p>Multi-variable question. Question with several question words. &quot;When is something where&quot;. At time t, the position of the object is x.</p>
+<p>Time.</p>
+<p>Coordinate transform.</p>
+<p>Optimization problems. Fermat's method of adequality. Variational calculus.</p>
+<h3 id="turning-point-the-electrochemical-cell"><span class="section_number">4.6</span><span class="section_title">Turning point: The electrochemical cell</span></h3>
+<p>The invention of the electrochemical cell is pivotal.</p>
+<p>Galvani animal electricity. Volta suspected the different metals; he followed his suspicion; it led him to his invention of the electrochemical cell. He set out to prove Galvani wrong, not to revolutionize the world.</p>
+<p>Enables experiments of atomic theory and electromagnetism.</p>
+<p>Enables electrochemistry, which enables the isolation of many chemical elements by Humphry Davy and his big battery.</p>
+<p>Enables the discovery of subatomic particles, such as the discovery of electron by Crookes.</p>
+<p>Enables electrodynamics, Hertz's experiments, Faraday's experiments, and Maxwell's equations.</p>
+<h2 id="act-analytic-mechanics"><span class="section_number">5</span><span class="section_title">Act: Analytic mechanics</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#turning-point-principle-of-stationary-action">Turning point: Principle of stationary action</a></span><span class="word_count">(346w~2m)</span></li>
+</ul>
+</div>
+<h3 id="turning-point-principle-of-stationary-action"><span class="section_number">5.1</span><span class="section_title">Turning point: Principle of stationary action</span></h3>
+<p>They come up with the concept of <em>conservative</em> forces and <em>potential gradients</em>.</p>
+<p>They model <em>collisions</em>.</p>
+<p>They find some conserved quantities. They find that Galileo's interrupted pendulum conserves energy? They find that Newton's cradle conserves momentum. Galileo's interrupted pendulum<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. How does one find a conserved quantity?<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> Conservation of kinetic energy, vis viva, elastic collisions.</p>
+<p>They shift their thinking from &quot;<em>what</em> is motion&quot; to &quot;<em>why</em> is motion&quot;.</p>
+<p>They have a lot of models.</p>
+<p>They shift their question from &quot;How do we model motion&quot; to &quot;How do we <em>generate</em> these models of motion&quot;.</p>
+<p>They begin asking the question &quot;What is the minimum amount of information we need to model the dynamics of a system&quot;.</p>
+<p>&quot;What is the simplest explanation for motion&quot;.</p>
+<p>They begin divorcing mathematics from physics.</p>
+<p>They begin meta-reasoning, that is reasoning about reasoning. Perhaps this shift is why it is hard to understand the development of physics after this point.</p>
+<p>They suspect that there is something more fundamental.</p>
+<p>Newton's laws explain <em>how</em> things move (<em>what</em> motion is). The principle of stationary action explains <em>why</em> things move (<em>why</em> motion is).</p>
+<p>They surmise that things move <em>to stationarize their actions</em>.</p>
+<p>They don't know why; it just gives the right equations of motion.</p>
+<p>Euler–Lagrange equation.</p>
+<p>They discover, in optics, that the angle of incidence and the angle of reflection are equal. They state that more fancifully: Light takes the path that requires the least time to traverse.</p>
+<p>They generalize/unify the disparate variational principles?</p>
+<p>They propose Friston's <em><a href="https://en.wikipedia.org/wiki/Free_energy_principle">https://en.wikipedia.org/wiki/Free_energy_principle</a></em>. It is a variational principle.</p>
+<p>It becomes in vogue to derive physical laws from variational principles.</p>
+<p><a href="https://en.wikipedia.org/wiki/History_of_variational_principles_in_physics">https://en.wikipedia.org/wiki/History_of_variational_principles_in_physics</a></p>
+<p>Lanczos's &quot;the variational principles of mehanics&quot;?</p>
+<p>But how the hell did they arrive at that conclusion? Of whose ass was the &quot;principle of stationary action&quot; pulled out? Hamilton's? What was the justification?</p>
+<p>They find that they are lazy. They surmise that this laziness pervades Nature: everything spends minimum effort to get maximum result. They are eager to overgeneralize.</p>
+<p>We can think in reverse: From Newton's laws, find what gives Newton's laws when optimized.</p>
+<p>Optimization problem, variational calculus.</p>
+<p>They solve the brachistochrone problem, just because they can.</p>
+<p>Then comes Lagrangian mechanics. The form of &quot;Lagrangian mechanics&quot; we know today was actually invented by Hamilton? Stigler's law of eponymy.</p>
+<h2 id="act-20th-century-physics"><span class="section_number">6</span><span class="section_title">Act: 20th century physics</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#turning-point-symmetry-erlangen-program-noethers-theorem">Turning point: Symmetry, Erlangen program, Noether's theorem</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#turning-point-mass-energy-equivalence">Turning point: Mass-energy equivalence</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#turning-point-cp-violation-symmetry-breaking">Turning point: CP-violation / symmetry breaking</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#act-quantum-mechanics">? Act: quantum mechanics</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">6.5</span><span class="section_title"><a href="#act-geometry-relativity">? Act: geometry, relativity</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">6.6</span><span class="section_title"><a href="#turning-point-hawking-radiation">Turning point: Hawking radiation</a></span><span class="word_count">(35w~1m)</span></li>
+<li><span class="section_number">6.7</span><span class="section_title"><a href="#act-quantum-field-theory">? Act: quantum field theory</a></span><span class="word_count">(5w~1m)</span></li>
+</ul>
+</div>
+<h3 id="turning-point-symmetry-erlangen-program-noethers-theorem"><span class="section_number">6.1</span><span class="section_title">Turning point: Symmetry, Erlangen program, Noether's theorem</span></h3>
+<p>What?</p>
+<p>They formalize symmetry using logic?</p>
+<p>They formalize the symmetry of functions?</p>
+<h3 id="turning-point-mass-energy-equivalence"><span class="section_number">6.2</span><span class="section_title">Turning point: Mass-energy equivalence</span></h3>
+<p>They find that mass is congealed energy.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<h3 id="turning-point-cp-violation-symmetry-breaking"><span class="section_number">6.3</span><span class="section_title">Turning point: CP-violation / symmetry breaking</span></h3>
+<h3 id="act-quantum-mechanics"><span class="section_number">6.4</span><span class="section_title">? Act: quantum mechanics</span></h3>
+<p>Then comes quantum mechanics.</p>
+<p>How the hell did Schrödinger arrive at (or perhaps &quot;come up with&quot;) that strange equation?</p>
+<h3 id="act-geometry-relativity"><span class="section_number">6.5</span><span class="section_title">? Act: geometry, relativity</span></h3>
+<ul>
+<li>describing curved surfaces
+<ul>
+<li>How do we describe a sphere? <span class="math inline">\(x^2+y^2+z^2 = r^2\)</span>.</li>
+<li>How do we describe a curved surface? By its tangent space? By coordinate mapping?</li>
+</ul></li>
+<li>Derive Einstein field equations from analytical mechanics / principle of stationary action? <span class="citation" data-cites="lanczos2012variational">[<a href="#ref-lanczos2012variational">2</a>]</span></li>
+</ul>
+<h3 id="turning-point-hawking-radiation"><span class="section_number">6.6</span><span class="section_title">Turning point: Hawking radiation</span></h3>
+<p>They predict Hawking radiation by thinking about a pair of virtual particles X and Y (quantum mechanics) near a black hole (general relativity). X falls into the black hole, and Y escapes.</p>
+<h3 id="act-quantum-field-theory"><span class="section_number">6.7</span><span class="section_title">? Act: quantum field theory</span></h3>
+<h2 id="other-drafts"><span class="section_number">7</span><span class="section_title">Other drafts</span></h2>
+<ul>
+<li><a href="physics-motion.html">On motion</a></li>
+<li><a href="nature.html">A physics book draft</a> (should be split into articles instead)</li>
+<li><a href="chemistry-ontology.html">On the evolution of the ontology of chemistry</a></li>
+<li><a href="integral.html">On integrals</a></li>
+</ul>
+<h2 id="what-digressions"><span class="section_number">8</span><span class="section_title">What digressions?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">8.1</span><span class="section_title"><a href="#digression-narrative-of-target-audience">Digression: Narrative of target audience</a></span><span class="word_count">(207w~2m)</span></li>
+<li><span class="section_number">8.2</span><span class="section_title"><a href="#digression-where-curiosity-led-us">Digression: Where curiosity led us</a></span><span class="word_count">(251w~2m)</span></li>
+<li><span class="section_number">8.3</span><span class="section_title"><a href="#narrative-what">Narrative: What</a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">8.4</span><span class="section_title"><a href="#my-original-motivation-advanced-hypotheses-and-crackpots">My original motivation, advanced hypotheses, and crackpots</a></span><span class="word_count">(127w~1m)</span></li>
+<li><span class="section_number">8.5</span><span class="section_title"><a href="#what-is-to-understand">What is to understand?</a></span><span class="word_count">(55w~1m)</span></li>
+</ul>
+</div>
+<h3 id="digression-narrative-of-target-audience"><span class="section_number">8.1</span><span class="section_title">Digression: Narrative of target audience</span></h3>
+<p>&lt;2019-12-25&gt;</p>
+<p>My target audience is people like me: those who want to understand a little bit of 21st century physics in their spare time.</p>
+<p>(This book tells a story about reading this book itself. What the hell.)</p>
+<p>Enter John, a 30-year-old who aspires to understand recent physics.</p>
+<p>John is a 30-year-old man who likes mathematics, physics, and research, but he avoids a job in academia, because he refuses to rot in the ivory tower infested with perverse incentives and predatory publishers, so he spent 10 years working as a well-paid engineer. Now that he has saved enough money to survive for a while, he rekindles his old dream of being an amateur who discovers fun things.</p>
+<p>John wants to learn a little bit of recent physics, especially quantum mechanics and general relativity, but he doesn't have some billion dollars to spare for building a particle accelerator or a satellite probe, for experimental physics, and he prefers to work alone or in small groups, so he gets into theoretical physics, because, as Vladimir Arnold <a href="https://www.uni-muenster.de/Physik.TP/~munsteg/arnold.html">wrote</a>, &quot;Mathematics is the part of physics where experiments are cheap.&quot;</p>
+<p>He wants to understand the mathematics, not just pop science. He wants to distinguish between real spirituality and quantum woo.</p>
+<p>John is comfortable with undergraduate-level physics.</p>
+<h3 id="digression-where-curiosity-led-us"><span class="section_number">8.2</span><span class="section_title">Digression: Where curiosity led us</span></h3>
+<p>Numbers got divorced from counting.</p>
+<p>We saw that some things happen together. We began expecting and predicting things. We understood <em>correlation</em>. We understood <em>causation</em> as a reliable time-ordered correlation. We had an internal model that enables <em>counterfactual reasoning</em> by simulating the past or the future. We gained the ability to imagine, both the past and the future.</p>
+<p><em>Language</em>, <em>writing</em>, and <em>alphabets</em> came along.</p>
+<p><em>Algebra</em>.</p>
+<p><em>Functions</em> and <em>relations</em>. Relate effort to harvest.</p>
+<p>To maximize the area enclosed by a rope. What shape has the maximal area-to-circumference ratio?</p>
+<p>We frame motion as an <em>optimization problem</em>. We think in reverse: what is optimized by a free-falling body?</p>
+<p>Then our desire grows. We begin modeling things for fun, not because we need to. Brachistochrone problem. Soap bubble on two coaxial rings. Calculus of variations.</p>
+<p>We wonder why things move. Because forces. But that only shifts the question: What is a force?</p>
+<p>We try to model falling things with numbers.</p>
+<p>Galileo found <span class="math inline">\( h = kt^2 \)</span>.</p>
+<p>Then vectors.</p>
+<p>Newton found <span class="math inline">\( F = G m_1 m_2 / r^2 \)</span>.</p>
+<p>We want every point in between.</p>
+<p>Then we graph functions and superimpose them on the real world.</p>
+<p>Trajectories.</p>
+<p>Where does Lagrange come in?</p>
+<p>Now that we have a lot of models, we wonder: is there an easier way to do this? Is there something common to these models? Which generalizes which? Which can be derived from which? We begin meta-modeling: modeling the models, using math to think about math itself. Then math begins to take a life of its own.</p>
+<p>It seems that both linear programming and variational calculus are optimization problems?</p>
+<h3 id="narrative-what"><span class="section_number">8.3</span><span class="section_title">Narrative: What</span></h3>
+<p>At first we did something to survive; it was work. Then we did it for leisure, for fun, for love. Then we did it for pay, that is, indirectly, to survive; leisure has become work again. We have come back to where we started from. Materially we are better off, but spiritually we are worse off.</p>
+<p>We see every inconvenience as a problem to be eliminated, while being unaware that the solution creates more problems. We create technologies without thinking about the problems they create.</p>
+<h3 id="my-original-motivation-advanced-hypotheses-and-crackpots"><span class="section_number">8.4</span><span class="section_title">My original motivation, advanced hypotheses, and crackpots</span></h3>
+<p>Around 2019-11-08, I was reading much literature about remote viewing, and I found many resources with various agenda, from the most legitimate open-minded people to the most illegitimate crackpots. My motivation for learning quantum mechanics was to distinguish between legitimate hypotheses and quantum woo.</p>
+<p>But all the crackpots I have encountered are so obvious that one immediately suspects crackpottery even without any knowledge of quantum mechanics. Perhaps it is their very attempt at looking legitimate that gives them away.</p>
+<p>But to me there is no practical difference between legitimate advanced hypotheses and illegitimate crackpots; both are incomprehensible and useless to me, and I shall treat them equally: give them the benefit of the doubt, and ignore them until I understand them, if ever.</p>
+<h3 id="what-is-to-understand"><span class="section_number">8.5</span><span class="section_title">What is to understand?</span></h3>
+<p>To understand something is to create a reasonably accurate model (internal mental model) of it.</p>
+<p>I want to write a physics book with emphasis in <em>modeling</em>, because that is what physics is.</p>
+<p>Physics is about understanding (and therefore creating a reasonably accurate model of) reality, and mathematics is its tool for concise precise communication.</p>
+<h2 id="physics-blog"><span class="section_number">9</span><span class="section_title">Physics blog?</span></h2>
+<p>What is the evidence for quantum field theory? What experiments justify it?</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#electromagnetic-wave">&lt;2019-08-14&gt; Electromagnetic wave</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">9.2</span><span class="section_title"><a href="#electron-excitation-is-not-instantaneous">Electron excitation is not instantaneous</a></span><span class="word_count">(22w~1m)</span></li>
+</ul>
+</div>
+<h3 id="electromagnetic-wave"><span class="section_number">9.1</span><span class="section_title">&lt;2019-08-14&gt; Electromagnetic wave</span></h3>
+<p>In Maxwell's theory, an electric charge instantaneously affects all of space, and an electromagnetic wave is not something emitted by an electric charge.</p>
+<h3 id="electron-excitation-is-not-instantaneous"><span class="section_number">9.2</span><span class="section_title">Electron excitation is not instantaneous</span></h3>
+<p>2019 article &quot;To catch and reverse a quantum jump mid-flight&quot;<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>, via video &quot;Quantum Leap / Quantum Jump Explained&quot;<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">10</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-coriolis1829calcul">
+<p>[1] Coriolis, G. 1829. <em>Du calcul de l’effet des machines, ou, considerations sur l’emploi des moteurs et sur leur évaluation: Pour servir d’introduction a l’étude spéciale des machines</em>. Carilian-Goeury.</p>
+</div>
+<div id="ref-lanczos2012variational">
+<p>[2] Lanczos, C. 2012. <em>The variational principles of mechanics</em>. Courier Corporation.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-12-25&gt; <a href="https://en.wikipedia.org/wiki/Work_(physics)">https://en.wikipedia.org/wiki/Work_(physics)</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-11-06&gt; <a href="https://en.wikipedia.org/wiki/Conservation_of_energy#History">https://en.wikipedia.org/wiki/Conservation_of_energy#History</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&lt;2019-11-06&gt; <a href="https://en.wikipedia.org/wiki/Conserved_quantity">https://en.wikipedia.org/wiki/Conserved_quantity</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.ted.com/talks/david_christian_big_history/transcript?language=en">https://www.ted.com/talks/david_christian_big_history/transcript?language=en</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>&lt;2019-11-09&gt; <a href="https://www.nature.com/articles/s41586-019-1287-z">https://www.nature.com/articles/s41586-019-1287-z</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>&lt;2019-11-09&gt; <a href="https://www.youtube.com/watch?v=r8uVbwD-aZM">https://www.youtube.com/watch?v=r8uVbwD-aZM</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2019-11-05 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
