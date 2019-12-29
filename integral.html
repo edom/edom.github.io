@@ -164,13 +164,235 @@ document.addEventListener("DOMContentLoaded", function () {
                     </header>
                 </article>
                 <div class="post-content">
+<p><span class="math inline">\(
+\newcommand\der{\operatorname{der}}
+\newcommand\Der{\mathrm{D}}
+\newcommand\dd{\operatorname{d}}
+\newcommand\ang[1]{#1^\circ}
+\newcommand\parenthesize[1]{\left(#1\right)}
+\newcommand\dif{\mathrm{d}}
+\newcommand\Dif{\Delta}
+\newcommand\LinearInterpolation{\text{LInterp}}
+\)</span></p>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#notation-1">Notation 1</a></span><span class="word_count">(523w~3m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#notation-2">Notation 2</a></span><span class="word_count">(126w~1m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#prerequisites">Prerequisites</a></span><span class="word_count">(43w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#riemann-integrals">Riemann integrals</a></span><span class="word_count">(215w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#arc-length">Arc length</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#line-integral">Line integral</a></span><span class="word_count">(214w~2m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#hypervolume-integral">? Hypervolume integral</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#notation-for-multiple-integrals">Notation for multiple integrals</a></span><span class="word_count">(192w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#comparison-of-some-integrals">? Comparison of some integrals</a></span><span class="word_count">(134w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#digression">Digression</a></span><span class="word_count">(522w~3m)</span></li>
 </ul>
 </div>
-<h2 id="notation-1"><span class="section_number">1</span><span class="section_title">Notation 1</span></h2>
+<h2 id="prerequisites"><span class="section_number">1</span><span class="section_title">Prerequisites</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#linear-interpolation">? Linear interpolation</a></span><span class="word_count">(4w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#measure">Measure</a></span><span class="word_count">(40w~1m)</span></li>
+</ul>
+</div>
+<h3 id="linear-interpolation"><span class="section_number">1.1</span><span class="section_title">? Linear interpolation</span></h3>
+<p><a href="https://en.wikipedia.org/wiki/Linear_interpolation">Linear interpolation</a>:</p>
+<span class="math display">\[\begin{align*}
+\LinearInterpolation(a,b,0) &amp;= a
+\\ \LinearInterpolation(a,b,1) &amp;= b
+\\ \LinearInterpolation(a,b,p) &amp;= (1-p)a + pb
+\end{align*}
+\]</span>
+<h3 id="measure"><span class="section_number">1.2</span><span class="section_title">Measure</span></h3>
+<p>A <em>measure space</em> <span class="math inline">\((S,\mu)\)</span> is a space <span class="math inline">\(S\)</span> and a measure <span class="math inline">\(\mu : S \to \Real\)</span>.</p>
+<p>&quot;Measure&quot; generalizes the concept of length, area, volume, and hypervolume.</p>
+<p>Usually, at least in physics:</p>
+<span class="math display">\[\begin{align*}
+\mu([a,b]) &amp;= b-a
+\\ \mu([a,b)) &amp;= b-a
+\\ \mu((a,b]) &amp;= b-a
+\\ \mu((a,b)) &amp;= b-a
+\\ \mu(A \times B) &amp;= \mu(A) \times \mu(B)
+\\ \mu(A \cup B) &amp;= \mu(A) + \mu(B) - \mu(A \cap B)
+\\ \mu\left(\prod_k A_k\right) &amp;= \prod_k \mu(A_k)
+\end{align*}
+\]</span>
+<p>If we allow infinities, <span class="math inline">\( \mu(\Real) = \infty \)</span>; otherwise <span class="math inline">\( \mu(\Real) \)</span> is undefined.</p>
+<h2 id="riemann-integrals"><span class="section_number">2</span><span class="section_title">Riemann integrals</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#in-one-dimension">In one dimension</a></span><span class="word_count">(180w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#in-many-dimensions">In many dimensions</a></span><span class="word_count">(35w~1m)</span></li>
+</ul>
+</div>
+<h3 id="in-one-dimension"><span class="section_number">2.1</span><span class="section_title">In one dimension</span></h3>
+<p>Let <span class="math inline">\( (\Real,\mu) \)</span> be a <em>measure space</em>.</p>
+<p>Let <span class="math inline">\( f : \Real \to \Real \)</span> be the <em>integrand</em>.</p>
+<p>Let <span class="math inline">\( X = [a,b] \)</span> be the <em>domain of integration</em>.</p>
+<p>Let <span class="math inline">\(n\)</span> be the number of partitions.</p>
+<p>Partition <span class="math inline">\(X\)</span> evenly into <span class="math inline">\(n\)</span> partitions <span class="math inline">\(p_0, \ldots, p_{n-1}\)</span> such that, for each <span class="math inline">\(k\)</span>: <span class="math display">\[ \mu(p_k) = \frac{\mu(X)}{n} = \frac{b-a}{n} \]</span></p>
+<p>We write <span class="math inline">\( p_k^* \)</span> to mean &quot;any point in <span class="math inline">\(p_k\)</span>&quot;.</p>
+<p>A <em>Riemann summand</em> is the area of a rectangle: <span class="math display">\[ s_k = f(p_k^*) \cdot \mu(p_k) \]</span></p>
+<p>The <em>Riemann sum</em> is the sequence <span class="math inline">\( S_1, S_2, \ldots \)</span> where: <span class="math display">\[ S_n = \sum_{k=0}^{n-1} s_k \]</span></p>
+<p>The <em>Riemann integral</em> is the limit of the Riemann sum: <span class="math display">\[ I_X f = \int_X f(x)~\dif x = \int_a^b f(x) ~ \dif x = \lim_{n\to\infty} S_n \]</span></p>
+<p>As <span class="math inline">\(n\)</span> grows unbounded, the sum involves more numerous but smaller partitions, and the sum approaches the area under the curve.</p>
+<p>The integral sign <span class="math inline">\(\int\)</span> is a stylized letter &quot;S&quot; that stands for &quot;sum&quot;.</p>
+<p>The notation <span class="math inline">\(\int_a^b f(x)~\dif x\)</span> means &quot;the area enclosed by the line <span class="math inline">\(x=a\)</span>, the line <span class="math inline">\(x=b\)</span>, the line <span class="math inline">\(y=0\)</span>, and the curve <span class="math inline">\(y=f(x)\)</span>&quot;. Negative area means that the curve <span class="math inline">\(y=f(x)\)</span> goes below the line <span class="math inline">\(y=0\)</span>. See <a href="https://commons.wikimedia.org/wiki/File:Integral_example.svg?">picture</a>. See <a href="https://en.wikipedia.org/wiki/Integral">Wikipedia</a>.</p>
+<h3 id="in-many-dimensions"><span class="section_number">2.2</span><span class="section_title">In many dimensions</span></h3>
+<p>Let <span class="math inline">\( f : \Real^r \to \Real \)</span> replace the integrand.</p>
+<p>Let <span class="math inline">\( X = X_1 \times \ldots \times X_r \)</span> replace the domain of integration.</p>
+<p>Let <span class="math inline">\( X_i = [a_i,b_i] \)</span> for each <span class="math inline">\(i\)</span>.</p>
+<p>Then the Riemann integral is replaced by:</p>
+<span class="math display">\[\begin{align*}
+I_X f &amp;= \int_X f(x)~\dif x
+\\ &amp;= \int_{X_r} \ldots \int_{X_1} f(x_1,\ldots,x_r) ~ \dif x_1 ~ \ldots ~ \dif x_r
+\\ &amp;= \int_{a_r}^{b_r} \ldots \int_{a_1}^{b_1} f(x_1,\ldots,x_r) ~ \dif x_1 ~ \ldots ~ \dif x_r
+\end{align*}
+\]</span>
+<h2 id="arc-length"><span class="section_number">3</span><span class="section_title">Arc length</span></h2>
+<p>See <a href="https://en.wikipedia.org/wiki/Arc_length#Finding_arc_lengths_by_integrating">Wikipedia</a>.</p>
+<p>Let <span class="math inline">\(f : [a,b] \to \Real\)</span>.</p>
+<p>Let <span class="math inline">\(f&#39;\)</span> be the derivative of <span class="math inline">\(f\)</span>.</p>
+<p>The arc length of the curve described by the <a href="https://en.wikipedia.org/wiki/Graph_of_a_function">graph</a> of <span class="math inline">\(f\)</span> is <span class="math display">\[ \int_a^b \sqrt{1 + (f&#39;(x))^2}~\dif x \]</span></p>
+<h2 id="line-integral"><span class="section_number">4</span><span class="section_title">Line integral</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#of-scalar-fields">Of scalar fields</a></span><span class="word_count">(210w~2m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#of-vector-fields">? Of vector fields</a></span><span class="word_count">(4w~1m)</span></li>
+</ul>
+</div>
+<h3 id="of-scalar-fields"><span class="section_number">4.1</span><span class="section_title">Of scalar fields</span></h3>
+<p>See <a href="https://en.wikipedia.org/wiki/Line_integral#Derivation">derivation</a>.</p>
+<p>See the picture in <a href="https://en.wikipedia.org/wiki/Line_integral">Wikipedia</a>.</p>
+<p>Begin with the basic case.</p>
+<p>Let <span class="math inline">\(X = [a,b]\)</span>.</p>
+<p>Let <span class="math inline">\(c : X \to Y\)</span> be a curve.</p>
+<p>Let <span class="math inline">\(f : Y \to \Real\)</span> be the integrand (a scalar field).</p>
+<p>Partition <span class="math inline">\(X\)</span> evenly to <span class="math inline">\(n\)</span> subintervals <span class="math inline">\( p_0, \ldots, p_{n-1} \)</span>.</p>
+<p>We write <span class="math inline">\(c[A]\)</span> to mean <span class="math inline">\(\SetBuilder{c(x)}{x \in A}\)</span>.</p>
+<p>If we compare a line integral summand and a Riemann summand as follows, we see that a Riemann integral is a line integral along an identity curve described by <span class="math inline">\(c(x) = x\)</span> for all <span class="math inline">\(x \in X\)</span>:</p>
+<span class="math display">\[\begin{align*}
+s_k &amp;= f(p_k^*) \cdot \mu(c[p_k]) &amp; \text{(line integral summand)}
+\\ s_k &amp;= f(p_k^*) \cdot \mu(p_k) &amp; \text{(Riemann summand)}
+\end{align*}
+\]</span>
+<p>By <span class="math inline">\(\mu(c[p_k])\)</span>, we mean &quot;the arc length of the subcurve <span class="math inline">\(c[p_k]\)</span>&quot;?</p>
+<p>The magical step is the application of the mean value theorem?</p>
+<p>We write <span class="math inline">\( I_c f \)</span> to mean &quot;the line integral of <span class="math inline">\(f\)</span> <em>along</em> <span class="math inline">\(c\)</span>&quot;.</p>
+<p><a href="https://en.wikipedia.org/wiki/Line_integral#Applications">Example</a>: work done by force on a particle?</p>
+<p>If <span class="math inline">\(X=[a,b]\)</span>, then &quot;Riemann integral of <span class="math inline">\(f\)</span> in <span class="math inline">\(X\)</span>&quot; is the same as &quot;line integral of <span class="math inline">\(f\)</span> along <span class="math inline">\(\text{id}_X\)</span>&quot;, where <span class="math inline">\( \text{id}_X : X \to X \)</span> and <span class="math inline">\( \text{id}_X(x) = x \)</span>.</p>
+<p>This table compares a Riemann integral and a line integral:</p>
+<table>
+<thead>
+<tr class="header">
+<th>term</th>
+<th>Riemann integral</th>
+<th>line integral</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td>of <span class="math inline">\(f\)</span> in <span class="math inline">\(X\)</span></td>
+<td>of <span class="math inline">\(f\)</span> along <span class="math inline">\(c\)</span></td>
+</tr>
+<tr class="even">
+<td>notation</td>
+<td><span class="math inline">\( I_{[a,b]} f = \int_a^b f(x) ~ \dif x \)</span></td>
+<td><span class="math inline">\(I_c f\)</span></td>
+</tr>
+<tr class="odd">
+<td>type of integrand <span class="math inline">\(f\)</span></td>
+<td><span class="math inline">\(X \to \Real\)</span></td>
+<td><span class="math inline">\(Y \to \Real\)</span></td>
+</tr>
+<tr class="even">
+<td>type of curve <span class="math inline">\(c\)</span></td>
+<td><span class="math inline">\(X \to X\)</span></td>
+<td><span class="math inline">\(X \to Y\)</span></td>
+</tr>
+<tr class="odd">
+<td>curve <span class="math inline">\(c\)</span></td>
+<td><span class="math inline">\(c(x)=x\)</span></td>
+<td>anything</td>
+</tr>
+<tr class="even">
+<td>domain of integration <span class="math inline">\(X\)</span></td>
+<td><span class="math inline">\([a,b]\)</span></td>
+<td><span class="math inline">\([a,b]\)</span></td>
+</tr>
+<tr class="odd">
+<td>partition <span class="math inline">\(p_k\)</span></td>
+<td><span class="math inline">\(X_k\)</span></td>
+<td><span class="math inline">\(c[X_k]\)</span></td>
+</tr>
+<tr class="even">
+<td>partition measure <span class="math inline">\(\mu(p_k)\)</span></td>
+<td><span class="math inline">\(\frac{b-a}{n}\)</span></td>
+<td>arc length of <span class="math inline">\(p_k\)</span></td>
+</tr>
+<tr class="odd">
+<td>summand <span class="math inline">\(s_k\)</span></td>
+<td><span class="math inline">\(f(p_k^*) \cdot \mu(p_k)\)</span></td>
+<td><span class="math inline">\(f(p_k^*) \cdot \mu(c[p_k])\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="of-vector-fields"><span class="section_number">4.2</span><span class="section_title">? Of vector fields</span></h3>
+<h2 id="hypervolume-integral"><span class="section_number">5</span><span class="section_title">? Hypervolume integral</span></h2>
+<p>Surface integral, volume integral, etc.</p>
+<h2 id="notation-for-multiple-integrals"><span class="section_number">6</span><span class="section_title">Notation for multiple integrals</span></h2>
+<p>I propose another notation for <a href="https://en.wikipedia.org/wiki/Multiple_integral">multiple integrals</a> at the end of this section.</p>
+<p>Suppose that <span class="math inline">\(f : \Real^3 \to \Real\)</span>.</p>
+<p>We write <span class="math inline">\(f(x,y,z)\)</span> to mean <span class="math inline">\(f(xi+yj+zk)\)</span> where <span class="math inline">\(i,j,k\)</span> are the standard Cartesian basis vectors.</p>
+<p>Let <span class="math inline">\( V = X \times Y \times Z \)</span>.</p>
+<p>The common notation for multiple integrals exposes too much detail: <span class="math display">\[
+\iiint_V f(x,y,z) ~ \dif x ~ \dif y ~ \dif z
+= \int_Z \int_Y \int_X f(x,y,z) ~ \dif x ~ \dif y ~ \dif z
+\]</span></p>
+<p>The integral sign should work with all measure spaces, not only with <span class="math inline">\( \Real \)</span>, because the Riemann integral (the following equation) accepts all measure spaces: <span class="math display">\[
+I_V f = \int_V f(x) ~ \dif x = \lim_{n \to \infty} \sum_{p \in P(V,n)} f(p^*) \cdot \mu(p)
+\]</span> where <span class="math inline">\(P(V,n)\)</span> is a set of <span class="math inline">\(n\)</span> partitions of <span class="math inline">\(V\)</span>, and <span class="math inline">\( p^* \)</span> is a point in partition <span class="math inline">\(p\)</span>, and <span class="math inline">\( \mu \)</span> is the measure in context.</p>
+<p>(See <a href="https://en.wikipedia.org/wiki/Riemann_sum#Generalization">generalized Riemann sum</a>. A Riemann integral is the limit of a Riemann sum as the partitions vanish.)</p>
+<p>I propose this notation, which treats all measure spaces such as <span class="math inline">\(V\)</span> uniformly: <span class="math display">\[
+\int_V f(v^*) ~ \dif v
+\]</span> where <span class="math inline">\(v^*\)</span> mean a point in an infinitesimal subspace <span class="math inline">\(\dif v\)</span> of <span class="math inline">\(V\)</span>.</p>
+<h2 id="comparison-of-some-integrals"><span class="section_number">7</span><span class="section_title">? Comparison of some integrals</span></h2>
+<p>Let <span class="math inline">\((\Real,\mu)\)</span> be a measure space.</p>
+<p>Let <span class="math inline">\(f : \Real \to \Real\)</span> be a function (the &quot;integrand&quot;).</p>
+<p>Let <span class="math inline">\(X \subseteq \Real\)</span> be the domain of integration.</p>
+<p>Let <span class="math inline">\(Y = \{ f(x) ~\vert~ x \in X\}\)</span>.</p>
+<p>Let <span class="math inline">\(X_1,\ldots,X_{n+1}\)</span> be a partitioning of <span class="math inline">\(X\)</span>.</p>
+<p>Let <span class="math inline">\(Y_1,\ldots,Y_{n+1}\)</span> be a partitioning of <span class="math inline">\(Y\)</span>.</p>
+<p>For each <span class="math inline">\(k\)</span>, let <span class="math inline">\(x_k \in X_k\)</span> and <span class="math inline">\(y_k \in Y_k\)</span>. (Pick a point from each partition.)</p>
+<p>An <em>integral of function <span class="math inline">\( f \)</span> in space <span class="math inline">\( X \)</span></em> is <span class="math inline">\(I_X f = \lim_{n\to\infty} \sum_{k=1}^{n} a_k\)</span> where each <span class="math inline">\(a_k = \mu(X_k) \cdot \mu(Y_k)\)</span> is a rectangular part of the total area. There are several kinds of integrals depending on how the area is divided. See the table.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th><span class="math inline">\(X_k\)</span></th>
+<th><span class="math inline">\(Y_k\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Riemann integral</td>
+<td><span class="math inline">\([x_k,x_{k+1}]\)</span></td>
+<td><span class="math inline">\([0,f(x_k)]\)</span></td>
+</tr>
+<tr class="even">
+<td>Stieltjes integral with respect to <span class="math inline">\(g\)</span>?</td>
+<td><span class="math inline">\([g(x_k),g(x_{k+1})]\)</span></td>
+<td><span class="math inline">\([0,f(x_k)]\)</span></td>
+</tr>
+<tr class="odd">
+<td>Lebesgue integral</td>
+<td><span class="math inline">\( \{x ~\vert~ f(x) \in Y_k\} \)</span></td>
+<td><span class="math inline">\([y_k,y_{k+1}]\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>In Riemann integral, you divide <span class="math inline">\(X\)</span> freely.</p>
+<p>In Lebesgue integral, you divide <span class="math inline">\(Y\)</span> freely.</p>
+<h2 id="digression"><span class="section_number">8</span><span class="section_title">Digression</span></h2>
 <p>(Archimedes? Riemann?)</p>
 <p>A simple closed path divides a space into two: the space inside the shape and the space outside the shape.</p>
 <p>We want to compute the amount of space inside the shape (the area enclosed by the shape).</p>
@@ -219,41 +441,6 @@ I_{[1,2]} (x \mapsto x^2) &amp;= \lim_{n \to \infty} \sum_{p \in P([1,2],n)} (x 
 <p>The fundamental theorem of calculus makes integration so much easier that integrating monomial functions become embarrassingly trivial because the theorem enables us to derive the power rule for integrals from the power rule for derivatives. The theorem enables technologies that reduce many problems from complicated algebraic juggling to simple pattern matching.</p>
 <p>A mathematical theorem is a technology too, because it increases productivity (it makes life easier, it reduces the effort required to accomplish something).</p>
 <p>We take this for granted, but we should not forget that for hundreds of years people did not know that and they painstakingly did things so that we do not have to, and for that we should be grateful.</p>
-<h2 id="notation-2"><span class="section_number">2</span><span class="section_title">Notation 2</span></h2>
-<p>Let <span class="math inline">\((\Real,m)\)</span> be a measure space.</p>
-<p>Let <span class="math inline">\(f : \Real \to \Real\)</span> be a function.</p>
-<p>Let <span class="math inline">\(X \subseteq \Real\)</span> and <span class="math inline">\(Y = \{ f(x) ~\vert~ x \in X\}\)</span>.</p>
-<p>Let <span class="math inline">\(X_1,\ldots,X_{n+1}\)</span> be a partitioning of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y_1,\ldots,Y_{n+1}\)</span> be a partitioning of <span class="math inline">\(Y\)</span>.</p>
-<p>For each <span class="math inline">\(k\)</span>, let <span class="math inline">\(x_k \in X_k\)</span> and <span class="math inline">\(y_k \in Y_k\)</span>. (Pick a point from each partition.)</p>
-<p>An <em>integral of function <span class="math inline">\( f \)</span> in space <span class="math inline">\( X \)</span></em> is <span class="math inline">\(I_X f = \lim_{n\to\infty} \sum_{k=1}^{n} a_k\)</span> where each <span class="math inline">\(a_k = m(X_k) \cdot m(Y_k)\)</span> is a rectangular part of the total area. There are several kinds of integrals depending on how the area is divided. See the table.</p>
-<table>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th><span class="math inline">\(X_k\)</span></th>
-<th><span class="math inline">\(Y_k\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Riemann integral</td>
-<td><span class="math inline">\([x_k,x_{k+1}]\)</span></td>
-<td><span class="math inline">\([0,f(x_k)]\)</span></td>
-</tr>
-<tr class="even">
-<td>Stieltjes integral with respect to <span class="math inline">\(g\)</span>?</td>
-<td><span class="math inline">\([g(x_k),g(x_{k+1})]\)</span></td>
-<td><span class="math inline">\([0,f(x_k)]\)</span></td>
-</tr>
-<tr class="odd">
-<td>Lebesgue integral</td>
-<td><span class="math inline">\( \{x ~\vert~ f(x) \in Y_k\} \)</span></td>
-<td><span class="math inline">\([y_k,y_{k+1}]\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>In Riemann integral, you divide <span class="math inline">\(X\)</span> freely.</p>
-<p>In Lebesgue integral, you divide <span class="math inline">\(Y\)</span> freely.</p>
 <section class="footnotes">
 <hr />
 <ol>
