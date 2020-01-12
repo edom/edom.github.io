@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On management</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On management</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#senior-lead-manager-director">Senior, lead, manager, director</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#management-hiring-culture-anarchy">Management, hiring, culture, anarchy</a></span><span class="word_count">(831w~5m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#management-is-farming">Management is farming</a></span><span class="word_count">(113w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#social-pitfalls">Social pitfalls?</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#plan">Plan</a></span><span class="word_count">(19w~1m)</span></li>
+</ul>
+</div>
+<h2 id="senior-lead-manager-director"><span class="section_number">1</span><span class="section_title">Senior, lead, manager, director</span></h2>
+<p>Etymology clears up the differences.</p>
+<p>Senior = older.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>Lead = to show the way.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>Manage = handle or train a horse.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>Handle = &quot;touch with the hands, hold in the hands, fondle, pet&quot;<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>A director <em>directs</em>. Directors knows what they want.</p>
+<h2 id="management-hiring-culture-anarchy"><span class="section_number">2</span><span class="section_title">Management, hiring, culture, anarchy</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#what-is-management">What is management?</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#what-management">What management?</a></span><span class="word_count">(69w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#hiring-a-person-is-like-buying-a-bundle-of-candies-mixed-with-shit">Hiring a person is like buying a bundle of candies mixed with shit</a></span><span class="word_count">(128w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#what-is-the-difference-between-the-10000-indonesian-programmer-and-the-100000-american-programmer">What is the difference between the $10,000 Indonesian programmer and the $100,000 American programmer?</a></span><span class="word_count">(81w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#standard-questions-for-open-source-projects">Standard questions for open-source projects</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">2.6</span><span class="section_title"><a href="#why-is-nobody-using-my-open-source-project">Why is nobody using my open source project?</a></span><span class="word_count">(104w~1m)</span></li>
+<li><span class="section_number">2.7</span><span class="section_title"><a href="#sometimes-lateness-is-not-software-engineers-fault">Sometimes lateness is not software engineers' fault</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">2.8</span><span class="section_title"><a href="#making-jobs-even-more-granular">Making jobs even more granular</a></span><span class="word_count">(209w~2m)</span></li>
+<li><span class="section_number">2.9</span><span class="section_title"><a href="#article-what-is-the-best-way-for-developers-to-learn-new-software-tools-an-empirical-comparison-between-a-text-and-a-video-tutorial">2017 article &quot;What Is the Best Way For Developers to Learn New Software Tools? An Empirical Comparison Between a Text and a Video Tutorial&quot;</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">2.10</span><span class="section_title"><a href="#human-aspect">Human aspect</a></span><span class="word_count">(93w~1m)</span></li>
+<li><span class="section_number">2.11</span><span class="section_title"><a href="#how-do-others-do-it">How do others do it?</a></span><span class="word_count">(70w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-is-management"><span class="section_number">2.1</span><span class="section_title">What is management?</span></h3>
+<p>What did it mean to manage horses? Why did people manage horses?</p>
+<h3 id="what-management"><span class="section_number">2.2</span><span class="section_title">What management?</span></h3>
+<p>I tried to think about <a href="engman.html">managing software engineers</a>.</p>
+<p>&quot;When hiring senior engineers, you’re not buying, you’re selling.&quot; (Alexander von Franqué)<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>&quot;Why Developers Become Frustrated And Companies Can’t Find Talent&quot;<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>: &quot;In order to survive, a software project needs to sacrifice quality for money and time. In order to exist, a software project needs to sacrifice money and time for quality.&quot;</p>
+<p>Am I the only person who feels that engineers are generally anarchists?</p>
+<h3 id="hiring-a-person-is-like-buying-a-bundle-of-candies-mixed-with-shit"><span class="section_number">2.3</span><span class="section_title">Hiring a person is like buying a bundle of candies mixed with shit</span></h3>
+<p>When you hire a man, you can't just get his good side: you get both his good side and his bad side. When you hire a fast coder who is also a drunkard, a gambler, and a thief, you get not only the fast coder, but also the drunkard, the gambler, and the thief. You get all aspects of him.</p>
+<p>It's the same with Android phones and telecommunication companies. Android phones are bundled with unwanted Google shit. Telkomsel Internet plans are bundled with unwanted movie quota shit. Why don't they have a no-bullshit pure-Internet plan?</p>
+<p>The art of hiring is determining whether a candidate's good side outweights his bad side.</p>
+<p>Teaching skills is easier than changing habits or characters.</p>
+<h3 id="what-is-the-difference-between-the-10000-indonesian-programmer-and-the-100000-american-programmer"><span class="section_number">2.4</span><span class="section_title">What is the difference between the $10,000 Indonesian programmer and the $100,000 American programmer?</span></h3>
+<p>Is it location? Will a $10,000 Indonesian programmer suddenly become a $100,000 Indonesian programmer just by moving to America? Are American companies simply able/willing to pay more?</p>
+<p>The average Indonesian does not know English. Not all computer science undergraduates can write code, let alone think abstractly. This seems to afflict all countries.</p>
+<p>Is it skill/ability? Is the $100,000 American programmer more capable than the $10,000 Indonesian programmer?</p>
+<p>Is it racism?</p>
+<p>Inconclusive discussion<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
+<h3 id="standard-questions-for-open-source-projects"><span class="section_number">2.5</span><span class="section_title">Standard questions for open-source projects</span></h3>
+<ul>
+<li>Why does this project exist? What problem does it solve?</li>
+<li>How do I use it?</li>
+<li>How do I contribute? Code? Money? Documentation? Something else?</li>
+<li>Where is the community?</li>
+<li>Where do the users hang out?</li>
+<li>Where do the developers/maintainers hang out?</li>
+</ul>
+<h3 id="why-is-nobody-using-my-open-source-project"><span class="section_number">2.6</span><span class="section_title">Why is nobody using my open source project?</span></h3>
+<ul>
+<li>There is no documentation.</li>
+<li>Their friends don't use it, because there is no documentation.</li>
+<li>You wrote some documentation, but they can't understand it or they can't find it, which means to them that there is no documentation.</li>
+<li>There is no documentation, because there is nothing to document. Make sure that your project actually does something significant and shareworthy.</li>
+<li>There is no license?</li>
+</ul>
+<p>How can people know whether they will like it and tell their friends, if people can't even know what it is!?</p>
+<p>It is too easy to get carried away with our beloved project and forget that telepathy has not been invented.</p>
+<h3 id="sometimes-lateness-is-not-software-engineers-fault"><span class="section_number">2.7</span><span class="section_title">Sometimes lateness is not software engineers' fault</span></h3>
+<p><span class="citation" data-cites="demarco2011all">[<a href="#ref-demarco2011all">1</a>]</span></p>
+<h3 id="making-jobs-even-more-granular"><span class="section_number">2.8</span><span class="section_title">Making jobs even more granular</span></h3>
+<p>Instead of these job titles:</p>
+<ul>
+<li>software engineer</li>
+<li>data scientist</li>
+<li>accountant</li>
+</ul>
+<p>How about these roles:</p>
+<ul>
+<li>the person who engineers software</li>
+<li>the person who, scientifically, formulates experiments and answers questions</li>
+<li>the person who keeps track of everything money-related</li>
+</ul>
+<p>And there is no 1:1 mapping from person to roles, unlike 1:1 mapping from person to job titles.</p>
+<p>The compensation is based on roles. If you want more money, take more roles, probably inventing your own roles.</p>
+<p>That is, we replace the question &quot;What are you&quot; with &quot;What do you do&quot;.</p>
+<p>But job &quot;titles&quot; become long. &quot;I am a software engineer&quot; vs &quot;I engineer software&quot; vs &quot;I design, implement, and maintain software&quot;.</p>
+<p>I don't need a &quot;regional manager&quot;. I need someone who &quot;helps me expand to such-and-such country&quot;.</p>
+<p>In 2019, &quot;engineer&quot; may be a verb, but &quot;science&quot; is hardly a verb. Even in 2015, &quot;I’m going to have to science the shit out of this&quot;<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<p>The question is &quot;Why are we hiring this person?&quot;</p>
+<p>What problem are we trying to solve by hiring this person?</p>
+<p>We are not solving problems; we are <em>trading</em> bigger problems with smaller problems. Hiring people solves some problems and creates new problems. But isn't that also true for everything we do? Every solution solves a problem and creates new problems. Thus the question is: Which problems would we rather handle?</p>
+<h3 id="article-what-is-the-best-way-for-developers-to-learn-new-software-tools-an-empirical-comparison-between-a-text-and-a-video-tutorial"><span class="section_number">2.9</span><span class="section_title">2017 article &quot;What Is the Best Way For Developers to Learn New Software Tools? An Empirical Comparison Between a Text and a Video Tutorial&quot;</span></h3>
+<ul>
+<li><a href="http://programming-journal.org/2017/1/17/">http://programming-journal.org/2017/1/17/</a></li>
+</ul>
+<h3 id="human-aspect"><span class="section_number">2.10</span><span class="section_title">Human aspect</span></h3>
+<p>Good code is more because of programmer discipline than because of the framework or language.<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
+<ul>
+<li>Emphasize maintainability, readability, understandability, changeability?</li>
+</ul>
+<p>Adding people to a late software project makes it later (Fred Brooks, &quot;No silver bullet&quot;).</p>
+<p>Newcoming programmers, no matter how experienced, need time to onboard; they are not immediately productive. Existing programmers must spend some time helping the newcoming programmers, temporarily reducing productivity even further.</p>
+<p>How do we concentrate? Does putting on a headphone enhance your focus, even if it isn't playing any sound? How about putting a motorcycle helmet (a friend of mine did that)?</p>
+<h3 id="how-do-others-do-it"><span class="section_number">2.11</span><span class="section_title">How do others do it?</span></h3>
+<ul>
+<li>2016 &quot;I Hire Engineers At Google–Here’s What I Look For (And Why)&quot;<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a></li>
+<li>2019 &quot;How I negotiated a $300,000 job offer in Silicon Valley&quot;<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>: multiple concurrent offers, make buyers bid against each other, respectfully</li>
+<li>Interesting? &quot;The irony is that dishonest people believe they are normal people in a dishonest world, so they have no problem telling the truth!&quot;<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></li>
+<li>unread
+<ul>
+<li>long text: <a href="http://organizationalphysics.com/2016/10/13/top-down-vs-bottom-up-hierarchy-or-how-to-build-a-self-managed-organization/">Top-down vs. Bottom-up Hierarchy: Or, How to Design a Self-Managed Organization</a></li>
+</ul></li>
+</ul>
+<h2 id="management-is-farming"><span class="section_number">3</span><span class="section_title">Management is farming</span></h2>
+<p>Table: manager farmer employee farm animal high-value low-maintenance employee chicken high-value high-maintenance employee cow low-value low-maintenance employee ? low-value high-maintenance employee jackal, fox, coyote, rat, racoon, parasite, weed</p>
+<p>Smart people should not be employees. Farm animals cannot propose new processes. A cow can't tell a farmer how to milk it better. It's the farmer's responsibility to understand the cow.</p>
+<p>Farmers don't make chicken lay eggs. Chickens lay eggs at their own pace. Farmers provide a conducive environment for chickens to lay eggs.</p>
+<p>A chicken is a high-value low-maintenance employee.</p>
+<p>A cow is a high-value high-maintenance employee. It must be milked. Chicken not.</p>
+<p>Horse</p>
+<p>Cat, dog</p>
+<p><a href="https://rz.mdrt.org/html/rtt201803-categorizing-employees/">https://rz.mdrt.org/html/rtt201803-categorizing-employees/</a></p>
+<p>Employee categorization by mission-criticality <a href="https://www.shrm.org/resourcesandtools/hr-topics/risk-management/pages/employeecategorization.aspx">https://www.shrm.org/resourcesandtools/hr-topics/risk-management/pages/employeecategorization.aspx</a></p>
+<p>How a leader categorizes their new employees <a href="https://www.tlnt.com/how-new-leaders-categorize-their-new-employees/">https://www.tlnt.com/how-new-leaders-categorize-their-new-employees/</a></p>
+<p>What? <a href="https://www.inc.com/geoffrey-james/its-official-open-plan-offices-are-now-dumbest-management-fad-of-all-time.html">https://www.inc.com/geoffrey-james/its-official-open-plan-offices-are-now-dumbest-management-fad-of-all-time.html</a></p>
+<h2 id="social-pitfalls"><span class="section_number">4</span><span class="section_title">Social pitfalls?</span></h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Sayre%27s_law">https://en.wikipedia.org/wiki/Sayre%27s_law</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Law_of_triviality">https://en.wikipedia.org/wiki/Law_of_triviality</a></li>
+</ul>
+<h2 id="plan"><span class="section_number">5</span><span class="section_title">Plan</span></h2>
+<p>Merge <a href="engman.html">file:engman.html</a>.</p>
+<div id="refs" class="references">
+<div id="ref-demarco2011all">
+<p>[1] DeMarco, T. 2011. All late projects are the same. <em>IEEE software</em>. 28, 6 (2011), 104–104. url: &lt;<a href="https://www.computer.org/csdl/magazine/so/2011/06/mso2011060104/13rRUwI5Uj1">https://www.computer.org/csdl/magazine/so/2011/06/mso2011060104/13rRUwI5Uj1</a>&gt;.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.etymonline.com/word/senior">https://www.etymonline.com/word/senior</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://www.etymonline.com/word/lead#etymonline_v_6615">https://www.etymonline.com/word/lead#etymonline_v_6615</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://www.etymonline.com/search?q=manage">https://www.etymonline.com/search?q=manage</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.etymonline.com/word/handle">https://www.etymonline.com/word/handle</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://hiringengineersbook.com/post/trouble-hiring/">https://hiringengineersbook.com/post/trouble-hiring/</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://codeburst.io/why-developers-become-frustrated-and-companies-cant-find-talent-c4114d8b72ac">https://codeburst.io/why-developers-become-frustrated-and-companies-cant-find-talent-c4114d8b72ac</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://marginalrevolution.com/marginalrevolution/2012/01/why-are-some-programmers-paid-more-than-others.html">https://marginalrevolution.com/marginalrevolution/2012/01/why-are-some-programmers-paid-more-than-others.html</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://stronglang.wordpress.com/2015/09/16/im-going-to-have-to-science-the-shit-out-of-this/">https://stronglang.wordpress.com/2015/09/16/im-going-to-have-to-science-the-shit-out-of-this/</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://blog.codinghorror.com/discipline-makes-strong-developers/">https://blog.codinghorror.com/discipline-makes-strong-developers/</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://www.fastcompany.com/3062713/i-hire-engineers-at-google-heres-what-i-look-for-and-why">https://www.fastcompany.com/3062713/i-hire-engineers-at-google-heres-what-i-look-for-and-why</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://blog.usejournal.com/how-i-negotiated-a-software-engineer-offer-in-silicon-valley-f11590f5c656">https://blog.usejournal.com/how-i-negotiated-a-software-engineer-offer-in-silicon-valley-f11590f5c656</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://medium.freecodecamp.org/hiring-right-an-engineers-perspective-on-tech-recruiting-7ee187ded22d">https://medium.freecodecamp.org/hiring-right-an-engineers-perspective-on-tech-recruiting-7ee187ded22d</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-11 00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

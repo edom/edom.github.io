@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On learning</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On learning</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<p><span class="math inline">\(
+\newcommand\Der{\mathrm{D}}
+\newcommand\dif{\mathrm{d}}
+\newcommand\Pmf{\mathrm{p}}% probability mass function
+\newcommand\Prm{\mathrm{P}}% probability measure
+\)</span></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#to-learn-something-is-to-get-better-at-it">To learn something is to get better at it</a></span><span class="word_count">(78w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#too-philosophical">Too philosophical?</a></span><span class="word_count">(263w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#teaching-autodidactism-and-metalearning">Teaching, autodidactism, and metalearning</a></span><span class="word_count">(196w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#learning-complexity">Learning complexity</a></span><span class="word_count">(107w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#colt-measuring-intelligence">COLT: measuring intelligence</a></span><span class="word_count">(257w~2m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#toward-a-unified-theory-of-learning">Toward a unified theory of learning?</a></span><span class="word_count">(70w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#adversarial-learning">Adversarial learning?</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#neural-networks">Neural networks?</a></span><span class="word_count">(83w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#models-of-learning">Models of learning</a></span><span class="word_count">(847w~5m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#on-learning-approximation-and-machine-learning">&lt;2019-11-27&gt; On learning, approximation, and machine learning</a></span><span class="word_count">(139w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(131w~1m)</span></li>
+</ul>
+</div>
+<h2 id="to-learn-something-is-to-get-better-at-it"><span class="section_number">1</span><span class="section_title">To learn something is to get better at it</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#extrinsicblack-boxoperationaltest-score-model">Extrinsic/black-box/operational/test-score model</a></span><span class="word_count">(70w~1m)</span></li>
+</ul>
+</div>
+<h3 id="extrinsicblack-boxoperationaltest-score-model"><span class="section_number">1.1</span><span class="section_title">Extrinsic/black-box/operational/test-score model</span></h3>
+<p>&quot;Better&quot; implies an ordering of goodness, and &quot;get better&quot; implies time, so we may model learning as an <em>increasing test scores</em>.</p>
+<p>Caution: The agent maximizes the test score without necessarily understanding anything; the agent may learn the <em>dataset bias</em> instead of the desired feature; but here we do not discuss about making good tests.</p>
+<p>Let <span class="math inline">\(s(t)\)</span> be the agent's <em>test score</em> at time <span class="math inline">\(t\)</span>.</p>
+<p>The agent's <em>learning rate</em> is <span class="math inline">\( \Der s \)</span>.</p>
+<h2 id="too-philosophical"><span class="section_number">2</span><span class="section_title">Too philosophical?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#learning">Learning</a></span><span class="word_count">(94w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#on-the-prerequisites-of-learning">On the prerequisites of learning</a></span><span class="word_count">(78w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#philosophy-of-learning">Philosophy of learning?</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#intelligence-without-learning">Intelligence without learning</a></span><span class="word_count">(84w~1m)</span></li>
+</ul>
+</div>
+<h3 id="learning"><span class="section_number">2.1</span><span class="section_title">Learning</span></h3>
+<p>Learner <em>learns</em> Thing iff Learner <em>causes</em> itself to <em>get better</em> at Thing. A teacher may <em>contribute</em> to the improvement, but the learner itself <em>causes</em> that improvement.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Learning is self-improvement.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> &quot;To <em>learn</em> Thing&quot; is to <em>become more intelligent</em> in Thing; remember that intelligence is relative. For example, &quot;they learn to cook&quot; means that they are trying to get better in cooking, that is, how to cook more tasty food with less effort in less time. &quot;Learning X&quot; means finding a way to use the brain more efficiently for X so that X feels more effortless.</p>
+<h3 id="on-the-prerequisites-of-learning"><span class="section_number">2.2</span><span class="section_title">On the prerequisites of learning</span></h3>
+<p>In order for learning to be possible at all, there has to be an intersection between the learner's architecture and the learnee's inherent structure. We can learn some laws of Nature because there is an intersection between the way we learn/think and the way Nature works.</p>
+<p>What is the absolute minimum requirements for learning?</p>
+<p>Learning requires feedback and changeable internal state. How do we formalize &quot;experience&quot;? &quot;Experience&quot; can be modeled by a sequence? experience? mistakes? memory?</p>
+<h3 id="philosophy-of-learning"><span class="section_number">2.3</span><span class="section_title">Philosophy of learning?</span></h3>
+<p><a href="http://learning.media.mit.edu/content/publications/EA.Piaget%20_%20Papert.pdf">Piaget's constructivism vs Papert's constructionism</a>, Edith Ackermann</p>
+<h3 id="intelligence-without-learning"><span class="section_number">2.4</span><span class="section_title">Intelligence without learning</span></h3>
+<p>What is the relationship between intelligence and learning? Can we have one without the other? Yes. A system that stops learning after it obtains intelligence is still intelligent. A computer program with sufficiently many conditionals is intelligent, but it never learns. An intelligent system does not have to learn. A non-learning intelligent system will continue to satisfy its goal as long as the system stays in the environments it is familiar with.</p>
+<p>Both intelligence and learning requires measuring <em>how well</em> something is done.</p>
+<h2 id="teaching-autodidactism-and-metalearning"><span class="section_number">3</span><span class="section_title">Teaching, autodidactism, and metalearning</span></h2>
+<p>What is teaching? &quot;Teacher <em>teaches</em> Thing to Learner&quot; iff Teacher <em>helps</em> Learner learn Thing. Teaching is mostly about sequencing lessons to maximize learning speed.</p>
+<p>What is the relationship between teaching and learning? Teachers needs learners, because otherwise there is no one to teach. If learning is the shaping of belief, then teaching is the spreading of belief. Belief is software: belief can be duplicated but not be moved. Language enables some belief transfer and capture. If we know how to learn, then we know how to teach, and also the converse. &quot;Learn&quot; is a transitive verb that takes one object: one learns <em>something</em>. &quot;Teach&quot; is a transitive verb that takes <em>two</em> objects: one teaches <em>something</em> to <em>someone</em>, possibly to thonself in case of autodidactism. But &quot;autodidactism&quot; (&quot;self-teaching&quot;) is somewhat nonsensical: you can't tell yourself something that you don't know. When you read a book, the book <em>teaches</em> you, and you <em>learn</em> from the book. But you may speed up your learning using some metalearning techniques. Thus, when we say &quot;autodidactism&quot;, we actually mean &quot;metalearning&quot;. Of human learning, the most important ideas seem to be goal-directed learning, the forgetting curve<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>, and Bloom's taxonomy of learning<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<h2 id="learning-complexity"><span class="section_number">4</span><span class="section_title">Learning complexity</span></h2>
+<p>How complex is something to learn? Every computable thing is learnable, in principle. Formal language with lower descriptive complexity is more learnable. Smoother functions are more learnable. This suggests that computation theory : computation-complexity theory = learning theory : learning-complexity theory.</p>
+<p>Smoother functions are more learnable (easier to learn). Convex boundary is more learnable than concave boundary. A polyhedron is a three-dimensional polygon. A polytope is a higher-dimensional polyhedron. The analogy is polytope : polyhedron : polygon = hypercube : cube : square. The boundary of a cluster is a polytope. A cluster with convex polytope boundary is more learnable than a cluster with concave polytope boundary.</p>
+<h2 id="colt-measuring-intelligence"><span class="section_number">5</span><span class="section_title">COLT: measuring intelligence</span></h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Computational_learning_theory">Wikipedia: Computational learning theory</a>
+<ul>
+<li>What is the goal of computational learning theory?
+<ul>
+<li>&quot;Give a rigorous, computationally detailed and plausible account of how learning can be done.&quot; [Angluin1992]</li>
+</ul></li>
+<li>&quot;a subfield of Artificial Intelligence devoted to studying the design and analysis of machine learning algorithms&quot;</li>
+</ul></li>
+<li>Supervised learning is extrapolating a function from finite samples. Usually, the function is high-dimensional, and the samples are few.</li>
+<li>It is simple to measure learning success in perfect information games such as chess. Chess also doesn't require any sensors and motors.</li>
+</ul>
+<p>What COLT?</p>
+<ul>
+<li>2000, György Turán, <a href="https://link.springer.com/article/10.1023%2FA%3A1018948021083">Remarks on COLT</a></li>
+<li>2016, Krendzelak, Jakab, <a href="https://ieeexplore.ieee.org/document/7802092/">Fundamental principals of Computational Learning Theory</a>
+<ul>
+<li>Reading queue:
+<ul>
+<li>D. Angluin, C. Smith, &quot;Inductive inference: theory and methods&quot;, A.C.M. Computing Surveys, vol. 15, pp. 237-269, 1983.</li>
+<li>M. Anthony, N. Biggs, &quot;Computational Learning Theory&quot; in , Cambridge university press, 1992.</li>
+<li>M.J. Kearns, &quot;The computational Complexity of Machine Learning&quot; in , The MIT Press, May 1990.</li>
+<li>L. Pitt, L.G. Valiant, &quot;Computational limitations on learning from examples&quot;, Journal of the A.C.M., vol. 35, no. 4, pp. 965-984, 1988.</li>
+</ul></li>
+</ul></li>
+<li>helpful slides <a href="https://cs.uwaterloo.ca/~klarson/teaching/W15-486/lectures/22Colt.pdf">https://cs.uwaterloo.ca/~klarson/teaching/W15-486/lectures/22Colt.pdf</a></li>
+<li>Bertoni et al. http://elearning.unimib.it/pluginfile.php/283303/mod<sub>resource</sub>/content/1/Apprendimento<sub>Automatico</sub>/Computational<sub>Learning</sub>.pdf</li>
+<li><a href="https://stats.stackexchange.com/questions/142906/what-does-pac-learning-theory-mean">https://stats.stackexchange.com/questions/142906/what-does-pac-learning-theory-mean</a></li>
+<li><a href="https://pdfs.semanticscholar.org/presentation/fbbd/65646c8a81094864d4e0b0dfb9c1f22181af.pdf">https://pdfs.semanticscholar.org/presentation/fbbd/65646c8a81094864d4e0b0dfb9c1f22181af.pdf</a></li>
+<li><a href="http://web.cs.iastate.edu/~honavar/colt-tutorial.pdf">http://web.cs.iastate.edu/~honavar/colt-tutorial.pdf</a></li>
+<li><a href="http://www.cis.upenn.edu/~mkearns/">http://www.cis.upenn.edu/~mkearns/</a> the computational complexity of machine learning <a href="http://www.cis.upenn.edu/~mkearns/papers/thesis.pdf">http://www.cis.upenn.edu/~mkearns/papers/thesis.pdf</a> <a href="https://www.worldscientific.com/worldscibooks/10.1142/10175">https://www.worldscientific.com/worldscibooks/10.1142/10175</a></li>
+<li>2015 <a href="http://www.cs.tufts.edu/~roni/Teaching/CLT/">http://www.cs.tufts.edu/~roni/Teaching/CLT/</a></li>
+<li>probably link to this <a href="http://bactra.org/notebooks/learning-theory.html">http://bactra.org/notebooks/learning-theory.html</a></li>
+<li>semantics-first <a href="https://pdfs.semanticscholar.org/83e7/b615c165209af54dd0fe05c850bb08232625.pdf">https://pdfs.semanticscholar.org/83e7/b615c165209af54dd0fe05c850bb08232625.pdf</a></li>
+<li>discrete approximation theory see the references of this paper <a href="https://www.worldscientific.com/doi/suppl/10.1142/10175/suppl_file/10175_chap01.pdf">https://www.worldscientific.com/doi/suppl/10.1142/10175/suppl_file/10175_chap01.pdf</a></li>
+<li><a href="https://profs.info.uaic.ro/~ciortuz/SLIDES/ml7.pdf">https://profs.info.uaic.ro/~ciortuz/SLIDES/ml7.pdf</a></li>
+</ul>
+<p>Optimal learning for humans <a href="https://www.kqed.org/mindshift/37289">https://www.kqed.org/mindshift/37289</a></p>
+<p>Curate from this <a href="https://thesecondprinciple.com/optimal-learning/">https://thesecondprinciple.com/optimal-learning/</a></p>
+<p>Boston dynamics dog robots</p>
+<p>Tesla car autopilots</p>
+<p>Google and Uber self-driving cars</p>
+<p><a href="https://www.quora.com/Will-we-ever-have-a-rigorous-and-robust-definition-for-intelligence">https://www.quora.com/Will-we-ever-have-a-rigorous-and-robust-definition-for-intelligence</a></p>
+<p>rigorous definition of intelligence The new ai is general and rigorous, idsia Toward a theory of intelligence,RAND</p>
+<p>A system responds to a stimulus. Define: a system is <em>adapting</em> to a stimulus if the same stimulus level elicits decreasing response level from the system. The stimulus level has to be increased to maintain the response level.</p>
+<p>Is learning = adapting? Is intelligence = adaptiveness?</p>
+<h2 id="toward-a-unified-theory-of-learning"><span class="section_number">6</span><span class="section_title">Toward a unified theory of learning?</span></h2>
+<p>What is learning? Shallow definitions. To learn is to avoid repeating past mistakes.</p>
+<p>TODO Unify learning, prediction, modeling, approximation, control, hysteresis, memory. These things are similar:</p>
+<ul>
+<li>hysteresis</li>
+<li>memory</li>
+<li>smoothing</li>
+<li>infinite-impulse-response filter</li>
+</ul>
+<p><em>Optimal reverse prediction</em> unifies supervised and unsupervised learning <span class="citation" data-cites="xu2009optimal">[<a href="#ref-xu2009optimal">6</a>]</span>. Then <span class="citation" data-cites="white2012generalized">[<a href="#ref-white2012generalized">5</a>]</span> generalizes <span class="citation" data-cites="xu2009optimal">[<a href="#ref-xu2009optimal">6</a>]</span> to non-linear predictors.</p>
+<p>Is hysteresis<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>] learning? Is hysteresis memory? Does intelligence require learning?</p>
+<p>Is it possible to accomplish the same goal in different environments without learning?</p>
+<p>Use discrete sequences</p>
+<p>Gradient descent</p>
+<p><a href="https://forum.azimuthproject.org/discussion/1538/machine-learning">https://forum.azimuthproject.org/discussion/1538/machine-learning</a></p>
+<h2 id="adversarial-learning"><span class="section_number">7</span><span class="section_title">Adversarial learning?</span></h2>
+<p>How do we learn amid lies, deception, disinformation, misinformation? Related to adversarial learning? <a href="https://en.wikipedia.org/wiki/Adversarial_machine_learning">https://en.wikipedia.org/wiki/Adversarial_machine_learning</a> ?</p>
+<p><span class="math inline">\(P\)</span> tries to predict <span class="math inline">\(G\)</span>. <span class="math inline">\(G\)</span> tries to make <span class="math inline">\(P\)</span> wrong.</p>
+<h2 id="neural-networks"><span class="section_number">8</span><span class="section_title">Neural networks?</span></h2>
+<p>Neural networks is one architecture that makes machine trainable. Neural network is not necessarily the best architecture for intelligence. Evolution is a greedy optimization algorithm.</p>
+<p>Topologically, a neural network layer is a continuous map. It transforms the input space into a more separable space. Consider the set of points that satisfy the classifier. This set is a manifold. A neural network layer stretches, rotates, manipulates that manifold. The output wants to be box-shaped. But isn't this just the idea of Kohonen's self-organizing maps?</p>
+<h2 id="models-of-learning"><span class="section_number">9</span><span class="section_title">Models of learning</span></h2>
+<p>Most mathematical statements in this chapter are to be interpreted probabilistically (truth value continuum; non-binary truth value).</p>
+<p>There should be one theory of learning that can explain the learning done by humans, animals, plants, microbes, machines, etc.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#teaching-is-not-a-dual-of-learning">Teaching is not a dual of learning</a></span><span class="word_count">(56w~1m)</span></li>
+<li><span class="section_number">9.2</span><span class="section_title"><a href="#more-intrinsic-model">More intrinsic model</a></span><span class="word_count">(56w~1m)</span></li>
+<li><span class="section_number">9.3</span><span class="section_title"><a href="#discrete-time-learning">Discrete-time learning</a></span><span class="word_count">(108w~1m)</span></li>
+<li><span class="section_number">9.4</span><span class="section_title"><a href="#meta-learning">Meta-learning</a></span><span class="word_count">(9w~1m)</span></li>
+<li><span class="section_number">9.5</span><span class="section_title"><a href="#sobolev-space-approximation">Sobolev space approximation</a></span><span class="word_count">(55w~1m)</span></li>
+<li><span class="section_number">9.6</span><span class="section_title"><a href="#convergence">Convergence</a></span><span class="word_count">(99w~1m)</span></li>
+<li><span class="section_number">9.7</span><span class="section_title"><a href="#other-models-of-learning">Other models of learning</a></span><span class="word_count">(431w~3m)</span></li>
+<li><span class="section_number">9.8</span><span class="section_title"><a href="#more-about-learning">More about learning</a></span><span class="word_count">(3w~1m)</span></li>
+</ul>
+</div>
+<h3 id="teaching-is-not-a-dual-of-learning"><span class="section_number">9.1</span><span class="section_title">Teaching is not a dual of learning</span></h3>
+<p>Both &quot;agent X <em>teaches</em> agent Y Z&quot; and &quot;agent Y learns Z from agent X&quot; mean the same thing: &quot;X speeds up Y's learning Z&quot;.</p>
+<p>Teaching makes learning more efficient.</p>
+<p>A teacher <em>multiplies</em> a learner's productivity. No teacher can help a learner who produces zero (a learner who is unwilling to learn).</p>
+<h3 id="more-intrinsic-model"><span class="section_number">9.2</span><span class="section_title">More intrinsic model</span></h3>
+<p>Let <span class="math inline">\(Input\)</span> be the agent's input type.</p>
+<p>Let <span class="math inline">\(Output\)</span> be the agent's output type.</p>
+<p>Let <span class="math inline">\(S : Input \times Output \to \Real\)</span> be the <em>scoring function</em>.</p>
+<p>A <em>learning process</em> is a function from time to test score.</p>
+<p>Let <span class="math inline">\(x(t)\)</span> be the agent's input at time <span class="math inline">\(t\)</span>.</p>
+<p>Let <span class="math inline">\(y(t)\)</span> be the agent's output at time <span class="math inline">\(t\)</span>.</p>
+<p>Let <span class="math inline">\( s(t) = S(x(t),y(t)) \)</span>.</p>
+<h3 id="discrete-time-learning"><span class="section_number">9.3</span><span class="section_title">Discrete-time learning</span></h3>
+<p>Let <span class="math inline">\(x\)</span> be the agent's <em>input sequence</em> where each <span class="math inline">\(x_k \in Input\)</span>.</p>
+<p>Let <span class="math inline">\(y\)</span> be the agent's <em>output sequence</em> where each <span class="math inline">\(y_k \in Output\)</span>.</p>
+<p>Let <span class="math inline">\(s\)</span> be a sequence of <em>test scores</em> where each <span class="math inline">\(s_k = S(x_k,y_k)\)</span>.</p>
+<p>The agent <em>learns <span class="math inline">\(S\)</span></em> iff the sequence <span class="math inline">\(s\)</span> is increasing.</p>
+<p>The agent is <em><span class="math inline">\(m\)</span>-proficient at <span class="math inline">\(S\)</span> after time <span class="math inline">\(t\)</span></em> iff <span class="math inline">\(s_k \ge m\)</span> for all <span class="math inline">\(k \ge t\)</span>.</p>
+<p>The agent's <em>degree of mastery</em> (<em>degree of expertise</em>) is the minimum score it can reliably achieve.</p>
+<p>The agent's <em>learning rate</em> at time <span class="math inline">\(k\)</span> is <span class="math inline">\(r_k = s_k - s_{k-1}\)</span>.</p>
+<p>If there exists <span class="math inline">\(f\)</span> such that <span class="math inline">\(S(x,y) = \norm{y - f(x)}\)</span>, then the learning problem is also an optimization problem.</p>
+<h3 id="meta-learning"><span class="section_number">9.4</span><span class="section_title">Meta-learning</span></h3>
+<p>Meta-learning can be thought of optimization/maximization of learning rate.</p>
+<h3 id="sobolev-space-approximation"><span class="section_number">9.5</span><span class="section_title">Sobolev space approximation</span></h3>
+<p>Learning can be seen as <em>approximation in Sobolev spaces</em>.</p>
+<p>(See also: approximation theory, optimization theory, and functional analysis.)</p>
+<p>Another possibility: In 1984 Valiant proposed the PAC (probably approximately correct) learning model <span class="citation" data-cites="valiant1984theory">[<a href="#ref-valiant1984theory">4</a>]</span>, but it is limited to learning propositional logic formulas. It is one piece of the theory that we need to build intelligent systems.</p>
+<h3 id="convergence"><span class="section_number">9.6</span><span class="section_title">Convergence</span></h3>
+<p>Learning can be defined as <em>convergence</em>.</p>
+<p>Sequence, learning, and approximation:</p>
+<p>Here an <em>agent</em> is a sequence.</p>
+<p>The agent <span class="math inline">\(a : \Nat \to T\)</span> <em>learns</em> the target <span class="math inline">\(t : T\)</span> iff the sequence <span class="math inline">\(a\)</span> converges to <span class="math inline">\(t\)</span>.</p>
+<p>Formally, the agent <span class="math inline">\(a\)</span> learns the target <span class="math inline">\(t\)</span> iff <span class="math inline">\(\lim_{n\to\infty} a_n = t\)</span>.</p>
+<p>Let there be a system. Devise a test. Let the system do the test several times. Let the test results be the sequence <span class="math inline">\(x\)</span>. We say that the system is <em>getting better</em> at that test iff, mostly, <span class="math display">\[ i &lt; k \implies x_i &lt; x_k \]</span> that is, iff the sequence of test scores is <em>mostly increasing</em>.</p>
+<h3 id="other-models-of-learning"><span class="section_number">9.7</span><span class="section_title">Other models of learning</span></h3>
+<p>(Why do we bother discussing this if we won't use this further?) Psychology sees learning as adaptation and habituation. Formal education sees learning as <em>getting high grades</em> in exams. Epistemology sees learning as <em>acquisition of knowledge</em>. YouTube sees learning as <em>maximizing</em> people's addiction to YouTube so that they linger on YouTube, with the hope that they click more ads. Each of those models is about getting better in something.</p>
+<p>Preece 1984 <span class="citation" data-cites="preece1984mathematical">[<a href="#ref-preece1984mathematical">3</a>]</span><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>: differential equation model of learning: &quot;Hicklin [1976] envisaged that learning resulted from a dynamic equilibrium between information acquisition and loss&quot;.</p>
+<p>ML stands for &quot;machine learning&quot;. &quot;Machine learning addresses the question of how to build computers that improve automatically through experience.&quot;<span class="citation" data-cites="jordan2015machine">[<a href="#ref-jordan2015machine">2</a>]</span> However, we are not only interested in humans and machines, but in all intelligent beings.</p>
+<p>Machine learning is finding a function fitting a data list, minimizing error on unseen data. Machine learning is about how program improves with experience.</p>
+<p>Find a function fitting the data and minimizing the <em>loss function</em>.</p>
+<p>Given <span class="math inline">\([(x_1,y_1),\ldots,(x_n,y_n)]\)</span>, find <span class="math inline">\(f\)</span> minimizing <span class="math inline">\(\sum_k \norm{f(x_k) - y_k}^2\)</span>.</p>
+<p>A <em>model</em> is a constrained optimization problem: Given <span class="math inline">\(C\)</span>, compute <span class="math inline">\(\min_{x \in C} f(x)\)</span> or <span class="math inline">\(\argmin_{x \in C} f(x)\)</span>. If <span class="math inline">\(C\)</span> is discrete, use dynamic programming. If <span class="math inline">\(C\)</span> is continuous, use gradient descent.</p>
+<p>A <em>learner</em> inhabits <span class="math inline">\([(a,b)] \to (a \to b)\)</span>.</p>
+<p>A <em>loss function</em> inhabits <span class="math inline">\((a,b,\Real^\infty) \to \Real\)</span>.</p>
+<p>The <em>training loss</em> of <span class="math inline">\(g(x) = w \cdot f(x)\)</span> with respect to <span class="math inline">\(D\)</span> is <span class="math inline">\(\frac{1}{|D|} \sum_{(x,y) \in D} L(x,y,w)\)</span> where <span class="math inline">\(L\)</span> is the loss function.</p>
+<p>Learning is finding <span class="math inline">\(w\)</span> that minimizes the training loss.</p>
+<p>Let <span class="math inline">\(y \in \{-1,+1\}\)</span>. The <em>score</em> of <span class="math inline">\(f\)</span> for <span class="math inline">\((x,y)\)</span> is <span class="math inline">\(f(x)\)</span>. The <em>margin</em> of <span class="math inline">\(f\)</span> for <span class="math inline">\((x,y)\)</span> is <span class="math inline">\(f(x) \cdot y\)</span>.</p>
+<p>Binarization of <span class="math inline">\(f\)</span> is <span class="math inline">\(\sgn \circ f\)</span>.</p>
+<p>Least-squares linear regression</p>
+<p>Minimize training loss</p>
+<p>Gradient descent training with initial weight <span class="math inline">\(w_1\)</span>, iteration count <span class="math inline">\(T\)</span>, and step size <span class="math inline">\(\eta\)</span>: Let <span class="math inline">\(K : \Real^n \to \Real\)</span> be the training loss function. Let <span class="math inline">\(\nabla K\)</span> be the gradient of <span class="math inline">\(K\)</span>. The weight update equation is <span class="math inline">\(w_{t+1} = w_t - \eta \cdot (\nabla K)(w_t)\)</span> where <span class="math inline">\(w_1\)</span> may be random. The training result is <span class="math inline">\(w_T\)</span>.</p>
+<p>Stochastic gradient descent (SGD) training: <span class="math inline">\(w_{t+1} = w_t - \eta \cdot (\nabla(L~x_t~y_t))(w_t)\)</span>. Note the usage of the loss function <span class="math inline">\(L\)</span> instead of the training loss function <span class="math inline">\(K\)</span>.</p>
+<p>SGD is <em>online</em> or <em>incremental</em> training.</p>
+<p>Classification is regression with zero-one loss function. Every classification can be turned into regression by using <em>hinge loss</em> or <em>logistic regression</em>.</p>
+<p>The <em>logistic function</em> is <span class="math inline">\(f(x) = \frac{1}{1 + e^{-x}}\)</span>.</p>
+<p>Nearest neighbor with training data list <span class="math inline">\(D\)</span>: <span class="math inline">\(g(x&#39;) = y\)</span> where <span class="math inline">\((x,y) \in D\)</span> minimizing <span class="math inline">\(\norm{f(x&#39;) - f(x)}^2\)</span>.</p>
+<p>Seminal papers?<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<p>TODO Read?</p>
+<ul>
+<li><a href="https://arxiv.org/abs/1405.1513">Ibrahim Alabdulmohsin: A Mathematical Theory of Learning</a></li>
+<li>1999: <a href="http://www.cis.syr.edu/people/royer/stl2e/">Sanjay Jain et al.: Systems that learn</a></li>
+<li>2017, <a href="https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/building-machines-that-learn-and-think-for-themselves/E28DBFEC380D4189FB7754B50066A96F">Building machines that learn and think for themselves</a></li>
+<li><span class="citation" data-cites="geffner2018model">[<a href="#ref-geffner2018model">1</a>]</span></li>
+</ul>
+<h3 id="more-about-learning"><span class="section_number">9.8</span><span class="section_title">More about learning</span></h3>
+<p><a href="https://en.wikipedia.org/wiki/Learning">https://en.wikipedia.org/wiki/Learning</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Machine_learning">https://en.wikipedia.org/wiki/Machine_learning</a></p>
+<h2 id="on-learning-approximation-and-machine-learning"><span class="section_number">10</span><span class="section_title">&lt;2019-11-27&gt; On learning, approximation, and machine learning</span></h2>
+<p>Approximation error <span class="math inline">\( \sum_{x \in D} d(f(x),\hat{f}(x)) \)</span> where <span class="math inline">\(d\)</span> is the discrete metric<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> (equality comparison): <span class="math inline">\( d(x,y) = 0 \)</span> iff <span class="math inline">\( x = y \)</span> and <span class="math inline">\( d(x,y) = 1 \)</span> iff <span class="math inline">\( x \neq y \)</span>.</p>
+<p>Connectionist machine learning is the art of giving machines feelings, because feelings can hardly be explained by language, which is used for thinking and not feeling.</p>
+<p><span class="math inline">\( I_D(x \mapsto d(f(x),\hat{f}(x))) \)</span>.</p>
+<p><span class="math inline">\( d \)</span> is a distance function.</p>
+<p>Is there machine learning on finite fields? Boolean functions? Unit interval?</p>
+<p><span class="math inline">\( f : D \to C \)</span>.</p>
+<p><span class="math inline">\( f : \Real^\infty \to \Real \)</span>?</p>
+<p><span class="math inline">\( f : A^\infty \to A \)</span>?</p>
+<p><span class="math inline">\( f : A^n \to A \)</span> where <span class="math inline">\( A \)</span> is a finite field?</p>
+<p>Define learning. What does it mean to learn something? What does it mean to learn a function?</p>
+<p>How do we measure generalizability?</p>
+<p>Machine learning is about finding the shape of the approximating function?</p>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">11</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-geffner2018model">
+<p>[1] Geffner, H. 2018. Model-free, model-based, and general intelligence. <em>Proceedings of the twenty-seventh international joint conference on artificial intelligence, IJCAI-18</em> (Jul. 2018), 10–17. url: &lt;<a href="https://doi.org/10.24963/ijcai.2018/2">https://doi.org/10.24963/ijcai.2018/2</a>&gt;.</p>
+</div>
+<div id="ref-jordan2015machine">
+<p>[2] Jordan, M.I. and Mitchell, T.M. 2015. Machine learning: Trends, perspectives, and prospects. <em>Science</em>. 349, 6245 (2015), 255–260. url: &lt;<a href="http://www.cs.cmu.edu/~tom/pubs/Science-ML-2015.pdf">http://www.cs.cmu.edu/~tom/pubs/Science-ML-2015.pdf</a>&gt;.</p>
+</div>
+<div id="ref-preece1984mathematical">
+<p>[3] Preece, P.F. and Anderson, O. 1984. Mathematical modeling of learning. <em>Journal of Research in Science Teaching</em>. 21, 9 (1984), 953–955.</p>
+</div>
+<div id="ref-valiant1984theory">
+<p>[4] Valiant, L.G. 1984. A theory of the learnable. <em>Communications of the ACM</em>. 27, 11 (1984), 1134–1142. url: &lt;<a href="http://web.mit.edu/6.435/www/Valiant84.pdf">http://web.mit.edu/6.435/www/Valiant84.pdf</a>&gt;.</p>
+</div>
+<div id="ref-white2012generalized">
+<p>[5] White, M. and Schuurmans, D. 2012. Generalized optimal reverse prediction. <em>Artificial intelligence and statistics</em> (2012), 1305–1313. url: &lt;<a href="http://proceedings.mlr.press/v22/white12/white12.pdf">http://proceedings.mlr.press/v22/white12/white12.pdf</a>&gt;.</p>
+</div>
+<div id="ref-xu2009optimal">
+<p>[6] Xu, L. et al. 2009. Optimal reverse prediction: A unified perspective on supervised, unsupervised and semi-supervised learning. <em>Proceedings of the 26th annual international conference on machine learning</em> (2009), 1137–1144. url: &lt;<a href="http://people.ee.duke.edu/~lcarin/OptReversePred.pdf">http://people.ee.duke.edu/~lcarin/OptReversePred.pdf</a>&gt;.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>X <em>causes</em> Y iff the absence of X causes the absence of Y. On the other hand, X <em>contributes</em> to Y iff the existence of X changes the severity of Y.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&quot;Learning is a an area of AI that focuses on processes of self-improvement.&quot; <a href="http://users.cs.cf.ac.uk/Dave.Marshall/AI2/node131.html#SECTION000151000000000000000">http://users.cs.cf.ac.uk/Dave.Marshall/AI2/node131.html#SECTION000151000000000000000</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Forgetting_curve">https://en.wikipedia.org/wiki/Forgetting_curve</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy">https://en.wikipedia.org/wiki/Bloom%27s_taxonomy</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Hysteresis#Models_of_hysteresis">https://en.wikipedia.org/wiki/Hysteresis#Models_of_hysteresis</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>&lt;2020-01-12&gt; <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/tea.3660210910">https://onlinelibrary.wiley.com/doi/pdf/10.1002/tea.3660210910</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://www.quora.com/What-are-the-most-important-foundational-papers-in-artificial-intelligence-machine-learning">https://www.quora.com/What-are-the-most-important-foundational-papers-in-artificial-intelligence-machine-learning</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>&lt;2019-11-27&gt; <a href="https://en.wikipedia.org/wiki/Metric_(mathematics)#Examples">https://en.wikipedia.org/wiki/Metric_(mathematics)#Examples</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>&lt;2019-11-27&gt; <a href="https://en.wikipedia.org/wiki/Discrete_space">https://en.wikipedia.org/wiki/Discrete_space</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2017-06-22 03:57:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

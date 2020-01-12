@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On intelligence models</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On intelligence models</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<p><span class="math inline">\(
+\newcommand\Der{\mathrm{D}}
+\newcommand\dif{\mathrm{d}}
+\newcommand\Pmf{\mathrm{p}}% probability mass function
+\newcommand\Prm{\mathrm{P}}% probability measure
+\)</span></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#agent">Agent</a></span><span class="word_count">(231w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#agent-intelligence-model">Agent intelligence model</a></span><span class="word_count">(200w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#measuring-the-intelligence-of-a-phase-space-trajectory">Measuring the intelligence of a phase space trajectory?</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#self">Self</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#brain">Brain?</a></span><span class="word_count">(263w~2m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#aiml-taxonomy">AI/ML taxonomy?</a></span><span class="word_count">(241w~2m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#ramble">Ramble?</a></span><span class="word_count">(638w~4m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#on-adaptive-systems-and-boredom">&lt;2019-11-27&gt; On adaptive systems and boredom</a></span><span class="word_count">(49w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#required-mathematics">Required mathematics?</a></span><span class="word_count">(1540w~8m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(78w~1m)</span></li>
+</ul>
+</div>
+<h2 id="agent"><span class="section_number">1</span><span class="section_title">Agent</span></h2>
+<p>See also the Wikipedia article on <a href="https://en.wikipedia.org/wiki/Intelligent_agent">intelligent agents</a>.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#stateless-agent">Stateless agent</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#stateful-agent">Stateful agent</a></span><span class="word_count">(23w~1m)</span></li>
+<li><span class="section_number">1.3</span><span class="section_title"><a href="#vectorial">Vectorial</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">1.4</span><span class="section_title"><a href="#logical-and-perhaps-probabilistic">Logical, and perhaps probabilistic</a></span><span class="word_count">(34w~1m)</span></li>
+<li><span class="section_number">1.5</span><span class="section_title"><a href="#continuous-agent">Continuous agent</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">1.6</span><span class="section_title"><a href="#input-output-model">Input-output model?</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">1.7</span><span class="section_title"><a href="#discrete-dynamical-system-model">Discrete dynamical system model?</a></span><span class="word_count">(70w~1m)</span></li>
+<li><span class="section_number">1.8</span><span class="section_title"><a href="#endofunction">Endofunction?</a></span><span class="word_count">(13w~1m)</span></li>
+</ul>
+</div>
+<h3 id="stateless-agent"><span class="section_number">1.1</span><span class="section_title">Stateless agent</span></h3>
+<p>Agent input <span class="math inline">\(x : \Real \to Input\)</span>.</p>
+<p>Agent output <span class="math inline">\(y : \Real \to Output\)</span>.</p>
+<p>Constant behavior <span class="math inline">\( f \)</span> such that <span class="math display">\[ y(t) = f(x(t)) \]</span></p>
+<p>Also called &quot;reflex agent&quot;?</p>
+<h3 id="stateful-agent"><span class="section_number">1.2</span><span class="section_title">Stateful agent</span></h3>
+<p>Is the agent's memory part of the agent or part of the environment?</p>
+<p>State <span class="math inline">\(m\)</span>.</p>
+<p>Constant behavior <span class="math inline">\(f\)</span> such that <span class="math display">\[ (m(t+\dif t),y(t)) = f(m(t),x(t)) \]</span></p>
+<h3 id="vectorial"><span class="section_number">1.3</span><span class="section_title">Vectorial</span></h3>
+<p><span class="math inline">\( Input = \Real^m \)</span></p>
+<p><span class="math inline">\( Output = \Real^n \)</span></p>
+<h3 id="logical-and-perhaps-probabilistic"><span class="section_number">1.4</span><span class="section_title">Logical, and perhaps probabilistic</span></h3>
+<p>Given data/observations/experiments <span class="math inline">\( x_1 \wedge \ldots \wedge x_n \)</span>, infer the simplest hypothesis <span class="math inline">\( y \)</span> such that <span class="math inline">\( y \to (x_1 \wedge \ldots \wedge x_n) \)</span>.</p>
+<p>Example of generalization: <span class="math inline">\( p(a) \to \forall x [p(x)] \)</span>.</p>
+<h3 id="continuous-agent"><span class="section_number">1.5</span><span class="section_title">Continuous agent</span></h3>
+<p>Input: <span class="math inline">\( x(t) \)</span>.</p>
+<p>Output: <span class="math inline">\( y(t) \)</span>.</p>
+<p>Internal: <span class="math inline">\( y(t) = f(t,x(t)) \)</span>.</p>
+<h3 id="input-output-model"><span class="section_number">1.6</span><span class="section_title">Input-output model?</span></h3>
+<p>An agent has input and output.</p>
+<p>An <em>agent logic</em> is a function <span class="math inline">\(A : M \times I \to M \times O\)</span> where <span class="math inline">\(M\)</span> is the memory type, <span class="math inline">\(I\)</span> is the input type, and <span class="math inline">\(O\)</span> is the output type.</p>
+<p>We assume that the world remembers the agent memory.</p>
+<h3 id="discrete-dynamical-system-model"><span class="section_number">1.7</span><span class="section_title">Discrete dynamical system model?</span></h3>
+<p>Let <span class="math inline">\(w\)</span> be a world.</p>
+<p>Let <span class="math inline">\(a\)</span> be an agent in world <span class="math inline">\(w\)</span>.</p>
+<p>Let <span class="math inline">\(x~t\)</span> be the input of the agent at time <span class="math inline">\(t\)</span>.</p>
+<p>Let <span class="math inline">\(y~t\)</span> be the output of the agent at time <span class="math inline">\(t\)</span>.</p>
+<p>Let <span class="math inline">\(m~t\)</span> be the memory of the agent at time <span class="math inline">\(t\)</span>.</p>
+<p>We assume that the agent needs one time step to compute the output. <span class="math display">\[
+\begin{aligned}
+    y~(t+1) &amp;= Y~(x~t)~(m~t)~t
+    \\
+    m~(t+1) &amp;= M~(x~t)~(m~t)~t
+    \\
+    x~(t+1) &amp;= X~(x~t)~(y~t)~t
+\end{aligned}
+\]</span></p>
+<h3 id="endofunction"><span class="section_number">1.8</span><span class="section_title">Endofunction?</span></h3>
+<p>See <a href="endo.html">file:endo.html</a> (The endofunction model of worlds and agents, and its philosophical implications)?</p>
+<h2 id="what"><span class="section_number">2</span><span class="section_title">What</span></h2>
+<p>Intelligence model</p>
+<p>Legg &amp; Hutter AIXI</p>
+<p>Adaptation model</p>
+<p>Boredom model</p>
+<p>Learning model</p>
+<p>Knowledge/thought/reasoning model</p>
+<p>Feeling model</p>
+<p>Agent A feels feeling F with strength S iff …?</p>
+<p>Do people become bored when they meditate?</p>
+<h2 id="agent-intelligence-model"><span class="section_number">3</span><span class="section_title">Agent intelligence model</span></h2>
+<p>We assume that you have read <a href="endo.html">file:endo.html</a>.</p>
+<p>Now we define intelligence, but we have to define the required things first.</p>
+<p>We define the <em>orbit</em><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> of <span class="math inline">\(A\)</span> at <span class="math inline">\(x\)</span> as the sequence <span class="math inline">\(A^0(x), A^1(x), A^2(x), \ldots\)</span>.</p>
+<p>We have a function <span class="math inline">\(judge : (S&#39;)^\infty \to \Real\)</span> that judges an orbit.</p>
+<p>Now we assume that every state <span class="math inline">\(x \in S&#39;\)</span> is distributed uniformly. Define <span class="math inline">\(p(r)\)</span> as the probability of finding a state <span class="math inline">\(x\)</span> where <span class="math inline">\(judge(x) \le r\)</span>. The shape of the distribution <span class="math inline">\(p\)</span> describes the intelligence of the agent.</p>
+<p>The function <span class="math inline">\(penalty : S&#39; \to \Real\)</span> defines the undesirability of an agent state. Alternatively, the function <span class="math inline">\(reward : S&#39; \to \Real\)</span> defines the desirability of an agent state. The function measures how bad or how good the agent performs. This is the agent's hidden objective function. This is hardwired. This is arbitrary. The agent doesn't have to be aware of this. An intelligent agent acts to make its <span class="math inline">\(penalty(x)\)</span> as close to zero as possible in the long term for as many <span class="math inline">\(x\)</span> as possible.</p>
+<p>The agent displays an intelligent behavior if it can minimize the long-term penalty from lots of starting states. The most intelligent agent is the one that minimizes its lifelong sum of penalty?</p>
+<h2 id="measuring-the-intelligence-of-a-phase-space-trajectory"><span class="section_number">4</span><span class="section_title">Measuring the intelligence of a phase space trajectory?</span></h2>
+<p>We can think of a human as a dynamical system. Given two phase space trajectories, the most intelligent is the most homeostatic, the most stabilizing, the most controlling. (Why?)</p>
+<h2 id="self"><span class="section_number">5</span><span class="section_title">Self</span></h2>
+<p>An agent constructs its self model by correlating the output that is fed back to the input.</p>
+<p>Self is the extent of control.</p>
+<h2 id="brain"><span class="section_number">6</span><span class="section_title">Brain?</span></h2>
+<p>The brain is an associative machine and a pattern recognizer?</p>
+<p>The brain finds <em>associations across space</em> and <em>associations across time</em>, and find spatial patterns and temporal patterns and spatiotemporal patterns.</p>
+<p>What is the relationship between association and pattern?</p>
+<p>&quot;Together&quot; means in a space interval under a few meters and a time interval under a few hundred milliseconds.</p>
+<p>Each time agent X observes input E and input F having the same value, X increases its association strength of E and F.</p>
+<p>The input is X = [x1 … xn], an <span class="math inline">\( n \)</span>-dimensional vector; or an infinite vector with finite non-zero cells. Each cell is in [0,1].</p>
+<p>The correlation matrix is M, an <span class="math inline">\( n \times m \)</span> matrix; or an infinite matrix with finite non-zero cells.</p>
+<p>The output is Y = M X. Each cell is in [0,1]. The output can be interpreted classically as the output itself, or be interpreted probabilistically, in which each output cell is the probability of the firing the corresponding output actuator.</p>
+<pre class="example"><code>Y0 = M0 X0
+
+W1 = f(W0,Y0)
+X1 = g(W1)
+Y1 = M1 X1
+
+W2 = f(W1,Y1)
+X2 = g(W2)
+Y2 = M2 X2
+
+Wk = f(Wk-1,Yk-1)
+Xk = g(Wk)
+Yk = Mk Xk
+...
+</code></pre>
+<p>Some of the output feeds back into the input. Some of the input comes from the environment. This enables the agent to understand itself, that is, to build a model of itself, but not necessarily to know itself.</p>
+<p>The agent wants to minimize its approximation error Y - M X. That is, the agent wants to build an accurate self model. The question is: How should it update its M for the next time step?</p>
+<p>I think the key to making an AI is to make a machine that can establish association across spacetime.</p>
+<p>The brain does not understand causality. It only understands association. The mind understands mathematics and causality.</p>
+<h2 id="aiml-taxonomy"><span class="section_number">7</span><span class="section_title">AI/ML taxonomy?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#what-should-the-categories-be">What should the categories be?</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#functions-in-intelligence-models">Functions in intelligence models</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">7.3</span><span class="section_title"><a href="#hyperplane-classifier">Hyperplane classifier</a></span><span class="word_count">(43w~1m)</span></li>
+<li><span class="section_number">7.4</span><span class="section_title"><a href="#support-vector-machine">Support vector machine</a></span><span class="word_count">(121w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-should-the-categories-be"><span class="section_number">7.1</span><span class="section_title">What should the categories be?</span></h3>
+<p>Artificial intelligence is constrained optimization.</p>
+<p>Generate vs discriminative.</p>
+<p>Type type of an <em>expert system</em> is <span class="math inline">\(Facts \to Query \to Answer\)</span>. Decision tree. Linearized decision tree.</p>
+<p>A learning algorithm is <em>stable</em> iff its generalization error is bounded.</p>
+<h3 id="functions-in-intelligence-models"><span class="section_number">7.2</span><span class="section_title">Functions in intelligence models</span></h3>
+<table>
+<caption>Some types of functions related to learning</caption>
+<thead>
+<tr class="header">
+<th>domain</th>
+<th>codomain</th>
+<th>name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\{0,1\}^*\)</span></td>
+<td><span class="math inline">\(\{0,1\}^*\)</span></td>
+<td>compression (if bijective)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\{0,1\}^*\)</span></td>
+<td><span class="math inline">\(\{0,1\}\)</span></td>
+<td>decider</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\([0,1]^n\)</span></td>
+<td><span class="math inline">\([0,1]\)</span></td>
+<td>neuron</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(E\)</span></td>
+<td><span class="math inline">\(C\)</span> finite</td>
+<td>classification (if surjective)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(E\)</span> finite</td>
+<td><span class="math inline">\(C\)</span> finite</td>
+<td>discrete classification (if surjective)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(E\)</span> finite</td>
+<td><span class="math inline">\(C\)</span> of size 2</td>
+<td>discrete binary classification (if surjective)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\Nat\)</span></td>
+<td><span class="math inline">\(E\)</span></td>
+<td>sequence</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(E^n\)</span></td>
+<td><span class="math inline">\(E\)</span></td>
+<td>stateless next-value predictor with lag <span class="math inline">\(n\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(C \times E^n\)</span></td>
+<td><span class="math inline">\(C \times E\)</span></td>
+<td>stateful next-value predictor with lag <span class="math inline">\(n\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="hyperplane-classifier"><span class="section_number">7.3</span><span class="section_title">Hyperplane classifier</span></h3>
+<p>Let <span class="math inline">\(h\)</span> be a hyperplane.</p>
+<p>Define <span class="math inline">\(m : \Real^\infty \to \{0,1\}\)</span>, the <em>hard linear binary classifier</em> of <span class="math inline">\(h\)</span>, as <span class="math inline">\(m~x = [h~x \ge 0]\)</span> where <span class="math inline">\([x]\)</span> is 1 iff <span class="math inline">\(x\)</span> is true or 0 iff <span class="math inline">\(x\)</span> is false.</p>
+<p>Soft classifier: define <span class="math inline">\(m~x = \tanh^{-1}~(h~x)\)</span>.</p>
+<h3 id="support-vector-machine"><span class="section_number">7.4</span><span class="section_title">Support vector machine</span></h3>
+<p>A training point <span class="math inline">\(x\)</span> is a support of <span class="math inline">\(h\)</span> iff it is the closest point to <span class="math inline">\(h\)</span> among all points in the class of <span class="math inline">\(x\)</span>.</p>
+<p>Alternative formulation: An upper level is a hyperplane <span class="math inline">\(h_u\)</span> such that <span class="math inline">\(\forall a \in U : h_u~a &gt; 0\)</span>. A lower level is a hyperplane <span class="math inline">\(h_l\)</span> such that <span class="math inline">\(\forall b \in L : h_l~b &lt; 0\)</span>. Let <span class="math inline">\(h_u\)</span> and <span class="math inline">\(h_l\)</span> be parallel. Maximize the distance between <span class="math inline">\(h_u\)</span> and <span class="math inline">\(h_l\)</span>. Then <span class="math inline">\(h_u\)</span> is the upper margin and <span class="math inline">\(h_l\)</span> is the lower margin. Define <span class="math inline">\(h\)</span> as the hyperplane exactly between <span class="math inline">\(h_u\)</span> and <span class="math inline">\(h_l\)</span>.</p>
+<p>Define <span class="math inline">\(m : \Real^\infty \to \{0,1\}\)</span>, the <em>support vector machine</em> (SVM) of <span class="math inline">\(h\)</span>, as <span class="math inline">\(m~x = [h~x \ge 0]\)</span>. Such SVM is a binary classifier.</p>
+<h2 id="ramble"><span class="section_number">8</span><span class="section_title">Ramble?</span></h2>
+<p>Intelligence is an ordering (2018-04-26). This idea goes back at least to 2004 in <span class="citation" data-cites="hutter2004universal">[<a href="#ref-hutter2004universal">2</a>]</span>. Intelligence is an <em>ordering</em> of systems. An order is a transitive antisymmetric relation.</p>
+<p>How do we decide which of system <span class="math inline">\(A\)</span> and system <span class="math inline">\(B\)</span> is more intelligent in task <span class="math inline">\(T\)</span>?</p>
+<p>Let <span class="math inline">\(T(A)\)</span> denote how well system <span class="math inline">\(A\)</span> does task <span class="math inline">\(T\)</span>. This is a number. Higher is better. We can invent any measurement. Our definition of &quot;intelligence&quot; is only as good as this measurement.</p>
+<p>We say &quot;<span class="math inline">\(A\)</span> is <em><span class="math inline">\(T\)</span>-better</em> than <span class="math inline">\(B\)</span>&quot; iff <span class="math inline">\(T(A) &gt; T(B)\)</span>.</p>
+<p>Let <span class="math inline">\(S\)</span> be a set of tasks.</p>
+<p>We say &quot;<span class="math inline">\(A\)</span> <em><span class="math inline">\(S\)</span>-dominates</em> <span class="math inline">\(B\)</span>&quot; iff <span class="math inline">\(T(A) &gt; T(B)\)</span> for every task <span class="math inline">\(T \in S\)</span>.</p>
+<p>We define &quot;to be more <span class="math inline">\(S\)</span>-intelligent than&quot; to mean &quot;to <span class="math inline">\(S\)</span>-dominate&quot;.</p>
+<p>The <span class="math inline">\(S\)</span>-domination relation forms a partial order of all systems.</p>
+<p>Example: Which is more intelligent, a dog or a rock? That depends on the task. It's the rock if the task is to sit still. It's the dog if the task is to move around.</p>
+<p>Intelligence is function optimization (2018-04-27). Let <span class="math inline">\(g\)</span> be a goal function. A system's <span class="math inline">\(g\)</span>-intelligence is how well it optimizes <span class="math inline">\(g\)</span>. What is &quot;how well&quot;? Optimization (extremization) is either minimization or maximization.</p>
+<p>Intelligence is what?</p>
+<p>Intelligence is a spectrum. Is a human intelligent? Is a rock intelligent? A human is more intelligent than a rock. Is a human pretending to be a rock intelligent?</p>
+<p>Can an intelligent system look non-intelligent (hide its intelligence)?</p>
+<p>We can measure intelligence as numbers.</p>
+<p>Adapting needs learning.</p>
+<p>We say X adapts to Y iff Y surprises X less as time goes by. (Whose idea is this?)</p>
+<p>Intelligence needs state. State needs time. Intelligence is control. An intelligent system is a special case of control system.</p>
+<p>Intelligence relative to something is a real number.</p>
+<p>Is a company, which consists of intelligent people, intelligent?</p>
+<p>Alan Turing proposed the Turing test.</p>
+<p>I think we use the word 'intelligence' to refer to a stabilizing behavior that is complex enough to elude a simple explanation.</p>
+<p>I think we agree that we are intelligent.</p>
+<p>We cannot know if something is intrinsically intelligent. We can only determine intelligence from what we can observe.</p>
+<p>How do we determine how intelligent something is? An intelligent being may elude detection by pretending to be unintelligent.</p>
+<p>What is a mathematical theory of intelligence?</p>
+<p>(RAMBLE; DELETE)</p>
+<p>Here I try an alternative formalization to <span class="citation" data-cites="DefineMachIntel">[<a href="#ref-DefineMachIntel">4</a>]</span>.</p>
+<p>Let <span class="math inline">\(E\)</span> be a set of <em>environments</em>.</p>
+<p>Let <span class="math inline">\(G : E \to \Real\)</span> be a <em>goal function</em>. The value of <span class="math inline">\(G(e)\)</span> measures how well the agent performs in environment <span class="math inline">\(e\)</span>.</p>
+<p>The <em>intelligence</em> of the agent <em>with respect to <span class="math inline">\(G\)</span> across $E$</em> is <span class="math inline">\(\int_E G\)</span>.</p>
+<p>A <em>performance</em> consists of an agent and an environment.</p>
+<p>Assumption: The agent cannot modify <span class="math inline">\(G\)</span>.</p>
+<p>Behavior is a function taking an environment and outputing something.</p>
+<p>Intelligence is <em>relative</em> to <span class="math inline">\(G\)</span> and <span class="math inline">\(E\)</span>: <em>goal</em> and <em>environment</em>.</p>
+<p>If we see longevity as intelligence test, then an illiterate farmer who lives to 80 is more intelligent than a scientist who dies at 20, but a rock that has been there for 100 years would even be more intelligent than the farmer.</p>
+<p>If we see money as intelligence test, then a corrupt politician who steals billions of dollars without getting caught is more intelligent than a honest farmer who only has tens of thousands of dollars.</p>
+<p>Gaming the system is a sign of intelligence. It is hard to design a goal function that gives the desired outcome without undesired side effects.</p>
+<p>IQ tests are intelligence measures with small environment set.</p>
+<p>Lifespan may be an intelligence measure with huge environment set.</p>
+<p>A human can optimize <em>several</em> goal functions across the same environment set. A human may be asked to clean a floor, to write a report, to run a company, to cook food, and to find the quickest route between home and office, and optimize them all.</p>
+<p>Some goal functions for humans may be:</p>
+<ul>
+<li>Maximize happiness</li>
+<li>Minimize pain</li>
+<li>Optimize the level of a chemical in the brain</li>
+<li>Optimize the time integral of such chemical</li>
+<li>Maximize the chance of survival</li>
+</ul>
+<p>But I don't know the root goal function that explains all those behaviors.</p>
+<h2 id="on-adaptive-systems-and-boredom"><span class="section_number">9</span><span class="section_title">&lt;2019-11-27&gt; On adaptive systems and boredom</span></h2>
+<p>The law of adaptive systems: &quot;Every adaptive system converges to a state in which all kind of stimulation ceases.&quot;<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>Corollary: All jobs eventually become boring.</p>
+<p>If something excites us, we will eventually get used to it.</p>
+<p>But how come we don't get bored of sex? Do we?</p>
+<h2 id="required-mathematics"><span class="section_number">10</span><span class="section_title">Required mathematics?</span></h2>
+<p>Here I try to learn the minimal amount of functional analysis and approximation theory required for learning theory.</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.1</span><span class="section_title"><a href="#assumed-background-knowledge">Assumed background knowledge</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">10.2</span><span class="section_title"><a href="#notations">Notations</a></span><span class="word_count">(127w~1m)</span></li>
+<li><span class="section_number">10.3</span><span class="section_title"><a href="#in-what-sequence-should-i-learn">In what sequence should I learn?</a></span><span class="word_count">(157w~1m)</span></li>
+<li><span class="section_number">10.4</span><span class="section_title"><a href="#name-this-space"><span class="todo TODO">TODO</span> Name this space</a></span><span class="word_count">(155w~1m)</span></li>
+<li><span class="section_number">10.5</span><span class="section_title"><a href="#what-1">What</a></span><span class="word_count">(119w~1m)</span></li>
+<li><span class="section_number">10.6</span><span class="section_title"><a href="#courses">Courses</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">10.7</span><span class="section_title"><a href="#subfields-of-approximation-theory">Subfields of approximation theory</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">10.8</span><span class="section_title"><a href="#scenarios">Scenarios</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">10.9</span><span class="section_title"><a href="#overview">Overview</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">10.10</span><span class="section_title"><a href="#what-2">What</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">10.11</span><span class="section_title"><a href="#why-are-chebyshev-polynomials-important">Why are Chebyshev polynomials important?</a></span><span class="word_count">(77w~1m)</span></li>
+<li><span class="section_number">10.12</span><span class="section_title"><a href="#machine-learning-as-relation-approximation">Machine learning as relation approximation?</a></span><span class="word_count">(34w~1m)</span></li>
+<li><span class="section_number">10.13</span><span class="section_title"><a href="#least-square-approximation-of-overdetermined-system-of-linear-equations">Least-square approximation of overdetermined system of linear equations?</a></span><span class="word_count">(61w~1m)</span></li>
+<li><span class="section_number">10.14</span><span class="section_title"><a href="#approximation-schemes">Approximation schemes?</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">10.15</span><span class="section_title"><a href="#how-do-we-approximate-a-function">How do we approximate a function?</a></span><span class="word_count">(120w~1m)</span></li>
+<li><span class="section_number">10.16</span><span class="section_title"><a href="#why-do-we-approximate">Why do we approximate?</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">10.17</span><span class="section_title"><a href="#approximation-by-truncation">Approximation by truncation</a></span><span class="word_count">(387w~2m)</span></li>
+<li><span class="section_number">10.18</span><span class="section_title"><a href="#approximation-vs-estimation">Approximation vs estimation</a></span><span class="word_count">(87w~1m)</span></li>
+</ul>
+</div>
+<h3 id="assumed-background-knowledge"><span class="section_number">10.1</span><span class="section_title">Assumed background knowledge</span></h3>
+<p>I assume that the reader is a Bachelor of Computer Science who graduated in 2011. As of 2018, functional analysis does not seem to be in any computer science curriculum<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. The closest things to functional analysis in such curriculum seems to be ordinary differential equations.</p>
+<h3 id="notations"><span class="section_number">10.2</span><span class="section_title">Notations</span></h3>
+<p><span class="math inline">\( \Real \)</span> is the set of all real numbers. If you are a finitist, just think of a set as a predicate: think of <span class="math inline">\(\Real\)</span> as a predicate such that <span class="math inline">\( \Real(x) \)</span> is true iff <span class="math inline">\(x\)</span> is a real number, and then replace the formula <span class="math inline">\( x \in \Real \)</span> with the formula <span class="math inline">\( \Real(x) \)</span> in your mind.</p>
+<p><span class="math inline">\( [0,1] \)</span> is the <em>unit interval</em>. It is the set of every real number between 0 and 1, including 0 and 1. Formally, <span class="math inline">\( [0,1] = \{ x ~|~ x \in \Real, 0 \le x \le 1 \} \)</span>.</p>
+<p><span class="math inline">\( C(A) \)</span> is the space of every <em>continuous</em> function whose domain is the set <span class="math inline">\(A\)</span> and whose codomain is <span class="math inline">\(\Real\)</span>. Formally, <span class="math inline">\( C(A) = \{ f ~|~ f : A \to \Real, ~ f \text{ continuous} \} \)</span>.</p>
+<h3 id="in-what-sequence-should-i-learn"><span class="section_number">10.3</span><span class="section_title">In what sequence should I learn?</span></h3>
+<p>Here are the easy things. We need to memorize these definitions.</p>
+<p>Relation (a domain, a codomain, and a set of pairs). Function (a special kind of relation). Function space.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> Measure.<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> Distance or metric.<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> Norm. Inner product. Do not confuse measure with metric.</p>
+<p>Here are some rather hard things that need some thinking.</p>
+<p>Should we think of a matrix as a rectangle containing numbers or as a <em>linear function</em>?</p>
+<p>A real-valued function can be seen as a vector.<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> &quot;In modern introductory texts to functional analysis, the subject is seen as the study of vector spaces endowed with a topology&quot;<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>. Why do we adopt this view?</p>
+<p>These slides<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> (slide 20: Lagrange multipliers are common.)</p>
+<p>It would be nice if this Wikipedia article<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> relates those opaquely-named function spaces instead of just dumbly listing them.</p>
+<p>Do we need to know these?</p>
+<p>Functional analysis.<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> Hilbert spaces. Banach spaces. Compact spaces. Continuity. Smoothness. Differentiability.</p>
+<p>Reproducing kernel Hilbert space<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> is an application of functional analysis to machine learning.<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a></p>
+<h3 id="name-this-space"><span class="section_number">10.4</span><span class="section_title"><span class="todo TODO">TODO</span> Name this space</span></h3>
+<p>Find the name of the space of every function from unit hypercube to unit interval. Find the name of the space <span class="math inline">\( \{ f ~|~ f : [0,1]^n \to [0,1] \} \)</span>. I guess these keywords: embedding, projection. I guess these areas: functional analysis, approximation theory, topology.</p>
+<p>Cybenko 1989 <span class="citation" data-cites="cybenko1989approximation">[<a href="#ref-cybenko1989approximation">1</a>]</span> uses the notation <span class="math inline">\(C(I_n)\)</span> to mean the space of every continuous function from <span class="math inline">\([0,1]^n\)</span> to .<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a> He refers to <span class="citation" data-cites="rudin1973functional">[<a href="#ref-rudin1973functional">5</a>]</span> for the notations.</p>
+<p>From <span class="citation" data-cites="cybenko1989approximation">[<a href="#ref-cybenko1989approximation">1</a>]</span>:</p>
+<ul>
+<li>&quot;a fundamental result in digital signal processing is the fact that digital filters made from unit delays and constant multipliers can approximate any continuous transfer function arbitrarily well.&quot;</li>
+<li>&quot;The main result of this paper is a demonstration of the fact that sums of the form (1) are dense in the space of continuous functions on the unit cube if <span class="math inline">\(\sigma\)</span> is any continuous sigmoidal function.&quot;</li>
+<li>&quot;In a well-known resolution of Hilbert's 13th problem, Kolmogorov showed&quot; the Kolmogorov representation theorem.<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a></li>
+</ul>
+<p>Best linear approximation<span class="citation" data-cites="khavinson1997best">[<a href="#ref-khavinson1997best">3</a>]</span>?</p>
+<p><a href="https://en.wikipedia.org/wiki/Universal_approximation_theorem">universal approximation theorem</a></p>
+<h3 id="what-1"><span class="section_number">10.5</span><span class="section_title">What</span></h3>
+<p>The phrase &quot;x <em>approximates</em> y&quot; means &quot;x is <em>close</em> to y&quot;, which implies distance, which implies metric space.</p>
+<p>How close is the approximation? Suppose that the function <span class="math inline">\(g\)</span> approximates the function <span class="math inline">\(f\)</span> in interval <span class="math inline">\(I\)</span>. Then:</p>
+<ul>
+<li>The &quot;approximation error at <span class="math inline">\(x\)</span>&quot; is <span class="math inline">\(g(x) - f(x)\)</span>.</li>
+<li>The &quot;maximum absolute error&quot; is <span class="math inline">\(\max_{x \in I} \abs{g(x) - f(x)}\)</span>.</li>
+</ul>
+<p>How do we measure the distance between two <span class="math inline">\(\Real \to \Real\)</span> functions <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span>? There are several ways. Which should we use?</p>
+<ul>
+<li>The maximum norm, in interval <span class="math inline">\(I\)</span> is <span class="math inline">\(\max_{x \in I} \abs{f(x) - g(x)}\)</span>. This norm is also called uniform norm, supremum norm, Chebyshev norm, infinity norm, norm-infinity, <span class="math inline">\(L_\infty\)</span>-norm. Why is it called &quot;uniform&quot;? <a href="https://en.wikipedia.org/wiki/Uniform_norm">WP:Uniform norm</a>.</li>
+<li>What is this norm called? <span class="math inline">\(\int_{x \in I} [f(x)-g(x)]^2 ~ dx\)</span>.</li>
+</ul>
+<h3 id="courses"><span class="section_number">10.6</span><span class="section_title">Courses</span></h3>
+<ul>
+<li>2017, <a href="https://www.nada.kth.se/~olofr/Approx/">Approximation Theory, 7.5 ECTS</a></li>
+<li>2012, syllabus, Drexel University, Math 680-002 (Approximation Theory), <a href="http://www.math.drexel.edu/~foucart/TeachingFiles/S12/Math680Syl.pdf">pdf</a></li>
+<li>2002, <a href="http://math.ucdenver.edu/~aknyazev/teaching/02/5667/">MATH 5667-001: Introduction to Approximation Theory, CU-Denver, Fall 02</a>.</li>
+</ul>
+<h3 id="subfields-of-approximation-theory"><span class="section_number">10.7</span><span class="section_title">Subfields of approximation theory</span></h3>
+<ul>
+<li>Classical approximation theory deals with univariate real functions <span class="math inline">\(\Real \to \Real\)</span>.</li>
+<li>Multivariate approximation theory deals with multivariate real functions <span class="math inline">\(\Real^m \to \Real^n\)</span>.</li>
+</ul>
+<h3 id="scenarios"><span class="section_number">10.8</span><span class="section_title">Scenarios</span></h3>
+<ul>
+<li>Suppose we want to approximate the function <span class="math inline">\(f\)</span>, but we don't know the equation for <span class="math inline">\(f\)</span>; we only have a few input-output samples.
+<ul>
+<li>Can we approximate <span class="math inline">\(f\)</span>?</li>
+<li>How do approximation and curve-fitting relate?</li>
+</ul></li>
+</ul>
+<h3 id="overview"><span class="section_number">10.9</span><span class="section_title">Overview</span></h3>
+<ul>
+<li>What is a multivariate polynomial?</li>
+<li>Commonly conflated concepts</li>
+</ul>
+<h3 id="what-2"><span class="section_number">10.10</span><span class="section_title">What</span></h3>
+<ul>
+<li>The <em>uniform norm</em> is …</li>
+<li>Best approximation is …</li>
+<li>Uniform approximation is best approximation in uniform norm.</li>
+<li><a href="https://en.wikipedia.org/wiki/Approximation_theory#Remez&#39;s_algorithm">https://en.wikipedia.org/wiki/Approximation_theory#Remez's_algorithm</a>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Remez_algorithm">https://en.wikipedia.org/wiki/Remez_algorithm</a>
+<ul>
+<li>Inputs: a function, and an interval.</li>
+<li>Output: an optimal polynomial approximating the input function in the input interval.</li>
+</ul></li>
+</ul></li>
+<li>What are Bernstein polynomials? What question does the Weierstrass approximation theorem answer?
+<ul>
+<li><a href="http://www4.ncsu.edu/~mtchu/Teaching/Lectures/MA530/chapter7.pdf">http://www4.ncsu.edu/~mtchu/Teaching/Lectures/MA530/chapter7.pdf</a></li>
+</ul></li>
+</ul>
+<h3 id="why-are-chebyshev-polynomials-important"><span class="section_number">10.11</span><span class="section_title">Why are Chebyshev polynomials important?</span></h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Chebyshev_polynomials">WP:Chebyshev polynomials</a>
+<ul>
+<li>Why is it important? How does it relate to best approximation?
+<ul>
+<li>&quot;Chebyshev polynomials are important in approximation theory because the roots of the Chebyshev polynomials of the first kind, which are also called Chebyshev nodes, are used as nodes in polynomial interpolation. The resulting interpolation polynomial minimizes the problem of Runge's phenomenon and provides an approximation that is close to the polynomial of best approximation to a continuous function under the maximum norm.&quot;</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="machine-learning-as-relation-approximation"><span class="section_number">10.12</span><span class="section_title">Machine learning as relation approximation?</span></h3>
+<ul>
+<li>Machine learning, statistical modelling, function approximation, and curve fitting are related.</li>
+<li>Generalize function approximation to relation approximation.</li>
+<li>A function can be stated as a relation.</li>
+<li>A relation can be stated as a function.</li>
+</ul>
+<h3 id="least-square-approximation-of-overdetermined-system-of-linear-equations"><span class="section_number">10.13</span><span class="section_title">Least-square approximation of overdetermined system of linear equations?</span></h3>
+<ul>
+<li>Consider the least-square solution to an overdetermined system of linear equations. Is such solution a kind of approximation?
+<ul>
+<li>There is no exact solution to begin with?</li>
+<li>Why is it called &quot;least-squares <em>approximation</em>&quot;?</li>
+<li>How can we approximate something that does not exist?
+<ul>
+<li>1.2 approximates 1.23. Both 1.2 and 1.23 exist.</li>
+<li>Contrarily, there is no X such that AX = B.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="approximation-schemes"><span class="section_number">10.14</span><span class="section_title">Approximation schemes?</span></h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Polynomial-time_approximation_scheme">https://en.wikipedia.org/wiki/Polynomial-time_approximation_scheme</a></li>
+</ul>
+<h3 id="how-do-we-approximate-a-function"><span class="section_number">10.15</span><span class="section_title">How do we approximate a function?</span></h3>
+<p>Is it even possible to approximate arbitrary functions?</p>
+<ul>
+<li>If the function is analytic, we can truncate its Taylor series.
+<ul>
+<li>Commonly-used differentiable functions are analytic.</li>
+</ul></li>
+<li>Chebyshev polynomials?</li>
+<li>If we have an approximation scheme, we may be able to improve it.
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Series_acceleration">https://en.wikipedia.org/wiki/Series_acceleration</a>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Aitken%27s_delta-squared_process">https://en.wikipedia.org/wiki/Aitken%27s_delta-squared_process</a></li>
+</ul></li>
+</ul></li>
+<li>google search: machine learning approximation theory
+<ul>
+<li><a href="https://math.stackexchange.com/questions/2680158/approximation-theory-for-deep-learning-models-where-to-start">Approximation Theory for Deep Learning Models: Where to Start? - Mathematics Stack Exchange</a></li>
+<li><a href="http://www.vision.jhu.edu/tutorials/ICCV15-Tutorial-Math-Deep-Learning-Intro-Rene-Joan.pdf">http://www.vision.jhu.edu/tutorials/ICCV15-Tutorial-Math-Deep-Learning-Intro-Rene-Joan.pdf</a></li>
+<li>2017, slides, &quot;From approximation theory to machine learning: New perspectives in the theory of function spaces and their applications&quot;, <a href="http://npfsa2017.uni-jena.de/l_notes/vybiral.pdf">pdf</a></li>
+<li>2018, article, &quot;Approximation theory, Numerical Analysis and Deep Learning&quot;, <a href="http://at.yorku.ca/c/b/p/g/30.htm">abstract</a>
+<ul>
+<li>&quot;the problem of numerically solving a large class of (high-dimensional) PDEs (such as linear Black-Scholes or diffusion equations) can be cast into a classical supervised learning problem which can then be solved by deep learning methods&quot;</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="why-do-we-approximate"><span class="section_number">10.16</span><span class="section_title">Why do we approximate?</span></h3>
+<ul>
+<li>Because it is practically inevitable.
+<ul>
+<li>Fundamental reason: Because computers are finite.</li>
+<li>Practical reason: Trade-off between computation time and precision.
+<ul>
+<li>The more error we can afford, the faster we can run.
+<ul>
+<li>May be related: 2013 monograph &quot;Faster Algorithms via Approximation Theory&quot; <a href="http://theory.epfl.ch/vishnoi/Publications_files/approx-survey.pdf">pdf</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="approximation-by-truncation"><span class="section_number">10.17</span><span class="section_title">Approximation by truncation</span></h3>
+<p>We can approximate a series by <em>truncating</em> it.</p>
+<p>Suppose that the series <span class="math inline">\(y = x_0 + x_1 + \ldots\)</span> converges.</p>
+<p>Suppose that the sequence <span class="math inline">\(\langle x_0, x_1, \ldots \rangle\)</span> converges to zero.</p>
+<p>Pick where to cut. Pick a natural number <span class="math inline">\(n\)</span>.</p>
+<p>Then the series <span class="math inline">\(x_0 + \ldots + x_n\)</span> approximates the series <span class="math inline">\(y\)</span>. We cut its tail. We take finitely many summands from the beginning.</p>
+<p>Here come examples: Truncate all the series!</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.17.1</span><span class="section_title"><a href="#power-series-truncation">Power series truncation</a></span><span class="word_count">(258w~2m)</span></li>
+<li><span class="section_number">10.17.2</span><span class="section_title"><a href="#iteration-truncation">Iteration truncation</a></span><span class="word_count">(62w~1m)</span></li>
+</ul>
+</div>
+<h4 id="power-series-truncation"><span class="section_number">10.17.1</span><span class="section_title">Power series truncation</span></h4>
+<p>Below we truncate a power series.</p>
+<p>Decimal truncation: <span class="math inline">\(1.2\)</span> approximates <span class="math inline">\(1.23\)</span>. Remember that a decimal number is a series. For example, the number <span class="math inline">\(1.23\)</span> is the power series <span class="math display">\[ \ldots 01.230 \ldots = \ldots + 0 \cdot 10^1 + 1 \cdot 10^0 + 2 \cdot 10^{-1} + 3 \cdot 10^{-2} + 0 \cdot 10^{-3} + \ldots. \]</span></p>
+<p>Polynomial truncation: <span class="math inline">\(1 + x\)</span> approximates <span class="math inline">\(1 + x + x^2\)</span> for <span class="math inline">\(x\)</span> near zero.</p>
+<p>Taylor series truncation: <span class="math inline">\(1 + x + \frac{x^2}{2}\)</span> approximates <span class="math inline">\(e^x\)</span> for <span class="math inline">\(x\)</span> near zero. Remember the Taylor series expansion <span class="math inline">\(e^x = \sum_{n \in \Nat} \frac{x^n}{n!}\)</span>.</p>
+<p>Below we truncate the ratio of two power series.</p>
+<p>Rational truncation: <span class="math inline">\(12/23\)</span> approximates <span class="math inline">\(123/234\)</span>.</p>
+<p><a href="https://en.wikipedia.org/wiki/Pad%C3%A9_approximant">WP:Padé approximation</a> is a truncation of a ratio of series.</p>
+<p>Fourier series truncation: The <a href="https://en.wikipedia.org/wiki/Fourier_series#Example_1:_a_simple_Fourier_series">Wikipedia example</a> animates how a Fourier series converges to the sawtooth function as more terms are added.</p>
+<p>Digression: Is a (complex) Fourier series a power series? Reminder: A Fourier series looks like <span class="math inline">\(\sum_{k=0}^{\infty} c_k e^{ikt}\)</span>.</p>
+<p><a href="https://en.wikipedia.org/wiki/Laurent_series">WP:Laurent series</a> truncation?</p>
+<ol>
+<li><p>Digression: What is an analytic function?</p>
+<p>A function is <em>analytic</em> iff it can be represented by power series.</p>
+<p>Formally, a function <span class="math inline">\(f\)</span> is <em>analytic</em> iff for every <span class="math inline">\(x \in \dom(f)\)</span>, we can write <span class="math inline">\(f(x)\)</span> as a power series.</p>
+<p>See also <a href="https://en.wikipedia.org/wiki/Power_series#Analytic_functions">WP:Definition of &quot;analytic function&quot;</a>.</p>
+<p>Taylor series expansion is illustrated in the 2015 slides &quot;Taylor Series: Expansions, Approximations and Error&quot; (<a href="https://relate.cs.illinois.edu/course/cs357-f15/file-version/2978ddd5db9824a374db221c47a33f437f2df1da/media/cs357-slides6.pdf">pdf</a>)</p></li>
+<li><p>Digression: What is the relationship between polynomial and power series?</p>
+<p>A polynomial is an algebraic expression. It is not a function.</p>
+<p>Power series is a kind of infinite polynomial.</p>
+<p><a href="https://en.wikipedia.org/wiki/Formal_power_series">WP:Formal power series</a>: &quot;A formal power series is a generalization of a polynomial, where the number of terms is allowed to be infinite.&quot;</p></li>
+</ol>
+<h4 id="iteration-truncation"><span class="section_number">10.17.2</span><span class="section_title">Iteration truncation</span></h4>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Iterated_function">WP:Iterated function</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Iterative_method">WP:Iterative method</a></li>
+<li><a href="http://mathworld.wolfram.com/NewtonsIteration.html">Newton's Iteration</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method">WP:Methods of computing square roots, the Babylonian method</a></li>
+<li>An iteration converges to an attractive fixed point.</li>
+</ul>
+<p>Example: Let <span class="math inline">\(f(x) = x + \frac{1}{x}\)</span>.</p>
+<p>Continued fraction truncation: We know that <span class="math display">\[ 1 + \frac{1}{1 + \frac{1}{1 + \ldots}} = \frac{1 + \sqrt{5}}{2} = \Phi. \]</span> We can truncate that continued fraction to approximate <span class="math inline">\(\Phi\)</span>.</p>
+<p>Seeing those examples makes me wonder whether all approximations are truncation.</p>
+<h3 id="approximation-vs-estimation"><span class="section_number">10.18</span><span class="section_title">Approximation vs estimation</span></h3>
+<p>Differences:</p>
+<ul>
+<li>Approximation is part of analysis. Estimation is part of statistics.</li>
+<li>Approximation does not involve sampling. Estimation involves sampling.</li>
+<li>Epistemology: Approximation converges to a <em>knowable</em> value. Estimation <em>may</em> converge to a possibly <em>unknowable</em> value (the value exists but it is impractical for us to know what it actually is). Example: we <em>approximate</em> pi, and we <em>estimate</em> the height of all living people on Earth.</li>
+<li>Epistemology: Approximation does not guess. Estimation does.</li>
+</ul>
+<p>Similarities:</p>
+<ul>
+<li>Both has a notion of &quot;error&quot;. Approximation has error. Estimation has bias and uncertainty.</li>
+<li>Both are instances of modeling (simplification).</li>
+</ul>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">11</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-cybenko1989approximation">
+<p>[1] Cybenko, G. 1989. Approximation by superpositions of a sigmoidal function. <em>Mathematics of control, signals and systems</em>. 2, 4 (1989), 303–314. url: &lt;<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.441.7873&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.441.7873&amp;rep=rep1&amp;type=pdf</a>&gt;.</p>
+</div>
+<div id="ref-hutter2004universal">
+<p>[2] Hutter, M. 2004. <em>Universal artificial intelligence: Sequential decisions based on algorithmic probability</em>. Springer Science &amp; Business Media.</p>
+</div>
+<div id="ref-khavinson1997best">
+<p>[3] Khavinson, S.Y. 1997. <em>Best approximation by linear superpositions (approximate nomography)</em>. American Mathematical Soc.</p>
+</div>
+<div id="ref-DefineMachIntel">
+<p>[4] Legg, S. and Hutter, M. 2007. Universal intelligence: A definition of machine intelligence. (2007).</p>
+</div>
+<div id="ref-rudin1973functional">
+<p>[5] Rudin, W. 1973. Functional analysis, mcgraw-hill series in higher mathematics. (1973).</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&quot;Orbit&quot; is a standard mono-unary algebra terminology.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-11-27&gt; <a href="https://en.wikipedia.org/wiki/Adaptive_system">https://en.wikipedia.org/wiki/Adaptive_system</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://functionalcs.github.io/curriculum/">https://functionalcs.github.io/curriculum/</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://www.csd.cs.cmu.edu/academic/undergraduate/bachelors-curriculum-admitted-2017">https://www.csd.cs.cmu.edu/academic/undergraduate/bachelors-curriculum-admitted-2017</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://cs.stanford.edu/degrees/ug/Requirements.shtml">https://cs.stanford.edu/degrees/ug/Requirements.shtml</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Function_space">https://en.wikipedia.org/wiki/Function_space</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://en.wikipedia.org/wiki/Measure_(mathematics)">https://en.wikipedia.org/wiki/Measure_(mathematics)</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p><a href="https://en.wikipedia.org/wiki/Metric_(mathematics)">https://en.wikipedia.org/wiki/Metric_(mathematics)</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://en.wikipedia.org/wiki/Function_space#In_linear_algebra">https://en.wikipedia.org/wiki/Function_space#In_linear_algebra</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p><a href="https://en.wikipedia.org/wiki/Functional_analysis">https://en.wikipedia.org/wiki/Functional_analysis</a><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p><a href="https://courses.cs.washington.edu/courses/cse590a/09wi/mathfoundation.pdf">https://courses.cs.washington.edu/courses/cse590a/09wi/mathfoundation.pdf</a><a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p><a href="https://en.wikipedia.org/wiki/Function_space#Functional_analysis">https://en.wikipedia.org/wiki/Function_space#Functional_analysis</a><a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p><a href="https://en.wikipedia.org/wiki/Functional_analysis">https://en.wikipedia.org/wiki/Functional_analysis</a><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p><a href="https://en.wikipedia.org/wiki/Reproducing_kernel_Hilbert_space">https://en.wikipedia.org/wiki/Reproducing_kernel_Hilbert_space</a><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p><a href="https://www.quora.com/What-are-the-most-notable-applications-of-functional-analysis-to-computer-science">https://www.quora.com/What-are-the-most-notable-applications-of-functional-analysis-to-computer-science</a><a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p><a href="https://math.stackexchange.com/questions/84238/is-there-a-shorthand-or-symbolic-notation-for-differentiable-or-continuous">https://math.stackexchange.com/questions/84238/is-there-a-shorthand-or-symbolic-notation-for-differentiable-or-continuous</a><a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p><a href="https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Arnold_representation_theorem">https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Arnold_representation_theorem</a><a href="#fnref17" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2017-06-22 03:57:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

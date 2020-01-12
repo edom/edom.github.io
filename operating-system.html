@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On the operating systems I use</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On the operating systems I use</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#desired-file-system-layout-for-personal-computer">Desired file system layout for personal computer?</a></span><span class="word_count">(59w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#debian-10-turn-off-bellbeep">&lt;2019-01-08&gt; Debian 10: Turn off bell/beep</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#prepare-os-upgrade">&lt;2018-12-11&gt; Prepare OS upgrade?</a></span><span class="word_count">(440w~3m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#woes-upgrading-to-debian-9">Woes upgrading to Debian 9</a></span><span class="word_count">(192w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#create-debian-live-usb">&lt;2019-04-23&gt; Create Debian Live USB</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#administering-a-personal-gnulinux-installation-mostly-ubuntu">Administering a personal GNU/Linux installation (mostly Ubuntu)</a></span><span class="word_count">(1333w~7m)</span></li>
+</ul>
+</div>
+<h2 id="desired-file-system-layout-for-personal-computer"><span class="section_number">1</span><span class="section_title">Desired file system layout for personal computer?</span></h2>
+<ul>
+<li>/boot: 1 GB primary partition (Linux kernel is getting fatter)</li>
+<li>/usr: 128 GB LVM logical volume</li>
+<li>/mess: 256 GB LVM logical volume</li>
+<li>/: 64 GB encrypted LVM logical volume</li>
+<li>/rescue: 8 GB LVM logical volume, minimal Debian installation</li>
+</ul>
+<p>To avoid problems with early boot, we don't symlink.</p>
+<p>But if I encrypt all of <em>home</em>, sshd authorized<sub>keys</sub> may not work.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<h2 id="debian-10-turn-off-bellbeep"><span class="section_number">2</span><span class="section_title">&lt;2019-01-08&gt; Debian 10: Turn off bell/beep</span></h2>
+<p><a href="https://www.linuxquestions.org/questions/linuxquestions-org-member-success-stories-23/turn-off-the-annoying-bell-pc-speaker-in-debian-etch-594405/">https://www.linuxquestions.org/questions/linuxquestions-org-member-success-stories-23/turn-off-the-annoying-bell-pc-speaker-in-debian-etch-594405/</a></p>
+<p>Several options:</p>
+<ul>
+<li>xset b off</li>
+<li>/etc/inputrc</li>
+<li>rmmod pcspkr and blacklist it; the nuclear option</li>
+</ul>
+<h2 id="prepare-os-upgrade"><span class="section_number">3</span><span class="section_title">&lt;2018-12-11&gt; Prepare OS upgrade?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(401w~3m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#unanswered-questions">Unanswered questions</a></span><span class="word_count">(37w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what"><span class="section_number">3.1</span><span class="section_title">What</span></h3>
+<p>Move from Ubuntu 14.04 to Debian unstable <a href="https://www.reddit.com/r/linux/comments/40peeb/security_debian_vs_ubuntu/">https://www.reddit.com/r/linux/comments/40peeb/security_debian_vs_ubuntu/</a></p>
+<p>Don't buy any laptop outside this list. <a href="https://www.linux-on-laptops.com/">https://www.linux-on-laptops.com/</a></p>
+<p>Make moving easy.</p>
+<p>Burn a Debian Live CD.</p>
+<p>Debian is huge. The Debian community is huge. It's overwhelming. It's unclear where to start. The Debian project needs to delete things. The [Debian front page](<a href="https://www.debian.org/">https://www.debian.org/</a>) has too much information.</p>
+<p>&quot;several Debian developers advise people to not use testing. Why is that?&quot; <a href="https://raphaelhertzog.com/2010/10/04/can-debian-offer-a-constantly-usable-testing-distribution/">https://raphaelhertzog.com/2010/10/04/can-debian-offer-a-constantly-usable-testing-distribution/</a></p>
+<ul>
+<li><a href="https://www.debian.org/doc/manuals/debian-reference/apa.en.html#_the_debian_maze">https://www.debian.org/doc/manuals/debian-reference/apa.en.html#_the_debian_maze</a>
+<ul>
+<li>&quot;The Debian Reference was initiated by me, Osamu Aoki […], as a personal system administration memo.&quot;</li>
+<li>&quot;I hope this […] provides a good starting direction for people in the Debian maze.&quot;</li>
+</ul></li>
+<li>Debian Documentation Project <a href="https://www.debian.org/doc/ddp">https://www.debian.org/doc/ddp</a>
+<ul>
+<li>&quot;The Debian Documentation Project was formed to coordinate and unify all efforts to write more and better documentation for the Debian system.&quot;</li>
+</ul></li>
+<li>Debian testing gets no security updates. debsecan + Debian unstable + APT pinning?</li>
+<li>Debian testing freezes some time before stable release and after stable release.</li>
+<li>Debian unstable + get in touch with Debian community + APT pinning.</li>
+<li>Do not apt-get upgrade if you have no time to fix problems.</li>
+</ul>
+<p>Prerequisites?</p>
+<ul>
+<li>Understand advanced APT usage.</li>
+<li>Read the Debian manual.</li>
+<li>Always read the Release Notes before installing Debian stable. (Where?)</li>
+</ul>
+<p>As we get older, we set up rules to simplify our lives. Example of rules:</p>
+<ul>
+<li>Never sudo make. Only use sudo with the part that comes from Debian.</li>
+<li>Always put house keys and car keys in the front pocket of the bag when not using those keys.</li>
+<li>Never pick up a call from an unknown number.</li>
+</ul>
+<p>Enable Magic SysRq key:</p>
+<ul>
+<li>Read /etc/sysctl.d/README.</li>
+<li>Symlink /etc/sysctl.d/10-magic-sysrq.conf.</li>
+</ul>
+<p>How to install Debian unstable:</p>
+<ul>
+<li>Minimal-install Debian latest stable, upgrade to testing, install GUI, pin APT, upgrade to unstable.</li>
+</ul>
+<p>Always check apt-get install plan. Don't just answer &quot;yes&quot;. If the plan doesn't look sane, wait for a few days.</p>
+<p>Dump and backup LVM metadata to GitHub? Is this not sensitive data?</p>
+<p>Why must APT binary packages be installed to a fixed location? Because ELF hardcodes &quot;rpath&quot;. NixOS patches ELF rpath.</p>
+<p>Buy an SSD?</p>
+<p>Use &quot;brasero&quot; to burn ISO to DVD. <a href="https://wiki.debian.org/BurnCd#Burn_the_image_file_to_CD.2C_DVD.2C_or_BD">https://wiki.debian.org/BurnCd#Burn_the_image_file_to_CD.2C_DVD.2C_or_BD</a></p>
+<p>How a Debian user is supposed to install a recent version of some packages: A Debian user is not supposed to install any recent version of packages.</p>
+<p>How an advanced Debian user is supposed to install a recent version of some packages:</p>
+<ul>
+<li>Install Debian stable.</li>
+<li>Add testing repository.</li>
+<li>Set up APT pinning:
+<ul>
+<li>Most things come from stable.</li>
+<li>System packages come from stable.</li>
+<li>GHC comes from testing.</li>
+</ul></li>
+<li>Always check APT install plan. Avoid reinstalling system packages such as libc, python, perl, gnome, xorg, and so on. If installing something from testing requires removing something from stable, then say no to the apt prompt.</li>
+<li>Does anything break?</li>
+</ul>
+<h3 id="unanswered-questions"><span class="section_number">3.2</span><span class="section_title">Unanswered questions</span></h3>
+<p>Which distro has the best governance (the best social system, and the most trustworthy and competent people)?</p>
+<p>Which distro has the most packages?</p>
+<p>Which distro has the most volunteers?</p>
+<p>Fedora ships with SELinux enabled?</p>
+<p>My university used Debian and Ubuntu.</p>
+<h2 id="woes-upgrading-to-debian-9"><span class="section_number">4</span><span class="section_title">Woes upgrading to Debian 9</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#gcc-6-pie-breaks-ghc">GCC 6 PIE breaks GHC</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#no-gnome-night-light">No GNOME Night Light</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#massive-debian-9-chromium-privacy-violation">Massive Debian 9 Chromium privacy violation</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#gnome-3-woes">GNOME 3 woes</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">4.5</span><span class="section_title"><a href="#git-gui-breaks">git gui breaks</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">4.6</span><span class="section_title"><a href="#change-network-dns-networkmanager-broken">Change network DNS; NetworkManager broken</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">4.7</span><span class="section_title"><a href="#automatic-install-of-updates-including-security-updates-should-be-disabled">Automatic install of updates, including security updates, should be disabled</a></span><span class="word_count">(19w~1m)</span></li>
+</ul>
+</div>
+<h3 id="gcc-6-pie-breaks-ghc"><span class="section_number">4.1</span><span class="section_title">GCC 6 PIE breaks GHC</span></h3>
+<p>GCC 6 PIE defaulting breaks GHC. Should Debian package ghc as several packages such as ghc-7.6, ghc-8.4, not as one package ghc with several versions? One Debian package per GHC minor version? Alternatives system? Like openjdk-6 and openjdk-7? Like python2 and python3?</p>
+<h3 id="no-gnome-night-light"><span class="section_number">4.2</span><span class="section_title">No GNOME Night Light</span></h3>
+<p>GNOME Night Light is not in Debian 9 (gnome-shell 3.22).<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<h3 id="massive-debian-9-chromium-privacy-violation"><span class="section_number">4.3</span><span class="section_title">Massive Debian 9 Chromium privacy violation</span></h3>
+<p>On 2018-12-20, I fresh-install Debian 9.6. Chromium enables &quot;Allow Chromium sign-in&quot; without asking user consent.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>That's the last straw. I'm switching to firefox. I'm using chromium for privacy violators and shady companies:</p>
+<ul>
+<li>google, youtube</li>
+<li>facebook</li>
+</ul>
+<h3 id="gnome-3-woes"><span class="section_number">4.4</span><span class="section_title">GNOME 3 woes</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.4.1</span><span class="section_title"><a href="#totem-video-player">Totem video player</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">4.4.2</span><span class="section_title"><a href="#fix-gnome-3-counterproductive-defaults">Fix GNOME 3 counterproductive defaults</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">4.4.3</span><span class="section_title"><a href="#nautilus-replaces-type-ahead-search-with-recursive-search">Nautilus replaces type-ahead search with recursive search</a></span><span class="word_count">(7w~1m)</span></li>
+</ul>
+</div>
+<h4 id="totem-video-player"><span class="section_number">4.4.1</span><span class="section_title">Totem video player</span></h4>
+<p>Toem used to display playlist but it was removed because it was deemed &quot;too complex&quot; <a href="https://bugs.launchpad.net/ubuntu/+source/totem/+bug/1600606">https://bugs.launchpad.net/ubuntu/+source/totem/+bug/1600606</a></p>
+<h4 id="fix-gnome-3-counterproductive-defaults"><span class="section_number">4.4.2</span><span class="section_title">Fix GNOME 3 counterproductive defaults</span></h4>
+<p>gsettings set org.gnome.shell.app-switcher current-workspace-only true <a href="https://coderwall.com/p/m5mhoq/gnome-3-how-to-alt-tab-windows-on-current-workspace-only">https://coderwall.com/p/m5mhoq/gnome-3-how-to-alt-tab-windows-on-current-workspace-only</a> <a href="https://askubuntu.com/questions/653436/totem-sidebar-gone-after-upgrade-playlist">https://askubuntu.com/questions/653436/totem-sidebar-gone-after-upgrade-playlist</a></p>
+<h4 id="nautilus-replaces-type-ahead-search-with-recursive-search"><span class="section_number">4.4.3</span><span class="section_title">Nautilus replaces type-ahead search with recursive search</span></h4>
+<h3 id="git-gui-breaks"><span class="section_number">4.5</span><span class="section_title">git gui breaks</span></h3>
+<p>Ctrl+T no longer works with multiple files.</p>
+<p>&lt;2019-02-10&gt; gitk gobbles insane amount of RAM.</p>
+<h3 id="change-network-dns-networkmanager-broken"><span class="section_number">4.6</span><span class="section_title">Change network DNS; NetworkManager broken</span></h3>
+<p>Nuke /etc/NetworkManager/system-connections and recreate that directory. <a href="https://askubuntu.com/questions/979939/network-manager-keeps-creating-new-profiles-for-the-same-network">https://askubuntu.com/questions/979939/network-manager-keeps-creating-new-profiles-for-the-same-network</a></p>
+<p>Then connect to network.</p>
+<p>Then stop.</p>
+<p>sudo service NetworkManager stop</p>
+<p>sudo nm-connection-edit</p>
+<p>Use the GUI to manualize the DNS.</p>
+<p>sudo service NetworkManager start</p>
+<p><a href="https://wiki.debian.org/NetworkManager">https://wiki.debian.org/NetworkManager</a></p>
+<h3 id="automatic-install-of-updates-including-security-updates-should-be-disabled"><span class="section_number">4.7</span><span class="section_title">Automatic install of updates, including security updates, should be disabled</span></h3>
+<p>I want to see it first before it is installed.</p>
+<pre class="example"><code>apt purge unattended-upgrades
+</code></pre>
+<h2 id="create-debian-live-usb"><span class="section_number">5</span><span class="section_title">&lt;2019-04-23&gt; Create Debian Live USB</span></h2>
+<p>Get an 8 GB USB disk.</p>
+<p>Download the Debian 9 Live ISO file.</p>
+<p>Use dd/cp to copy the ISO file into the disk.</p>
+<p>The Debian 9 Live ISO file is a horrible hack.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>&lt;2019-04-23&gt; I am trying machma.nl guide<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.</p>
+<h2 id="administering-a-personal-gnulinux-installation-mostly-ubuntu"><span class="section_number">6</span><span class="section_title">Administering a personal GNU/Linux installation (mostly Ubuntu)</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#bash-shell-programming">Bash shell programming</a></span><span class="word_count">(116w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#installing-remote-graphical-user-interface">Installing remote graphical user interface</a></span><span class="word_count">(243w~2m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#autotools">Autotools</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#running-x-client-applications-on-docker-on-linux">Running X client applications on Docker on Linux</a></span><span class="word_count">(147w~1m)</span></li>
+<li><span class="section_number">6.5</span><span class="section_title"><a href="#habits-learned-the-hard-way">Habits learned the hard way</a></span><span class="word_count">(59w~1m)</span></li>
+<li><span class="section_number">6.6</span><span class="section_title"><a href="#what-1">What</a></span><span class="word_count">(331w~2m)</span></li>
+<li><span class="section_number">6.7</span><span class="section_title"><a href="#sudo-security-hole-mitigation-dont-reuse-the-terminal-you-use-for-sudo.">sudo security hole mitigation: Don't reuse the terminal you use for sudo.</a></span><span class="word_count">(153w~1m)</span></li>
+<li><span class="section_number">6.8</span><span class="section_title"><a href="#probably-relevant-twitters">Probably relevant Twitters</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">6.9</span><span class="section_title"><a href="#building-software-for-old-ubuntu">Building software for old Ubuntu</a></span><span class="word_count">(70w~1m)</span></li>
+<li><span class="section_number">6.10</span><span class="section_title"><a href="#what-2">What</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">6.11</span><span class="section_title"><a href="#security">Security</a></span><span class="word_count">(154w~1m)</span></li>
+</ul>
+</div>
+<h3 id="bash-shell-programming"><span class="section_number">6.1</span><span class="section_title">Bash shell programming</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1.1</span><span class="section_title"><a href="#articles">Articles</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">6.1.2</span><span class="section_title"><a href="#error-handling">Error handling</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">6.1.3</span><span class="section_title"><a href="#bash-pitfalls">Bash pitfalls</a></span><span class="word_count">(72w~1m)</span></li>
+<li><span class="section_number">6.1.4</span><span class="section_title"><a href="#others">Others</a></span><span class="word_count">(11w~1m)</span></li>
+</ul>
+</div>
+<h4 id="articles"><span class="section_number">6.1.1</span><span class="section_title">Articles</span></h4>
+<ul>
+<li><p>Bash has associative arrays</p>
+<ul>
+<li><a href="https://www.artificialworlds.net/blog/2012/10/17/bash-associative-array-examples/">https://www.artificialworlds.net/blog/2012/10/17/bash-associative-array-examples/</a></li>
+</ul></li>
+<li><a href="https://github.com/SierraSoftworks/bash-cli">SierraSoftworks/bash-cli: A command line framework built using nothing but Bash and compatible with anything</a></li>
+<li><a href="http://wiki.bash-hackers.org/syntax/pe">parameter expansion</a></li>
+<li><p><a href="https://github.com/dylanaraps/pure-bash-bible">pure bash bible</a></p></li>
+</ul>
+<h4 id="error-handling"><span class="section_number">6.1.2</span><span class="section_title">Error handling</span></h4>
+<p>I set these bash options in my script to make it fail fast:</p>
+<div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">set</span> <span class="ex">-o</span> errexit</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw">set</span> <span class="ex">-o</span> nounset</a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="kw">set</span> <span class="ex">-o</span> pipefail</a></code></pre></div>
+<h4 id="bash-pitfalls"><span class="section_number">6.1.3</span><span class="section_title">Bash pitfalls</span></h4>
+<p>This is bash version <code>GNU bash, version 4.3.11(1)-release (x86_64-pc-linux-gnu)</code> that comes with Ubuntu 14.04.</p>
+<ol>
+<li><p>Local variable definition ignores command substitution result</p>
+<p>At first this seems like an unexpected interaction between function, <code>local</code> variable, <code>set -e (set -o errexit)</code>, and command substitution <code>$(cmd)</code>.</p>
+<p>The word <code>local</code> is a shell command that has an exit status, not a keyword like <code>var</code> in JavaScript. Bash is behaving as documented. See the documentation for <code>local</code> in <code>man bash</code>.</p>
+<div class="sourceCode" id="cb3" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="fu">fun_0()</span> <span class="kw">{</span></a>
+<a class="sourceLine" id="cb3-2" title="2">    <span class="bu">local</span> <span class="va">var</span></a>
+<a class="sourceLine" id="cb3-3" title="3">    <span class="va">var=$(</span><span class="fu">false</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb3-4" title="4">    <span class="bu">echo</span> fun_0</a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="kw">}</span></a>
+<a class="sourceLine" id="cb3-6" title="6"></a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="fu">fun_1()</span> <span class="kw">{</span></a>
+<a class="sourceLine" id="cb3-8" title="8">    <span class="bu">local</span> <span class="va">var=$(</span><span class="fu">false</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb3-9" title="9">    <span class="bu">echo</span> fun_1</a>
+<a class="sourceLine" id="cb3-10" title="10"><span class="kw">}</span></a>
+<a class="sourceLine" id="cb3-11" title="11"></a>
+<a class="sourceLine" id="cb3-12" title="12"><span class="fu">fun_2()</span> <span class="kw">{</span></a>
+<a class="sourceLine" id="cb3-13" title="13">    <span class="bu">local</span> <span class="va">var=$1</span></a>
+<a class="sourceLine" id="cb3-14" title="14">    <span class="bu">echo</span> fun_2</a>
+<a class="sourceLine" id="cb3-15" title="15"><span class="kw">}</span></a>
+<a class="sourceLine" id="cb3-16" title="16"></a>
+<a class="sourceLine" id="cb3-17" title="17"><span class="bu">echo</span> <span class="va">$(</span><span class="kw">set</span> <span class="ex">-o</span> errexit<span class="kw">;</span> <span class="ex">fun_0</span><span class="va">)</span> <span class="co"># Expected: This doesn&#39;t print fun_0.</span></a>
+<a class="sourceLine" id="cb3-18" title="18"><span class="bu">echo</span> <span class="va">$(</span><span class="kw">set</span> <span class="ex">-o</span> errexit<span class="kw">;</span> <span class="ex">fun_1</span><span class="va">)</span> <span class="co"># PITFALL: This prints fun_1 !!!</span></a>
+<a class="sourceLine" id="cb3-19" title="19"><span class="bu">echo</span> <span class="va">$(</span><span class="kw">set</span> <span class="ex">-o</span> nounset<span class="kw">;</span> <span class="ex">fun_2</span><span class="va">)</span> <span class="co"># Pitfall: This doesn&#39;t print fun_2, and aborts with &quot;bash: $1: unbound variable&quot;.</span></a></code></pre></div></li>
+</ol>
+<h4 id="others"><span class="section_number">6.1.4</span><span class="section_title">Others</span></h4>
+<ul>
+<li><a href="https://github.com/koalaman/shellcheck">https://github.com/koalaman/shellcheck</a>
+<ul>
+<li>&lt;2018-11-03&gt; I'm not going back to Haskell until GHC compiles faster.</li>
+</ul></li>
+</ul>
+<h3 id="installing-remote-graphical-user-interface"><span class="section_number">6.2</span><span class="section_title">Installing remote graphical user interface</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.2.1</span><span class="section_title"><a href="#goal-background-and-failures">Goal, background, and failures</a></span><span class="word_count">(101w~1m)</span></li>
+<li><span class="section_number">6.2.2</span><span class="section_title"><a href="#plan-of-action">Plan of action</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">6.2.3</span><span class="section_title"><a href="#installing-starting-and-stopping-tightvnc-server-on-the-remote-machine">Installing, starting, and stopping TightVNC server on the remote machine</a></span><span class="word_count">(73w~1m)</span></li>
+<li><span class="section_number">6.2.4</span><span class="section_title"><a href="#installing-tightvnc-client-on-the-localdevelopment-machine">Installing TightVNC client on the local/development machine</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">6.2.5</span><span class="section_title"><a href="#path-not-taken">Path not taken</a></span><span class="word_count">(11w~1m)</span></li>
+</ul>
+</div>
+<h4 id="goal-background-and-failures"><span class="section_number">6.2.1</span><span class="section_title">Goal, background, and failures</span></h4>
+<p>I need to run Java VisualVM on my server to profile my application.</p>
+<p>I tried <code>ssh -X</code>, but it was unacceptably slow. SSH compression doesn't help; the problem is latency, not throughput.</p>
+<p>I don't want to run an X server on the remote machine. I don't want a display server running all the time. I want to start it only when I need it.</p>
+<p>Ubuntu help is not helpful. It doesn't even mention VNC or RDP. <a href="https://help.ubuntu.com/community/ServerGUI">https://help.ubuntu.com/community/ServerGUI</a></p>
+<p>VNC seems promising. Let's run VNC at the server's localhost, and connect through SSH tunneling. Let's go with TightVNC.</p>
+<p>&quot;VNC: A Faster Alternative to X11&quot; <a href="https://www.nas.nasa.gov/hecc/support/kb/vnc-a-faster-alternative-to-x11_257.html">https://www.nas.nasa.gov/hecc/support/kb/vnc-a-faster-alternative-to-x11_257.html</a></p>
+<h4 id="plan-of-action"><span class="section_number">6.2.2</span><span class="section_title">Plan of action</span></h4>
+<p>We assume two machines:</p>
+<ul>
+<li>The <em>local machine</em> is the machine that we use to start SSH connection.</li>
+<li>The <em>remote machine</em> is the machine that accepts SSH connections.</li>
+</ul>
+<p>What we need to do on the remote machine:</p>
+<ul>
+<li>Install VNC server.</li>
+<li>Start VNC server.</li>
+<li>Stop VNC server.</li>
+</ul>
+<p>What we need to do on the local machine:</p>
+<ul>
+<li>Install VNC client/viewer.</li>
+</ul>
+<h4 id="installing-starting-and-stopping-tightvnc-server-on-the-remote-machine"><span class="section_number">6.2.3</span><span class="section_title">Installing, starting, and stopping TightVNC server on the remote machine</span></h4>
+<p>sudo apt-get install –no-install-recommends xfce4 tightvncserver</p>
+<p>To start VNC server at remote localhost port 5901. 1920x1080. vncserver -localhost -nolisten tcp -geometry 1920x960 -depth 24 :1</p>
+<p>Configure SSH LocalForward. If you have a jumpbox, you may need to forward twice.</p>
+<p>To stop vncserver -kill :1</p>
+<p>Start remmina. It seems to have been installed by default. The GUI should be obvious.</p>
+<p>Sources:</p>
+<ul>
+<li>&quot;-nolisten tcp&quot; <a href="http://mail.nylug.org/pipermail/nylug-talk/2009-April/013377.html">http://mail.nylug.org/pipermail/nylug-talk/2009-April/013377.html</a></li>
+<li>&quot;vncserver :1 -geometry 800x600 -depth 24&quot; <a href="https://blog.ssdnodes.com/blog/remote-linux-desktop-vps-ssh-vnc/">https://blog.ssdnodes.com/blog/remote-linux-desktop-vps-ssh-vnc/</a></li>
+<li>helpful <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-14-04">https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-14-04</a></li>
+</ul>
+<h4 id="installing-tightvnc-client-on-the-localdevelopment-machine"><span class="section_number">6.2.4</span><span class="section_title">Installing TightVNC client on the local/development machine</span></h4>
+<h4 id="path-not-taken"><span class="section_number">6.2.5</span><span class="section_title">Path not taken</span></h4>
+<p>I saw these, but I did not try these.</p>
+<ul>
+<li><a href="https://wiki.x2go.org/doku.php/doc:newtox2go">https://wiki.x2go.org/doku.php/doc:newtox2go</a></li>
+<li><a href="https://www.tecmint.com/best-remote-linux-desktop-sharing-software/">https://www.tecmint.com/best-remote-linux-desktop-sharing-software/</a></li>
+<li><a href="https://serverfault.com/questions/36381/best-fastest-way-to-access-desktop-gui-on-a-remote-ubuntu-server">https://serverfault.com/questions/36381/best-fastest-way-to-access-desktop-gui-on-a-remote-ubuntu-server</a></li>
+</ul>
+<h3 id="autotools"><span class="section_number">6.3</span><span class="section_title">Autotools</span></h3>
+<ul>
+<li>I add <code>--prefix=$HOME/.local</code> to configure. For installing things, I only sudo apt. I never sudo make.</li>
+<li>Cargo-cult programming
+<ul>
+<li>Sometimes fixes things
+<ul>
+<li>Add <code>-I /usr/share/aclocal</code> to <code>ACLOCAL_AMFLAGS</code> in <code>Makefile.am</code>.</li>
+</ul></li>
+</ul></li>
+<li><a href="http://voices.canonical.com/jussi.pakkanen/2011/09/13/autotools/">Why GNU Autotools is not my favorite build system | Jussi Pakkanen's development blog</a></li>
+</ul>
+<h3 id="running-x-client-applications-on-docker-on-linux"><span class="section_number">6.4</span><span class="section_title">Running X client applications on Docker on Linux</span></h3>
+<pre class="example"><code>docker \
+    -e DISPLAY \
+    -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+    -u &lt;user&gt; &lt;image&gt; &lt;command&gt;
+</code></pre>
+<p>Replace <code>&lt;user&gt;</code> with a non-root user. You need a non-root user because the X server rejects connection from the root user by default. You can change this with <code>xhost</code>, but it's better to connect with a non-root user.</p>
+<p>The <code>&lt;command&gt;</code> argument is optional.</p>
+<p>The <code>-e DISPLAY</code> parameter reexports the <code>DISPLAY</code> environment variable to the application inside the container. X client applications will read from this environment variable to determine which server to connect to.</p>
+<p>The <code>-v HOST:CONT:ro</code> option mounts <code>HOST</code> directory to <code>CONT</code> directory read-only. This is so that the application in the container can connect to the host X server's Unix socket.</p>
+<p>On Linux, display <code>:0</code> corresponds to the Unix socket <code>/tmp/.X11-unix/X0</code>. Everyone who can connect to that Unix socket will be able to run X client applications on the machine; it is not specific to Docker.</p>
+<p>If X complains about shared memory, try:</p>
+<pre class="example"><code>docker \
+    -e DISPLAY=unix$DISPLAY \
+    -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+    -u &lt;user&gt; &lt;image&gt; &lt;command&gt;
+</code></pre>
+<h3 id="habits-learned-the-hard-way"><span class="section_number">6.5</span><span class="section_title">Habits learned the hard way</span></h3>
+<ul>
+<li>I check the time at <a href="https://time.gov/">time.gov</a> because Ubuntu 14.04 NTP once betrayed me.
+<ul>
+<li>2018-01-16: I had always thought that it was dependable, but it betrayed me: It showed 2 a.m. while the actual time was 4 a.m.. I missed some hours of sleep.</li>
+</ul></li>
+<li>I sometimes run <code>sync</code>, hoping to make sure my changes are written to disk.</li>
+</ul>
+<h3 id="what-1"><span class="section_number">6.6</span><span class="section_title">What</span></h3>
+<ul>
+<li><p>Why use swap partitions and not swap files?</p>
+<ul>
+<li><p>Defragmenting swap files might have undesirable effects.</p>
+<ul>
+<li><a href="https://lwn.net/Articles/317787/">https://lwn.net/Articles/317787/</a></li>
+</ul></li>
+</ul></li>
+<li><p>ext4 defragmentation tools</p>
+<ul>
+<li><p><a href="https://askubuntu.com/questions/221079/how-to-defrag-an-ext4-filesystem">https://askubuntu.com/questions/221079/how-to-defrag-an-ext4-filesystem</a></p>
+<ul>
+<li>e2freefrag DEV, e4defrag -c FILE</li>
+</ul></li>
+</ul></li>
+<li><p>SATA 3 Gbps controller problem?</p>
+<ul>
+<li><a href="https://github.com/zfsonlinux/zfs/issues/4873">https://github.com/zfsonlinux/zfs/issues/4873</a></li>
+</ul></li>
+<li><p>Security</p>
+<ul>
+<li><p>Isolating (sandboxing) an application</p>
+<ul>
+<li><p>Creating a dedicated limited user for an application</p>
+<ul>
+<li><code>adduser --system</code>, or just use the <code>nobody</code> user?</li>
+</ul></li>
+</ul></li>
+<li><p>Many methods of isolation</p>
+<ul>
+<li><a href="https://unix.stackexchange.com/questions/384117/linux-isolate-process-without-containers">https://unix.stackexchange.com/questions/384117/linux-isolate-process-without-containers</a></li>
+<li><a href="https://www.engineyard.com/blog/linux-containers-isolation">https://www.engineyard.com/blog/linux-containers-isolation</a></li>
+<li><a href="https://opensourceforu.com/2016/07/many-approaches-sandboxing-linux/">https://opensourceforu.com/2016/07/many-approaches-sandboxing-linux/</a></li>
+</ul></li>
+</ul></li>
+<li>Why isn't ssh fail2ban the default? Why is security not the default?</li>
+<li>2014, &quot;Is there any solution to make OpenVPN authentication with Google ID?&quot;, <a href="https://serverfault.com/questions/597833/is-there-any-solution-to-make-openvpn-authentication-with-google-id">SF 597833</a></li>
+<li><p>man page usability, terminal usability, reducing cognitive load</p>
+<ul>
+<li><a href="https://tldr.sh/">tldr.sh</a>: &quot;The TLDR pages are a community effort to simplify the beloved man pages with practical examples.&quot;</li>
+</ul></li>
+<li><a href="https://stackoverflow.com/questions/22697049/what-is-the-difference-between-google-app-engine-and-google-compute-engine">SO 22697049: difference between Google App Engine and Google Compute Engine</a></li>
+<li><p>A good OS (operating system) is invisible like a good design.</p>
+<ul>
+<li>The user can't tell whether an OS is good. If the OS is good, everything runs smoothly.</li>
+<li>But the user can tell whether an OS is bad. Crashes due to non-hardware problems. Things that don't just work.</li>
+</ul></li>
+<li><p><a href="https://felipec.wordpress.com/2011/06/16/after-two-weeks-of-using-gnome-3-i-officially-hate-it/">https://felipec.wordpress.com/2011/06/16/after-two-weeks-of-using-gnome-3-i-officially-hate-it/</a></p>
+<ul>
+<li>Why does the author disapprove of GNOME 3?</li>
+</ul></li>
+<li><p><a href="https://libcloud.apache.org/">https://libcloud.apache.org/</a></p>
+<ul>
+<li>&quot;One Interface To Rule Them All: Python library for interacting with many of the popular cloud service providers using a unified API.&quot;</li>
+</ul></li>
+<li><p>Systems should be secure by default.</p>
+<ul>
+<li><p>UNIX/Linux woes</p>
+<ul>
+<li>Why is SSH fail2ban not installed by default?</li>
+<li><p>Why does an application run as the user?</p>
+<ul>
+<li>I think this is a design flaw. It's a big gaping security hole. It allows an application to access all your files. But how do we fix this without sacrificing convenience?</li>
+<li>Why is sandboxing not the default?</li>
+</ul></li>
+<li><p>How do we understand SELinux?</p>
+<ul>
+<li><a href="https://www.computernetworkingnotes.com/rhce-study-guide/selinux-explained-with-examples-in-easy-language.html">SELinux Explained with Examples in Easy Language</a></li>
+<li><p>NSA made SELinux. How trustworthy is it? Does it have NSA backdoors?</p>
+<ul>
+<li><a href="https://security.stackexchange.com/questions/42383/how-trustworthy-is-selinux">linux - How trustworthy is SELinux? - Information Security Stack Exchange</a></li>
+<li>2017, <a href="https://www.reddit.com/r/linux/comments/54in5s/the_nsa_has_tried_to_backdoor_linux_three_times/">The NSA has tried to backdoor linux three times : linux</a></li>
+</ul></li>
+</ul></li>
+<li><p>What is the relationship/difference between MAC (mandatory access control) and DAC (discretionary access control)? Are they antonyms? Complements?</p>
+<ul>
+<li><a href="https://security.stackexchange.com/questions/63518/mac-vs-dac-vs-rbac">access control - MAC vs DAC vs RBAC - Information Security Stack Exchange</a></li>
+</ul></li>
+</ul></li>
+<li><p>The only real secure way to run an untrusted application is on a different machine with no network connection.</p></li>
+</ul></li>
+<li><a href="https://linux.die.net/man/1/pv">pv(1): monitor progress of data through pipe - Linux man page</a></li>
+<li><a href="https://stedolan.github.io/jq/">jq</a>, <a href="https://en.wikipedia.org/wiki/Jq_(programming_language)">WP:jq (programming language)</a></li>
+</ul>
+<h3 id="sudo-security-hole-mitigation-dont-reuse-the-terminal-you-use-for-sudo."><span class="section_number">6.7</span><span class="section_title">sudo security hole mitigation: Don't reuse the terminal you use for sudo.</span></h3>
+<p>The problem: If you run sudo in a terminal, then every program you run in the same terminal shortly after can become root without asking for your password, (You may not have this problem if your system disables credential caching.)</p>
+<p>To see how, save this into <code>evil.sh</code>, and then <code>chmod 755 evil.sh</code>, and then <code>sudo echo login</code>, and then <code>./evil.sh</code>.</p>
+<div class="sourceCode" id="cb6" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" title="1"><span class="co">#!/bin/bash</span></a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="co"># If you run this script not long after sudoing in the same terminal,</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co"># then this script can become root without prompting for your password.</span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="fu">sudo</span> echo PWNED <span class="co"># could be a malicious program</span></a></code></pre></div>
+<p>The security hole is by design for convenience because people don't like typing their passwords. This hole is not fatal; the user can control this. It seems that this hole won't be closed; there doesn't seem to be any way of closing this hole without annoying the user.</p>
+<p>The mitigation is simple disciplined behavior:</p>
+<ul>
+<li>Do as few things as necessary in an elevated terminal.</li>
+<li>Run only trusted programs and scripts.</li>
+<li>Close the terminal as soon as possible. Alternatively, you can also run <code>sudo -K</code> to remove the cache.</li>
+</ul>
+<h3 id="probably-relevant-twitters"><span class="section_number">6.8</span><span class="section_title">Probably relevant Twitters</span></h3>
+<ul>
+<li><a href="https://twitter.com/nixcraft">nixcraft</a>: some humor, some important</li>
+</ul>
+<h3 id="building-software-for-old-ubuntu"><span class="section_number">6.9</span><span class="section_title">Building software for old Ubuntu</span></h3>
+<p>Suppose:</p>
+<ul>
+<li>You are using Ubuntu 14.04.</li>
+<li>Ubuntu 14.04 comes with Emacs 24.</li>
+<li>You want to build Emacs 26 (because you want Spacemacs).</li>
+</ul>
+<p>You may be able to do that. Install the build dependencies, and hope that emacs 26 doesn't get too edgy with its libraries.</p>
+<pre class="example"><code>sudo apt-get build-dep emacs24
+</code></pre>
+<p>That is from <a href="http://ergoemacs.org/emacs/building_emacs_on_linux.html">How to Build Emacs on Linux</a>.</p>
+<p>You can do that for other software, as long as they don't require dependencies that are too recent.</p>
+<h3 id="what-2"><span class="section_number">6.10</span><span class="section_title">What</span></h3>
+<ul>
+<li><a href="https://medium.com/netflix-techblog/linux-performance-analysis-in-60-000-milliseconds-accc10403c55">https://medium.com/netflix-techblog/linux-performance-analysis-in-60-000-milliseconds-accc10403c55</a></li>
+</ul>
+<p>&lt;2019-01-16&gt; Ubuntu 14.04. Okular is better than Evince. Okular's &quot;Trim Margins&quot; feature is helpful. Okular also feels more responsive.</p>
+<h3 id="security"><span class="section_number">6.11</span><span class="section_title">Security</span></h3>
+<ul>
+<li><p>Bastion hosts, aka jump boxes</p>
+<ul>
+<li><p>Does a jump box add any security?</p>
+<ul>
+<li><a href="http://cloudacademy.com/blog/aws-bastion-host-nat-instances-vpc-peering-security/">http://cloudacademy.com/blog/aws-bastion-host-nat-instances-vpc-peering-security/</a></li>
+<li><a href="http://www.infoworld.com/article/2612700/security/-jump-boxes--improve-security--if-you-set-them-up-right.html">http://www.infoworld.com/article/2612700/security/-jump-boxes--improve-security--if-you-set-them-up-right.html</a></li>
+</ul></li>
+</ul></li>
+<li><p>Check your HTTPS</p>
+<ul>
+<li><a href="https://www.ssllabs.com/ssltest/">Test your HTTPS implementation</a>; it's too easy to do security wrong.</li>
+</ul></li>
+<li><p><a href="https://www.vaultproject.io/">HashiCorp Vault</a></p>
+<ul>
+<li><a href="https://github.com/hashicorp/vault">source code</a>, language Go, license MPL 2.0</li>
+<li>What is Vault? &quot;Vault is a tool for securely accessing <em>secrets</em>.&quot; (<a href="https://www.vaultproject.io/intro/index.html">Introduction</a>)</li>
+<li>What can it do?</li>
+<li>How do I install it?</li>
+<li>How do I run it?</li>
+<li>How do I interact with it?</li>
+<li><a href="https://www.hashicorp.com/">HashiCorp</a></li>
+</ul></li>
+<li><a href="https://stackoverflow.com/questions/5930529/how-is-revocation-of-a-root-certificate-handled">SE 5930529: How is revocation of a root certificate handled?</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Online_Certificate_Status_Protocol">WP: Online Certificate Status Protocol</a></li>
+<li><a href="https://en.wikipedia.org/wiki/OCSP_stapling">WP: OCSP Stapling</a> moves the cost from client to server.</li>
+<li><p>Zero trust security model (ZTSM)</p>
+<ul>
+<li>&quot;How would I design my system without any firewalls?&quot;</li>
+<li><p><a href="https://www.scaleft.com/beyondcorp/">https://www.scaleft.com/beyondcorp/</a></p>
+<ul>
+<li>old approach: perimeter security, medieval castle, weak core, strong perimeter</li>
+<li><p><a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/43231.pdf">https://storage.googleapis.com/pub-tools-public-publication-data/pdf/43231.pdf</a></p>
+<ul>
+<li>&quot;The perimeter security model works well enough when all employees work exclusively in buildings owned by an enterprise.&quot;</li>
+<li>&quot;access depends solely on device and user credentials, regardless of a user's network location&quot;</li>
+<li>&quot;All access to enterprise resources is fully authenticated, fully authorized, and fully encrypted based upon device state and user credentials.&quot;</li>
+<li>ZTSM obviates VPN (virtual private network).</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2020-01-11&gt; <a href="https://security.stackexchange.com/questions/135499/what-is-the-point-of-encrypting-the-home-directory">https://security.stackexchange.com/questions/135499/what-is-the-point-of-encrypting-the-home-directory</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://www.omgubuntu.co.uk/2017/02/gnome-night-light-blue-light-filter-linux">https://www.omgubuntu.co.uk/2017/02/gnome-night-light-blue-light-filter-linux</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=916320">https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=916320</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://blog.cryptographyengineering.com/2018/09/23/why-im-leaving-chrome/">https://blog.cryptographyengineering.com/2018/09/23/why-im-leaving-chrome/</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://lists.debian.org/debian-live/2017/06/msg00070.html">https://lists.debian.org/debian-live/2017/06/msg00070.html</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://www.machma.nl/DebianonUSB.html">https://www.machma.nl/DebianonUSB.html</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2016-05-02 03:31:20 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

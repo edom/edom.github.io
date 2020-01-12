@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On spirituality and business</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On spirituality and business</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#we-dont-have-to-choose-between-bsd-and-gpl">We don't have to choose between BSD and GPL</a></span><span class="word_count">(108w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#taxation">Taxation</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(259w~2m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#ethical-advertising">Ethical advertising</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#computational-complexity-and-intellectual-property">Computational complexity and intellectual property</a></span><span class="word_count">(94w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#inspiring-internet-onion-seller">Inspiring Internet onion seller</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#economics-anti-cafe">&lt;2019-08-17&gt; Economics: anti-cafe</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#open-source">Open source?</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#business-vs-company">Business vs company</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#old-contents">Old contents</a></span><span class="word_count">(14w~1m)</span></li>
+</ul>
+</div>
+<h2 id="we-dont-have-to-choose-between-bsd-and-gpl"><span class="section_number">1</span><span class="section_title">We don't have to choose between BSD and GPL</span></h2>
+<p>We can choose <em>both</em>.</p>
+<p>Why not all of them?</p>
+<p>We can say &quot;The project is licensed under these licenses, at your choice: BSD/MIT/X11/ISC/MPL/Apache2/GPL/LGPL/AGPL&quot;</p>
+<p>BSD does not forbid adding restrictions.</p>
+<p>I choose BSD/MIT/Apache2 because I want humans to flourish, not companies to suffer.</p>
+<p>I choose the licenses that are based on love, not on hatred.</p>
+<p>People choose GPL because they hate capitalism first, and they want humankind to benefit second. I used to hate capitalism, but now I see that it is neutral, and the problem is humans, not systems. If a company freeloads on an open-source project, people can choose to not buy from the company.</p>
+<h2 id="taxation"><span class="section_number">2</span><span class="section_title">Taxation</span></h2>
+<p>Spirit of corporate taxation laws:</p>
+<ul>
+<li>Personal expenses are not corporate expenses.</li>
+</ul>
+<h2 id="what"><span class="section_number">3</span><span class="section_title">What</span></h2>
+<p>Why does the company retain most of its profits? To create buffer. Reinvest?</p>
+<p>I want a company without employees. Everyone is paid according to their impact? Everyone bids?</p>
+<p>If money should not be given to those who do not know what to do with it, then either employees should be paid less or nobody should be employees (everybody should be one-person businesses instead).</p>
+<p>If profit is theft, then loss is also theft. If a profiting employer is fleecing its employees, then a losing employer is being fleeced by its employees.</p>
+<p>We are not customer-driven because customers can be immoral.</p>
+<p>We are self-driven.</p>
+<p>We want to be God-driven, but we don't know how to be sure that it's God.</p>
+<p>Employers trust God more than employees do?</p>
+<p>Adam Smith's theorem? Voluntary trade improves everyone's satisfaction / satisfied wants. But what about drug users? Do they voluntarily trade their hard-earned money for harmful drugs?</p>
+<p>Business = intrinsic motivation * distribution channel?</p>
+<p>What <a href="https://wanderingaimfully.com/start-a-business/">https://wanderingaimfully.com/start-a-business/</a></p>
+<p>Write principles, start my own businesses. Trust God. A businessperson trusts God more than an employee does. In risk is God.</p>
+<p>Avoid looking down on old-school capitalists. Do not feel holier than others.</p>
+<p>No employment. No command. No power asymmetry.</p>
+<p>Employment is immoral, but most people prefer certain income, stability, and low risk appetite, only want to master a narrow range of things. Or it's just that sometimes employment is necessary because control?</p>
+<p>Nature provides more than a social safety net can ever provide: A fertile land to live on forever.</p>
+<p>Accounting should be truthful. If truth is not possible, then it should be pessimistic. Debts and expenses are certain. Assets and incomes are uncertain.</p>
+<h2 id="ethical-advertising"><span class="section_number">4</span><span class="section_title">Ethical advertising</span></h2>
+<p>We inform, not manipulate.</p>
+<p>No discounts. No promotions.</p>
+<h2 id="computational-complexity-and-intellectual-property"><span class="section_number">5</span><span class="section_title">Computational complexity and intellectual property</span></h2>
+<p>The intended definition of intellectual property is something hard enough to compute/create/come up with.</p>
+<p>Patents, copyrights, and intellectual properties hamper progress.</p>
+<p>If ideas are planted in our minds by spirits, then nobody has the right to claim authorship?</p>
+<p>An insurance company can only profit by making the average person lose. It's cheap when you're young and you don't need it. It's too expensive when you're old and you need it.</p>
+<p>The insurance company makes the book so it has house advantage. Search &quot;actuarial tables&quot;.</p>
+<p>Appeal to fear.</p>
+<div class="line-block">God is my insurance.<br />
+Illness is God's calling me home.</div>
+<h2 id="inspiring-internet-onion-seller"><span class="section_number">6</span><span class="section_title">Inspiring Internet onion seller</span></h2>
+<p>Inspiring Internet onion seller<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>: It's <em>stupidly simple</em>, but it's <em>real money</em>. It's <em>good business</em>.</p>
+<p><a href="https://www.bradford-delong.com/2017/07/how-to-think-like-an-economist-if-that-is-you-wish-to.html">https://www.bradford-delong.com/2017/07/how-to-think-like-an-economist-if-that-is-you-wish-to.html</a> <a href="https://hackernoon.com/how-to-make-more-money-as-a-software-developer-da9fc13944e4">https://hackernoon.com/how-to-make-more-money-as-a-software-developer-da9fc13944e4</a> <a href="https://en.wikipedia.org/wiki/Economic_system">https://en.wikipedia.org/wiki/Economic_system</a> <a href="https://en.wikipedia.org/wiki/Circular_economy">https://en.wikipedia.org/wiki/Circular_economy</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Productivity_model">https://en.wikipedia.org/wiki/Productivity_model</a> <a href="https://en.wikipedia.org/wiki/Productive_forces">https://en.wikipedia.org/wiki/Productive_forces</a> <a href="https://en.wikipedia.org/wiki/Production_(economics)">https://en.wikipedia.org/wiki/Production_(economics)</a></p>
+<h2 id="economics-anti-cafe"><span class="section_number">7</span><span class="section_title">&lt;2019-08-17&gt; Economics: anti-cafe</span></h2>
+<p>In anti-cafe, one pays for time, not for food.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<h2 id="open-source"><span class="section_number">8</span><span class="section_title">Open source?</span></h2>
+<p><a href="https://github.com/tycrek/degoogle/blob/master/README.md">https://github.com/tycrek/degoogle/blob/master/README.md</a></p>
+<h2 id="business-vs-company"><span class="section_number">9</span><span class="section_title">Business vs company</span></h2>
+<p>Business is essence/activity/spirit/idea. Company is form/detail/execution/body.</p>
+<p>Business : company = spirit : body.</p>
+<h2 id="old-contents"><span class="section_number">10</span><span class="section_title">Old contents</span></h2>
+<ul>
+<li><a href="rich.html">file:rich.html</a> was written when I was a materialist before I was into spirituality</li>
+</ul>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.deepsouthventures.com/i-sell-onions-on-the-internet/">https://www.deepsouthventures.com/i-sell-onions-on-the-internet/</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Anti-café">https://en.wikipedia.org/wiki/Anti-café</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-11 00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
