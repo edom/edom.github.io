@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On the Git version control system</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On the Git version control system</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#a-curriculum-for-team-members">A curriculum for team members</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#mental-model">Mental model</a></span><span class="word_count">(199w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#more-information">More information</a></span><span class="word_count">(64w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#things-to-write">Things to write?</a></span><span class="word_count">(53w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#git-hash-collisions">Git hash collisions</a></span><span class="word_count">(120w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#related-tools">Related tools</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#speeding-up-git">Speeding up Git</a></span><span class="word_count">(205w~2m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#git-annoys-perfectionists">Git annoys perfectionists</a></span><span class="word_count">(137w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#distributed-does-not-mean-no-coordination">Distributed does not mean no coordination</a></span><span class="word_count">(38w~1m)</span></li>
+</ul>
+</div>
+<h2 id="a-curriculum-for-team-members"><span class="section_number">1</span><span class="section_title">A curriculum for team members</span></h2>
+<p>See <a href="git-curriculum.html">file:git-curriculum.html</a>.</p>
+<h2 id="mental-model"><span class="section_number">2</span><span class="section_title">Mental model</span></h2>
+<p>A <em>commit</em> is a snapshot of the working tree.</p>
+<p>A <em>reference</em> names a commit so that you can write <code>master</code> instead of <code>da39a3e</code>.</p>
+<p>If you are a visual person, you can think about how git commands change the picture shown by <code>gitk</code> (a tool for visualizing Git repositories).</p>
+<p>In gitk, a blue circle is a commit, a green box is a <em>reference</em>, and the bold green box is the <em>head</em>.</p>
+<p>The head points to the commit that will be the parent of the next commit.</p>
+<p>When you <code>git init</code>, Git creates a <code>.git</code> directory.</p>
+<p>When you <code>git status</code>, it prints <code>On branch master</code>. It means that the head points to the same commit pointed by the reference named <code>master</code>.</p>
+<p>When you <code>git commit</code>, you make a new commit (blue circle), and move the current branch (bold green box) to that new commit.</p>
+<p>When you <code>git reset Target</code>, you move the head (bold green box) to <code>Target</code>.</p>
+<p>If you are not yet comfortable with Git, back up your data by copying the <code>.git</code> directory. It can get corrupted. Things will go wrong. You may accidentally do something and don't know how to recover. Computers don't understand what you mean. They do what you say, not what you mean.</p>
+<h2 id="more-information"><span class="section_number">3</span><span class="section_title">More information</span></h2>
+<p>A Git <em>object</em>:</p>
+<ul>
+<li>is identified by a SHA-1 hash;</li>
+<li>is either a blob, tree, or commit;</li>
+<li>is stored as a file somewhere in the <code>.git</code> folder.</li>
+</ul>
+<p>A <em>commit</em> has zero or more parents. It also refers to a tree.</p>
+<p>A <em>tree</em> is a list of references. Every reference points to either a tree or a blob.</p>
+<p>For more information, read the <a href="https://git-scm.com/book">Pro Git</a> book or the <a href="https://git-scm.com/docs">manpages</a> (<code>man git</code>).</p>
+<h2 id="things-to-write"><span class="section_number">4</span><span class="section_title">Things to write?</span></h2>
+<ul>
+<li><p>Git fundamentals:</p>
+<ul>
+<li>Git store things in the <code>.git</code> directory.</li>
+<li>Why merge conflicts? How to resolve them? How to use <code>meld</code>? How to do a three-way merge?</li>
+<li>Avoid changing spaces. Avoid using your IDE to reformat files that are already commited.</li>
+</ul></li>
+<li><p>Workaround for bad user experience</p>
+<ul>
+<li><p>Disable git-gui GC warning:</p>
+<ul>
+<li><a href="https://stackoverflow.com/questions/1106529/how-to-skip-loose-object-popup-when-running-git-gui">https://stackoverflow.com/questions/1106529/how-to-skip-loose-object-popup-when-running-git-gui</a></li>
+</ul></li>
+</ul></li>
+<li><p><a href="https://manishearth.github.io/blog/2017/03/05/understanding-git-filter-branch/">Understanding Git Filter-branch and the Git Storage Model</a></p></li>
+</ul>
+<h2 id="git-hash-collisions"><span class="section_number">5</span><span class="section_title">Git hash collisions</span></h2>
+<p>Git hash collision may occur albeit extremely unlikely. Git assumes that if two objects have the same hash, then they are the same object. This is false; the converse is true: if two objects are the same, then they have the same hash. When hash collision occur, Git may silently lose data. Git is an example of software that is incorrect but works for the use cases it was designed for (source code versioning). Git is not meant to be used as an arbitrary database.</p>
+<p>Other softwares are incorrect as well. We routinely make software that assumes that there will never be more than 2<sup>64</sup> rows in a database table.</p>
+<p>Is it even possible to write correct software at all?</p>
+<h2 id="related-tools"><span class="section_number">6</span><span class="section_title">Related tools</span></h2>
+<ul>
+<li>git-gui, for making commits</li>
+<li>gitk, for showing history</li>
+<li>meld, for three-way diff/merge</li>
+</ul>
+<h2 id="speeding-up-git"><span class="section_number">7</span><span class="section_title">Speeding up Git</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#the-problem">The problem</a></span><span class="word_count">(134w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#plans">Plans</a></span><span class="word_count">(41w~1m)</span></li>
+<li><span class="section_number">7.3</span><span class="section_title"><a href="#non-plans">Non-plans</a></span><span class="word_count">(30w~1m)</span></li>
+</ul>
+</div>
+<h3 id="the-problem"><span class="section_number">7.1</span><span class="section_title">The problem</span></h3>
+<p>I have a repository with 100,000 files and 1,000,000 objects, but most of them are not mine, and I will never use most of them. I don't even think I have more than 1,000 files in that repository. The problem: Git interactive rebase is too slow in that repository.</p>
+<p>&lt;2018-12-05&gt; I solved the problem by extracting my work into its own disjoint subtree, and pushing to a different branch of the same repository.</p>
+<p>Hypothesis: How git rebase works.</p>
+<p>I guess <code>git rebase --onto TARGET BASE MOVE</code> works like this:</p>
+<pre class="example"><code>git checkout --orphan TARGET --
+git cherry-pick &lt;all commits from BASE to MOVE, excluding BASE, including MOVE&gt;
+git checkout -B MOVE
+</code></pre>
+<p>Cherry-pick is also slow. I guess that speeding up cherry-pick will also speed up rebase.</p>
+<p>Checkout is also slow. I guess that speeding up checkout will also speed up cherry-pick.</p>
+<p>It seems that <code>commit</code> and <code>write-tree</code> are slow.</p>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables">Git - Environment Variables</a>
+<ul>
+<li><code>GIT_TRACE_PERFORMANCE=true</code> has no effect. Which git version is it for?</li>
+</ul></li>
+</ul>
+<h3 id="plans"><span class="section_number">7.2</span><span class="section_title">Plans</span></h3>
+<ul>
+<li>Plan: Make a rebase that uses only trees and not indexes
+<ul>
+<li>If a tree changes, all its ancestors have to be rewritten.</li>
+</ul></li>
+<li>Plan: Just use subtrees and keep the repository small
+<ul>
+<li>I think this is the least-effort solution that solves (works around) the problem.</li>
+</ul></li>
+</ul>
+<h3 id="non-plans"><span class="section_number">7.3</span><span class="section_title">Non-plans</span></h3>
+<ul>
+<li><a href="https://www.atlassian.com/blog/git/handle-big-repositories-git">atlassian.com: How to manage big Git repositories</a>
+<ul>
+<li>Try git sparse checkout? It seems that sparse-checkout and rebase doesn't mix.</li>
+</ul></li>
+<li>Not recommended: <code>git gc --aggressive</code> (doesn't do what we think it would do).</li>
+</ul>
+<h2 id="git-annoys-perfectionists"><span class="section_number">8</span><span class="section_title">Git annoys perfectionists</span></h2>
+<p>Is my commit perfect yet? Who the hell cares. But my stupid mistakes will be recorded permanently and published for everyone to see? Who the hell cares.</p>
+<p>What do I use Git for? For backup and distribution. Not for history. I don't care about my Git history. In general, I don't care about the past, and I care about the present and the future. I have never needed to look into my Git history to diagnose a programming error. I have never used git-bisect. I try to do what I understand and understand what I do, in order to avoid introducing errors. I only demand that Git preserve the things I think are important.</p>
+<p>But Git is a version control system, not a backup solution. It may lose data although the probability is astronomically small (practically improbable).<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<h2 id="distributed-does-not-mean-no-coordination"><span class="section_number">9</span><span class="section_title">Distributed does not mean no coordination</span></h2>
+<p>Git compares lines of text. Git does not compare the meaning of code fragments.</p>
+<p>Git merge introduces defect when the source commits are diff-compatible but not meaning-compatible. Example: adding name-clashing functions at different places.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://stackoverflow.com/questions/10434326/hash-collision-in-git">https://stackoverflow.com/questions/10434326/hash-collision-in-git</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-11 00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

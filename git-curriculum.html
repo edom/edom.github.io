@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>A Git curriculum for team members</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">A Git curriculum for team members</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#set-up">Set up</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#inspecting-history">Inspecting history</a></span><span class="word_count">(55w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#referring-to-commits">Referring to commits</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#working-in-a-team">Working in a team</a></span><span class="word_count">(171w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#doing-your-work">Doing your work</a></span><span class="word_count">(177w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#rewriting-history">Rewriting history</a></span><span class="word_count">(165w~1m)</span></li>
+</ul>
+</div>
+<h2 id="set-up"><span class="section_number">1</span><span class="section_title">Set up</span></h2>
+<ul>
+<li>We assume GNU/Linux.</li>
+<li>Understand that <code>git config --global</code> usually modifies the file <code>~/.gitconfig</code>.</li>
+<li>Understand that <code>git config</code> usually modifies the file <code>.git/config</code>.</li>
+<li>Understand that Git stores data in the <code>.git</code> directory.</li>
+</ul>
+<h2 id="inspecting-history"><span class="section_number">2</span><span class="section_title">Inspecting history</span></h2>
+<ul>
+<li>Read the output of programs that show the newest commit on top.
+<ul>
+<li>Read the output of <code>git log</code>.</li>
+<li>Read the output of <code>git log -p</code> (that generates diffs).</li>
+<li>Read the output of <code>git log --graph --oneline --decorate</code>.</li>
+<li>Read the output of <code>gitk</code>.</li>
+<li>Read the output of <code>gitk Ref1 ... RefN</code>.</li>
+<li>Understand options that are common to <code>git log</code> and <code>gitk</code>:
+<ul>
+<li>refs</li>
+<li><code>--all</code></li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="referring-to-commits"><span class="section_number">3</span><span class="section_title">Referring to commits</span></h2>
+<ul>
+<li>Understand that a reference (a ref) labels a commit.</li>
+</ul>
+<h2 id="working-in-a-team"><span class="section_number">4</span><span class="section_title">Working in a team</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#synchronizing-with-others">Synchronizing with others</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#coordinating-with-others">Coordinating with others</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#merging">Merging</a></span><span class="word_count">(134w~1m)</span></li>
+</ul>
+</div>
+<h3 id="synchronizing-with-others"><span class="section_number">4.1</span><span class="section_title">Synchronizing with others</span></h3>
+<ul>
+<li>Understand <code>git fetch</code>.</li>
+<li>Understand <code>git push</code>.</li>
+<li>Understand <code>git push -f</code>.</li>
+</ul>
+<h3 id="coordinating-with-others"><span class="section_number">4.2</span><span class="section_title">Coordinating with others</span></h3>
+<ul>
+<li>Avoid trivial merge conflicts.
+<ul>
+<li>Avoid renaming files that others are working on.</li>
+<li>Avoid working on the same fragment that others are working on.</li>
+</ul></li>
+<li>Avoid noise.
+<ul>
+<li>Avoid changing whitespace/formatting.</li>
+</ul></li>
+</ul>
+<h3 id="merging"><span class="section_number">4.3</span><span class="section_title">Merging</span></h3>
+<ul>
+<li>Understand that a merge commit is a commit with more than one parents.</li>
+<li>Understand that Git merges are <em>textual</em>; Git does not understand programming.</li>
+<li>Understand that <code>git merge Ref</code> merges Ref <em>to the current branch</em>.
+<ul>
+<li>The current branch will be the first parent; X will be the second parent.</li>
+</ul></li>
+<li>Develop good habits.
+<ul>
+<li>Before <code>git merge</code>, ensure that the working directory is <em>clean</em> according to <code>git status</code>.</li>
+<li>Avoid editing a merge other than what is necessary to resolve conflicts.</li>
+<li>Avoid amending a merge commit.</li>
+<li>Avoid rebasing a merge commit.</li>
+<li>If you feel bad while merging, you can <code>git merge --abort</code> to restore the repository state to what it was before the merge began.</li>
+</ul></li>
+<li>Resolve merge conflicts.
+<ul>
+<li>Understand the three trees/versions: <em>ours</em>, <em>base</em>, and <em>theirs</em>.</li>
+<li>Resolve merge conflicts with <code>meld</code> and <code>git gui</code>.</li>
+<li>Understand that <code>meld</code> shows three panes in this order: <em>ours</em> (first parent), <em>base</em>, <em>theirs</em> (second parent).</li>
+</ul></li>
+</ul>
+<h2 id="doing-your-work"><span class="section_number">5</span><span class="section_title">Doing your work</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#developing-programs">Developing programs</a></span><span class="word_count">(99w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#switching-context">Switching context</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">5.3</span><span class="section_title"><a href="#discarding-uncommited-changes">Discarding uncommited changes</a></span><span class="word_count">(33w~1m)</span></li>
+</ul>
+</div>
+<h3 id="developing-programs"><span class="section_number">5.1</span><span class="section_title">Developing programs</span></h3>
+<ul>
+<li>Do one thing at a time.
+<ul>
+<li>Write the first line of the commit message <em>before</em> working. For example, the first line can be a to-do item title, or an issue identifier and the issue title.</li>
+<li>Do not refactor while adding feature.</li>
+<li>Do not add another feature while adding a feature.</li>
+</ul></li>
+<li>Have a feeling for commit granularity. A commit may correspond to one code review, an issue in an issue tracker, or something else.</li>
+<li>Every commit should leave the tree in a working state. If your commit breaks something, you may be biting more than you can chew.</li>
+<li>Avoid big conflicts.
+<ul>
+<li>Synchronize often, at least daily.</li>
+</ul></li>
+</ul>
+<h3 id="switching-context"><span class="section_number">5.2</span><span class="section_title">Switching context</span></h3>
+<ul>
+<li>Avoid using <code>git stash</code> for context-switching, because we don't want a merge conflict while doing <code>git stash pop</code>. Instead, just make an <em>ordinary</em> commit with <code>git commit</code>, because we can always amend and rebase normal commits and resolve merge conflicts in the usual way.</li>
+</ul>
+<h3 id="discarding-uncommited-changes"><span class="section_number">5.3</span><span class="section_title">Discarding uncommited changes</span></h3>
+<ul>
+<li>Discard uncommited changes <em>irrecoverably</em> with <code>git reset --hard</code>. Note that <em>they cannot be recovered</em>. If you discard them accidentally, you will have to manually type them again. There is no warning.</li>
+</ul>
+<h2 id="rewriting-history"><span class="section_number">6</span><span class="section_title">Rewriting history</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#commit-as-diff-mental-model">Commit-as-diff mental model</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#visualizing-operations">Visualizing operations</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#rebasing">Rebasing</a></span><span class="word_count">(92w~1m)</span></li>
+</ul>
+</div>
+<h3 id="commit-as-diff-mental-model"><span class="section_number">6.1</span><span class="section_title">Commit-as-diff mental model</span></h3>
+<p>This mental model is <em>wrong but useful</em><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> for rewriting history.</p>
+<ul>
+<li>Pretend that a commit is a delta, a diff, a patch.</li>
+<li>Understand cherry-pick as replay.</li>
+<li>Understand rebase as automated/programmatic cherry-pick.</li>
+</ul>
+<h3 id="visualizing-operations"><span class="section_number">6.2</span><span class="section_title">Visualizing operations</span></h3>
+<p>If visualization doesn't help you, skip this.</p>
+<ul>
+<li>Think that an operation (commit, rebase, merge, etc.) <em>transforms the picture</em> shown by <code>gitk</code>.
+<ul>
+<li>Visualize a commit as a <em>circle</em> in <code>gitk</code>.</li>
+<li>Visualize the history as a <em>tree</em> of commits (visualize the data structure, not the plant).</li>
+<li>Visualize rebasing as <em>grafting</em>.</li>
+</ul></li>
+</ul>
+<h3 id="rebasing"><span class="section_number">6.3</span><span class="section_title">Rebasing</span></h3>
+<ul>
+<li>Understand rebase as automated cherry-picking.</li>
+<li>Understand what three-argument rebase does with the tree.</li>
+<li>Understand <code>git merge-base</code> nearest common ancestor (assuming that the repository has only one root).
+<ul>
+<li>Understand “nearest common ancestor”.
+<ul>
+<li>Understand the ancestors of a commit.</li>
+<li>Understand the common ancestors of two commits.</li>
+<li>Understand the nearest common ancestors of two commits.</li>
+</ul></li>
+</ul></li>
+<li>Explain one- and two-argument rebase as special cases of three-argument rebase.</li>
+<li>Amend the last commit.</li>
+<li>Use interactive rebase.
+<ul>
+<li>Read the commit list (oldest commit on top, reverse of <code>git log</code>).</li>
+</ul></li>
+<li>Understand <code>--continue</code>, <code>--skip</code>, and <code>--abort</code>.</li>
+<li>Join/squash commits.</li>
+<li>Split commits.</li>
+<li>Resolve merge conflicts with <code>meld</code>.</li>
+<li>Resolve rebase conflicts with <code>meld</code>.</li>
+<li>Tidy up commit history before pushing.</li>
+<li>Discard commits.</li>
+</ul>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2020-01-14&gt; <a href="https://en.wikipedia.org/wiki/Lie-to-children">https://en.wikipedia.org/wiki/Lie-to-children</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2020-01-14&gt; <a href="https://en.wikipedia.org/wiki/All_models_are_wrong">https://en.wikipedia.org/wiki/All_models_are_wrong</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&lt;2020-01-14&gt; Knuth TeXbook preface <a href="https://twitter.com/johnregehr/status/1060251915777232896">https://twitter.com/johnregehr/status/1060251915777232896</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-14 00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>On Common Lisp</title>
+        <title>On Lisps, especially ANSI Common Lisp</title>
         <link rel="stylesheet" href="/assets/main.css"/>
         <script>
 // Help the reader estimate how much time the reading is going to take.
@@ -160,10 +160,18 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="wrapper">
                 <article class="post">
                     <header class="post-header">
-                        <h1 class="post-title">On Common Lisp</h1>
+                        <h1 class="post-title">On Lisps, especially ANSI Common Lisp</h1>
                     </header>
                 </article>
                 <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(69w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#tricky-stuff">Tricky stuff</a></span><span class="word_count">(88w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#namespaces">Namespaces?</a></span><span class="word_count">(2w~1m)</span></li>
+</ul>
+</div>
+<h2 id="what"><span class="section_number">1</span><span class="section_title">What</span></h2>
 <ul>
 <li>Why are there two sites: <a href="https://common-lisp.net/">common-lisp.net</a> and <a href="https://lisp-lang.org/">lisp-lang.net</a>? The former seems to have more content.</li>
 <li><a href="http://www.lispworks.com/documentation/lw50/CLHS/Front/index.htm">CLHS</a> (Common Lisp HyperSpec)</li>
@@ -176,6 +184,45 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>Reader case-sensitivity is adjustable <a href="https://www.cliki.net/Case%20sensitivity">https://www.cliki.net/Case%20sensitivity</a></p>
 <p><a href="https://www.cliki.net/Scribble">https://www.cliki.net/Scribble</a></p>
 <p>Meta, parsing on Lisp <a href="https://www.cliki.net/Meta">https://www.cliki.net/Meta</a></p>
+<p><a href="https://legacy.cs.indiana.edu/~dyb/pubs/hocs.pdf">Dybvig 2006</a> tells the history of Chez Scheme.</p>
+<h2 id="tricky-stuff"><span class="section_number">2</span><span class="section_title">Tricky stuff</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#keyword-vs-symbol">Keyword vs symbol</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#equality-comparison">Equality comparison</a></span><span class="word_count">(61w~1m)</span></li>
+</ul>
+</div>
+<h3 id="keyword-vs-symbol"><span class="section_number">2.1</span><span class="section_title">Keyword vs symbol</span></h3>
+<p><a href="https://stackoverflow.com/questions/23969203/what-is-the-difference-between-a-keyword-symbol-and-a-quoted-symbol">https://stackoverflow.com/questions/23969203/what-is-the-difference-between-a-keyword-symbol-and-a-quoted-symbol</a></p>
+<p>In the toplevel:</p>
+<ul>
+<li><code>'a</code> evaluates to a symbol in the package <code>common-lisp-user</code>.</li>
+<li><code>:a</code> evaluates to a symbol in the package <code>keyword</code>; this package is special.</li>
+</ul>
+<p>See also: <code>symbol-package</code>.</p>
+<h3 id="equality-comparison"><span class="section_number">2.2</span><span class="section_title">Equality comparison</span></h3>
+<p>In mathematics, X and Y are <em>equal</em> iff every X can be replaced with Y without changing the truth value of the containing statement.</p>
+<p>Two things are <em>identical</em> iff …</p>
+<p>In Common Lisp:</p>
+<ul>
+<li><code>eq</code> is identity comparison.</li>
+<li><code>eql</code> is <code>eq</code> or something?</li>
+<li><code>equal</code> is about structural similarity / isomorphism?</li>
+<li><code>equalp</code> is <code>equal</code> or something?</li>
+<li><code>=</code></li>
+<li><code>string=</code></li>
+<li><code>char=</code></li>
+</ul>
+<p>In Scheme:</p>
+<ul>
+<li><code>eq?</code> is identity comparison.</li>
+<li><code>eqv?</code> is ???</li>
+<li><code>equal?</code> is deep/recursive comparison?</li>
+<li><code>=</code> is numeric comparison?</li>
+</ul>
+<h2 id="namespaces"><span class="section_number">3</span><span class="section_title">Namespaces?</span></h2>
+<p><a href="https://www.emacswiki.org/emacs/Namespaces">https://www.emacswiki.org/emacs/Namespaces</a></p>
+<p>&quot;Debuggable&quot; <a href="https://endlessparentheses.com/introducing-names-practical-namespaces-for-emacs-lisp.html">https://endlessparentheses.com/introducing-names-practical-namespaces-for-emacs-lisp.html</a></p>
                 </div>
             </div>
         </main>

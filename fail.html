@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Failures</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Failures</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#internet-service-providers">Internet service providers</a></span><span class="word_count">(268w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#whatsapp-bullshit-i-have-to-put-up-with">WhatsApp bullshit I have to put up with</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#pln-electricity-distribution">PLN electricity distribution</a></span><span class="word_count">(174w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#derita-naik-gojekgrabbikegocargrabcar">&lt;2018-09-22&gt; Derita naik Gojek/Grabbike/Gocar/Grabcar</a></span><span class="word_count">(267w~2m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#gmail">Gmail</a></span><span class="word_count">(146w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#jakarta">Jakarta</a></span><span class="word_count">(120w~1m)</span></li>
+</ul>
+</div>
+<h2 id="internet-service-providers"><span class="section_number">1</span><span class="section_title">Internet service providers</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#fastnet">Fastnet</a></span><span class="word_count">(184w~1m)</span></li>
+<li><span class="section_number">1.2</span><span class="section_title"><a href="#cbn">CBN</a></span><span class="word_count">(83w~1m)</span></li>
+</ul>
+</div>
+<h3 id="fastnet"><span class="section_number">1.1</span><span class="section_title">Fastnet</span></h3>
+<p>Every time Fastnet goes down when I want to connect to the Internet, I'll write here.</p>
+<p>2016-11-29 it went down.</p>
+<p>2016-12-13 it went down due to someone else's fault. Kabel kecangkul alat berat orang lain di depan BCA KCP Kepa Duri Jl Mangga.</p>
+<p>2017-06-15 00:00 +0700 it went down. 04:00 I went to bed, and it was still down. It went up again some time between 04:00 and 10:30. The downtime was more than 4 hours.</p>
+<p>2017-08-11 00:00 +0700 it went down. 2017-08-11 02:30 +0700 it went up. The downtime was 2 hours 30 minutes.</p>
+<p>2017-08-24 08:00 +0700 it went down. 2017-08-24 12:24 +0700 I left home for office; it was still down. 2017-08-25 02:00 +0700 I went home from office; it had gone up. The downtime was less than 18 hours. I forgot to ask the people at home how long it had been down.</p>
+<p>2017-10-09 11:00 +0700 it went down. They said it would go up on 2017-10-10 23:00 +0700 (24 hour downtime). 2017-10-10 03:23 +0700 it hadn't gone up. It finally went up, but I didn't note when.</p>
+<p>In 2018, we stopped using Fastnet. We switched to CBN.</p>
+<h3 id="cbn"><span class="section_number">1.2</span><span class="section_title">CBN</span></h3>
+<p>&lt;2019-10-30&gt; Update: CBN sudah tidak sering mati seperti dulu. (Atau saya yang jarang di rumah?)</p>
+<p>Plus: CBN lebih murah daripada Fastnet. CBN fiber upload lebih cepat daripada Fastnet ADSL.</p>
+<p>Minus: CBN lebih sering mati. <em>CBN sangat sering mati.</em></p>
+<p>2017-12-23 00:00 CBN mati sekitar 12 jam.</p>
+<p>2018-05-22 04:27 CBN mati. 04:37 sudah nyala.</p>
+<p>2018-07-17 22:32 CBN mati.</p>
+<p>2018-09-07 11:30 - 13:30 CBN mati.</p>
+<p>2018-09-26 02:04 - 12:11 CBN mati.</p>
+<p>2018-11-16 00:16 CBN mati sebentar.</p>
+<p>2018-11-26 16:45 - 17:30 CBN mati. Hujan petir.</p>
+<p>2018-11-29 16:00 CBN mati.</p>
+<p>2018-11-30 00:30 CBN mati.</p>
+<p>2018-12-17 04:00 CBN mati. 14:00 nyala.</p>
+<h2 id="whatsapp-bullshit-i-have-to-put-up-with"><span class="section_number">2</span><span class="section_title">WhatsApp bullshit I have to put up with</span></h2>
+<p>&lt;2018-12-13&gt; WhatsApp Web requires Chrome 36+ or newer? I have Chromium 65.</p>
+<h2 id="pln-electricity-distribution"><span class="section_number">3</span><span class="section_title">PLN electricity distribution</span></h2>
+<p>Zona waktu GMT+7.</p>
+<p>Daerah Green Ville tahap 4, Jakarta Barat.</p>
+<p>2017-10-05 13:42 PLN mati.</p>
+<p>2017-12-20 00:17 PLN mati sekitar 15 menit.</p>
+<p>2018-01-02 07:00 PLN mati. Waktu kembali hidup tidak dicatat.</p>
+<p>2018-04-03 22:00 brownout. 00:00 mati total. 07:20 nyala.</p>
+<p>2018-??-??: Gardu PLN meledak.</p>
+<p>(&quot;Sebentar&quot; berarti &quot;sekitar 10 detik&quot;. Zona waktu UTC+7.)</p>
+<p>PLN mati sebentar:</p>
+<ul>
+<li>2018-05-10 02:50</li>
+<li>2018-05-10 20:00</li>
+<li>2018-08-08 23:28</li>
+<li>2018-09-18 01:18</li>
+<li>2018-09-19 02:55</li>
+<li>2018-12-07 01:39</li>
+<li>2018-12-07 23:00</li>
+</ul>
+<p>2019-03-05 05:20 one-second brown-out.</p>
+<p>2019-07-29 00:22 one-minute black-out.</p>
+<p>2019-07-30 00:12 one-minute black-out.</p>
+<p>Mengapa PLN suka mati sebentar?</p>
+<ul>
+<li>2018-08-14 23:58 PLN mati sebentar.
+<ul>
+<li>This corrupts Chromium profile.</li>
+<li>Chromium fails to restore tabs.
+<ul>
+<li>This is the second time it fails.</li>
+</ul></li>
+<li>My response:
+<ul>
+<li>Discard tabs at the end of browsing.
+<ul>
+<li>Open Chromium with predefined tabs.</li>
+<li>This also solves two other problems: tab hoarding and information overload.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>I wish we have distributed electricity generation with solar panels and batteries. Electric utility companies should die.</p>
+<p>2019-08-04 11:00-21:00 pln mati se-jawa barat &amp; jawa tengah 21:00 Nyala sebentar cuma 2 jam 23:14 mati lagi 06:00 nyala 10:00 mati lagi 15:30 nyala</p>
+<p>2019-08-23 01:25 mati lampu beberapa detik</p>
+<p>Semoga monopoli PLN dihapus.</p>
+<p>Dalam pengalaman saya sebagai warga Jakarta, PAM Jakarta jadi becus setelah diswastakan. Saat PAM masih dipegang negara, airnya kecil, kotor, dan berlumpur.</p>
+<h2 id="derita-naik-gojekgrabbikegocargrabcar"><span class="section_number">4</span><span class="section_title">&lt;2018-09-22&gt; Derita naik Gojek/Grabbike/Gocar/Grabcar</span></h2>
+<p>&lt;2019-10-30&gt; Update: Hal-hal di bawah sudah tidak berlaku. Pada tahun 2019, Grab lebih bagus daripada Gojek. Akhirnya saya kembali pakai Grab.</p>
+<p>&lt;2018-09-22&gt;</p>
+<p>Saya sempat coba Grab dan Gojek. Saya tidak pakai Grab karena saya benci kode promo. Akhirnya berlabuh di Gojek.</p>
+<ul>
+<li>Gojek
+<ul>
+<li>Kadang pengemudi tidak bisa membaca. Tiap minggu ada saja pengemudi yang tidak baca catatan, lalu nyasar. Sangat buang waktu.</li>
+<li>Kadang dapat motor Yamaha Aerox.
+<ul>
+<li>Motor ini tidak aman; pusat massa tinggi, mengurangi kestabilan.</li>
+<li>Motor ini tidak nyaman; joknya keras, suspensinya keras, menyiksa pantat.</li>
+<li>Contoh motor yang enak: Honda Scoopy. Tampilannya emang culun, tapi jok lebar dan empuk, dan suspensi juga lembut. Enak buat pantat.</li>
+<li>(Saya tidak punya motor. Saya bukan fans Yamaha ataupun Honda. Saya cuma benci sakit pantat.)</li>
+</ul></li>
+<li>Kadang ban kempes. Kadang motor bocor. Kadang ban bocor.</li>
+<li>Pernah, jam 17:00, 30 menit gak ada yang ambil.</li>
+</ul></li>
+<li>Gocar
+<ul>
+<li>Kadang pengemudi mengantuk, merem melek. Mobil ngegas ngerem.</li>
+<li>Posisi suka ngaco. Minta jemput di S Parman, supir di Mal Pondok Indah lah (12 km), di Pejompongan lah (6 km), di Tomang lah (4 km), di sisi jalan yang salah lah (4 km).</li>
+<li>Kadang di-cancel 5 kali baru dapat.</li>
+<li>Kadang mobil bau rokok.</li>
+</ul></li>
+<li>Grabbike
+<ul>
+<li>&lt;2018-10-05&gt; Grab jam 17 sangat shitty. Driver tidak bisa dihubungi. Dua kali berturut-turut.</li>
+</ul></li>
+<li>Grabcar
+<ul>
+<li>&lt;2018-10-25&gt; Saya ditinggal kabur supir grabcar, padahal saya tinggal 5 langkah dari mobil, dan dia belum ada 5 menit menunggu.</li>
+</ul></li>
+<li>Aplikasi Gojek vs Grab:
+<ul>
+<li>Grab lebih reliable.</li>
+<li>Gojek lebih hemat baterai.</li>
+</ul></li>
+<li>Perasaan saya.
+<ul>
+<li>Teknologi keduanya shitty, tapi teknologi Grab less shitty daripada teknologi Gojek; Grabcar lebih bisa mencari supir yang dekat (500 m, 1 km); Gocar seringkali dapat supir (2 km, bahkan pernah 6 km).</li>
+<li>Supir Gocar memperlakukan penumpang lebih baik daripada supir Grabcar memperlakukan penumpang. Mungkin karena Gojek lebih kejam ke supir.</li>
+</ul></li>
+</ul>
+<h2 id="gmail"><span class="section_number">5</span><span class="section_title">Gmail</span></h2>
+<ul>
+<li>I know it's free and my life depends on it, but I need to rant.
+<ul>
+<li>Who says it's free? I paid it with my privacy!</li>
+</ul></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#plain-text-78-character-hard-word-wrap.-its-2018-and-i-open-gmail-in-a-browser-in-an-almost-30-inch-screen.">&lt;2018-11-03&gt; Plain text 78-character hard word wrap. It's 2018, and I open Gmail in a browser, in an almost 30-inch screen.</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">5.2</span><span class="section_title"><a href="#harmful-miscommunication-inducing-deal-breaking-enemy-making-april-fools-day-prank">&lt;2016-04-01&gt; Harmful miscommunication-inducing deal-breaking enemy-making April fools' day prank</a></span><span class="word_count">(86w~1m)</span></li>
+</ul>
+</div>
+<h3 id="plain-text-78-character-hard-word-wrap.-its-2018-and-i-open-gmail-in-a-browser-in-an-almost-30-inch-screen."><span class="section_number">5.1</span><span class="section_title">&lt;2018-11-03&gt; Plain text 78-character hard word wrap. It's 2018, and I open Gmail in a browser, in an almost 30-inch screen.</span></h3>
+<ul>
+<li>Either the request fell on deaf ears, or the forum is not the right place for requests. <a href="https://productforums.google.com/forum/#!msg/gmail/rThTLh3KY7s/ACN9M300XYAJ">https://productforums.google.com/forum/#!msg/gmail/rThTLh3KY7s/ACN9M300XYAJ</a></li>
+</ul>
+<h3 id="harmful-miscommunication-inducing-deal-breaking-enemy-making-april-fools-day-prank"><span class="section_number">5.2</span><span class="section_title">&lt;2016-04-01&gt; Harmful miscommunication-inducing deal-breaking enemy-making April fools' day prank</span></h3>
+<p>April fools' day is harmful.</p>
+<p>Pranks are harmful.</p>
+<p><a href="http://www.telegraph.co.uk/technology/2016/04/01/gmails-mic-drop-april-fool-backfires-costing-people-their-jobs/">Gmail mic drop April fools' day prank</a> is <a href="http://www.businessinsider.co.id/google-pulls-mic-drop-minions-april-fools-joke-due-to-complaints-job-losses-2016-4/#.Vv43px_I7Qo">a stupid idea</a>, and also a harmful one, it turns out.</p>
+<p>I, among who knows how many of the other <a href="http://techcrunch.com/2016/02/01/gmail-now-has-more-than-1b-monthly-active-users/">1 billion users</a>, was sending an email to a head recruiter for a job on the following Monday (2016-04-04) when I accidentally pressed that damn button.</p>
+<p>Pranks violate the <a href="https://en.wikipedia.org/wiki/Cooperative_principle">cooperative principle</a>.</p>
+<p>The next time you're going to play pranks: just don't. Better spend your time somewhere else.</p>
+<h2 id="jakarta"><span class="section_number">6</span><span class="section_title">Jakarta</span></h2>
+<p>2020-01-01: Jakarta failed. Worst flood in 30 years. Water level was above my knee in my home. On the streets, the water was deeper than my height. We took refuge, and we were only able to come back home on the 5th, and we were only able to sleep back at home on the 11th, after much cleaning, although it would take longer to restore the house to pre-disaster conditions.</p>
+<p>This city suffered from heavy rain, citizens who were religious but godless and ungrateful, and a governor who only cared about looking good. This city was <em>cursed</em>. It was <em>doomed</em>.</p>
+<p>I saw the flood as a gift from God to hasten my spiritual progress. The flood presented a perfect occasion to meditate.</p>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2017-05-20 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
