@@ -166,33 +166,87 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="post-content">
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(69w~1m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#tricky-stuff">Tricky stuff</a></span><span class="word_count">(88w~1m)</span></li>
-<li><span class="section_number">3</span><span class="section_title"><a href="#namespaces">Namespaces?</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(174w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#legalese">Legalese</a></span><span class="word_count">(20w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#managing-projects">Managing projects</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#using-slime">Using SLIME</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#know-some-format">Know some FORMAT</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#know-some-loop">Know some LOOP</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#tricky-stuff">Tricky stuff</a></span><span class="word_count">(118w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#namespaces">Namespaces?</a></span><span class="word_count">(2w~1m)</span></li>
 </ul>
 </div>
 <h2 id="what"><span class="section_number">1</span><span class="section_title">What</span></h2>
 <ul>
 <li>Why are there two sites: <a href="https://common-lisp.net/">common-lisp.net</a> and <a href="https://lisp-lang.org/">lisp-lang.net</a>? The former seems to have more content.</li>
-<li><a href="http://www.lispworks.com/documentation/lw50/CLHS/Front/index.htm">CLHS</a> (Common Lisp HyperSpec)</li>
+<li><a href="http://www.lispworks.com/documentation/lw50/CLHS/Front/index.htm">CLHS</a> (Common Lisp HyperSpec), can also be installed with <code>apt install hyperspec</code> in Debian 10.</li>
 <li><a href="http://www.gigamonkeys.com/book/">Practical Common Lisp</a> book</li>
 <li>Steve Losh's <a href="https://stevelosh.com/blog/2018/08/a-road-to-common-lisp/">A road to Common Lisp</a></li>
+<li>rlwrap sbcl <a href="https://lispcookbook.github.io/cl-cookbook/getting-started.html">https://lispcookbook.github.io/cl-cookbook/getting-started.html</a></li>
 <li>SBCL + Emacs + SLIME (but is it secure?)</li>
+<li><a href="https://common-lisp.net/project/asdf/">ASDF</a> (Another System Definition Facility), like npm's package.json
+<ul>
+<li>ASDF + Quicklisp ~ npm</li>
+</ul></li>
 <li><a href="http://community.schemewiki.org/?scheme-vs-common-lisp">Scheme vs Common Lisp</a></li>
+<li><a href="http://hyperpolyglot.org/lisp">Hyperpolyglot's inter-Lisp comparison table</a> may be incomplete but may help porting.</li>
+<li>Quicklisp and <a href="http://quickdocs.org/">Quickdocs</a></li>
+<li>Run <code>rlwrap sbcl</code>.
+<ul>
+<li>Suppress license banner with <code>--noinform</code>.</li>
+<li>Load file with <code>--load Path</code>.</li>
+</ul></li>
+<li>Match pattern with <code>trivia</code>.</li>
+<li>Use ASDF to describe, but use Quicklisp to load. Create an <code>asd</code> file, but use <code>(ql:quickload :asdf-system-name)</code> instead of <code>(asdf:load-system &quot;asdf-system-name&quot;)</code>. <a href="https://www.darkchestnut.com/2016/quicklisp-load-personal-projects-from-arbitrary-locations/">https://www.darkchestnut.com/2016/quicklisp-load-personal-projects-from-arbitrary-locations/</a></li>
 </ul>
 <p>Gerbil/Gambit Scheme process migration? Why I haven't jumped ship from Common Lisp to Racket (just yet)? <a href="https://fare.livejournal.com/188429.html">https://fare.livejournal.com/188429.html</a></p>
 <p>Reader case-sensitivity is adjustable <a href="https://www.cliki.net/Case%20sensitivity">https://www.cliki.net/Case%20sensitivity</a></p>
 <p><a href="https://www.cliki.net/Scribble">https://www.cliki.net/Scribble</a></p>
 <p>Meta, parsing on Lisp <a href="https://www.cliki.net/Meta">https://www.cliki.net/Meta</a></p>
 <p><a href="https://legacy.cs.indiana.edu/~dyb/pubs/hocs.pdf">Dybvig 2006</a> tells the history of Chez Scheme.</p>
-<h2 id="tricky-stuff"><span class="section_number">2</span><span class="section_title">Tricky stuff</span></h2>
+<p>&quot;<a href="https://nikodemus.github.io/screamer/">Screamer</a> provides a nondeterministic choice-point operator, a backtracking mechanism, and a forward propagation facility. &quot;</p>
+<p>&quot;<a href="https://common-lisp.net/project/ucw/features.html">UnCommon Web</a> provides developers with the illusion that web pages are nothing more than function calls.&quot;</p>
+<p><a href="http://www.nhplace.com/kent/Papers/Special-Forms.html">Pitman 1980</a> argues that fexprs preclude compilation.</p>
+<h2 id="legalese"><span class="section_number">2</span><span class="section_title">Legalese</span></h2>
+<p>Why do all those important projects like ASDF and Quicklisp don't have any LICENSE information in their source code repository!?</p>
+<h2 id="managing-projects"><span class="section_number">3</span><span class="section_title">Managing projects</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">2.1</span><span class="section_title"><a href="#keyword-vs-symbol">Keyword vs symbol</a></span><span class="word_count">(27w~1m)</span></li>
-<li><span class="section_number">2.2</span><span class="section_title"><a href="#equality-comparison">Equality comparison</a></span><span class="word_count">(61w~1m)</span></li>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#show-dpeendency-tree">Show dpeendency tree</a></span><span class="word_count">(27w~1m)</span></li>
 </ul>
 </div>
-<h3 id="keyword-vs-symbol"><span class="section_number">2.1</span><span class="section_title">Keyword vs symbol</span></h3>
+<h3 id="show-dpeendency-tree"><span class="section_number">3.1</span><span class="section_title">Show dpeendency tree</span></h3>
+<p>At first glance, <code>(ql-dist:dependency-tree SYSTEM)</code>, but <a href="https://lispblog.xach.com/post/105043399223/the-unknown-dependency-tree">problem</a>:</p>
+<blockquote>
+<p>Quicklisp has an idea about the dependencies of Quicklisp-provided systems, but not of any other systems available through ASDF.</p>
+</blockquote>
+<h2 id="using-slime"><span class="section_number">4</span><span class="section_title">Using SLIME</span></h2>
+<ul>
+<li>Open an inferior-lisp buffer with <code>M-x slime</code>.</li>
+<li>List keybindings with <code>C-c C-d ?</code>.</li>
+<li>Load file with <code>C-c C-l</code>.</li>
+<li>Load current buffer's file with <code>C-c C-k</code>.</li>
+<li>History with <code>M-p</code> and <code>M-n</code>.</li>
+<li><a href="https://stackoverflow.com/questions/33003993/how-to-get-emacs-slime-sbcl-to-recognize-quicklisp-packages">https://stackoverflow.com/questions/33003993/how-to-get-emacs-slime-sbcl-to-recognize-quicklisp-packages</a></li>
+</ul>
+<h2 id="know-some-format"><span class="section_number">5</span><span class="section_title">Know some FORMAT</span></h2>
+<p><a href="http://www.lispworks.com/documentation/lw50/CLHS/Body/22_c.htm">http://www.lispworks.com/documentation/lw50/CLHS/Body/22_c.htm</a></p>
+<h2 id="know-some-loop"><span class="section_number">6</span><span class="section_title">Know some LOOP</span></h2>
+<h2 id="tricky-stuff"><span class="section_number">7</span><span class="section_title">Tricky stuff</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#eval-vs-load">eval vs load</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#keyword-vs-symbol">Keyword vs symbol</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">7.3</span><span class="section_title"><a href="#equality-comparison">Equality comparison</a></span><span class="word_count">(67w~1m)</span></li>
+<li><span class="section_number">7.4</span><span class="section_title"><a href="#nil-vs-false">Nil vs false</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">7.5</span><span class="section_title"><a href="#printing">Printing</a></span><span class="word_count">(11w~1m)</span></li>
+</ul>
+</div>
+<h3 id="eval-vs-load"><span class="section_number">7.1</span><span class="section_title">eval vs load</span></h3>
+<ul>
+<li>&quot;SBCL processes initialization files with <code>read</code> and <code>eval</code>, not <code>load</code>&quot; <a href="http://www.sbcl.org/manual/#Initialization-Files">http://www.sbcl.org/manual/#Initialization-Files</a></li>
+</ul>
+<h3 id="keyword-vs-symbol"><span class="section_number">7.2</span><span class="section_title">Keyword vs symbol</span></h3>
 <p><a href="https://stackoverflow.com/questions/23969203/what-is-the-difference-between-a-keyword-symbol-and-a-quoted-symbol">https://stackoverflow.com/questions/23969203/what-is-the-difference-between-a-keyword-symbol-and-a-quoted-symbol</a></p>
 <p>In the toplevel:</p>
 <ul>
@@ -200,13 +254,13 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><code>:a</code> evaluates to a symbol in the package <code>keyword</code>; this package is special.</li>
 </ul>
 <p>See also: <code>symbol-package</code>.</p>
-<h3 id="equality-comparison"><span class="section_number">2.2</span><span class="section_title">Equality comparison</span></h3>
+<h3 id="equality-comparison"><span class="section_number">7.3</span><span class="section_title">Equality comparison</span></h3>
 <p>In mathematics, X and Y are <em>equal</em> iff every X can be replaced with Y without changing the truth value of the containing statement.</p>
 <p>Two things are <em>identical</em> iff …</p>
 <p>In Common Lisp:</p>
 <ul>
 <li><code>eq</code> is identity comparison.</li>
-<li><code>eql</code> is <code>eq</code> or something?</li>
+<li><code>eql</code> is <code>eq</code> or something? <code>eql</code> is the default for make-hash-table.</li>
 <li><code>equal</code> is about structural similarity / isomorphism?</li>
 <li><code>equalp</code> is <code>equal</code> or something?</li>
 <li><code>=</code></li>
@@ -220,7 +274,16 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><code>equal?</code> is deep/recursive comparison?</li>
 <li><code>=</code> is numeric comparison?</li>
 </ul>
-<h2 id="namespaces"><span class="section_number">3</span><span class="section_title">Namespaces?</span></h2>
+<h3 id="nil-vs-false"><span class="section_number">7.4</span><span class="section_title">Nil vs false</span></h3>
+<p><a href="https://www.google.com/amp/s/lispchronicles.wordpress.com/2017/03/16/the-truth-about-nothing/amp/">https://www.google.com/amp/s/lispchronicles.wordpress.com/2017/03/16/the-truth-about-nothing/amp/</a></p>
+<h3 id="printing"><span class="section_number">7.5</span><span class="section_title">Printing</span></h3>
+<ul>
+<li><code>prin1</code> for machines (<code>read</code>).</li>
+<li><code>princ</code> for humans.</li>
+<li><code>pprint</code> for pretty-printing.</li>
+<li>Avoid <code>write</code> and <code>print</code>?</li>
+</ul>
+<h2 id="namespaces"><span class="section_number">8</span><span class="section_title">Namespaces?</span></h2>
 <p><a href="https://www.emacswiki.org/emacs/Namespaces">https://www.emacswiki.org/emacs/Namespaces</a></p>
 <p>&quot;Debuggable&quot; <a href="https://endlessparentheses.com/introducing-names-practical-namespaces-for-emacs-lisp.html">https://endlessparentheses.com/introducing-names-practical-namespaces-for-emacs-lisp.html</a></p>
                 </div>
