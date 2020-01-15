@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>On Lisps, especially ANSI Common Lisp</title>
+        <title>Toward a curriculum for ANSI Common Lisp</title>
         <link rel="stylesheet" href="/assets/main.css"/>
         <script>
 // Help the reader estimate how much time the reading is going to take.
@@ -160,25 +160,31 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="wrapper">
                 <article class="post">
                     <header class="post-header">
-                        <h1 class="post-title">On Lisps, especially ANSI Common Lisp</h1>
+                        <h1 class="post-title">Toward a curriculum for ANSI Common Lisp</h1>
                     </header>
                 </article>
                 <div class="post-content">
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">1</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(174w~1m)</span></li>
-<li><span class="section_number">2</span><span class="section_title"><a href="#legalese">Legalese</a></span><span class="word_count">(20w~1m)</span></li>
-<li><span class="section_number">3</span><span class="section_title"><a href="#managing-projects">Managing projects</a></span><span class="word_count">(28w~1m)</span></li>
-<li><span class="section_number">4</span><span class="section_title"><a href="#using-slime">Using SLIME</a></span><span class="word_count">(27w~1m)</span></li>
-<li><span class="section_number">5</span><span class="section_title"><a href="#know-some-format">Know some FORMAT</a></span><span class="word_count">(3w~1m)</span></li>
-<li><span class="section_number">6</span><span class="section_title"><a href="#know-some-loop">Know some LOOP</a></span><span class="word_count">(3w~1m)</span></li>
-<li><span class="section_number">7</span><span class="section_title"><a href="#tricky-stuff">Tricky stuff</a></span><span class="word_count">(118w~1m)</span></li>
-<li><span class="section_number">8</span><span class="section_title"><a href="#namespaces">Namespaces?</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">1</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(183w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#slime">SLIME</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#naming-conventions">Naming conventions</a></span><span class="word_count">(8w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#projects">Projects</a></span><span class="word_count">(132w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#defstruct-vs-defclass">DEFSTRUCT vs DEFCLASS</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#format-language">FORMAT language</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#loop-language">LOOP language</a></span><span class="word_count">(92w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#clos-common-lisp-object-system">CLOS (Common Lisp Object System)</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#match-languages">MATCH languages</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#web-application-development">Web application development</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#parsing">Parsing</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#tricky-stuff">Tricky stuff</a></span><span class="word_count">(138w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#other-lisps">Other Lisps</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#namespaces">Namespaces?</a></span><span class="word_count">(2w~1m)</span></li>
 </ul>
 </div>
 <h2 id="what"><span class="section_number">1</span><span class="section_title">What</span></h2>
 <ul>
-<li>Why are there two sites: <a href="https://common-lisp.net/">common-lisp.net</a> and <a href="https://lisp-lang.org/">lisp-lang.net</a>? The former seems to have more content.</li>
+<li>Too many cooks spoil the broth. Why are there two sites: <a href="https://common-lisp.net/">common-lisp.net</a> and <a href="https://lisp-lang.org/">lisp-lang.net</a>? The former seems to have more content.</li>
 <li><a href="http://www.lispworks.com/documentation/lw50/CLHS/Front/index.htm">CLHS</a> (Common Lisp HyperSpec), can also be installed with <code>apt install hyperspec</code> in Debian 10.</li>
 <li><a href="http://www.gigamonkeys.com/book/">Practical Common Lisp</a> book</li>
 <li>Steve Losh's <a href="https://stevelosh.com/blog/2018/08/a-road-to-common-lisp/">A road to Common Lisp</a></li>
@@ -188,8 +194,6 @@ document.addEventListener("DOMContentLoaded", function () {
 <ul>
 <li>ASDF + Quicklisp ~ npm</li>
 </ul></li>
-<li><a href="http://community.schemewiki.org/?scheme-vs-common-lisp">Scheme vs Common Lisp</a></li>
-<li><a href="http://hyperpolyglot.org/lisp">Hyperpolyglot's inter-Lisp comparison table</a> may be incomplete but may help porting.</li>
 <li>Quicklisp and <a href="http://quickdocs.org/">Quickdocs</a></li>
 <li>Run <code>rlwrap sbcl</code>.
 <ul>
@@ -198,29 +202,18 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul></li>
 <li>Match pattern with <code>trivia</code>.</li>
 <li>Use ASDF to describe, but use Quicklisp to load. Create an <code>asd</code> file, but use <code>(ql:quickload :asdf-system-name)</code> instead of <code>(asdf:load-system &quot;asdf-system-name&quot;)</code>. <a href="https://www.darkchestnut.com/2016/quicklisp-load-personal-projects-from-arbitrary-locations/">https://www.darkchestnut.com/2016/quicklisp-load-personal-projects-from-arbitrary-locations/</a></li>
+<li>Reader case-sensitivity is <a href="https://www.cliki.net/Case%20sensitivity">adjustable</a>.</li>
 </ul>
-<p>Gerbil/Gambit Scheme process migration? Why I haven't jumped ship from Common Lisp to Racket (just yet)? <a href="https://fare.livejournal.com/188429.html">https://fare.livejournal.com/188429.html</a></p>
-<p>Reader case-sensitivity is adjustable <a href="https://www.cliki.net/Case%20sensitivity">https://www.cliki.net/Case%20sensitivity</a></p>
+<p>Some people have written getting-started guides: <a href="https://common-lisp.net/downloads">common-lisp.net</a>.</p>
+<p>&lt;2020-01-16&gt; <a href="https://common-lisp.net/libraries">common-lisp.net</a>'s library recommendation list seems to be taken from <a href="https://github.com/CodyReichert/awesome-cl">CodyReichert/awesome-cl</a>. There is also <a href="https://borretti.me/article/common-lisp-sotu-2015">Borretti 2015 consolidation</a>. <a href="https://lisp-lang.org/wiki/article/recommended-libraries">lisp-lang.org</a>'s list seems shorter.</p>
+<p><a href="http://quickdocs.org/">quickdocs.org</a>: centralized Common Lisp libraries documentation and popularity.</p>
+<p>There are no GitHub trends<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> for Common Lisp!? Is CL that unpopular!?</p>
+<p><a href="https://stackoverflow.com/questions/33848241/most-recent-standard-of-common-lisp">https://stackoverflow.com/questions/33848241/most-recent-standard-of-common-lisp</a></p>
+<p><a href="https://common-lisp.net/project/cdr/final.html">https://common-lisp.net/project/cdr/final.html</a></p>
 <p><a href="https://www.cliki.net/Scribble">https://www.cliki.net/Scribble</a></p>
-<p>Meta, parsing on Lisp <a href="https://www.cliki.net/Meta">https://www.cliki.net/Meta</a></p>
-<p><a href="https://legacy.cs.indiana.edu/~dyb/pubs/hocs.pdf">Dybvig 2006</a> tells the history of Chez Scheme.</p>
 <p>&quot;<a href="https://nikodemus.github.io/screamer/">Screamer</a> provides a nondeterministic choice-point operator, a backtracking mechanism, and a forward propagation facility. &quot;</p>
-<p>&quot;<a href="https://common-lisp.net/project/ucw/features.html">UnCommon Web</a> provides developers with the illusion that web pages are nothing more than function calls.&quot;</p>
-<p><a href="http://www.nhplace.com/kent/Papers/Special-Forms.html">Pitman 1980</a> argues that fexprs preclude compilation.</p>
-<h2 id="legalese"><span class="section_number">2</span><span class="section_title">Legalese</span></h2>
-<p>Why do all those important projects like ASDF and Quicklisp don't have any LICENSE information in their source code repository!?</p>
-<h2 id="managing-projects"><span class="section_number">3</span><span class="section_title">Managing projects</span></h2>
-<div class="local_table_of_contents">
-<ul>
-<li><span class="section_number">3.1</span><span class="section_title"><a href="#show-dpeendency-tree">Show dpeendency tree</a></span><span class="word_count">(27w~1m)</span></li>
-</ul>
-</div>
-<h3 id="show-dpeendency-tree"><span class="section_number">3.1</span><span class="section_title">Show dpeendency tree</span></h3>
-<p>At first glance, <code>(ql-dist:dependency-tree SYSTEM)</code>, but <a href="https://lispblog.xach.com/post/105043399223/the-unknown-dependency-tree">problem</a>:</p>
-<blockquote>
-<p>Quicklisp has an idea about the dependencies of Quicklisp-provided systems, but not of any other systems available through ASDF.</p>
-</blockquote>
-<h2 id="using-slime"><span class="section_number">4</span><span class="section_title">Using SLIME</span></h2>
+<p>No legalese? Why do all those important projects like ASDF and Quicklisp don't have any LICENSE information in their source code repository!?</p>
+<h2 id="slime"><span class="section_number">2</span><span class="section_title">SLIME</span></h2>
 <ul>
 <li>Open an inferior-lisp buffer with <code>M-x slime</code>.</li>
 <li>List keybindings with <code>C-c C-d ?</code>.</li>
@@ -229,24 +222,153 @@ document.addEventListener("DOMContentLoaded", function () {
 <li>History with <code>M-p</code> and <code>M-n</code>.</li>
 <li><a href="https://stackoverflow.com/questions/33003993/how-to-get-emacs-slime-sbcl-to-recognize-quicklisp-packages">https://stackoverflow.com/questions/33003993/how-to-get-emacs-slime-sbcl-to-recognize-quicklisp-packages</a></li>
 </ul>
-<h2 id="know-some-format"><span class="section_number">5</span><span class="section_title">Know some FORMAT</span></h2>
-<p><a href="http://www.lispworks.com/documentation/lw50/CLHS/Body/22_c.htm">http://www.lispworks.com/documentation/lw50/CLHS/Body/22_c.htm</a></p>
-<h2 id="know-some-loop"><span class="section_number">6</span><span class="section_title">Know some LOOP</span></h2>
-<h2 id="tricky-stuff"><span class="section_number">7</span><span class="section_title">Tricky stuff</span></h2>
+<h2 id="naming-conventions"><span class="section_number">3</span><span class="section_title">Naming conventions</span></h2>
+<ul>
+<li><code>(defconstant +Name+ Value Docstring)</code></li>
+<li><code>(defvar *Name* Value Docstring)</code></li>
+</ul>
+<h2 id="projects"><span class="section_number">4</span><span class="section_title">Projects</span></h2>
 <div class="local_table_of_contents">
 <ul>
-<li><span class="section_number">7.1</span><span class="section_title"><a href="#eval-vs-load">eval vs load</a></span><span class="word_count">(13w~1m)</span></li>
-<li><span class="section_number">7.2</span><span class="section_title"><a href="#keyword-vs-symbol">Keyword vs symbol</a></span><span class="word_count">(27w~1m)</span></li>
-<li><span class="section_number">7.3</span><span class="section_title"><a href="#equality-comparison">Equality comparison</a></span><span class="word_count">(67w~1m)</span></li>
-<li><span class="section_number">7.4</span><span class="section_title"><a href="#nil-vs-false">Nil vs false</a></span><span class="word_count">(3w~1m)</span></li>
-<li><span class="section_number">7.5</span><span class="section_title"><a href="#printing">Printing</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#writing-asdf-systems">Writing ASDF systems</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#packages">Packages</a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#show-dependency-graph-as-tree">Show dependency graph as tree</a></span><span class="word_count">(35w~1m)</span></li>
 </ul>
 </div>
-<h3 id="eval-vs-load"><span class="section_number">7.1</span><span class="section_title">eval vs load</span></h3>
+<h3 id="writing-asdf-systems"><span class="section_number">4.1</span><span class="section_title">Writing ASDF systems</span></h3>
+<ul>
+<li>Write an <code>asd</code> file.
+<ul>
+<li>Write a <code>defsystem</code> form.</li>
+<li>See also <a href="https://common-lisp.net/project/asdf/asdf/The-defsystem-grammar.html">the defsystem grammar</a>.</li>
+</ul></li>
+<li>Quickproject? <a href="http://articulate-lisp.com/project/new-project.html">http://articulate-lisp.com/project/new-project.html</a></li>
+</ul>
+<h3 id="packages"><span class="section_number">4.2</span><span class="section_title">Packages</span></h3>
+<ul>
+<li><code>defpackage</code></li>
+<li>Use uninterned symbols for names in <code>defpackage</code>.</li>
+<li><code>in-package</code></li>
+</ul>
+<p>Tricky stuff:</p>
+<pre class="example"><code>(defpackage my-package) ;; wrong
+(defpackage :my-package) ;; less OK
+(defpackage #:my-package) ;; OK
+</code></pre>
+<p>The first causes an unintended <em>interning</em> in the <code>*package*</code> (usually <code>common-lisp-user</code>) when the <code>defpackage</code> form is being read.</p>
+<p>The second adds noise to SLIME autocompletion? SLIME does not auto-complete uninterned symbols?<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p><a href="https://stackoverflow.com/questions/7894548/why-are-uninterned-symbols-used-for-package-names-and-exports-in-common-lisp">https://stackoverflow.com/questions/7894548/why-are-uninterned-symbols-used-for-package-names-and-exports-in-common-lisp</a></p>
+<p>:export + use-package + uninterned symbols = conflict.</p>
+<pre class="example"><code>(defpackage temp (:export a))
+(use-package &#39;temp) ;; conflicts because A is already interned in *PACKAGE* when the above DEFPACKAGE was read.
+</code></pre>
+<p>This uses keywords <a href="http://www.gigamonkeys.com/book/programming-in-the-large-packages-and-symbols.html">http://www.gigamonkeys.com/book/programming-in-the-large-packages-and-symbols.html</a></p>
+<p>Should we use <code>:keywords</code> or <code>#:uninterned-symbols</code>?</p>
+<p><a href="https://stackoverflow.com/questions/46981477/variations-in-invocation-of-defpackage-and-in-package">https://stackoverflow.com/questions/46981477/variations-in-invocation-of-defpackage-and-in-package</a></p>
+<p>Is an interned symbol never garbage-collected?</p>
+<p>Tricky stuff: If <code>read</code> interns symbols, and symbols are never garbage-collected, then we can make the interpreter run out of memory by making it <code>read</code> too many distinct symbols?</p>
+<h3 id="show-dependency-graph-as-tree"><span class="section_number">4.3</span><span class="section_title">Show dependency graph as tree</span></h3>
+<ul>
+<li><a href="https://github.com/guicho271828/asdf-viz">asdf-viz</a>? But we want text output.</li>
+<li><code>(ql-dist:dependency-tree SYSTEM)</code> <a href="https://lispblog.xach.com/post/105043399223/the-unknown-dependency-tree">does not work</a> for non-quicklisp libraries:</li>
+</ul>
+<blockquote>
+<p>Quicklisp has an idea about the dependencies of Quicklisp-provided systems, but not of any other systems available through ASDF.</p>
+</blockquote>
+<h2 id="defstruct-vs-defclass"><span class="section_number">5</span><span class="section_title">DEFSTRUCT vs DEFCLASS</span></h2>
+<ul>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/m_defstr.htm">CLHS: DEFSTRUCT</a></li>
+<li><code>defstruct</code> vs <code>defclass</code> is record vs class.</li>
+<li><code>defstruct</code> defines a product type.</li>
+<li><a href="https://stackoverflow.com/questions/34244855/difference-between-struct-and-class-in-common-lisp">https://stackoverflow.com/questions/34244855/difference-between-struct-and-class-in-common-lisp</a></li>
+</ul>
+<h2 id="format-language"><span class="section_number">6</span><span class="section_title">FORMAT language</span></h2>
+<ul>
+<li>Format to standard output with <code>(format t Format Arg...)</code>.</li>
+<li>Format to string with <code>(format nil Format Arg...)</code>.</li>
+<li><code>~a</code></li>
+<li><code>~s</code></li>
+<li><code>~%</code> newline.</li>
+</ul>
+<p><a href="http://www.lispworks.com/documentation/lw50/CLHS/Body/22_c.htm">http://www.lispworks.com/documentation/lw50/CLHS/Body/22_c.htm</a></p>
+<h2 id="loop-language"><span class="section_number">7</span><span class="section_title">LOOP language</span></h2>
+<p><a href="http://www.lispworks.com/documentation/HyperSpec/Body/06_aac.htm">http://www.lispworks.com/documentation/HyperSpec/Body/06_aac.htm</a></p>
+<ul>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/06_aaaa.htm">Simple loop form</a>
+<ul>
+<li>Loop with <code>(loop Form ...)</code> where each Form is a compound form (list form).
+<ul>
+<li>Break with <code>(return)</code> or <code>(return Value)</code>, similar to C <code>break</code>.</li>
+</ul></li>
+<li>Loop forever like <code>(loop (princ &quot;A&quot;))</code>.</li>
+</ul></li>
+<li><code>(loop repeat Count do ...)</code></li>
+<li><code>(loop for Var from Lower to Upper Action*)</code></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/06_aaeb.htm">Summary of Value Accumulation Clauses</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/06_aaec.htm">Summary of Termination Test Clauses</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/06_aaf.htm">Order of Execution</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/06_aag.htm">Destructuring</a></li>
+<li>Build a list.</li>
+<li>Loop with several variables.</li>
+<li>Know the pitfall: <code>finally</code> seems to be executed only if the loop body is terminated by <code>for</code> and not by <code>return</code>, <code>always</code>, <code>never</code>, etc.</li>
+</ul>
+<pre class="example"><code>(loop for i from 0 to 9
+      if Cond
+        if Cond
+          do Form ...
+        end
+      end)
+</code></pre>
+<p>From <a href="http://www.lispworks.com/documentation/HyperSpec/Body/06_aha.htm">http://www.lispworks.com/documentation/HyperSpec/Body/06_aha.htm</a></p>
+<pre class="example"><code>(loop for i from 0 to 9
+      if (evenp i)
+        collect i into evens
+      else
+        collect i into odds
+      end
+      finally (return (list evens odds)))
+=&gt; ((0 2 4 6 8) (1 3 5 7 9))
+
+(loop for i from 0
+      for j in &#39;(a b c)
+      collect (list i j))
+=&gt; ((0 A) (1 B) (2 C))
+</code></pre>
+<p><a href="http://www.lispworks.com/documentation/HyperSpec/Body/m_loop.htm">Syntax</a>.</p>
+<p><code>repeat X</code> translates to <code>for Gensym in 0 to (- X 1)</code></p>
+<h2 id="clos-common-lisp-object-system"><span class="section_number">8</span><span class="section_title">CLOS (Common Lisp Object System)</span></h2>
+<ul>
+<li><code>defclass</code></li>
+<li><code>defgeneric</code></li>
+<li><code>defmethod</code></li>
+<li><code>make-instance</code></li>
+</ul>
+<h2 id="match-languages"><span class="section_number">9</span><span class="section_title">MATCH languages</span></h2>
+<ul>
+<li>Know some <a href="https://github.com/guicho271828/trivia/wiki/Various-Patterns">trivia MATCH patterns</a>.</li>
+<li>Use EMATCH instead of MATCH, because, if no patterns match, the former raises an error and the latter returns NIL.</li>
+</ul>
+<h2 id="web-application-development"><span class="section_number">10</span><span class="section_title">Web application development</span></h2>
+<p>HTTP is too low-level for web application development.</p>
+<p>&quot;<a href="https://common-lisp.net/project/ucw/features.html">UnCommon Web</a> provides developers with the illusion that web pages are nothing more than function calls.&quot;</p>
+<h2 id="parsing"><span class="section_number">11</span><span class="section_title">Parsing</span></h2>
+<p>Meta, parsing on Lisp <a href="https://www.cliki.net/Meta">https://www.cliki.net/Meta</a></p>
+<h2 id="tricky-stuff"><span class="section_number">12</span><span class="section_title">Tricky stuff</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">12.1</span><span class="section_title"><a href="#eval-vs-load">eval vs load</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">12.2</span><span class="section_title"><a href="#keyword-vs-symbol">Keyword vs symbol</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">12.3</span><span class="section_title"><a href="#equality-comparison">Equality comparison</a></span><span class="word_count">(67w~1m)</span></li>
+<li><span class="section_number">12.4</span><span class="section_title"><a href="#nil-vs-false">Nil vs false</a></span><span class="word_count">(3w~1m)</span></li>
+<li><span class="section_number">12.5</span><span class="section_title"><a href="#printing">Printing</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">12.6</span><span class="section_title"><a href="#map">map</a></span><span class="word_count">(21w~1m)</span></li>
+</ul>
+</div>
+<h3 id="eval-vs-load"><span class="section_number">12.1</span><span class="section_title">eval vs load</span></h3>
 <ul>
 <li>&quot;SBCL processes initialization files with <code>read</code> and <code>eval</code>, not <code>load</code>&quot; <a href="http://www.sbcl.org/manual/#Initialization-Files">http://www.sbcl.org/manual/#Initialization-Files</a></li>
 </ul>
-<h3 id="keyword-vs-symbol"><span class="section_number">7.2</span><span class="section_title">Keyword vs symbol</span></h3>
+<h3 id="keyword-vs-symbol"><span class="section_number">12.2</span><span class="section_title">Keyword vs symbol</span></h3>
 <p><a href="https://stackoverflow.com/questions/23969203/what-is-the-difference-between-a-keyword-symbol-and-a-quoted-symbol">https://stackoverflow.com/questions/23969203/what-is-the-difference-between-a-keyword-symbol-and-a-quoted-symbol</a></p>
 <p>In the toplevel:</p>
 <ul>
@@ -254,7 +376,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><code>:a</code> evaluates to a symbol in the package <code>keyword</code>; this package is special.</li>
 </ul>
 <p>See also: <code>symbol-package</code>.</p>
-<h3 id="equality-comparison"><span class="section_number">7.3</span><span class="section_title">Equality comparison</span></h3>
+<h3 id="equality-comparison"><span class="section_number">12.3</span><span class="section_title">Equality comparison</span></h3>
 <p>In mathematics, X and Y are <em>equal</em> iff every X can be replaced with Y without changing the truth value of the containing statement.</p>
 <p>Two things are <em>identical</em> iff …</p>
 <p>In Common Lisp:</p>
@@ -274,18 +396,39 @@ document.addEventListener("DOMContentLoaded", function () {
 <li><code>equal?</code> is deep/recursive comparison?</li>
 <li><code>=</code> is numeric comparison?</li>
 </ul>
-<h3 id="nil-vs-false"><span class="section_number">7.4</span><span class="section_title">Nil vs false</span></h3>
+<h3 id="nil-vs-false"><span class="section_number">12.4</span><span class="section_title">Nil vs false</span></h3>
 <p><a href="https://www.google.com/amp/s/lispchronicles.wordpress.com/2017/03/16/the-truth-about-nothing/amp/">https://www.google.com/amp/s/lispchronicles.wordpress.com/2017/03/16/the-truth-about-nothing/amp/</a></p>
-<h3 id="printing"><span class="section_number">7.5</span><span class="section_title">Printing</span></h3>
+<h3 id="printing"><span class="section_number">12.5</span><span class="section_title">Printing</span></h3>
 <ul>
 <li><code>prin1</code> for machines (<code>read</code>).</li>
 <li><code>princ</code> for humans.</li>
 <li><code>pprint</code> for pretty-printing.</li>
 <li>Avoid <code>write</code> and <code>print</code>?</li>
 </ul>
-<h2 id="namespaces"><span class="section_number">8</span><span class="section_title">Namespaces?</span></h2>
+<h3 id="map"><span class="section_number">12.6</span><span class="section_title">map</span></h3>
+<ul>
+<li>Common Lisp <code>map</code> takes 3 arguments and works with lists and vectors.</li>
+<li>Scheme <code>map</code> takes 2 arguments and works with lists only.</li>
+</ul>
+<h2 id="other-lisps"><span class="section_number">13</span><span class="section_title">Other Lisps</span></h2>
+<ul>
+<li><a href="http://community.schemewiki.org/?scheme-vs-common-lisp">Scheme vs Common Lisp</a></li>
+<li><a href="http://hyperpolyglot.org/lisp">Hyperpolyglot's inter-Lisp comparison table</a> may be incomplete but may help porting.</li>
+<li><a href="https://legacy.cs.indiana.edu/~dyb/pubs/hocs.pdf">Dybvig 2006</a> tells the history of Chez Scheme.</li>
+<li><a href="http://www.nhplace.com/kent/Papers/Special-Forms.html">Pitman 1980</a> argues that fexprs preclude compilation.</li>
+<li>Gerbil/Gambit Scheme process migration?<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></li>
+</ul>
+<h2 id="namespaces"><span class="section_number">14</span><span class="section_title">Namespaces?</span></h2>
 <p><a href="https://www.emacswiki.org/emacs/Namespaces">https://www.emacswiki.org/emacs/Namespaces</a></p>
 <p>&quot;Debuggable&quot; <a href="https://endlessparentheses.com/introducing-names-practical-namespaces-for-emacs-lisp.html">https://endlessparentheses.com/introducing-names-practical-namespaces-for-emacs-lisp.html</a></p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2020-01-16&gt; <a href="https://github.com/trending/common-lisp">https://github.com/trending/common-lisp</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://www.reddit.com/r/learnlisp/comments/7a48i7/foo/dp7gr7i?utm_source=share&amp;utm_medium=web2x">https://www.reddit.com/r/learnlisp/comments/7a48i7/foo/dp7gr7i?utm_source=share&amp;utm_medium=web2x</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&lt;2020-01-15&gt; &quot;Why I haven't jumped ship from Common Lisp to Racket (just yet)?&quot; <a href="https://fare.livejournal.com/188429.html">https://fare.livejournal.com/188429.html</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
                 </div>
             </div>
         </main>
