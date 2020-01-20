@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Toward an abundant society</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Toward an abundant society</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#overview">Overview</a></span><span class="word_count">(52w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#step-1-pilot-project-feeding">Step 1: Pilot project: Feeding</a></span><span class="word_count">(536w~3m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#step-2-developing">Step 2: Developing</a></span><span class="word_count">(228w~2m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#step-3-attracting-high-vibration-people">Step 3: Attracting high-vibration people</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#step-4-attracting-and-helping-low-vibration-people">Step 4: Attracting and helping low-vibration people</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#other-peoples-projects">Other people's projects</a></span><span class="word_count">(13w~1m)</span></li>
+</ul>
+</div>
+<h2 id="overview"><span class="section_number">1</span><span class="section_title">Overview</span></h2>
+<ul>
+<li>Abundance does not always mean producing more.</li>
+<li>Abundance sometimes means getting satisfied with less.</li>
+<li>Our goal is not isolation, but to establish an abundance mindset so that everyone follows what excites them most (what they <em>truly</em> want to do). Then, people will have wealth (satisfaction) without money, and then they will value money less.</li>
+</ul>
+<h2 id="step-1-pilot-project-feeding"><span class="section_number">2</span><span class="section_title">Step 1: Pilot project: Feeding</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#overview-1">Overview</a></span><span class="word_count">(65w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#determine-whether-it-is-possible-in-theory">Determine whether it is possible in theory</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#legal-hedging">Legal hedging</a></span><span class="word_count">(89w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#find-buy-and-fence-a-patch-of-land-satisfying-these-criteria">Find, buy, and fence a patch of land satisfying these criteria</a></span><span class="word_count">(308w~2m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#find-a-vehicle-satisfying-these-criteria">Find a vehicle satisfying these criteria</a></span><span class="word_count">(53w~1m)</span></li>
+</ul>
+</div>
+<h3 id="overview-1"><span class="section_number">2.1</span><span class="section_title">Overview</span></h3>
+<ul>
+<li>I have an idea similar to The Venus Project, but more realizable and with smaller scope.</li>
+<li>This pilot project aims to determine whether it is possible for one man to feed himself with 100 m2 low-tech low-effort ecological engineering (permaculture, do-nothing farming).</li>
+<li>At first, only some people can participate; otherwise the seed will be destroyed before it blossoms. Later, the environment should help more people progress spiritually.</li>
+</ul>
+<h3 id="determine-whether-it-is-possible-in-theory"><span class="section_number">2.2</span><span class="section_title">Determine whether it is possible in theory</span></h3>
+<ul>
+<li>Calculate how much land can produce per square meter in normal condition with minimal maintenance.</li>
+</ul>
+<h3 id="legal-hedging"><span class="section_number">2.3</span><span class="section_title">Legal hedging</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.3.1</span><span class="section_title"><a href="#what">What</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">2.3.2</span><span class="section_title"><a href="#dasar-dasar-hukum-pertanahan">Dasar-dasar hukum pertanahan</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">2.3.3</span><span class="section_title"><a href="#kerumitan-pt-beli-tanah">Kerumitan PT beli tanah</a></span><span class="word_count">(26w~1m)</span></li>
+</ul>
+</div>
+<h4 id="what"><span class="section_number">2.3.1</span><span class="section_title">What</span></h4>
+<ul>
+<li><a href="https://www.hukumonline.com/klinik/detail/lt5227cf20c83a3/persyaratan-untuk-membuka-perkebunan-kecil">https://www.hukumonline.com/klinik/detail/lt5227cf20c83a3/persyaratan-untuk-membuka-perkebunan-kecil</a></li>
+<li>tricky shit <a href="http://bali.tribunnews.com/2015/08/24/awas-terjebak-urusan-izin-kavling-tanah-milik-sendiri-tak-bisa-urus-imb">http://bali.tribunnews.com/2015/08/24/awas-terjebak-urusan-izin-kavling-tanah-milik-sendiri-tak-bisa-urus-imb</a></li>
+<li>Check Badan Pertanahan Nasional, Dinas Tata Kota, rencana pembangunan, etc.</li>
+<li>Read UU Agraria.</li>
+<li>Find out whether private irrigation is illegal.</li>
+<li>Is it illegal if wind blows seeds from my land to someone else's land and it grows there?</li>
+</ul>
+<h4 id="dasar-dasar-hukum-pertanahan"><span class="section_number">2.3.2</span><span class="section_title">Dasar-dasar hukum pertanahan</span></h4>
+<ul>
+<li>UU 5/1960 tentang peraturan dasar pokok-pokok agraria (UUPA)
+<ul>
+<li>masih berlakukah?</li>
+</ul></li>
+<li><a href="https://www.slideshare.net/leksnco/20140930-presenting-lekscos-team-on-legal-training-hukum-online-dasar-dasar-hukum-pertanahan-by-eddy-leks">https://www.slideshare.net/leksnco/20140930-presenting-lekscos-team-on-legal-training-hukum-online-dasar-dasar-hukum-pertanahan-by-eddy-leks</a></li>
+<li>UUPA 7: &quot;Untuk tidak merugikan kepentingan umum maka pemilikan dan penguasaan tanah yang melampaui batas tidak diperkenankan.&quot;</li>
+</ul>
+<h4 id="kerumitan-pt-beli-tanah"><span class="section_number">2.3.3</span><span class="section_title">Kerumitan PT beli tanah</span></h4>
+<p>(doesn't matter; I'm not establishing a company.)</p>
+<ul>
+<li>PT tidak bisa punya Hak Milik atas tanah; hanya bisa punya HGB/HGU/Hak Pakai.
+<ul>
+<li><a href="http://www.legalakses.com/tips-membeli-tanah-dan-bangunan-oleh-perusahaan-perseroan-terbatas-pt/">http://www.legalakses.com/tips-membeli-tanah-dan-bangunan-oleh-perusahaan-perseroan-terbatas-pt/</a></li>
+</ul></li>
+<li>ada batas luas kepemilikan tanah
+<ul>
+<li><a href="https://www.bpn.go.id/Berita/Berita-Pertanahan/aturan-pemilikan-lahan-pertanian-diperketat-62666">https://www.bpn.go.id/Berita/Berita-Pertanahan/aturan-pemilikan-lahan-pertanian-diperketat-62666</a></li>
+<li><a href="https://www.hukum-hukum.com/2016/05/luas-maksimum-tanah-pertanian-yang.html">https://www.hukum-hukum.com/2016/05/luas-maksimum-tanah-pertanian-yang.html</a></li>
+</ul></li>
+</ul>
+<h3 id="find-buy-and-fence-a-patch-of-land-satisfying-these-criteria"><span class="section_number">2.4</span><span class="section_title">Find, buy, and fence a patch of land satisfying these criteria</span></h3>
+<ul>
+<li>Can use real-estate agents or online marketplaces; or survey some unknown/unsurveyed land / terra incognita.</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.4.1</span><span class="section_title"><a href="#biogeochemical-cycle">Biogeochemical cycle</a></span><span class="word_count">(106w~1m)</span></li>
+<li><span class="section_number">2.4.2</span><span class="section_title"><a href="#other-requirements">Other requirements</a></span><span class="word_count">(179w~1m)</span></li>
+</ul>
+</div>
+<h4 id="biogeochemical-cycle"><span class="section_number">2.4.1</span><span class="section_title">Biogeochemical cycle</span></h4>
+<ul>
+<li>The land must be a part of a life-conducive <em>biogeochemical cycle</em>; sufficient in common limiting nutrients such as phosphate and rare-earth minerals.</li>
+<li>The land must have enough water: at least one of <a href="https://en.wikipedia.org/wiki/Perennial_stream">perennial stream</a>, perennial rainfall (is there such thing?), or groundwater.
+<ul>
+<li>That Wikipedia article gives some hints on how to test whether a stream is perennial: see the indicators.</li>
+<li>Can groundwater/aquifer water plant (like potatos, not rice field / sawah)?</li>
+</ul></li>
+<li><a href="https://simple.wikibooks.org/wiki/World_History/Ancient_Mesopotamia">Mesopotamia</a><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> &quot;was a good place to start a civilisation because it had <em>fertile farmland</em> and <em>water from the rivers</em> to provide transportation and a water source.&quot; (emphasis mine)</li>
+<li><a href="https://www.quora.com/What-is-the-best-place-geographically-to-start-a-new-civilization/answer/Zachary-Newell-1">Zachary Newell's answer</a></li>
+<li>Soil important parameters: water retention; damp but not waterlogged?</li>
+</ul>
+<h4 id="other-requirements"><span class="section_number">2.4.2</span><span class="section_title">Other requirements</span></h4>
+<ul>
+<li>Area and shape requirements:
+<ul>
+<li>The land must have an area of at least 100 m2 and at most 10,000 m2. Too small, not enough production. Too big, the man may be unable to defend.</li>
+<li>The land should be encloseable/fenceable.</li>
+<li>The land should be square-shaped.</li>
+</ul></li>
+<li>must have some support systems and be not too far from civilization
+<ul>
+<li>must be adjacent to a river that is unpolluted and will not be polluted
+<ul>
+<li>(Is private irrigation illegal?)</li>
+</ul></li>
+<li>must have fertile soil (subsumed by biogeochemical cycle requirement above)</li>
+<li>must be adjacent to public road (or not gravel road)</li>
+<li>not too far from warteg/food seller</li>
+</ul></li>
+<li>low disaster risk
+<ul>
+<li>not affected by landslide, forest fires and their smoke, etc.</li>
+<li>occasional earthquakes are OK, but not soil liquefaction</li>
+<li>far enough (at least 5 km) from terrorist nests, things that may explode (chemical factories, oil rigs, bomb-making terrorist villages), xenophobes/radical-Muslims/anti-Chinese
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/2015_Tianjin_explosions">Tianjin explosion</a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> blast radius exceeds 2 km.</li>
+</ul></li>
+<li>floods?</li>
+<li>not near/among low-vibration people such as religious extremists and gratuitous thiefs</li>
+</ul></li>
+<li>Nice to haves (optional criteria, OK if not satisfied)
+<ul>
+<li>Should not too close to any mosques. (Noise issues.)</li>
+<li>Does not have to be in Jakarta or even in Indonesia.</li>
+<li>Should be close to forest/woodlands and metal ores?</li>
+</ul></li>
+</ul>
+<h3 id="find-a-vehicle-satisfying-these-criteria"><span class="section_number">2.5</span><span class="section_title">Find a vehicle satisfying these criteria</span></h3>
+<ul>
+<li>must have sufficient space for clothes, tools, dry food, and water</li>
+<li>must install kawat-nyamuk for all openable rear passenger windows, for sleeping in vehicle</li>
+<li>should be able to carry building materials (which ones?)
+<ul>
+<li>&quot;What's lighter than steel and as strong as titanium, but a tenth the cost? This new alloy&quot; <a href="https://www.nbcnews.com/tech/innovation/strong-titanium-cheap-dirt-new-steel-alloy-shines-n301226">https://www.nbcnews.com/tech/innovation/strong-titanium-cheap-dirt-new-steel-alloy-shines-n301226</a></li>
+</ul></li>
+</ul>
+<h2 id="step-2-developing"><span class="section_number">3</span><span class="section_title">Step 2: Developing</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#engineer-the-ecology">Engineer the ecology</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#grow-some-bioindicators-how-do-we-test-soil-quality-by-trying-to-grow-a-cheap-plant-such-as-grass-on-it-first."><span class="todo TODO">TODO</span> Grow some bioindicators? How do we test soil quality? By trying to grow a cheap plant (such as grass) on it first.</a></span><span class="word_count">(32w~1m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#read"><span class="todo TODO">TODO</span> Read?</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#procedures-instructions-steps-planting-times-what-to-plant-for-beginner">Procedures, instructions, steps, planting times, what to plant, for beginner</a></span><span class="word_count">(28w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#alat-alat-tools"><span class="todo TODO">TODO</span> Alat-alat / tools</a></span><span class="word_count">(111w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#more">More</a></span><span class="word_count">(42w~1m)</span></li>
+</ul>
+</div>
+<h3 id="engineer-the-ecology"><span class="section_number">3.1</span><span class="section_title">Engineer the ecology</span></h3>
+<ul>
+<li>More details: <a href="subsist.html">subsist.html</a>.</li>
+</ul>
+<h3 id="grow-some-bioindicators-how-do-we-test-soil-quality-by-trying-to-grow-a-cheap-plant-such-as-grass-on-it-first."><span class="section_number">3.2</span><span class="section_title"><span class="todo TODO">TODO</span> Grow some bioindicators? How do we test soil quality? By trying to grow a cheap plant (such as grass) on it first.</span></h3>
+<p>Which ones?</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Bioindicator">https://en.wikipedia.org/wiki/Bioindicator</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Sentinel_species">https://en.wikipedia.org/wiki/Sentinel_species</a></li>
+</ul>
+<p>Guard plant Sentinel plant Indicator plant pH indicator plant</p>
+<p><a href="https://www.gardeningknowhow.com/garden-how-to/info/plant-indicator-info.htm">https://www.gardeningknowhow.com/garden-how-to/info/plant-indicator-info.htm</a></p>
+<h3 id="read"><span class="section_number">3.3</span><span class="section_title"><span class="todo TODO">TODO</span> Read?</span></h3>
+<ul>
+<li>1992 FAO book &quot;Forests, trees, and food&quot; <a href="http://www.fao.org/docrep/006/u5620e/U5620E00.HTM">http://www.fao.org/docrep/006/u5620e/U5620E00.HTM</a>
+<ul>
+<li>chapter: &quot;Food and nutrition&quot; <a href="http://www.fao.org/docrep/006/u5620e/U5620E03.htm">http://www.fao.org/docrep/006/u5620e/U5620E03.htm</a></li>
+</ul></li>
+<li><a href="https://permacultureguidebook.org/">https://permacultureguidebook.org/</a></li>
+<li><a href="https://extension.psu.edu/fruit-and-vegetable-marketing-for-small-scale-and-part-time-growers">https://extension.psu.edu/fruit-and-vegetable-marketing-for-small-scale-and-part-time-growers</a></li>
+<li><a href="https://eschooltoday.com/ecosystems/the-nitrogen-cycle.html">https://eschooltoday.com/ecosystems/the-nitrogen-cycle.html</a></li>
+</ul>
+<h3 id="procedures-instructions-steps-planting-times-what-to-plant-for-beginner"><span class="section_number">3.4</span><span class="section_title">Procedures, instructions, steps, planting times, what to plant, for beginner</span></h3>
+<ul>
+<li>How to start a Container Garden from Seed Easy! STEP by STEP grow vegetables plant organic <a href="https://www.youtube.com/watch?v=4hVtMCGVMaQ">https://www.youtube.com/watch?v=4hVtMCGVMaQ</a>
+<ul>
+<li>too much hassle</li>
+</ul></li>
+</ul>
+<h3 id="alat-alat-tools"><span class="section_number">3.5</span><span class="section_title"><span class="todo TODO">TODO</span> Alat-alat / tools</span></h3>
+<ul>
+<li>spade, sekop</li>
+<li>sepatu bot</li>
+<li>meteran</li>
+<li>tong sampah bertutup untuk kompos; atau turnable compost bin <a href="https://www.youtube.com/watch?v=ZVVokyVZQHE">https://www.youtube.com/watch?v=ZVVokyVZQHE</a>
+<ul>
+<li>atau pakai gentong nganggur di dapur</li>
+</ul></li>
+<li>gerobak, trolley, wheelbarrow</li>
+<li>sarung tangan kebun (bukan sarung tangan medis latex yang di apotik); reusable garden gloves, not use-once throw-away medical gloves</li>
+<li>masker</li>
+<li>pitchfork/rake, to turn over compost</li>
+<li>semprotan / spray / atomizer</li>
+<li>soil thermometer</li>
+<li>(no longer applies) pot tanaman, tapi jangan terlalu besar; pastikan orang masih bisa angkat pot itu dengan isinya</li>
+<li>hose</li>
+<li>trash can / recycle bin / compost bin</li>
+<li>Waterproof/weatherproof/Heavy-duty/Industrial/Durable labels; what do you call it?</li>
+<li>manual seeder / hand-cranked seeder; can use a box/container/bottle with some small holes, and shake it; or just use the hand
+<ul>
+<li>mix the seed randomly, and sow them, because Nature knows best; can use</li>
+</ul></li>
+</ul>
+<h3 id="more"><span class="section_number">3.6</span><span class="section_title">More</span></h3>
+<ul>
+<li>Install solar electric generators.</li>
+<li>Build a house/shelter/settlement.
+<ul>
+<li>Prefab?</li>
+<li>Must have walls and roofs.</li>
+</ul></li>
+<li>Permaculture (do-nothing-farm) the land.</li>
+<li>Prevent malaria.</li>
+<li>The worst thing that could happen is that we become more resilient against money; our land will always feed us even if the value of money plummets to hell.</li>
+</ul>
+<h2 id="step-3-attracting-high-vibration-people"><span class="section_number">4</span><span class="section_title">Step 3: Attracting high-vibration people</span></h2>
+<ul>
+<li>Probably retirees.</li>
+</ul>
+<h2 id="step-4-attracting-and-helping-low-vibration-people"><span class="section_number">5</span><span class="section_title">Step 4: Attracting and helping low-vibration people</span></h2>
+<h2 id="other-peoples-projects"><span class="section_number">6</span><span class="section_title">Other people's projects</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#the-venus-project">The Venus Project</a></span><span class="word_count">(11w~1m)</span></li>
+</ul>
+</div>
+<h3 id="the-venus-project"><span class="section_number">6.1</span><span class="section_title">The Venus Project</span></h3>
+<ul>
+<li><a href="https://www.thevenusproject.com/">https://www.thevenusproject.com/</a></li>
+<li>5-minute introduction to resource-based economy <a href="https://www.youtube.com/watch?v=ndsWuYfRgjE&amp;feature=emb_logo">https://www.youtube.com/watch?v=ndsWuYfRgjE&amp;feature=emb_logo</a></li>
+<li>1-hour documentary <a href="https://www.youtube.com/watch?v=Yb5ivvcTvRQ">https://www.youtube.com/watch?v=Yb5ivvcTvRQ</a></li>
+<li>from <a href="https://planetstarseeders.com/the-venus-project/">https://planetstarseeders.com/the-venus-project/</a></li>
+</ul>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2020-01-21&gt;<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2020-01-21&gt; &quot;Apartment blocks 2 km (1.2 mi) from the site sustained shattered glass, loss of roof tiles and damage to ceilings&quot;<a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-20 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

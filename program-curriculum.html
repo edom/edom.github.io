@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Toward a curriculum for computer programming</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Toward a curriculum for computer programming</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#principles">Principles</a></span><span class="word_count">(254w~2m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#appetizers">Appetizers</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#beginners">Beginners</a></span><span class="word_count">(140w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#intermediate">Intermediate</a></span><span class="word_count">(100w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#advanced">Advanced</a></span><span class="word_count">(44w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#even-more-advanced">Even more advanced</a></span><span class="word_count">(25w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#post-scarcity-spirituality-and-actualization">Post-scarcity spirituality and actualization</a></span><span class="word_count">(20w~1m)</span></li>
+</ul>
+</div>
+<h2 id="principles"><span class="section_number">1</span><span class="section_title">Principles</span></h2>
+<ul>
+<li>Programmers <em>translate</em> human desires into computer systems.</li>
+<li>Programmer metrics measure translation quality. An example of translation quality measurement is that of <a href="https://unbabel.com/blog/measuring-translation-performance/">unbabel.com</a> (its speed-effort-quality framework is also applicable to formal translations).
+<ul>
+<li>The primary measurement is faithfulness/fidelity: Translate a desire into a program that does what is intended and does <em>only</em> what is intended.</li>
+<li>The secondary measurements are speed and effort.</li>
+<li>Some items from <a href="https://www.atanet.org/certification/aboutexams_overview.php">American Translators Association</a><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> are also applicable:
+<ul>
+<li>&quot;Everything integral to the source text is included in the target text and nothing that is not implicitly or explicitly stated by the author is added.&quot;</li>
+<li>&quot;Syntax is appropriate to the target language; the target text does not necessarily imitate the sentence structure of the source text.&quot;</li>
+<li>&quot;The target text flows smoothly and does not contain awkward expressions that mark it distinctly as a translation.&quot;</li>
+<li><a href="https://www.atanet.org/certification/aboutexams_error.php">Explanation of Error Categories</a></li>
+</ul></li>
+</ul></li>
+<li>AI/ML can be thought of as a subset of computer programming, in the same way intimidation can be thought of a subset of human programming.</li>
+<li>Translate what is meant, not only what is said. Translate the intention, not the utterance.
+<ul>
+<li>Uncover implicit/hidden desires (non-functional requirements).</li>
+<li>Uncover some probable hidden future desires.</li>
+<li>Ask/clarify/confirm back in the dialog with the client.</li>
+</ul></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1.1</span><span class="section_title"><a href="#translators-programmers-managers-and-their-measurements">Translators, programmers, managers, and their measurements</a></span><span class="word_count">(71w~1m)</span></li>
+</ul>
+</div>
+<h3 id="translators-programmers-managers-and-their-measurements"><span class="section_number">1.1</span><span class="section_title">Translators, programmers, managers, and their measurements</span></h3>
+<p>A translator is measured by the faithfulness of translation and speed of translation?</p>
+<p>If programmers <em>translate</em> human desire to computer program, then … the same measure.</p>
+<p>Managers also <em>translate</em> from abstract desire to concrete implementation? Or is that directors?</p>
+<p>Programming ability, how able they are to make machines do what they want.</p>
+<p>A programmer may be measured in the same way we measure animal trainers, formal translators, and government legislators.</p>
+<h2 id="appetizers"><span class="section_number">2</span><span class="section_title">Appetizers</span></h2>
+<ul>
+<li>Translate simple desires into programs in JavaScript in a common browser's JavaScript console (because everybody has a browser).</li>
+</ul>
+<h2 id="beginners"><span class="section_number">3</span><span class="section_title">Beginners</span></h2>
+<ul>
+<li>Translate simple desires into programs in these languages: Assembly, C, Scheme, Haskell, Prolog.</li>
+<li>Understand the abstraction from computer programs down to electronic logic gates.</li>
+<li>Prove the correctness of simple programs, but be aware that &quot;correctness&quot; is relative to a model; there is no absolute correctness; there is no correctness in reality.</li>
+<li>Read/maintain/change programs.</li>
+<li>Understand evaluation order.
+<ul>
+<li>Understand normal-order and applicative-order lambda-calculus reduction strategies.</li>
+</ul></li>
+<li>Programming without caring about time/ordering/sequentiality.</li>
+<li>Understand hard (NP-complete) problems, and understand whether to give up, to approximate, or to do something else.</li>
+<li>Understand performance; have a mental model of cost.</li>
+<li><a href="git-curriculum.html">Use Git</a>.</li>
+<li>Know what you are doing. Manipulate code in well-defined steps/operations, not haphazardly.
+<ul>
+<li>Create a function with simplifying assumptions.</li>
+<li>Relax a simplifying assumption.</li>
+</ul></li>
+<li>Understand HTML and CSS.</li>
+<li>Understand basic HTTP.</li>
+<li>Understand Ethernet.</li>
+<li>Understand Wi-Fi.</li>
+<li>Understand electromagnetism.</li>
+<li>Understand how materials reflect electromagnetic waves, for various wavelengths/frequencies.</li>
+<li>Understand the Internet Protocol stack.</li>
+<li>Understand the OSI 7-layer model and the Internet 5-layer model.</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#testing">Testing</a></span><span class="word_count">(7w~1m)</span></li>
+</ul>
+</div>
+<h3 id="testing"><span class="section_number">3.1</span><span class="section_title">Testing</span></h3>
+<ul>
+<li>Test functions.</li>
+<li>Test programs.</li>
+<li>Test systems.</li>
+<li>Property-based testing with QuickCheck.</li>
+<li>Fuzzing.</li>
+</ul>
+<h2 id="intermediate"><span class="section_number">4</span><span class="section_title">Intermediate</span></h2>
+<ul>
+<li>Translate simple desires into programs in these languages: C++, Java, Kotlin, Go.</li>
+<li>Translate complex desires into systems in these languages: Common Lisp, Scheme, Racket.</li>
+<li>Design application programming interfaces (APIs).</li>
+<li>Understand backward-compatibility.</li>
+<li>Formalize requirements.
+<ul>
+<li>Begin by designing the data model or the ontology of the information system being built.</li>
+</ul></li>
+<li>Interoperate several programming language implementations.</li>
+<li>van Roy &amp; Haridi: alternative semantics <a href="https://www.info.ucl.ac.be/~pvr/book.html">https://www.info.ucl.ac.be/~pvr/book.html</a></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#algebraic-modeling">Algebraic modeling</a></span><span class="word_count">(48w~1m)</span></li>
+</ul>
+</div>
+<h3 id="algebraic-modeling"><span class="section_number">4.1</span><span class="section_title">Algebraic modeling</span></h3>
+<ul>
+<li>Model some systems algebraically.
+<ul>
+<li>Come up with a set.</li>
+<li>Come up with a <em>closed</em> operation on that set.</li>
+<li>Example: shape algebra:
+<ul>
+<li>constructors
+<ul>
+<li>circle : Radius -&gt; Shape</li>
+<li>square : Side -&gt; Shape</li>
+</ul></li>
+<li>algebraic operations
+<ul>
+<li>juxtapose : Shape -&gt; Shape -&gt; Shape</li>
+<li>on : Shape -&gt; Shape -&gt; Shape</li>
+</ul></li>
+<li>combinators
+<ul>
+<li>translate : DX -&gt; DY -&gt; Shape -&gt; Shape</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="advanced"><span class="section_number">5</span><span class="section_title">Advanced</span></h2>
+<ul>
+<li>Decompose systems such that the difficulty of a change is proportional to the change's probability.</li>
+<li>Automate the translation of desires. Model-driven development. Make computers help translate desires. Teach computer how to reason.</li>
+<li>Design a programming language, probably domain-specific, beginning from the language's semantics.</li>
+<li>Make interpreters.</li>
+<li>Make compilers.</li>
+<li>Trade-offs, constraints.</li>
+</ul>
+<h2 id="even-more-advanced"><span class="section_number">6</span><span class="section_title">Even more advanced</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#critical-system-programmer">Critical-system programmer</a></span><span class="word_count">(23w~1m)</span></li>
+</ul>
+</div>
+<h3 id="critical-system-programmer"><span class="section_number">6.1</span><span class="section_title">Critical-system programmer</span></h3>
+<ul>
+<li>It is OK to be disiniterested in this; few people like this.</li>
+<li><a href="https://en.wikipedia.org/wiki/Critical_system">https://en.wikipedia.org/wiki/Critical_system</a></li>
+<li>Program computers without assuming that hardware is 100% reliable.</li>
+<li>Define failure modes.</li>
+</ul>
+<h2 id="post-scarcity-spirituality-and-actualization"><span class="section_number">7</span><span class="section_title">Post-scarcity spirituality and actualization</span></h2>
+<ul>
+<li>Make things with love, for beauty and simplicity, because we want to, not because we have to.</li>
+</ul>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2020-01-20&gt;<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-20 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
