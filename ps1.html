@@ -1,21 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="">
     <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>Reverse-engineering PlayStation 1 3D games to control the camera</title>
-  <meta name="description" content="Personal website">
-
-  <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="https://edom.github.io/ps1.html">
-  <link rel="alternate" type="application/rss+xml" title="Erik Dominikus&#39;s wiki" href="/feed.xml">
-
-  
-
-    <script>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Reverse-engineering PlayStation 1 3D games to control the camera</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
 // Help the reader estimate how much time the reading is going to take.
 // Show word count and reading time estimation in TOC entry.
 //
@@ -34,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return count + " " + ((count == 1) ? singular : plural);
     }
     function create_length_indicator (word, minute) {
-        let e = document.createElement("span");
+        let e = document.createElement("div");
         e.className = "toc_entry__length_indicator";
         e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
         return e;
@@ -82,169 +72,199 @@ document.addEventListener("DOMContentLoaded", function () {
         toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
     });
 });
-    </script>
+        </script>
 
-  
-  <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-12628443-6', 'auto');
-  ga('send', 'pageview');
-
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
 </script>
-  
-
-  
-
-  
-</head>
-
-
-  <body>
-
-    <header class="site-header" role="banner">
-  <div class="wrapper">
-    <a class="site-title" rel="author" href="/">Erik Dominikus&#39;s wiki</a>
-  </div>
-</header>
-
-
-    
-
-    <main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        <article class="post">
-
-  <header class="post-header">
-    <h1 class="post-title">Reverse-engineering PlayStation 1 3D games to control the camera</h1>
-  </header>
-
-  <div class="post-content">
-    <p>We are interested in reverse-engineering these (mostly PlayStation 1) games:
-Street Fighter EX series (EX Plus Alpha, EX2, EX3), Fighting Layer, Fighting EX Layer,
-Tekken series from Tekken 3, Virtual Hiryu No Ken, Dead or Alive series,
-Virtua Fighter series, Bloody Roar series.</p>
-
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Reverse-engineering PlayStation 1 3D games to control the camera</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<p>We are interested in reverse-engineering these (mostly PlayStation 1) games: Street Fighter EX series (EX Plus Alpha, EX2, EX3), Fighting Layer, Fighting EX Layer, Tekken series from Tekken 3, Virtual Hiryu No Ken, Dead or Alive series, Virtua Fighter series, Bloody Roar series.</p>
 <ul>
-  <li>I want to move the camera arbitrarily in the PlayStation game “Street Fighter EX plus alpha”.
-    <ul>
-      <li>The same technique might be applicable to other 3D PS1 games such as “Street Fighter EX2 plus”, “Tekken 3”, and “Fighting Layer” (Namco System 12, beefed-up PlayStation 1).</li>
-      <li>Interesting instructions: RTPT, CTC2.
-        <ul>
-          <li>I think that’s the only way the game can render the graphics at 30 fps, given the hardware.</li>
-          <li>Need some knowledge of linear algebra and computer graphics.</li>
-        </ul>
-      </li>
-      <li>Plan:
-        <ul>
-          <li>Find the address of the most often called RTPT instruction.</li>
-          <li>Find the CTC2 address that sets up the transformation matrices before that RTPT instruction.</li>
-          <li>Map the call graph.
-  Find the bottom-most call that coincides with the rendering of one frame.
-            <ul>
-              <li>Insert breakpoint.</li>
-              <li>Go until return.</li>
-            </ul>
-          </li>
-          <li>Use GDB.
-  Turn on debug info.
-  Disable optimization.
-  Write some tracing code.
-  Use GDB to toggle the code.
-  Write a line to trace output file every time a CTC2 or RTPT instruction is executed.
-  Every line contains register values (including program counter PC).</li>
-          <li>Add GDB script to run current function until it returns.
-  Do this by putting a temporary breakpoint at <code class="highlighter-rouge">$ra</code>.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>How to use GDB to debug MAME?
-    <ul>
-      <li>PCSX is easy to debug because it is in C, uses global variables (such as <code class="highlighter-rouge">psxRegs</code>), and doesn’t care about 100% faithful emulation.</li>
-      <li>MAME uses C++ and tries to emulate the whole hardware.
-        <ul>
-          <li>Can we supercompile MAME to make it faster?
-  But how do we debug supercompiled programs?</li>
-          <li>We can make our own global variables.
-  The source is open.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>https://en.wikipedia.org/wiki/PlayStation_(console)#Hardware</li>
-  <li>https://en.wikipedia.org/wiki/PlayStation_technical_specifications</li>
-  <li>http://phoboslab.org/log/2015/04/reverse-engineering-wipeout-psx</li>
-  <li>Tools
-    <ul>
-      <li><code class="highlighter-rouge">strings</code> from GNU binutils: <code class="highlighter-rouge">strings -t x FILE.bin</code></li>
-      <li><code class="highlighter-rouge">iat</code>: convert bin to iso
-        <ul>
-          <li>“Archive Manager” can open ISO</li>
-        </ul>
-      </li>
-      <li>Does it work?
-        <ul>
-          <li>https://github.com/cebix/psximager</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>technical documentation
-    <ul>
-      <li>https://www.zophar.net/fileuploads/2/10731bgqkx/playstation.htm</li>
-      <li>http://problemkaputt.de/psx-spx.htm</li>
-    </ul>
-  </li>
-  <li>Emulators
-    <ul>
-      <li>pcsx-reloaded</li>
-    </ul>
-  </li>
-  <li>Developing
-    <ul>
-      <li>SDKs
-        <ul>
-          <li>psxsdk
-            <ul>
-              <li>http://unhaut.x10host.com/psxsdk/doc/dir_000009.html</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Reverse engineering
-    <ul>
-      <li>https://reverseengineering.stackexchange.com/questions/1817/is-there-any-disassembler-to-rival-ida-pro</li>
-      <li>http://www.capstone-engine.org/</li>
-    </ul>
-  </li>
+<li>I want to move the camera arbitrarily in the PlayStation game &quot;Street Fighter EX plus alpha&quot;.
+<ul>
+<li>The same technique might be applicable to other 3D PS1 games such as &quot;Street Fighter EX2 plus&quot;, &quot;Tekken 3&quot;, and &quot;Fighting Layer&quot; (Namco System 12, beefed-up PlayStation 1).</li>
+<li>Interesting instructions: RTPT, CTC2.
+<ul>
+<li>I think that's the only way the game can render the graphics at 30 fps, given the hardware.</li>
+<li>Need some knowledge of linear algebra and computer graphics.</li>
+</ul></li>
+<li>Plan:
+<ul>
+<li>Find the address of the most often called RTPT instruction.</li>
+<li>Find the CTC2 address that sets up the transformation matrices before that RTPT instruction.</li>
+<li>Map the call graph. Find the bottom-most call that coincides with the rendering of one frame.
+<ul>
+<li>Insert breakpoint.</li>
+<li>Go until return.</li>
+</ul></li>
+<li>Use GDB. Turn on debug info. Disable optimization. Write some tracing code. Use GDB to toggle the code. Write a line to trace output file every time a CTC2 or RTPT instruction is executed. Every line contains register values (including program counter PC).</li>
+<li>Add GDB script to run current function until it returns. Do this by putting a temporary breakpoint at <code>$ra</code>.</li>
+</ul></li>
+</ul></li>
+<li>How to use GDB to debug MAME?
+<ul>
+<li>PCSX is easy to debug because it is in C, uses global variables (such as <code>psxRegs</code>), and doesn't care about 100% faithful emulation.</li>
+<li>MAME uses C++ and tries to emulate the whole hardware.
+<ul>
+<li>Can we supercompile MAME to make it faster? But how do we debug supercompiled programs?</li>
+<li>We can make our own global variables. The source is open.</li>
+</ul></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/PlayStation\_(console)#Hardware">https://en.wikipedia.org/wiki/PlayStation\_(console)#Hardware</a></li>
+<li><a href="https://en.wikipedia.org/wiki/PlayStation\_technical\_specifications">https://en.wikipedia.org/wiki/PlayStation\_technical\_specifications</a></li>
+<li><a href="http://phoboslab.org/log/2015/04/reverse-engineering-wipeout-psx">http://phoboslab.org/log/2015/04/reverse-engineering-wipeout-psx</a></li>
+<li>Tools
+<ul>
+<li><code>strings</code> from GNU binutils: <code>strings -t x FILE.bin</code></li>
+<li><code>iat</code>: convert bin to iso
+<ul>
+<li>&quot;Archive Manager&quot; can open ISO</li>
+</ul></li>
+<li>Does it work?
+<ul>
+<li><a href="https://github.com/cebix/psximager">https://github.com/cebix/psximager</a></li>
+</ul></li>
+</ul></li>
+<li>technical documentation
+<ul>
+<li><a href="https://www.zophar.net/fileuploads/2/10731bgqkx/playstation.htm">https://www.zophar.net/fileuploads/2/10731bgqkx/playstation.htm</a></li>
+<li><a href="http://problemkaputt.de/psx-spx.htm">http://problemkaputt.de/psx-spx.htm</a></li>
+</ul></li>
+<li>Emulators
+<ul>
+<li>pcsx-reloaded</li>
+</ul></li>
+<li>Developing
+<ul>
+<li>SDKs
+<ul>
+<li>psxsdk
+<ul>
+<li><a href="http://unhaut.x10host.com/psxsdk/doc/dir\_000009.html">http://unhaut.x10host.com/psxsdk/doc/dir\_000009.html</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Reverse engineering
+<ul>
+<li><a href="https://reverseengineering.stackexchange.com/questions/1817/is-there-any-disassembler-to-rival-ida-pro">https://reverseengineering.stackexchange.com/questions/1817/is-there-any-disassembler-to-rival-ida-pro</a></li>
+<li><a href="http://www.capstone-engine.org/">http://www.capstone-engine.org/</a></li>
+</ul></li>
+<li>Plan choices
+<ul>
+<li>Choice: Build PCSX with debugging, and use GDB+Guile to add &quot;aspects&quot; and to trace data-flow.</li>
+<li>Alternative: Transform the PCSX1 source code to add tracing/debugging.
+<ul>
+<li>Automatically or manually.
+<ul>
+<li>Coccinelle <a href="http://coccinelle.lip6.fr/gsoc/ideas.php">http://coccinelle.lip6.fr/gsoc/ideas.php</a></li>
+<li>C-Transformers <a href="https://www.lrde.epita.fr/wiki/Publications/borghi.06.crossroads">https://www.lrde.epita.fr/wiki/Publications/borghi.06.crossroads</a></li>
+<li>&quot;Vacietis works by loading C code into a Common Lisp runtime as though it were Lisp code&quot; <a href="https://www.cliki.net/Vacietis">https://www.cliki.net/Vacietis</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Does this work? <a href="https://github.com/iamgreaser/ps1-gpu-emulator-cl">https://github.com/iamgreaser/ps1-gpu-emulator-cl</a></li>
 </ul>
-
-  </div>
-
-</article>
-
-      </div>
-    </main>
-
-    <footer class="site-footer h-card">
-    <data class="u-url" href="/"></data>
-
-    <div class="wrapper">
-        <p>This page was created on 2018-05-25 00:00 +0700.</p>
-        <p class="rss-subscribe">There is an <a href="/feed.xml">RSS feed</a>,
-        but it's unused because this site is a wiki, not a blog.</p>
-        <p>Stop writing books, papers, and blogs! Write a personal wiki instead! Or, even better, contribute to a community wiki.</p>
-    </div>
-
-</footer>
-
-
-  </body>
-
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2018-05-25 00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
 </html>

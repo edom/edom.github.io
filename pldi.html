@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>On programming language design and implementation</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">On programming language design and implementation</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<p>(Not to be confused with the ACM SIGPLAN conference of the same name.)</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#designing-the-language-a-language">Designing the language / a language</a></span><span class="word_count">(140w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#instead-of-functions-and-macros-do-partial-evaluation">Instead of functions and macros, do partial evaluation?</a></span><span class="word_count">(97w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#biggest-problems-in-lisp">Biggest problems in Lisp</a></span><span class="word_count">(41w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#which-intermediate-representationlanguage-should-we-target">Which intermediate representation/language should we target?</a></span><span class="word_count">(64w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#features-for-programming-in-the-large">Features for programming in the large</a></span><span class="word_count">(81w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#toward-a-curriculum-for-programming-language-design-and-implementation">Toward a curriculum for programming language design and implementation</a></span><span class="word_count">(482w~3m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#marketing">Marketing</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#what-1">What?</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#on-the-mathematics-of-programming-languages">On the mathematics of programming languages</a></span><span class="word_count">(206w~2m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#creating-languages-with-the-tower-of-semantics-approach">Creating languages with the &quot;tower of semantics&quot; approach</a></span><span class="word_count">(228w~2m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#informal-program-complexity">Informal program complexity</a></span><span class="word_count">(29w~1m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#programs-that-write-programs">Programs that write programs</a></span><span class="word_count">(39w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#specification-and-complexity">Specification and complexity</a></span><span class="word_count">(533w~3m)</span></li>
+</ul>
+</div>
+<h2 id="designing-the-language-a-language"><span class="section_number">1</span><span class="section_title">Designing the language / a language</span></h2>
+<ul>
+<li>Instead of designing a new language from scratch, improve and <em>unify</em> existing languages (dialects of Lisp); otherwise we will end up reimplementing the same thing.</li>
+<li>Only MIT/BSD/Apache2/similar/public-domain; no GPL/AGPL/LGPL; no proprietary.</li>
+<li>Call-by-value (applicative-order evaluation) is OK; we can always make abstract interpreters later.</li>
+<li>Typing more should produce more return of effort: types are optional, but they help the computer help the programmer. Programmers should declare types (or use any feature of the language) because they <em>want</em> to (as in Common Lisp or TypeScript), not because they <em>have</em> to (as in Java).</li>
+<li>Design a language.
+<ul>
+<li>Design a language <em>top-down</em> (from math down to reality).
+<ul>
+<li><a href="pl-0.html">Sketch of PL-0 programming language</a>
+<ul>
+<li><a href="group.html">On grouping things</a>: How should we group functions?</li>
+<li><a href="program-text.html">On models of text in programming</a></li>
+</ul></li>
+</ul></li>
+<li>Design a language <em>bottom-up</em> (from reality up to math).
+<ul>
+<li><a href="pl-1.html">Sketch of PL-1 programming language</a></li>
+</ul></li>
+<li>Synthesize the middle way.</li>
+<li><a href="software-system-model.html">Towards a comprehensive software system modeling language</a></li>
+</ul></li>
+</ul>
+<h2 id="instead-of-functions-and-macros-do-partial-evaluation"><span class="section_number">2</span><span class="section_title">Instead of functions and macros, do partial evaluation?</span></h2>
+<ul>
+<li>Problem:
+<ul>
+<li>Macros <em>are</em> functions.
+<ul>
+<li>Macros are functions from <em>AST</em> to AST.</li>
+<li>Macros are functions that are called at <em>compile-time</em>; ordinary functions are called at run-time.</li>
+</ul></li>
+<li>My biggest beefs with macros:
+<ul>
+<li>It is unclear which arguments are evaluated. Example: Why does <code>in-package</code> not evaluate its argument but <code>use-package</code> does?</li>
+<li>Can't pass <code>and</code> to <code>zip</code> (although we can work around this in Racket with set!-transformers).</li>
+</ul></li>
+</ul></li>
+<li>Solution:
+<ul>
+<li>Partial evaluation cleanly <em>unifies</em> macros and ordinary functions?</li>
+</ul></li>
+<li>for all x y z: (let ((x y)) z) = ((lambda (x) z) y)
+<ul>
+<li>Staging/compilation side-effects should not affect run-time.</li>
+<li>Compile-time state and run-time state should be totally separate.</li>
+</ul></li>
+</ul>
+<h2 id="biggest-problems-in-lisp"><span class="section_number">3</span><span class="section_title">Biggest problems in Lisp</span></h2>
+<ul>
+<li>module/namespace</li>
+<li>macro</li>
+<li>quoting
+<ul>
+<li>I think quoting should satisfy these properties for all <code>x</code>:
+<ul>
+<li><code>(equal (quote x) x)</code></li>
+<li><code>(equal (unquote (quote x)) x)</code></li>
+</ul></li>
+<li>Important questions?
+<ul>
+<li>What is the difference between <code>unquote</code> and <code>eval</code>?</li>
+<li>Is <code>quote</code> a function? If so, what is its domain and codomain?</li>
+</ul></li>
+</ul></li>
+<li>multiple return values?</li>
+</ul>
+<h2 id="which-intermediate-representationlanguage-should-we-target"><span class="section_number">4</span><span class="section_title">Which intermediate representation/language should we target?</span></h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Intermediate_representation">https://en.wikipedia.org/wiki/Intermediate_representation</a>
+<ul>
+<li>Which intermediate representation (IR) is free and open?</li>
+<li>ECL has an intermediate language? <a href="https://en.wikipedia.org/wiki/Embeddable_Common_Lisp">https://en.wikipedia.org/wiki/Embeddable_Common_Lisp</a></li>
+</ul></li>
+<li>Is the &quot;Common Intermediate Language&quot; really common?</li>
+<li>Why did Microsoft make MSIL and not just reuse or fork LLVM? Probably it was about political control, not technical superiority.</li>
+<li>Is there an IR that can be translated to CPU + GPU + all weird instructions? How big is that IR?</li>
+</ul>
+<h2 id="features-for-programming-in-the-large"><span class="section_number">5</span><span class="section_title">Features for programming in the large</span></h2>
+<p>Module/namespace/name-management/what do you call it</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#distinguishing-between-modules-namespaces-and-compilation-units">&lt;2019-11-07&gt; Distinguishing between modules, namespaces, and compilation units</a></span><span class="word_count">(72w~1m)</span></li>
+</ul>
+</div>
+<h3 id="distinguishing-between-modules-namespaces-and-compilation-units"><span class="section_number">5.1</span><span class="section_title">&lt;2019-11-07&gt; Distinguishing between modules, namespaces, and compilation units</span></h3>
+<p>A namespace is a mapping.</p>
+<p>A compilation unit is the smallest thing that can be compiled.</p>
+<p>They are often conflated into a module, in the sense that a module often serves multiple functions like separate namespace, separate compilation, and dependency management, but perhaps it is time that we distinguish between them.</p>
+<p>Racket units are namespaces (in my sense) and Racket namespaces are namespaces (in my sense) too. Confusing.</p>
+<h2 id="toward-a-curriculum-for-programming-language-design-and-implementation"><span class="section_number">6</span><span class="section_title">Toward a curriculum for programming language design and implementation</span></h2>
+<p>Alternative title: &quot;Exploring the programming language design space&quot;</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#what-is-a-good-language">What is a good language?</a></span><span class="word_count">(10w~1m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#how-do-we-design-a-programming-language">How do we design a programming language?</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#implementation">Implementation?</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(52w~1m)</span></li>
+<li><span class="section_number">6.5</span><span class="section_title"><a href="#when-should-you-make-a-dsl-domain-specific-language">When should you make a DSL (domain-specific language)?</a></span><span class="word_count">(89w~1m)</span></li>
+<li><span class="section_number">6.6</span><span class="section_title"><a href="#how-do-we-specify-semantics">How do we specify semantics?</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">6.7</span><span class="section_title"><a href="#what-are-some-recent-developments">What are some recent developments?</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">6.8</span><span class="section_title"><a href="#what-we-are-going-to-do-here">What we are going to do here</a></span><span class="word_count">(93w~1m)</span></li>
+<li><span class="section_number">6.9</span><span class="section_title"><a href="#should-we-make-a-forth-or-a-lisp">Should we make a Forth or a Lisp?</a></span><span class="word_count">(107w~1m)</span></li>
+<li><span class="section_number">6.10</span><span class="section_title"><a href="#important-psychological-issues">Important psychological issues</a></span><span class="word_count">(67w~1m)</span></li>
+</ul>
+</div>
+<h3 id="what-is-a-good-language"><span class="section_number">6.1</span><span class="section_title">What is a good language?</span></h3>
+<ul>
+<li>A good language efficiently represents meanings.</li>
+</ul>
+<h3 id="how-do-we-design-a-programming-language"><span class="section_number">6.2</span><span class="section_title">How do we design a programming language?</span></h3>
+<ul>
+<li>Reuse Lisp syntax (S-expressions).</li>
+<li>Design the <em>semantics</em> (the meaning).
+<ul>
+<li>Consider <em>implementability</em>.</li>
+<li>Consider the future; consider probability/risk of changes.</li>
+</ul></li>
+</ul>
+<h3 id="implementation"><span class="section_number">6.3</span><span class="section_title">Implementation?</span></h3>
+<ul>
+<li>Interpretation vs compilation</li>
+<li>Garbage collection
+<ul>
+<li>Tracing; not moveable; simple to implement</li>
+<li>Copying; moveable; performant</li>
+</ul></li>
+</ul>
+<h3 id="what"><span class="section_number">6.4</span><span class="section_title">What?</span></h3>
+<p>We can begin designing from the semantics (our desires) or from the run-time system (our constraints). All design is a compromise between the ideal and the practical. But if the ideal needs to be compromised, is it truly ideal?</p>
+<p>To consider:</p>
+<ul>
+<li><a href="http://tomasp.net/blog/2017/design-side-of-pl/">Petricek 2017</a> (about programming language design).</li>
+<li><span class="citation" data-cites="ingalls1981design">[<a href="#ref-ingalls1981design">4</a>]</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</li>
+<li><span class="citation" data-cites="coblenz2018interdisciplinary">[<a href="#ref-coblenz2018interdisciplinary">1</a>]</span>.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></li>
+<li><a href="https://leastfixedpoint.com/tonyg/kcbbs/projects/thing.html">Tony's Programming Language Experiments</a>.</li>
+<li><a href="http://lisp-univ-etc.blogspot.com/2012/04/lisp-hackers-pascal-costanza.html">3-Lisp's tower of interpreters</a>.</li>
+<li><a href="https://en.wikipedia.org/wiki/Subject-oriented_programming">Subject-Oriented Programming</a>
+<ul>
+<li><span class="citation" data-cites="harrison1993subject">[<a href="#ref-harrison1993subject">3</a>]</span>?</li>
+</ul></li>
+</ul>
+<h3 id="when-should-you-make-a-dsl-domain-specific-language"><span class="section_number">6.5</span><span class="section_title">When should you make a DSL (domain-specific language)?</span></h3>
+<ul>
+<li>When you will be writing many programs in the language so that it saves you effort. Example:
+<ul>
+<li>Write 100 similar systems in Java: 100 * 10,000 = 1,000,000 units of effort</li>
+<li>Write 100 similar systems in DSL implemented in Lisp: 10,000 (translator) + 100 * 1,000 = 110,000 units of effort</li>
+<li>Compare: writing math in math notation <span class="math inline">\(x^2+1=0\)</span> vs writing math in spelled-out English (&quot;a number such that its square plus one is zero&quot;).</li>
+</ul></li>
+<li>And when you can maintain the DSL.</li>
+<li>What? Mernik et al. 2005 <span class="citation" data-cites="mernik2005and">[<a href="#ref-mernik2005and">5</a>]</span><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></li>
+</ul>
+<h3 id="how-do-we-specify-semantics"><span class="section_number">6.6</span><span class="section_title">How do we specify semantics?</span></h3>
+<h3 id="what-are-some-recent-developments"><span class="section_number">6.7</span><span class="section_title">What are some recent developments?</span></h3>
+<p>What are some recent innovations in programming languages?</p>
+<p>What are some recent innovations in In programming-language semantics?</p>
+<p>??? <a href="https://www.semanticscholar.org/paper/Practical-partial-evaluation-for-high-performance-W%C3%BCrthinger-Wimmer/1d4c0211549a8fe259a273da88c63e8f00fef463">https://www.semanticscholar.org/paper/Practical-partial-evaluation-for-high-performance-W%C3%BCrthinger-Wimmer/1d4c0211549a8fe259a273da88c63e8f00fef463</a></p>
+<h3 id="what-we-are-going-to-do-here"><span class="section_number">6.8</span><span class="section_title">What we are going to do here</span></h3>
+<p>Here we design a <a href="https://en.wikipedia.org/wiki/Lisp_(programming_language)">Lisp</a>, its semantics, and its interpreter. (Note that, in the 21st century, Lisp means a family of languages, not a particular language.)</p>
+<p>We design a Lisp because we want to focus on semantics; the syntax can always be improved later.</p>
+<p>We name our language &quot;PL-0&quot; (not to be confused with <a href="https://en.wikipedia.org/wiki/PL/0">Wirth's PL/0</a>).</p>
+<p>We want a programming language for implementing programming languages. We want to easily specify alternative semantics. There are many prior arts, such as Racket; Felleisen et al. 2008 <span class="citation" data-cites="felleisen2018programmable">[<a href="#ref-felleisen2018programmable">2</a>]</span> discusses some problems of Racket.</p>
+<h3 id="should-we-make-a-forth-or-a-lisp"><span class="section_number">6.9</span><span class="section_title">Should we make a Forth or a Lisp?</span></h3>
+<p>The question is wrong. The answer is: we should begin from mathematics.</p>
+<p>We did not make a stack-based language such as <a href="https://en.wikipedia.org/wiki/Forth_(programming_language)">Forth</a> or PostScript because we did not know how to implement <em>optional arguments</em> in a stack-based language other than by explicitly passing a possibly empty list.</p>
+<p>So we choose to make a Lisp instead.</p>
+<p>But, why not both? Why not make a Lisp interpreter on Forth?</p>
+<p>The question of Forth vs Lisp is: How hard should we allow the user to crash without foreign procedures: just an exit due to an unhandled exception (Lisp), or an abort due to a segmentation fault (Forth)?</p>
+<h3 id="important-psychological-issues"><span class="section_number">6.10</span><span class="section_title">Important psychological issues</span></h3>
+<ul>
+<li>The language must come with a <em>benevolent dictator</em>.</li>
+<li>The language must come with an <em>official formatter</em> (like <code>gofmt</code>). Otherwise people will waste energy bickering about code style. With an official formatter, we can use authority to nip such wasteful debates in the bud.
+<ul>
+<li>The official formatter does not have to be the best, but should be <em>good enough</em> to prevent others from wasting energy writing competing formatters.</li>
+</ul></li>
+</ul>
+<h2 id="marketing"><span class="section_number">7</span><span class="section_title">Marketing</span></h2>
+<ul>
+<li>Who decides what language is used?
+<ul>
+<li>Programmers in their hobby projects?</li>
+<li>Managers in their companies?</li>
+</ul></li>
+</ul>
+<h2 id="what-1"><span class="section_number">8</span><span class="section_title">What?</span></h2>
+<p>On programming by examples. Erik Meijer has an interesting presentation about machine learning, that is, programming computers by examples. Can we create a programming language in which programming by examples is elegantly expressible?</p>
+<p>If it is impossible to invent better primitives, then the only way to make programming easier is to make computers program themselves more.</p>
+<p>What is the significance of the <a href="https://blog.ballerina.io/posts/ballerina-a-cloud-native-programming-language/">Ballerina programming language</a><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>?</p>
+<h2 id="on-the-mathematics-of-programming-languages"><span class="section_number">9</span><span class="section_title">On the mathematics of programming languages</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#science">Science?</a></span><span class="word_count">(22w~1m)</span></li>
+<li><span class="section_number">9.2</span><span class="section_title"><a href="#programming-languages-are-formal-systems">Programming languages are formal systems</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">9.3</span><span class="section_title"><a href="#the-essence-of-syntax-is-finite-describability">The essence of syntax is finite describability</a></span><span class="word_count">(130w~1m)</span></li>
+</ul>
+</div>
+<h3 id="science"><span class="section_number">9.1</span><span class="section_title">Science?</span></h3>
+<p>A programming language should be <em>derived</em> from observations and principles, in the same way physical theories are derived from observations and principles?</p>
+<h3 id="programming-languages-are-formal-systems"><span class="section_number">9.2</span><span class="section_title">Programming languages are formal systems</span></h3>
+<p>(Hofstadter's <a href="https://en.wikipedia.org/wiki/BlooP_and_FlooP">BlooP and FlooP</a>?)</p>
+<p>A programming language is a formal system.</p>
+<p>This is a point of view:</p>
+<table>
+<thead>
+<tr class="header">
+<th>prog. lang. theory</th>
+<th>formal logic</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>syntax</td>
+<td>formal language</td>
+</tr>
+<tr class="even">
+<td>program</td>
+<td>formula</td>
+</tr>
+<tr class="odd">
+<td>primitive value</td>
+<td>axiom</td>
+</tr>
+<tr class="even">
+<td>primitive combinator</td>
+<td>inference rule</td>
+</tr>
+<tr class="odd">
+<td>programming language</td>
+<td><a href="https://en.wikipedia.org/wiki/Formal_system">formal system</a></td>
+</tr>
+</tbody>
+</table>
+<p>Another point of view is the <a href="https://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence">Curry–Howard isomorphism</a>:</p>
+<table>
+<thead>
+<tr class="header">
+<th>prog. lang. theory</th>
+<th>intuitionistic logic</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>program</td>
+<td>constructive proof</td>
+</tr>
+<tr class="even">
+<td>type</td>
+<td>proposition</td>
+</tr>
+<tr class="odd">
+<td>programming language</td>
+<td>logic system</td>
+</tr>
+</tbody>
+</table>
+<p>See also <a href="https://ncatlab.org/nlab/show/computational+trinitarianism">Curry–Howard–Lambek isomorphism</a> (called &quot;computational trinitarianism&quot; by Harper 2011).</p>
+<p>Recall that:</p>
+<pre class="example"><code>formal system        = formal language + interpretation
+programming language = syntax          + semantics
+</code></pre>
+<h3 id="the-essence-of-syntax-is-finite-describability"><span class="section_number">9.3</span><span class="section_title">The essence of syntax is finite describability</span></h3>
+<p>A formula does not have to be a string, but may be a <em>graph</em>, for example. A language does not have to be <em>textual</em>, and even text does not have to be one-dimensional. Syntax does not have to be one-dimensional; the only restriction is that the syntax is <em>finitely describable</em>.</p>
+<p>The semantics (the meaning) of a formula is a mathematical object, such as a number, a set, a state transformer (a special case of functions).</p>
+<p>The semantics of a processor instruction is usually a state transformer.</p>
+<p>We can map a state transformer to a number by <em>forgetting</em> the parts of state that are preserved by the transformer. (Compare &quot;forgetful functors&quot; in category theory.)</p>
+<p>A computation is <em>pure</em> iff its state transformer semantics can be reduced to value semantics???</p>
+<h2 id="creating-languages-with-the-tower-of-semantics-approach"><span class="section_number">10</span><span class="section_title">Creating languages with the &quot;tower of semantics&quot; approach</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.1</span><span class="section_title"><a href="#semantics-of-values-arithmetic-expressions">Semantics of values / arithmetic expressions</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">10.2</span><span class="section_title"><a href="#semantics-of-errors">Semantics of errors</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">10.3</span><span class="section_title"><a href="#semantics-of-bindings">Semantics of bindings</a></span><span class="word_count">(92w~1m)</span></li>
+<li><span class="section_number">10.4</span><span class="section_title"><a href="#semantics-of-application">Semantics of application?</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">10.5</span><span class="section_title"><a href="#semantics-of-state-mutation">Semantics of state / mutation?</a></span><span class="word_count">(24w~1m)</span></li>
+<li><span class="section_number">10.6</span><span class="section_title"><a href="#garbage-collection-simplifies-semantics">Garbage collection simplifies semantics?</a></span><span class="word_count">(64w~1m)</span></li>
+</ul>
+</div>
+<h3 id="semantics-of-values-arithmetic-expressions"><span class="section_number">10.1</span><span class="section_title">Semantics of values / arithmetic expressions</span></h3>
+<p>Let <span class="math inline">\(P\)</span> be the set of programs.</p>
+<p>An example value semantics (calculator): <span class="math inline">\(S : P \to \Nat\)</span>. <span class="math display">\[ S(a+b) = S(a)+S(b) \]</span></p>
+<h3 id="semantics-of-errors"><span class="section_number">10.2</span><span class="section_title">Semantics of errors</span></h3>
+<p>We add <em>errors</em>.</p>
+<p>Let <span class="math inline">\(V = \Nat \cup \Set{\bot}\)</span>.</p>
+<p><span class="math display">\[ S(n/0) = \bot \]</span></p>
+<h3 id="semantics-of-bindings"><span class="section_number">10.3</span><span class="section_title">Semantics of bindings</span></h3>
+<p>Let <span class="math inline">\(N\)</span> be the set of <em>names</em>.</p>
+<p>Let <span class="math inline">\(V = \Nat\)</span> be the set of <em>values</em>.</p>
+<p>Let <span class="math inline">\(C = N \to V\)</span> be the set of <em>contexts</em>.</p>
+<p>We add <em>binders</em> (basic math expression with eager dynamic binding): <span class="math inline">\(S : C \times P \to \Nat\)</span>.</p>
+<p><span class="math display">\[ S(c,\text{var}(v)) = c(v) \]</span> <span class="math display">\[ S(c,\text{let}(n,e,b)) = S(c + \Set{(n,S(n,e))},b) \]</span></p>
+<p>What use is mathematics, if the mathematics ends up looking like a Lisp/Prolog/Haskell program!?</p>
+<p>The argument for eager &quot;let&quot;: If you don't use a variable, simply don't define it.</p>
+<p>The argument for lazy &quot;let&quot;: Immutable cyclic data cannot be done with eager &quot;let&quot;.</p>
+<h3 id="semantics-of-application"><span class="section_number">10.4</span><span class="section_title">Semantics of application?</span></h3>
+<p><span class="math display">\[ S(f(x)) = [S(f)](S(x)) \]</span></p>
+<h3 id="semantics-of-state-mutation"><span class="section_number">10.5</span><span class="section_title">Semantics of state / mutation?</span></h3>
+<p>We add mutable binders.</p>
+<p>An example state-transformer semantics: <span class="math inline">\(M : (P \times E \to \Nat) \to (P \times E \to \Nat)\)</span>.</p>
+<h3 id="garbage-collection-simplifies-semantics"><span class="section_number">10.6</span><span class="section_title">Garbage collection simplifies semantics?</span></h3>
+<p>It is surprising that programming languages that have higher implementation complexity can have simpler semantics.</p>
+<p>It is surprising that higher-level languages are more complex to implement but simpler to reason about.</p>
+<p>If all we have is machine code (that is, if we are writing the <em>first</em> electronic computer program ever), is it harder to implement a minimal assembler or a minimal Lisp interpreter?</p>
+<h2 id="informal-program-complexity"><span class="section_number">11</span><span class="section_title">Informal program complexity</span></h2>
+<p>The complexity of a program is the difficulty of describing what it does.</p>
+<p>The complexity of a program is the length of the description of what it does.</p>
+<h2 id="programs-that-write-programs"><span class="section_number">12</span><span class="section_title">Programs that write programs</span></h2>
+<p>Programs that write abstract syntax trees?</p>
+<pre class="example"><code>(defmacro (make-prin1 x)
+  &quot;A trivial example.&quot;
+  `(progn
+    (prin1 ,x)
+    (terpri)))
+</code></pre>
+<p>Programs that write concrete syntax trees?</p>
+<ul>
+<li>Instead of <code>read</code>, there should be <code>read-cst</code> and <code>cst-&gt;ast</code>. Preserve source location for formatter and refactoring tools.</li>
+</ul>
+<p>It should be possible to parse programs <em>without executing them</em>?</p>
+<h2 id="specification-and-complexity"><span class="section_number">13</span><span class="section_title">Specification and complexity</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">13.1</span><span class="section_title"><a href="#motivation">Motivation</a></span><span class="word_count">(55w~1m)</span></li>
+<li><span class="section_number">13.2</span><span class="section_title"><a href="#the-syntax-of-specifications">The syntax of specifications</a></span><span class="word_count">(87w~1m)</span></li>
+<li><span class="section_number">13.3</span><span class="section_title"><a href="#syntactic-complexity-partial-order">Syntactic complexity partial order</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">13.4</span><span class="section_title"><a href="#syntactic-complexity-measure">Syntactic complexity measure</a></span><span class="word_count">(33w~1m)</span></li>
+<li><span class="section_number">13.5</span><span class="section_title"><a href="#semantic-complexity-measure">Semantic complexity measure</a></span><span class="word_count">(90w~1m)</span></li>
+<li><span class="section_number">13.6</span><span class="section_title"><a href="#specification-complexity">Specification complexity</a></span><span class="word_count">(85w~1m)</span></li>
+<li><span class="section_number">13.7</span><span class="section_title"><a href="#problems">Problems</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">13.8</span><span class="section_title"><a href="#what-2">What?</a></span><span class="word_count">(139w~1m)</span></li>
+</ul>
+</div>
+<h3 id="motivation"><span class="section_number">13.1</span><span class="section_title">Motivation</span></h3>
+<p>We want to define a complexity measure of specifications.</p>
+<p>We want to be able to determine whether specification X is easier to implement than specification Y.</p>
+<p>But isn't this NP-hard? What are our chances? If it is impossible to determine whether specification X is easier to implement than specification Y, then is &quot;software engineering&quot; possible at all?</p>
+<h3 id="the-syntax-of-specifications"><span class="section_number">13.2</span><span class="section_title">The syntax of specifications</span></h3>
+<p>A <em>specification</em> is a positive first-order logic formula.</p>
+<p>Informally, a positive formula is a formula that does not contain negation.</p>
+<p>In the rest of this document, by &quot;formula&quot; we usually mean &quot;positive first-order logic formula&quot;.</p>
+<p>The abstract syntax of formulas (expressions) is:</p>
+<ul>
+<li>Each <em>atom</em> is an expression. An atom is an identifier such as <span class="math inline">\(p\)</span>, <code>name_123</code>, <span class="math inline">\(\wedge\)</span>, <span class="math inline">\(\forall\)</span>, etc.</li>
+<li>If each of <span class="math inline">\(\beta,\alpha_1,\ldots,\alpha_n\)</span> is an expression, then the <em>application</em> <span class="math inline">\(\beta(\alpha_1,\ldots,\alpha_n)\)</span> is an expression.</li>
+</ul>
+<p>Should we have these?</p>
+<ul>
+<li>An atom is a zero-arity functor: <span class="math inline">\( \alpha = \alpha() \)</span>.</li>
+<li>Currying: <span class="math inline">\( [\alpha(\beta_1,\ldots,\beta_n)](\gamma,\ldots) = \alpha(\beta_1,\ldots,\beta_n,\gamma,\ldots) \)</span>.</li>
+</ul>
+<h3 id="syntactic-complexity-partial-order"><span class="section_number">13.3</span><span class="section_title">Syntactic complexity partial order</span></h3>
+<p>What do we mean by &quot;X is less complex than Y&quot;?</p>
+<p>The key idea of the <em>syntactic-complexity partial-order</em> <span class="math inline">\(\le\)</span> is &quot;If <span class="math inline">\(\alpha\)</span> occurs in <span class="math inline">\(\beta\)</span>, then <span class="math inline">\(\alpha \le \beta\)</span>&quot;:</p>
+<span class="math display">\[\begin{align*}
+\alpha &amp;\le \beta(\ldots, \alpha, \ldots)
+\\ \alpha &amp;\le \alpha(\ldots)
+\end{align*}
+\]</span>
+<p>Examples:</p>
+<span class="math display">\[\begin{align*}
+A &amp;\le \wedge(A,B)
+\\ B &amp;\le \wedge(A,B)
+\\ A &amp;\le f(A)
+\\ A &amp;\le [A(B)](C)
+\\ x &amp;\le +(x,y)
+\\ z &amp;\le \wedge(x,\wedge(y,z))
+\\ \forall &amp;\le \forall(x,y)
+\\ A(x) &amp;\le \forall(x,A(x))
+\end{align*}
+\]</span>
+<h3 id="syntactic-complexity-measure"><span class="section_number">13.4</span><span class="section_title">Syntactic complexity measure</span></h3>
+<p>The <em>syntactic complexity</em> of a formula <span class="math inline">\(x\)</span> is a natural number <span class="math inline">\(c(x)\)</span> where:</p>
+<span class="math display">\[\begin{align*}
+c(x) &amp;= 1 &amp; \text{if \(x\) is an atom}
+\\ c(\beta(\alpha_1,\ldots,\alpha_n)) &amp;= c(\beta) + c(\alpha_1) + \ldots + c(\alpha_n)
+\end{align*}
+\]</span>
+<p>Numbers are encoded as Peano numerals like <span class="math inline">\(z,s(z),s(s(z))\)</span>, etc., because we want bigger numbers to have bigger syntactic complexity.</p>
+<h3 id="semantic-complexity-measure"><span class="section_number">13.5</span><span class="section_title">Semantic complexity measure</span></h3>
+<p>The <em>semantic complexity</em> of a formula <span class="math inline">\(x\)</span> is <span class="math inline">\(C(x) = c(y)\)</span> where <span class="math inline">\(y\)</span> is the simplest (the least syntactically complex) formula that is <em>equivalent</em> to <span class="math inline">\(x\)</span>. <span class="math display">\[ C(\alpha) = \min_{\alpha \equiv \beta} c(\beta) \]</span></p>
+<p>Iff <span class="math inline">\(\alpha \equiv \beta\)</span> then <span class="math inline">\(C(\alpha) = C(\beta)\)</span>.</p>
+<p>Example: In classical logic, <span class="math inline">\(C(\wedge(\alpha,\alpha)) = C(\alpha)\)</span>.</p>
+<p>In classical logic, <span class="math inline">\(C\)</span> is unmonotonic, for example: <span class="math inline">\(C(\neg\neg\alpha) \le C(\neg\alpha)\)</span>.</p>
+<p>The semantic complexity of a formula is the syntactic complexity of its simplest equivalent formula.</p>
+<p>? &quot;essential complexity&quot; = &quot;irreducible complexity&quot; = &quot;semantic complexity&quot;</p>
+<p>? &quot;accidental complexity&quot; = &quot;reducible complexity&quot; = &quot;syntactic complexity&quot;</p>
+<p>(Brooks et al.?)</p>
+<h3 id="specification-complexity"><span class="section_number">13.6</span><span class="section_title">Specification complexity</span></h3>
+<p>Let x, y be positive literals.</p>
+<p>It is easier to do less:</p>
+<p>c(x) leq c(x wedge y) c(y) …</p>
+<p>c(y) leq c(x to y)</p>
+<p>c(x) leq c(x to y)</p>
+<p>The complexity of a formula is its proof complexity?</p>
+<p>A specification is a logical formula in conjunctive normal form in which negation is only allowed in the antecedent of implications. (Conjunction of Horn clauses?)</p>
+<p>Example of specification of state/memory using discrete-time logic? This assumes a temporal ordering of commands.</p>
+<p>Forall t in nat: if command(t) = increment then state(t+1) = state(t) + 1</p>
+<h3 id="problems"><span class="section_number">13.7</span><span class="section_title">Problems</span></h3>
+<p>It does not make sense that <span class="math inline">\(\forall(x,p(x))\)</span> and <span class="math inline">\(q(x,y,z)\)</span> have the same semantic complexity?</p>
+<p>Similar issue: <a href="https://cs.stackexchange.com/questions/48329/size-of-propositional-formula">CS SE 48329</a>.</p>
+<h3 id="what-2"><span class="section_number">13.8</span><span class="section_title">What?</span></h3>
+<p>1982 A measure of logical complexity of programs Iyengar et al. <a href="https://www.sciencedirect.com/science/article/abs/pii/0096055182900030">https://www.sciencedirect.com/science/article/abs/pii/0096055182900030</a></p>
+<p>Some second-order logic can be embedded into first-order logic with this trick: p(x, …) can always be rewritten to apply(p, x, …)</p>
+<p>Rijnders 2008 First-Order Logic as a Lightweight Software Specification Language <a href="https://homepages.cwi.nl/~paulk/thesesMasterSoftwareEngineering/2008/MichelRijnders.pdf">https://homepages.cwi.nl/~paulk/thesesMasterSoftwareEngineering/2008/MichelRijnders.pdf</a></p>
+<div id="refs" class="references">
+<div id="ref-coblenz2018interdisciplinary">
+<p>[1] Coblenz, M. et al. 2018. Interdisciplinary programming language design. <em>Proceedings of the 2018 acm sigplan international symposium on new ideas, new paradigms, and reflections on programming and software</em> (2018), 133–146.</p>
+</div>
+<div id="ref-felleisen2018programmable">
+<p>[2] Felleisen, M. et al. 2018. A programmable programming language. <em>Commun. ACM</em>. 61, 3 (Feb. 2018), 62–71. DOI:<a href="https://doi.org/10.1145/3127323">https://doi.org/10.1145/3127323</a>. url: &lt;<a href="https://cs.brown.edu/~sk/Publications/Papers/Published/fffkbmt-programmable-prog-lang/paper.pdf">https://cs.brown.edu/~sk/Publications/Papers/Published/fffkbmt-programmable-prog-lang/paper.pdf</a>&gt;.</p>
+</div>
+<div id="ref-harrison1993subject">
+<p>[3] Harrison, W. and Ossher, H. 1993. <em>Subject-oriented programming: A critique of pure objects</em>. Citeseer.</p>
+</div>
+<div id="ref-ingalls1981design">
+<p>[4] Ingalls, D.H. 1981. Design principles behind smalltalk. <em>BYTE magazine</em>. 6, 8 (1981), 286–298.</p>
+</div>
+<div id="ref-mernik2005and">
+<p>[5] Mernik, M. et al. 2005. When and how to develop domain-specific languages. <em>ACM computing surveys (CSUR)</em>. 37, 4 (2005), 316–344.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2019-12-11&gt; <a href="https://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html">mirror 1 (html)</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2019-12-11&gt; <a href="https://cs.pomona.edu/classes/cs131/readings/ingalls.pdf">mirror 2 (pdf)</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>&lt;2019-12-11&gt; <a href="http://www.cs.cmu.edu/~NatProg/papers/onward18essays-p7-p-682d101-38832-final.pdf">mirror (pdf)</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>&lt;2019-12-20&gt; <a href="http://people.cs.ksu.edu/~schmidt/505f14/Lectures/WhenDSL.pdf">http://people.cs.ksu.edu/~schmidt/505f14/Lectures/WhenDSL.pdf</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>&lt;2019-11-27&gt;<a href="#fnref5" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-22 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
