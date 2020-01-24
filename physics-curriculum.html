@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Toward a curriculum for physics</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Toward a curriculum for physics</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#thinking">Thinking</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#quantities">Quantities</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#energy-work-thermodynamics-chemistry">Energy, work, thermodynamics, chemistry</a></span><span class="word_count">(130w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#atomic-theory-electricity-electrochemistry">Atomic theory, electricity, electrochemistry</a></span><span class="word_count">(18w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#waves-oscillations">Waves, oscillations</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#mechanics-motion">Mechanics, motion</a></span><span class="word_count">(365w~2m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#astronomy">Astronomy</a></span><span class="word_count">(7w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#other-drafts">Other drafts</a></span><span class="word_count">(34w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#what">What?</a></span><span class="word_count">(24w~1m)</span></li>
+</ul>
+</div>
+<h2 id="thinking"><span class="section_number">1</span><span class="section_title">Thinking</span></h2>
+<ul>
+<li>See <a href="think-curriculum.html">file:think-curriculum.html</a>.</li>
+</ul>
+<h2 id="quantities"><span class="section_number">2</span><span class="section_title">Quantities</span></h2>
+<ul>
+<li>Understand that a <a href="https://en.wikipedia.org/wiki/Physical_quantity">physical quantity</a> is a magnitude and a unit.</li>
+</ul>
+<h2 id="energy-work-thermodynamics-chemistry"><span class="section_number">3</span><span class="section_title">Energy, work, thermodynamics, chemistry</span></h2>
+<ul>
+<li>Understand that <em>work</em> is weight lifted through a height.</li>
+<li>Understand that <em>energy</em> is the ability to work.</li>
+<li>Understand that <em>heat</em> is energy.</li>
+<li>Understand that <em>temperature</em> is what an analog <a href="https://en.wikipedia.org/wiki/Thermometer">thermometer</a> measures indirectly by <a href="https://en.wikipedia.org/wiki/Thermal_expansion">thermal expansion</a>.</li>
+<li>???</li>
+<li>Understand <a href="https://en.wikipedia.org/wiki/Avogadro_constant">Avogadro constant</a>.</li>
+<li>Understand <a href="https://en.wikipedia.org/wiki/Avogadro%27s_law">Avogadro's law</a>.</li>
+<li>Understand <em>mole</em>.</li>
+<li>Understand the <em>gas laws</em>.
+<ul>
+<li>Understand how the <em>ideal gas law</em> subsumes the <a href="https://en.wikipedia.org/wiki/Gas_laws">gas laws</a>.</li>
+</ul></li>
+<li>Understand <em>diatomic gases</em>.</li>
+<li>? If something can work, why does it not work? Why does it not convert all its energy to work?</li>
+<li>Understand why chemical reactions happen.
+<ul>
+<li>Predict <em>whether</em> a chemical reaction will happen.
+<ul>
+<li>Understand how the <em>Gibbs free energy equation</em> predicts whether a reaction happens spontaneously.
+<ul>
+<li><span class="math inline">\( \Delta G = \Delta H - T \cdot \Delta S \)</span></li>
+<li>&lt;2020-01-25&gt; <a href="https://en.wikipedia.org/wiki/Chemical_reaction#Thermodynamics">https://en.wikipedia.org/wiki/Chemical_reaction#Thermodynamics</a></li>
+</ul></li>
+<li>Understand how/where to get data about <span class="math inline">\( \Delta H \)</span> and <span class="math inline">\( \Delta S \)</span>.</li>
+</ul></li>
+<li>Predict <em>how fast</em> a chemical reaction will happen.
+<ul>
+<li>Kinetics: Predict the reaction rate?
+<ul>
+<li>&lt;2020-01-25&gt; <a href="https://en.wikipedia.org/wiki/Chemical_reaction#Kinetics">https://en.wikipedia.org/wiki/Chemical_reaction#Kinetics</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="atomic-theory-electricity-electrochemistry"><span class="section_number">4</span><span class="section_title">Atomic theory, electricity, electrochemistry</span></h2>
+<ul>
+<li>Understand <em>atoms</em>.</li>
+<li>Understand <em>electricity</em>.</li>
+<li>Understand that an <em>electric current</em> is the flow of electrons.
+<ul>
+<li>Understand the <a href="https://en.wikipedia.org/wiki/Faraday_constant">Faraday constant</a>.</li>
+</ul></li>
+</ul>
+<h2 id="waves-oscillations"><span class="section_number">5</span><span class="section_title">Waves, oscillations</span></h2>
+<ul>
+<li>Understand steady-state models of water surface waves.</li>
+<li>Understand steady-state models of spring oscillation.</li>
+</ul>
+<h2 id="mechanics-motion"><span class="section_number">6</span><span class="section_title">Mechanics, motion</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#geometry">Geometry</a></span><span class="word_count">(235w~2m)</span></li>
+<li><span class="section_number">6.2</span><span class="section_title"><a href="#variational-principles">Variational principles</a></span><span class="word_count">(51w~1m)</span></li>
+<li><span class="section_number">6.3</span><span class="section_title"><a href="#models-of-motion">Models of motion</a></span><span class="word_count">(32w~1m)</span></li>
+<li><span class="section_number">6.4</span><span class="section_title"><a href="#relativity">Relativity</a></span><span class="word_count">(14w~1m)</span></li>
+<li><span class="section_number">6.5</span><span class="section_title"><a href="#quantum-mechanics">Quantum mechanics</a></span><span class="word_count">(36w~1m)</span></li>
+</ul>
+</div>
+<h3 id="geometry"><span class="section_number">6.1</span><span class="section_title">Geometry</span></h3>
+<ul>
+<li>Understand <em>geometry</em>.
+<ul>
+<li>Understand that a <em>space</em> is a set of points.</li>
+<li>Understand that a <em>point</em> is an element in a set.</li>
+<li>Understand that a <em>vector</em> is a magnitude and a direction.</li>
+<li>Understand the addition of a point and a vector, producing a point.</li>
+<li>Understand the subtraction of a point and a point, producing a vector.</li>
+<li>Understand the addition of a vector and a vector, producing a vector.</li>
+<li>Understand the <em>Pythagorean theorem</em>.</li>
+</ul></li>
+<li>Understand <em>analytical geometry</em>.
+<ul>
+<li>Conflate an <em>Euclidean space</em> and its corresponding <em>real tuple space</em>.</li>
+<li>Understand the <em><span class="math inline">\(n\)</span>-dimensional Euclidean metric</em>: <span class="math inline">\( d(x,y) = \sqrt{\sum_{k=1}^n (x_k-y_k)^2} \)</span>.</li>
+<li>Understand that a <em>coordinate system</em> is a scheme for naming points with tuples of real numbers.
+<ul>
+<li>A coordinate system is a function whose domain is the set of real <span class="math inline">\(n\)</span>-tuples and whose codomain is an <span class="math inline">\(n\)</span>-dimensional space.</li>
+<li>Understand <em>basis vectors</em> (coordinate axes?).</li>
+<li>Understand <em>span</em>.</li>
+<li>Understand <em>collinearity</em>.</li>
+<li>Understand <em>linear operators</em>?</li>
+<li>Understand the intersection of two spaces.
+<ul>
+<li>Understand <em>systems of linear equations</em>?
+<ul>
+<li>Understand <em>matrices</em>.</li>
+</ul></li>
+<li><span class="math inline">\( P \cap Q = \SetBuilder{x}{p(x) \wedge q(x)} \)</span></li>
+</ul></li>
+</ul></li>
+<li>Understand <em>coordinate transformations</em>.
+<ul>
+<li>Change the coordinates while preserving the referred point.</li>
+<li><span class="math inline">\(s(c) = s&#39;(c&#39;)\)</span>.</li>
+<li>We are interested in <span class="math inline">\(t\)</span> such that <span class="math inline">\(c&#39; = t(c)\)</span>.</li>
+<li><span class="math inline">\(s(c) = s&#39;(t(c)) \)</span> ; <span class="math inline">\(s = s&#39; \circ t\)</span>; <span class="math inline">\((s&#39;)^{-1} \circ s = t\)</span>.</li>
+</ul></li>
+<li>? covariance and contravariance with respect to what?</li>
+</ul></li>
+<li>Understand some <em>algebraic geometry</em>.
+<ul>
+<li>Understand how to <em>algebraically</em> describe a <em>curved space</em>.
+<ul>
+<li>Example:
+<ul>
+<li>Consider a circle with origin <span class="math inline">\(O = (0,0)\)</span> and radius <span class="math inline">\(r\)</span>.</li>
+<li>Its <em>analytic-algebraic</em> description is <span class="math inline">\( \SetBuilder{(x,y)}{x^2+y^2=r^2} \)</span>.</li>
+<li>Its <em>synthetic-algebraic</em> description is <span class="math inline">\( \SetBuilder{x}{d(O,x) = r} \)</span>.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Understand some <em>differential geometry</em>.
+<ul>
+<li>Understand that a <em>manifold</em> is a <em>locally Euclidean space</em>.</li>
+<li>Understand <em>tangent spaces</em>.</li>
+<li>Understand <em>curvature</em>.
+<ul>
+<li>Understand <em>osculating circles</em> (kissing circles).</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="variational-principles"><span class="section_number">6.2</span><span class="section_title">Variational principles</span></h3>
+<ul>
+<li>Understand mathematical optimization, <em>variational principles</em>, and <em>unification</em> or <em>subsumption</em>.
+<ul>
+<li>Understand how Fermat's principle of least time <em>subsumes</em> the law of reflection and Snell's law of refraction.
+<ul>
+<li>Derive the law of reflection from the principle of least time.</li>
+<li>Derive the law of refraction from the principle of least time.</li>
+</ul></li>
+<li>???</li>
+<li>Understand the principle of stationary action.</li>
+</ul></li>
+</ul>
+<h3 id="models-of-motion"><span class="section_number">6.3</span><span class="section_title">Models of motion</span></h3>
+<ul>
+<li>Understand <em>Newton's model of motion</em>.</li>
+<li>Derive <em>continuum mechanics</em> from Newton's model of motion by relaxing the point-mass assumption.
+<ul>
+<li>Derive fluid mechanics.</li>
+<li>Derive the <a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_equations">Navier–Stokes equations</a> from Newton's laws of motion?</li>
+</ul></li>
+<li>Understand <a href="https://en.wikipedia.org/wiki/Fluid_mechanics#Relationship_to_continuum_mechanics">https://en.wikipedia.org/wiki/Fluid_mechanics#Relationship_to_continuum_mechanics</a></li>
+<li>? statistical mechanics</li>
+</ul>
+<h3 id="relativity"><span class="section_number">6.4</span><span class="section_title">Relativity</span></h3>
+<ul>
+<li>Understand <em>Galilean relativity</em>.</li>
+<li>???</li>
+<li>Understand <em>Lorentz transformation</em>.
+<ul>
+<li>Understand its significance.</li>
+<li>Understand how Poincaré, Lorentz, Einstein, etc. understood it.</li>
+</ul></li>
+<li>???</li>
+</ul>
+<h3 id="quantum-mechanics"><span class="section_number">6.5</span><span class="section_title">Quantum mechanics</span></h3>
+<ul>
+<li>Relax the assumption of definite time-position relationship into a probabilistic relationship.</li>
+<li>Model the double-slit light experiment.</li>
+<li>???</li>
+<li>Understand the <em>photoelectric effect</em>.</li>
+<li>Understand the <em>photovoltaic effect</em>.</li>
+<li>???</li>
+<li>Understand <em>Schrödinger's model of motion</em>?</li>
+<li>Understand what <em>de Broglie</em> was all about?</li>
+<li>Understand Planck's black-body radiation <em>formula</em>?</li>
+</ul>
+<h2 id="astronomy"><span class="section_number">7</span><span class="section_title">Astronomy</span></h2>
+<ul>
+<li>Understand how to <em>locate</em> a celestial object.</li>
+</ul>
+<h2 id="other-drafts"><span class="section_number">8</span><span class="section_title">Other drafts</span></h2>
+<ul>
+<li><a href="physics-motion.html">On motion</a></li>
+<li><a href="physics-theory.html">On theoretical physics</a></li>
+<li><a href="nature.html">A physics book draft</a> (should be split into articles instead)</li>
+<li><a href="chemistry-ontology.html">On the evolution of the ontology of chemistry</a></li>
+<li><a href="integral.html">On integrals</a></li>
+<li><a href="physics-story.html">A story of physics</a></li>
+<li><a href="save.html">On my plan to save myself and perhaps some people</a></li>
+<li><a href="energy.html">Energy</a></li>
+</ul>
+<h2 id="what"><span class="section_number">9</span><span class="section_title">What?</span></h2>
+<p>Are black holes the key to unifying general relativity and quantum field theory?</p>
+<p>&quot;Realistic Simulation: Inside a Black Hole - New Universe through White Hole?&quot;<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.youtube.com/watch?v=iUr8Obv_DeA">https://www.youtube.com/watch?v=iUr8Obv_DeA</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-24 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

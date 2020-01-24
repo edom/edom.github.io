@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Toward a curriculum for thinking</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Toward a curriculum for thinking</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#using-language">Using language</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#using-mathematics">Using mathematics</a></span><span class="word_count">(92w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#the-language-of-mathematics">The language of mathematics?</a></span><span class="word_count">(909w~5m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#theorizing-and-reasoning">Theorizing and reasoning</a></span><span class="word_count">(606w~4m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#meta-learning">Meta-learning</a></span><span class="word_count">(66w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#how-to-help-newbies-commands-not-options">How to help newbies: commands, not options</a></span><span class="word_count">(74w~1m)</span></li>
+</ul>
+</div>
+<h2 id="using-language"><span class="section_number">1</span><span class="section_title">Using language</span></h2>
+<ul>
+<li>Understand how to <a href="https://en.wikipedia.org/wiki/Definition">define</a> a term.</li>
+<li>Find the <em>origin</em> of words with an <a href="https://www.etymonline.com/">etymology dictionary</a>.</li>
+<li>Find <em>synonyms</em> with a <a href="https://www.thesaurus.com/">thesaurus</a>.</li>
+</ul>
+<h2 id="using-mathematics"><span class="section_number">2</span><span class="section_title">Using mathematics</span></h2>
+<ul>
+<li>Understand that mathematical notation is an <em>abbreviation</em> for natural language.</li>
+<li><em>Read</em> mathematical notation.
+<ul>
+<li><em>Mentally expand</em> a prose that contains mathematical symbols into a prose in natural language without mathematical symbols.</li>
+</ul></li>
+<li>Understand that &quot;to understand X&quot; means &quot;to have a useful internal mental model of X&quot; or &quot;to be able to manipulate X&quot;.</li>
+<li>Understand that a <em>theorem</em> is a <em>technology</em>, because it increases productivity: it reduces the effort required to prove something.</li>
+<li>Understand naïve set theory, functions, logic, variables, algebra, arithmetics.</li>
+<li>Understand <em>function composition</em>: <span class="math inline">\( (f\circ g)(x) = f(g(x)) \)</span>.</li>
+<li>Understand <em>real numbers</em>.</li>
+<li>Understand the relationship between set theory and logic.</li>
+</ul>
+<h2 id="the-language-of-mathematics"><span class="section_number">3</span><span class="section_title">The language of mathematics?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#mathematical-language">Mathematical language</a></span><span class="word_count">(68w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#dispelling-the-fear-of-mathematics">Dispelling the fear of mathematics</a></span><span class="word_count">(223w~2m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#the-time-required">The time required</a></span><span class="word_count">(81w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#digression-from-because-we-must-to-because-we-want">Digression: From &quot;because we must&quot; to &quot;because we want&quot;</a></span><span class="word_count">(266w~2m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#expressions">Expressions</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#equations">Equations</a></span><span class="word_count">(37w~1m)</span></li>
+<li><span class="section_number">3.7</span><span class="section_title"><a href="#sets">Sets</a></span><span class="word_count">(44w~1m)</span></li>
+<li><span class="section_number">3.8</span><span class="section_title"><a href="#functions">Functions</a></span><span class="word_count">(154w~1m)</span></li>
+<li><span class="section_number">3.9</span><span class="section_title"><a href="#integrals">Integrals</a></span><span class="word_count">(2w~1m)</span></li>
+<li><span class="section_number">3.10</span><span class="section_title"><a href="#algebra">Algebra</a></span><span class="word_count">(25w~1m)</span></li>
+</ul>
+</div>
+<h3 id="mathematical-language"><span class="section_number">3.1</span><span class="section_title">Mathematical language</span></h3>
+<p>Even if there is nothing you don't already know, at least glance through this chapter, just to be aware of our idiosyncrasies.</p>
+<p>If you program computers, you can think of mathematics as a <a href="https://en.wikipedia.org/wiki/Domain-specific_language">domain-specific language</a> for concise and precise thinking.</p>
+<p>Humans have invented a mathematical notation that greatly increases information density; thus such notation also increases information transfer rate. Such notation speeds up thought, after an initial learning curve.</p>
+<h3 id="dispelling-the-fear-of-mathematics"><span class="section_number">3.2</span><span class="section_title">Dispelling the fear of mathematics</span></h3>
+<p>Fear mathematics not, because it is just abbreviated English. For example, instead of repeating the cumbersome &quot;where the ball is at a given time&quot;, we may write the much shorter &quot;<span class="math inline">\( h(t) \)</span>&quot;. Instead of writing the long and hard-to-parse phrase &quot;a number that equals zero when multiplied by itself and then subtracted by one&quot;, we write &quot;a number <span class="math inline">\(x\)</span> such that <span class="math inline">\(x^2 - 1 = 0\)</span>&quot;.</p>
+<p>We have just seen mathematics speed up our thinking!</p>
+<p>Mathematics originated as a way of modeling reality.</p>
+<p>People did math because they wanted to do something in the real world. Shepherds want to avoid losing cattle, so they count their cattles. Carpenters want to cut woods for the diagonal braces of a roof, so they use the Pythagorean theorem. Merchants want to profit, so they subtract expenses from income, and use exponentials to calculate interests. Train operators want to profit, so they calculate the quantity of coal they should carry for a given distance. Nations want to avoid famine, so they calculate how much crop they should plant. And so on. People originally did math to avoid wastage, mistakes, and pain.</p>
+<p>People also did math to plan. For example, if a bush can feed one person, and there are three people in my family, then I would need to forage three bushes to feed my family.</p>
+<h3 id="the-time-required"><span class="section_number">3.3</span><span class="section_title">The time required</span></h3>
+<p>Even with the necessary background knowledge, we often take any time from <em>several seconds</em> to <em>several minutes</em> in order to read an equation.</p>
+<p>It does not help if we can 600 words per minute, because the difficulty of understanding mathematics is not in translating the notation into English, but in reconstructing the writer's understanding back from the notation.</p>
+<p>The writers have a picture in mind when they write an equation. The readers have to reconstruct that picture, given only the equation.</p>
+<h3 id="digression-from-because-we-must-to-because-we-want"><span class="section_number">3.4</span><span class="section_title">Digression: From &quot;because we must&quot; to &quot;because we want&quot;</span></h3>
+<p>(This may be false. Perhaps farming did not give people more leisure time, but it enabled people to build bigger and denser settlements.)</p>
+<p>At first we did math because we had to survive.</p>
+<p>We <em>counted</em> the things that determine our survival: animals, plants, people, weapons. We had <em>numbers</em>, but they were tied to units: we understood &quot;one cow&quot;, but we did not understand &quot;one&quot;.</p>
+<p>We found <em>linear relationships</em> between the number of family members and the rate of resource consumption.</p>
+<p>We wanted to survive, so we thought about <em>optimization</em>: to get maximum result with minimum effort. We built tools, farmed crops, trapped animals, built houses, settled down, simplified survival, and got much leisure time. It was futile to work harder than what was necessary for survival, because the surplus harvest would be wasted; Nature does not reward material possession beyond what is necessary to survive. We were wealthy in the sense that we had everything we wanted without working, because everything we wanted was to survive; crops gave themselves for us to eat; they didn't fight back like animals; what else could we want other than free food? It was heaven; we didn't know what else there was to want. We didn't know what to do with all that leisure time, so we began doing things for fun: painting cave walls, making statues, etc.</p>
+<p>With so much leisure time, we began doing things because we <em>could</em>, not because we <em>had to</em>, because there was nothing we had to do.</p>
+<p>Curiosity, not necessity.</p>
+<p>We have moved from doing what we <em>must</em> to doing what we <em>want</em>.</p>
+<h3 id="expressions"><span class="section_number">3.5</span><span class="section_title">Expressions</span></h3>
+<p>An <em>expression</em> is something like <span class="math inline">\(1+2\)</span>, or <span class="math inline">\(x + y \cdot z\)</span>, and so on.</p>
+<h3 id="equations"><span class="section_number">3.6</span><span class="section_title">Equations</span></h3>
+<p>An <em>equation</em> <span class="math inline">\(x = y\)</span> (read &quot;<span class="math inline">\(x\)</span> is equal to <span class="math inline">\(y\)</span>&quot;) means that every occurrence of <span class="math inline">\(x\)</span> can be <em>replaced</em> with <span class="math inline">\(y\)</span>, and also the other way around: every occurrence of <span class="math inline">\(y\)</span> can be replaced with <span class="math inline">\(x\)</span>.</p>
+<h3 id="sets"><span class="section_number">3.7</span><span class="section_title">Sets</span></h3>
+<p>A set is a collection without duplicates.</p>
+<p>Example: <span class="math inline">\( \Set{1,2,3} \)</span> is a set of three things.</p>
+<p>Example: <span class="math inline">\( \Real \)</span> is the set of all real numbers. (Perhaps for now it suffices to know that <span class="math inline">\(\Real\)</span> at least contains every number that you can type into a simple calculator.)</p>
+<h3 id="functions"><span class="section_number">3.8</span><span class="section_title">Functions</span></h3>
+<p>(Should we just use the domain-codomain-pairing triplet formalism?)</p>
+<p>A <em>function</em> <span class="math inline">\(f\)</span> is usually defined by an equation like <span class="math inline">\( f(x) = \text{something} \)</span>. See the following example.</p>
+<p>Suppose that we have defined <span class="math inline">\(f(x) = x+1\)</span> and we want to <em>evaluate</em> <span class="math inline">\(f(2)\)</span>. We do this by <em>assuming</em> <span class="math inline">\(x=2\)</span> (because we want to evaluate <span class="math inline">\(f(2)\)</span>). Here is how we do it:</p>
+<span class="math display">\[\begin{align*}
+f(x) &amp;= x+1 &amp; \text{by definition}
+\\ f(2) &amp;= 2+1 &amp; \text{by assuming \(x = 2\)}
+\\ f(2) &amp;= 3 &amp; \text{because \(2+1 = 3\)}
+\end{align*}
+\]</span>
+<p>Therefore, <span class="math inline">\(f(2) = 3\)</span>.</p>
+<p>As you become more proficient in math-speak, you will be able to skip the intermediate steps.</p>
+<p>Note that, in the above example, the function is <span class="math inline">\(f\)</span>, not the expression <span class="math inline">\(f(x)\)</span>. People often mistakenly say &quot;the function <span class="math inline">\(f(x)\)</span>&quot;. Do not confuse a function and its application.</p>
+<p>Sometimes we write <span class="math inline">\(f(x)\)</span> as <span class="math inline">\(fx\)</span>.</p>
+<p>We rarely do these, but we can write <span class="math inline">\(f(x)\)</span> as <span class="math inline">\(f~x\)</span>, and we can write <span class="math inline">\(f(x) = x+1\)</span> as <span class="math inline">\(f = (x \mapsto x+1)\)</span>. (This probably only makes sense to functional programmers.)</p>
+<p>A function can represent the relationship between two quantities in which one quantity determines the other quantity.</p>
+<h3 id="integrals"><span class="section_number">3.9</span><span class="section_title">Integrals</span></h3>
+<p>See <a href="integral.html">file:integral.html</a>.</p>
+<h3 id="algebra"><span class="section_number">3.10</span><span class="section_title">Algebra</span></h3>
+<p>A letter (a variable) represents a number (something) that is not yet known.</p>
+<p>Example: <span class="math inline">\(x+2 = 3\)</span> means &quot;What number, if added by 2, equals 3?&quot;.</p>
+<h2 id="theorizing-and-reasoning"><span class="section_number">4</span><span class="section_title">Theorizing and reasoning</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#theories">Theories</a></span><span class="word_count">(210w~2m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#making-theories-measure-model-abduce">Making theories: measure-model-abduce</a></span><span class="word_count">(124w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#which-one-of-two-theories-is-more-general">Which one of two theories is more general?</a></span><span class="word_count">(209w~2m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#which-one-of-two-models-is-more-accurate">Which one of two models is more accurate?</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">4.5</span><span class="section_title"><a href="#unification">Unification</a></span><span class="word_count">(27w~1m)</span></li>
+</ul>
+</div>
+<h3 id="theories"><span class="section_number">4.1</span><span class="section_title">Theories</span></h3>
+<ul>
+<li>Understand that a <em>theory</em> is a logical formula.</li>
+<li>Understand that theories usually have <em>assumptions</em>.</li>
+<li>Understand <em>reasoning</em> (how to <em>create theories</em>).
+<ul>
+<li>Understand <a href="https://en.wikipedia.org/wiki/Abductive_reasoning">abduction</a>: given <em>observations</em> E, find the simplest theory T that implies E.
+<ul>
+<li>Invent concepts if necessary.</li>
+<li>Name things that you need to talk about often.</li>
+</ul></li>
+<li>Understand <em>induction</em>: observing <span class="math inline">\( p(x) \)</span> for <em>some</em> <span class="math inline">\(x\)</span>, hypothesize <span class="math inline">\( p(x) \)</span> for <em>all</em> <span class="math inline">\(x\)</span>.</li>
+<li>Understand <em>relaxation</em>:
+<ul>
+<li>Remove an assumption.</li>
+<li>Given a theory <span class="math inline">\( A \wedge B \to C \)</span>, produce theory <span class="math inline">\( B \to C&#39; \)</span>, such that <span class="math inline">\( (B \to C&#39;) \to (A \wedge B \to C) \)</span>.</li>
+</ul></li>
+<li>Understand <em>subsumption</em>:
+<ul>
+<li>Given theory X and theory Y, find the simplest theory U that subsumes X and Y. Find U, derive X from U, and derive Y from U. By &quot;<em>derive</em> X from U&quot;, we mean &quot;show that U <em>implies</em> X&quot;.</li>
+<li>Find a unified theory <span class="math inline">\(U\)</span>.</li>
+<li>Show <span class="math inline">\(U \to X\)</span>.</li>
+<li>Show <span class="math inline">\(U \to Y\)</span>.</li>
+<li>Understand that if X and Y contain incompatible assumptions (e.g. <span class="math inline">\(X \wedge Y\)</span> is false), then those assumptions may have to be relaxed first.</li>
+</ul></li>
+</ul></li>
+<li>Understand how to <em>uncover the assumptions</em> of a theory with corner cases (extreme values of model variables).</li>
+<li>Examples of theory creation:
+<ul>
+<li>Relaxation:
+<ul>
+<li>From Newton's model of point-mass motion to continuum mechanics.</li>
+</ul></li>
+<li>Subsumption/unification:
+<ul>
+<li>From the law of reflection and Snell's law of refraction to Fermat's principle of least time.</li>
+<li>From the <a href="https://en.wikipedia.org/wiki/Gas_laws">gas laws</a> to the ideal gas law.</li>
+<li>From various laws of electromagnetism to Maxwell's equations.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="making-theories-measure-model-abduce"><span class="section_number">4.2</span><span class="section_title">Making theories: measure-model-abduce</span></h3>
+<p>This is how we make a theory:</p>
+<ol>
+<li>We begin with a measurement (an observation).</li>
+<li>We create a <a href="https://en.wikipedia.org/wiki/Phenomenological_model">phenomenological model</a>.</li>
+<li>We <a href="https://en.wikipedia.org/wiki/Abductive_reasoning">abduce</a> a <a href="https://en.wikipedia.org/wiki/First_principle">metaphysical principle</a> while assuming as little as possible<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>, and derive the phenomenological model from that principle.</li>
+</ol>
+<p>The motto is &quot;measure-model-abduce&quot;.</p>
+<p>The cycle is &quot;measurement-phenomenology-metaphysics&quot;.</p>
+<p>For example:</p>
+<ol>
+<li>We measure the motion of things by sampling their positions at various points in time.</li>
+<li>We model it phenomenologically with Newton's laws of motion.</li>
+<li>We abduce the principle of stationary action, and derive Newton's laws of motion from that principle.</li>
+</ol>
+<p>A <em>principle</em> is a reasoned assumption.</p>
+<p>We must always remember that models and principles are not the reality, and that falling in love with them will halt progress. We must always be ready to discard them.</p>
+<p>Can experiments test principles?</p>
+<p>Criteria for evaluating a scientific theory <a href="http://www.nytud.mta.hu/depts/tlp/gaertner/publ/schoemaker_huygens_fermat.pdf">http://www.nytud.mta.hu/depts/tlp/gaertner/publ/schoemaker_huygens_fermat.pdf</a></p>
+<h3 id="which-one-of-two-theories-is-more-general"><span class="section_number">4.3</span><span class="section_title">Which one of two theories is more general?</span></h3>
+<p>Let <span class="math inline">\(T\)</span> be a theory.</p>
+<p>Let <span class="math inline">\(U\)</span> be a theory.</p>
+<p>We write <span class="math inline">\( T \leq U \)</span> to mean &quot;<span class="math inline">\(T\)</span> is <em>derivable</em> from <span class="math inline">\(U\)</span>&quot; or &quot;<span class="math inline">\(T\)</span> is <em>implied</em> by <span class="math inline">\(U\)</span>&quot;.</p>
+<p>We write <span class="math inline">\( T &lt; U \)</span> to mean &quot;<span class="math inline">\(T\)</span> is <em>less general than</em> <span class="math inline">\(U\)</span>&quot; or &quot;<span class="math inline">\(T\)</span> is <em>subsumed</em> by <span class="math inline">\(U\)</span>&quot; or &quot;<span class="math inline">\(T\)</span> is <em>included</em> in <span class="math inline">\(U\)</span>&quot;.</p>
+<p>We choose that notation to make it easier to remember the relationship between subsumption and derivability: <span class="math display">\[ T &lt; U \iff T \leq U \wedge U \nleq T \]</span> which reads &quot;<span class="math inline">\(T\)</span> is less general than <span class="math inline">\(U\)</span> iff <span class="math inline">\(T\)</span> is derivable from <span class="math inline">\(U\)</span> but <span class="math inline">\(U\)</span> is not derivable from <span class="math inline">\(T\)</span>&quot;.</p>
+<p>For example, Snell's law is derivable from Fermat's principle, but Fermat's principle is not derivable from Snell's law. Therefore, Snell's law is less general than Fermat's principle. (Really?)</p>
+<p>Derivability imposes a partial order on theories.</p>
+<p>It may be useful to order physical theories ascending by derivability, and make a learning sequence according to that order.</p>
+<p>Theories form a poset. Do theories also form a lattice?</p>
+<p>If the lattice of theories is bounded, then the maximum of the lattice is the grand unified theory; otherwise there is no such grand unified theory.</p>
+<p>We say &quot;<span class="math inline">\(T\)</span> and <span class="math inline">\(U\)</span> are <em>equivalent</em>&quot; to mean &quot;<span class="math inline">\( T \leq U \)</span> and <span class="math inline">\( U \leq T \)</span>&quot;. (For what?)</p>
+<h3 id="which-one-of-two-models-is-more-accurate"><span class="section_number">4.4</span><span class="section_title">Which one of two models is more accurate?</span></h3>
+<p>We write <span class="math inline">\( T \le U \)</span> to mean &quot;every correct prediction of <span class="math inline">\(T\)</span> is also a correct prediction of <span class="math inline">\(U\)</span>&quot;.</p>
+<p>We write <span class="math inline">\( T &lt; U \)</span> to mean &quot;<span class="math inline">\(T\)</span> is less accurate than <span class="math inline">\(U\)</span>&quot;.</p>
+<h3 id="unification"><span class="section_number">4.5</span><span class="section_title">Unification</span></h3>
+<p>By &quot;X <em>unifies</em> Y and Z&quot;, we mean &quot;X provides an <em>unified explanation</em> for Y and Z&quot;, that is, &quot;both Y and Z are derivable from X&quot;.</p>
+<h2 id="meta-learning"><span class="section_number">5</span><span class="section_title">Meta-learning</span></h2>
+<ul>
+<li>Understand how to <em>uncover gaps in your understanding</em>.
+<ul>
+<li>Create a <em>curriculum</em> (a sequence of competencies).
+<ul>
+<li>A gap in your understanding will show up as a gap in your curriculum.</li>
+</ul></li>
+<li><em>Teach</em>.
+<ul>
+<li>The parts you find hard to teach are your gaps.</li>
+<li>If you don't know how to teach it, perhaps you don't understand it.</li>
+</ul></li>
+<li>Creating a curriculum is one way to find out our <em>unknown unknowns</em> (what we don't know we don't know).</li>
+</ul></li>
+</ul>
+<h2 id="how-to-help-newbies-commands-not-options"><span class="section_number">6</span><span class="section_title">How to help newbies: commands, not options</span></h2>
+<ul>
+<li><em>Commands</em>, not options.</li>
+<li><a href="http://www.goodtheorist.science/">t'Hooft's advice</a> does not <em>command</em> enough. It is more like a syllabus (what) than a curriculum (how). Newbies need <em>commands</em>, <em>instructions</em>, not suggestions, let alone options.</li>
+<li>Options confuse newbies because they don't know which ones are better.</li>
+<li>Newbies must be given explicit commands, clear sequences, no branching, no options, no choices.</li>
+<li>Do not present options to someone who does not have sufficient knowledge to decide which option is better.</li>
+</ul>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Occam%27s_razor">https://en.wikipedia.org/wiki/Occam%27s_razor</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Ontological_commitment#Ontological_parsimony">https://en.wikipedia.org/wiki/Ontological_commitment#Ontological_parsimony</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-24 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
