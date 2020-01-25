@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Toward a curriculum for geometry</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Toward a curriculum for geometry</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#syllabus">Syllabus</a></span><span class="word_count">(53w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#two--and-three-dimensional-euclidean-geometry">Two- and three-dimensional Euclidean geometry</a></span><span class="word_count">(344w~2m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#more-dimensions">More dimensions</a></span><span class="word_count">(401w~3m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#geometry-with-coordinates">Geometry with coordinates</a></span><span class="word_count">(1790w~9m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#describing-curved-spaces">Describing curved spaces</a></span><span class="word_count">(56w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#differential-geometry-and-non-euclidean-geometry">Differential geometry and non-Euclidean geometry</a></span><span class="word_count">(95w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#appreciating-various-approaches">Appreciating various approaches</a></span><span class="word_count">(198w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#motivating-stress-tensor">Motivating stress tensor</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#invariants">Invariants</a></span><span class="word_count">(183w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#symmetries">Symmetries</a></span><span class="word_count">(58w~1m)</span></li>
+</ul>
+</div>
+<h2 id="syllabus"><span class="section_number">1</span><span class="section_title">Syllabus</span></h2>
+<ul>
+<li>Geometry <em>with drawing</em>.
+<ul>
+<li>Understand <em>two-dimensional Euclidean geometry</em>.</li>
+<li>Understand <em>three-dimensional Euclidean geometry</em>.</li>
+</ul></li>
+<li>Geometry <em>without drawing</em>.
+<ul>
+<li>Generalize it to <em>more dimensions</em>.</li>
+<li>? symmetries</li>
+<li>Do geometry with <em>real numbers</em>, functions, calculus, analysis.</li>
+<li>Understand <em>coordinate systems</em>.</li>
+<li>Understand <em>coordinate transformations</em>.</li>
+<li>Generalize it to <em>non-Euclidean geometry</em>.
+<ul>
+<li>Rationale: This is after analytic geometry because coordinate systems facilitate discussing non-Euclidean geometry.</li>
+<li>Generalize <em>straight lines</em> to <em>geodesics</em>.</li>
+</ul></li>
+<li>Describe <em>curved spaces</em> with algebra.</li>
+<li>Understand <em>metric tensors</em>.</li>
+</ul></li>
+</ul>
+<h2 id="two--and-three-dimensional-euclidean-geometry"><span class="section_number">2</span><span class="section_title">Two- and three-dimensional Euclidean geometry</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#spaces-metrics">Spaces, metrics</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#circles-pi-angles-radian">Circles, pi, angles, radian</a></span><span class="word_count">(137w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#basic-shapes">Basic shapes</a></span><span class="word_count">(59w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#basic-solids">Basic solids</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#right-triangles-and-trigonometry">Right triangles and trigonometry</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">2.6</span><span class="section_title"><a href="#euclidean-vectors">Euclidean vectors</a></span><span class="word_count">(51w~1m)</span></li>
+</ul>
+</div>
+<h3 id="spaces-metrics"><span class="section_number">2.1</span><span class="section_title">Spaces, metrics</span></h3>
+<ul>
+<li>A <a href="https://en.wikipedia.org/wiki/Space_(mathematics)">space</a> (a mathematical space) is a set of points.</li>
+<li>A <em>point</em> is an element in a set.</li>
+<li>&quot;<a href="https://en.wikipedia.org/wiki/Metric_(mathematics)">Metric</a>&quot; is another term for &quot;distance&quot;.
+<ul>
+<li>We write <span class="math inline">\(d(x,y)\)</span> to mean &quot;the <em>distance</em> between point <span class="math inline">\(x\)</span> and point <span class="math inline">\(y\)</span>&quot;.</li>
+</ul></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>geometry</th>
+<th>set theory</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>space</td>
+<td>set</td>
+</tr>
+<tr class="even">
+<td>point</td>
+<td>element</td>
+</tr>
+</tbody>
+</table>
+<h3 id="circles-pi-angles-radian"><span class="section_number">2.2</span><span class="section_title">Circles, pi, angles, radian</span></h3>
+<ul>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Circle">circle</a> with center <span class="math inline">\(c\)</span> and radius <span class="math inline">\(r\)</span></em> is <span class="math inline">\( \SetBuilder{x}{d(c,x) = r} \)</span> (the set of every point whose distance from <span class="math inline">\(c\)</span> is <span class="math inline">\(r\)</span>).
+<ul>
+<li>A <a href="https://en.wikipedia.org/wiki/Circular_sector"><em>sector</em></a> is …</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Pi"><span class="math inline">\( \pi \)</span></a> is the ratio of a circle's circumference to its diameter.
+<ul>
+<li>All circles have that ratio.</li>
+<li>The first few digits of π are 3.141659…</li>
+<li>π is sometimes approximated as 22/7.</li>
+</ul></li>
+<li>An <a href="https://en.wikipedia.org/wiki/Angle"><em>angle</em></a> is …?</li>
+<li>An <em>angle</em> may be thought of as one revolution, half revolution, quarter revolution, 3/4 revolution, etc., but <a href="https://en.wikipedia.org/wiki/Radian"><em>radian</em></a> is the natural unit for angles.
+<ul>
+<li>360 degrees = 2π radian = 1 revolution</li>
+</ul></li>
+<li>Understand <a href="https://en.wikipedia.org/wiki/Radian#Advantages_of_measuring_in_radians">why</a><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> radian is the natural unit for angles.</li>
+<li>Circle, sector, angle, congruence
+<ul>
+<li>Consider a circle of radius <span class="math inline">\(r\)</span>.</li>
+<li>Consider a sector of angle <span class="math inline">\(\alpha\)</span> in that circle.</li>
+<li>The circumference of that sector is <span class="math inline">\( r \cdot \alpha \)</span>.</li>
+</ul></li>
+<li>An angle is the radius-independent &quot;size&quot; of a sector.</li>
+<li>An angle is an equivalence relation between sectors.</li>
+</ul>
+<h3 id="basic-shapes"><span class="section_number">2.3</span><span class="section_title">Basic shapes</span></h3>
+<ul>
+<li>A <a href="https://en.wikipedia.org/wiki/Polygon"><em>polygon</em></a> (an <span class="math inline">\(n\)</span>-gon) is a shape with <span class="math inline">\(n\)</span> vertices / edges / internal angles.
+<ul>
+<li>A <em>vertex</em> is a point.</li>
+<li>An <em>edge</em> is a straight line that connects two vertices.</li>
+<li>An <em>internal angle</em> is …</li>
+</ul></li>
+<li>A <a href="https://en.wikipedia.org/wiki/Triangle"><em>triangle</em></a> is a shape with three vertices / three edges / three internal angles.
+<ul>
+<li>triangle = three-angle</li>
+<li>quadrangle = four-angle, etc.</li>
+</ul></li>
+<li>A <em>circle</em> is <span class="math inline">\( \SetBuilder{x}{d(c,x) = r} \)</span> (see above).</li>
+</ul>
+<h3 id="basic-solids"><span class="section_number">2.4</span><span class="section_title">Basic solids</span></h3>
+<ul>
+<li>A <em>sphere</em> is <span class="math inline">\( \SetBuilder{x}{d(c,x) = r} \)</span>.
+<ul>
+<li>A <a href="https://en.wikipedia.org/wiki/Sphere">sphere</a> is the surface of a ball.</li>
+</ul></li>
+</ul>
+<h3 id="right-triangles-and-trigonometry"><span class="section_number">2.5</span><span class="section_title">Right triangles and trigonometry</span></h3>
+<ul>
+<li>A <em>right triangle</em> is a triangle with one right angle.
+<ul>
+<li>The <em>hypothenuse</em> is the side across the right angle.</li>
+</ul></li>
+<li>The <a href="https://en.wikipedia.org/wiki/Pythagorean_theorem">Pythagorean theorem</a> relates the length of the sides of every right triangle.</li>
+<li><a href="https://en.wikipedia.org/wiki/Trigonometry">Trigonometry</a>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Trigonometric_functions">Trigonometric functions</a>
+<ul>
+<li>? sine of an angle, cosine of an angle, tangent of an angle, …</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="euclidean-vectors"><span class="section_number">2.6</span><span class="section_title">Euclidean vectors</span></h3>
+<ul>
+<li>An <em><a href="https://en.wikipedia.org/wiki/Euclidean_vector">Euclidean vector</a></em> is something with magnitude and direction.</li>
+<li>Understand vector addition.</li>
+<li>Understand vector negation.</li>
+<li>Understand point–vector addition.</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>operation</th>
+<th>left argument</th>
+<th>right argument</th>
+<th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>addition</td>
+<td>vector</td>
+<td>vector</td>
+<td>vector</td>
+</tr>
+<tr class="even">
+<td>addition</td>
+<td>point</td>
+<td>vector</td>
+<td>point</td>
+</tr>
+<tr class="odd">
+<td>subtraction</td>
+<td>vector</td>
+<td>vector</td>
+<td>vector</td>
+</tr>
+<tr class="even">
+<td>subtraction</td>
+<td>point</td>
+<td>point</td>
+<td>vector</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Derive subtraction from addition and negation.
+<ul>
+<li>Subtraction can be derived from addition and negation: <span class="math inline">\(x-y = x+(-y)\)</span>.</li>
+<li>Negation: <span class="math inline">\(-x\)</span> is something such that <span class="math inline">\(x+(-x) = 0\)</span>.</li>
+<li>If <span class="math inline">\(p+v=r\)</span>, then, subtract both sides by <span class="math inline">\(v\)</span> to get <span class="math inline">\(p=r-v\)</span>.</li>
+</ul></li>
+</ul>
+<h2 id="more-dimensions"><span class="section_number">3</span><span class="section_title">More dimensions</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">3.1</span><span class="section_title"><a href="#modeling-physical-space-as-a-three-dimensional-euclidean-space">Modeling physical space as a three-dimensional Euclidean space</a></span><span class="word_count">(89w~1m)</span></li>
+<li><span class="section_number">3.2</span><span class="section_title"><a href="#dimension">Dimension</a></span><span class="word_count">(192w~1m)</span></li>
+<li><span class="section_number">3.3</span><span class="section_title"><a href="#orthogonality-perpendicularity">Orthogonality, perpendicularity</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">3.4</span><span class="section_title"><a href="#relationship-between-spaces-embedding-projection-homeomorphism">Relationship between spaces: embedding, projection, homeomorphism</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">3.5</span><span class="section_title"><a href="#vector-spaces">Vector spaces</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">3.6</span><span class="section_title"><a href="#hypersolids">Hypersolids</a></span><span class="word_count">(32w~1m)</span></li>
+</ul>
+</div>
+<h3 id="modeling-physical-space-as-a-three-dimensional-euclidean-space"><span class="section_number">3.1</span><span class="section_title">Modeling physical space as a three-dimensional Euclidean space</span></h3>
+<p>There are two different meanings of &quot;space&quot;. Physical space is often thought of as the volume occupied by objects.</p>
+<p>Most likely, you already understand a three-dimensional Euclidean space, because it is your internal mental model of the space around you.</p>
+<p>An <a href="https://en.wikipedia.org/wiki/Euclidean_space">Euclidean space</a> is a set of points, not a set of coordinates.</p>
+<p>We usually draw a point as a dot, but a point is a zero-dimensional geometric object that occupies no space at all.</p>
+<p><a href="https://commons.wikimedia.org/wiki/File:Coord_system_CA_0.svg#">This picture</a> may help you visualize a three-dimensional real tuple space.</p>
+<h3 id="dimension"><span class="section_number">3.2</span><span class="section_title">Dimension</span></h3>
+<ul>
+<li>The <em>number of dimensions</em> of a space is the <em>maximum number of mutually orthogonal lines</em> that can coexist in that space.
+<ul>
+<li>For example, we know no way to arrange more than three mutually orthogonal rulers in physical space. Therefore, we think our physical space has three dimensions.</li>
+</ul></li>
+<li>The number of dimensions of every <em>subset</em> of <span class="math inline">\( \Real^n \)</span> is <span class="math inline">\(n\)</span>.
+<ul>
+<li>Do not confuse embeddings and subsets.
+<ul>
+<li><span class="math inline">\( \Real^m \)</span> is not a <em>subset</em> of <span class="math inline">\( \Real^n \)</span> if <span class="math inline">\( m \neq n \)</span>.</li>
+</ul></li>
+<li>We do not define <span class="math inline">\(\Real^0\)</span>.</li>
+<li>We do not define the number of dimensions of the empty set.</li>
+</ul></li>
+</ul>
+<p>How do we know how many <em>dimensions</em> a space has?</p>
+<p>We know that a space has dimension <span class="math inline">\(n\)</span> if we cannot simultaneously place more than <span class="math inline">\(n\)</span> mutually orthogonal lines in that space. We infer that our space has three dimensions because we have not found how to arrange more than three mutually orthogonal lines in our space. For example, if we pick three rulers, we can arrange them so that they are orthogonal to each other. But, if we pick four rulers, we know no way to arrange them so that they are orthogonal to each other. That is why we think that space is three-dimensional.</p>
+<h3 id="orthogonality-perpendicularity"><span class="section_number">3.3</span><span class="section_title">Orthogonality, perpendicularity</span></h3>
+<p>How do we know that two lines are <em>orthogonal</em>? By a protractor?</p>
+<p>We know that two lines are orthogonal if all the four angles formed by their intersection are equal.</p>
+<p>Other terms for &quot;orthogonal&quot; are &quot;perpendicular&quot; and &quot;at a right angle&quot;.</p>
+<h3 id="relationship-between-spaces-embedding-projection-homeomorphism"><span class="section_number">3.4</span><span class="section_title">Relationship between spaces: embedding, projection, homeomorphism</span></h3>
+<ul>
+<li>Understand <em>embedding</em>.
+<ul>
+<li>Example: A line may be embedded in a three-dimensional space.</li>
+</ul></li>
+<li>Understand <a href="https://en.wikipedia.org/wiki/Ambient_space">ambient spaces</a>.</li>
+<li>Understand <em>projection</em>.
+<ul>
+<li>Example: A cube may be projected onto a plane.</li>
+<li>Understand that <em>shadows</em> can be modeled by geometric projections.</li>
+</ul></li>
+<li>Understand <em>homeomorphism</em>.</li>
+</ul>
+<h3 id="vector-spaces"><span class="section_number">3.5</span><span class="section_title">Vector spaces</span></h3>
+<ul>
+<li>A <em>vector</em> is an element of a <a href="https://en.wikipedia.org/wiki/Vector_space">vector space</a>.</li>
+<li>See also <a href="https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics)">a brief history of vectors</a>.</li>
+</ul>
+<h3 id="hypersolids"><span class="section_number">3.6</span><span class="section_title">Hypersolids</span></h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Polygon">polygon</a> (many-corner) → <a href="https://en.wikipedia.org/wiki/Polyhedron">polyhedron</a> (many-seat) → <a href="https://en.wikipedia.org/wiki/Polytope">polytope</a> (many-place)</li>
+<li>shape → solid → hypersolid</li>
+<li>A <em>line</em> is <span class="math inline">\( \SetBuilder{x}{x = a + tb, ~ t \in \Real} \)</span>.</li>
+<li>A <em>hyperplane</em> is <span class="math inline">\( \SetBuilder{x}{a \cdot x = b} \)</span>.</li>
+</ul>
+<h2 id="geometry-with-coordinates"><span class="section_number">4</span><span class="section_title">Geometry with coordinates</span></h2>
+<ul>
+<li>Alternative titles:
+<ul>
+<li>Geometry with coordinates</li>
+<li>Geometry with numbers and functions</li>
+<li>Analytical geometry</li>
+</ul></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.1</span><span class="section_title"><a href="#real-tuple-spaces">Real tuple spaces</a></span><span class="word_count">(12w~1m)</span></li>
+<li><span class="section_number">4.2</span><span class="section_title"><a href="#cartesian-coordinate-systems">Cartesian coordinate systems</a></span><span class="word_count">(88w~1m)</span></li>
+<li><span class="section_number">4.3</span><span class="section_title"><a href="#dot-product-orthogonality">Dot product, orthogonality</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">4.4</span><span class="section_title"><a href="#coordinate-systems-and-transformations">Coordinate systems and transformations</a></span><span class="word_count">(297w~2m)</span></li>
+<li><span class="section_number">4.5</span><span class="section_title"><a href="#matrices">Matrices</a></span><span class="word_count">(49w~1m)</span></li>
+<li><span class="section_number">4.6</span><span class="section_title"><a href="#imagining-a-three-dimensional-euclidean-real-tuple-space">Imagining a three-dimensional Euclidean real tuple space</a></span><span class="word_count">(97w~1m)</span></li>
+<li><span class="section_number">4.7</span><span class="section_title"><a href="#euclidean-spaces-vs-real-tuple-spaces">Euclidean spaces vs real tuple spaces</a></span><span class="word_count">(187w~1m)</span></li>
+<li><span class="section_number">4.8</span><span class="section_title"><a href="#intersection-of-two-spaces">Intersection of two spaces</a></span><span class="word_count">(26w~1m)</span></li>
+<li><span class="section_number">4.9</span><span class="section_title"><a href="#modeling-position-with-coordinates">Modeling position with coordinates</a></span><span class="word_count">(141w~1m)</span></li>
+<li><span class="section_number">4.10</span><span class="section_title"><a href="#the-rectangular-coordinate-system">The rectangular coordinate system</a></span><span class="word_count">(81w~1m)</span></li>
+<li><span class="section_number">4.11</span><span class="section_title"><a href="#the-polar-coordinate-system">The polar coordinate system</a></span><span class="word_count">(188w~1m)</span></li>
+<li><span class="section_number">4.12</span><span class="section_title"><a href="#an-example-basis">An example basis?</a></span><span class="word_count">(80w~1m)</span></li>
+<li><span class="section_number">4.13</span><span class="section_title"><a href="#spherical-coordinate-systems">Spherical coordinate systems</a></span><span class="word_count">(470w~3m)</span></li>
+<li><span class="section_number">4.14</span><span class="section_title"><a href="#converting-polar-coordinate-tuples-to-rectangular-coordinate-tuples">? Converting polar coordinate tuples to rectangular coordinate tuples</a></span><span class="word_count">(44w~1m)</span></li>
+</ul>
+</div>
+<h3 id="real-tuple-spaces"><span class="section_number">4.1</span><span class="section_title">Real tuple spaces</span></h3>
+<ul>
+<li>Conflate an <em>Euclidean space</em> and its corresponding <em>real tuple space</em>.</li>
+</ul>
+<h3 id="cartesian-coordinate-systems"><span class="section_number">4.2</span><span class="section_title">Cartesian coordinate systems</span></h3>
+<ul>
+<li>See <a href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system">Cartesian coordinate system</a>.</li>
+<li>The <em>Cartesian basis vectors</em>:
+<ul>
+<li><span class="math inline">\(e_k\)</span> is the zero vector <em>except</em> the <span class="math inline">\(k\)</span>th element is 1.</li>
+<li><p>In two dimensions:</p>
+<span class="math display">\[\begin{align*}
+ e_1 &amp;= (1,0)
+ \\ e_2 &amp;= (0,1)
+\end{align*}
+\]</span></li>
+<li><p>In three dimensions:</p>
+<span class="math display">\[\begin{align*}
+ e_1 &amp;= (1,0,0)
+ \\ e_2 &amp;= (0,1,0)
+ \\ e_3 &amp;= (0,0,1)
+\end{align*}
+\]</span></li>
+<li><p>In <span class="math inline">\(n\)</span> dimensions:</p>
+<span class="math display">\[\begin{align*}
+ e_1 &amp;= (1,0,\ldots,0,0)
+ \\ e_2 &amp;= (0,1,\ldots,0,0)
+ \\ \vdots
+ \\ e_n &amp;= (0,0,\ldots,0,1)
+\end{align*}
+\]</span></li>
+</ul></li>
+<li>Visual interpretation:
+<ul>
+<li>Interpret a <em>basis vector</em> as a <em>coordinate axis</em>.</li>
+<li>The standard three-dimensional Cartesian coordinate system is <a href="https://en.wikipedia.org/wiki/Right-hand_rule">right-handed</a>.
+<ul>
+<li>With your right hand:
+<ul>
+<li>Form an L with the thumb and the index finger.</li>
+<li>Form another L with the index and the middle finger.</li>
+<li>Then see this table.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<table>
+<caption>Standard directions</caption>
+<thead>
+<tr class="header">
+<th>direction</th>
+<th>right hand finger</th>
+<th>XYZ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rightward</td>
+<td>right thumb</td>
+<td>X positive</td>
+</tr>
+<tr class="even">
+<td>forward</td>
+<td>right index</td>
+<td>Y positive</td>
+</tr>
+<tr class="odd">
+<td>leftward</td>
+<td></td>
+<td>X negative</td>
+</tr>
+<tr class="even">
+<td>backward</td>
+<td></td>
+<td>Y negative</td>
+</tr>
+<tr class="odd">
+<td>upward</td>
+<td>right middle</td>
+<td>Z positive</td>
+</tr>
+<tr class="even">
+<td>downward</td>
+<td></td>
+<td>Z negative</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Understand the <em><span class="math inline">\(n\)</span>-dimensional Euclidean metric in Cartesian coordinate systems</em>: <span class="math display">\[ d(x,y) = \sqrt{\sum_{k=1}^n (x_k-y_k)^2} \]</span></li>
+</ul>
+<h3 id="dot-product-orthogonality"><span class="section_number">4.3</span><span class="section_title">Dot product, orthogonality</span></h3>
+<ul>
+<li>In <span class="math inline">\(n\)</span> dimensions: <span class="math display">\[ x \cdot y = \sum_{k=1}^n x_k \cdot y_k \]</span></li>
+<li>Two vectors <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are <em>orthogonal</em> iff <span class="math inline">\( x \cdot y = 0 \)</span>.</li>
+<li>What is the visual interpretation?</li>
+</ul>
+<h3 id="coordinate-systems-and-transformations"><span class="section_number">4.4</span><span class="section_title">Coordinate systems and transformations</span></h3>
+<ul>
+<li>A <em>coordinate system</em> is a scheme for naming points with tuples of real numbers.
+<ul>
+<li>We need to name <em>all</em> points because we need to refer to all of them.</li>
+<li>A coordinate system is a function whose domain is the set of real <span class="math inline">\(n\)</span>-tuples and whose codomain is an <span class="math inline">\(n\)</span>-dimensional space.
+<ul>
+<li>A coordinate system takes a coordinate tuple and gives a point.</li>
+<li>The name of a point is a tuple of numbers.</li>
+<li>A coordinate system over E describes how to <em>name</em> each point in E, how to locate those points.</li>
+</ul></li>
+</ul></li>
+<li>See also <a href="https://en.wikipedia.org/wiki/Analytic_geometry">WP:analytic geometry</a>.</li>
+<li>Definitions for this section:
+<ul>
+<li>Let <span class="math inline">\(C\)</span> be a set of coordinate tuples.</li>
+<li>Let <span class="math inline">\(S\)</span> be a space.</li>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Coordinate_system">coordinate system</a></em> for <span class="math inline">\(S\)</span> is a surjective function <span class="math inline">\(C \to S\)</span> where <span class="math inline">\(C \subseteq \Real^n\)</span>.</li>
+<li>Let <span class="math inline">\(s : C \to S\)</span> be a coordinate system.</li>
+<li>Let <span class="math inline">\(s&#39; : C&#39; \to S\)</span> be a coordinate system.</li>
+<li>We may say:
+<ul>
+<li><span class="math inline">\(x\)</span> <em>names</em> <span class="math inline">\(s(x)\)</span>.</li>
+<li><span class="math inline">\(x\)</span> <em>refers to</em> <span class="math inline">\(s(x)\)</span>.</li>
+<li><span class="math inline">\(x\)</span> <em>references</em> <span class="math inline">\(s(x)\)</span>.</li>
+<li><span class="math inline">\(x\)</span> is an <em><span class="math inline">\(s\)</span>-name</em> of <span class="math inline">\(s(x)\)</span>.</li>
+<li><span class="math inline">\(x\)</span> is a <em><span class="math inline">\(C\)</span>-name</em> of <span class="math inline">\(s(x)\)</span>.</li>
+<li><span class="math inline">\(s(x)\)</span> is the <em>referent</em> of <span class="math inline">\(x\)</span>.</li>
+<li><span class="math inline">\(s(x)\)</span> is the <span class="math inline">\(s\)</span>-<em>referent</em> of <span class="math inline">\(x\)</span>.</li>
+<li><span class="math inline">\(s(x)\)</span> is the <span class="math inline">\(C\)</span>-<em>referent</em> of <span class="math inline">\(x\)</span>.</li>
+</ul></li>
+</ul></li>
+<li>&quot;Coordinate system transformation&quot; means &quot;coordinate transformation&quot;.</li>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Coordinate_system#Transformations">coordinate transformation</a></em> from <span class="math inline">\(s\)</span> to <span class="math inline">\(s&#39;\)</span> is a function <span class="math inline">\(t : C \to C&#39;\)</span> such that <span class="math inline">\(s(c) = s&#39;(c&#39;)\)</span> where <span class="math inline">\(c&#39; = t(c)\)</span> for all <span class="math inline">\(c \in C\)</span>.</li>
+<li><p>A coordinate transformation changes the name but preserves the point.</p>
+<span class="math display">\[\begin{align*}
+ s(c) &amp;= s&#39;(c&#39;) = s&#39;(t(c))
+ \\ s &amp;= s&#39; \circ t
+ \\ (s&#39;)^{-1} \circ s &amp;= t
+\end{align*}
+\]</span></li>
+<li>Linear coordinate systems and linear transformations
+<ul>
+<li>If <span class="math inline">\(s\)</span> is linear, then there is a matrix <span class="math inline">\(E\)</span> such that <span class="math inline">\(s(x) = Ex\)</span>.</li>
+<li>If <span class="math inline">\(s&#39;\)</span> is linear, then there is a matrix <span class="math inline">\(F\)</span> such that <span class="math inline">\(s&#39;(x) = Fx\)</span>.</li>
+<li>If <span class="math inline">\(s\)</span> and <span class="math inline">\(s&#39;\)</span> are linear, then <span class="math inline">\(t\)</span> is linear, and there is a matrix <span class="math inline">\(T\)</span> such that <span class="math inline">\(t(x) = Tx\)</span>.
+<ul>
+<li><span class="math inline">\( F^{-1} E = T \)</span></li>
+</ul></li>
+<li>Understand <em>basis vectors</em> (coordinate axes?).</li>
+<li>Understand <em>span</em>.</li>
+<li>Understand <em>collinearity</em>.</li>
+<li>Understand <em>linear operators</em>?</li>
+</ul></li>
+<li>Do we need non-linear coordinate systems?</li>
+<li>? covariance and contravariance with respect to what?</li>
+<li>? curvilinear coordinate systems</li>
+<li>? curved coordinate systems</li>
+</ul>
+<h3 id="matrices"><span class="section_number">4.5</span><span class="section_title">Matrices</span></h3>
+<ul>
+<li>Relationship between matrices, bases (concatenation of basis vectors?), linear system of equations, linear transformations, and linear functions
+<ul>
+<li>Confusing names: <a href="https://en.wikipedia.org/wiki/Operator_(mathematics)#Linear_operators">linear operator</a>, <a href="https://en.wikipedia.org/wiki/Linear_map">linear map</a>, linear function</li>
+<li>'However, when using &quot;linear operator&quot; instead of &quot;linear map&quot;, mathematicians often mean actions on vector spaces of functions, which also preserve other properties, such as continuity.'<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></li>
+</ul></li>
+</ul>
+<h3 id="imagining-a-three-dimensional-euclidean-real-tuple-space"><span class="section_number">4.6</span><span class="section_title">Imagining a three-dimensional Euclidean real tuple space</span></h3>
+<ul>
+<li>Pick three rulers (graduated straightedges), called X, Y, and Z.</li>
+<li>Arrange them so that they intersect at one point (called the &quot;origin&quot;) and are at a right angle to each other.</li>
+<li>Extend each ruler infinitely in both directions.</li>
+<li>Then, assume that space is homogenous (is the same everywhere) and isotropic (is the same in all directions).</li>
+<li>To find a point named (x,y,z): go right x units in ruler X, and then go forward y units in ruler Y, and then go up z units in ruler Z. Observe that each point has a unique name.</li>
+</ul>
+<h3 id="euclidean-spaces-vs-real-tuple-spaces"><span class="section_number">4.7</span><span class="section_title">Euclidean spaces vs real tuple spaces</span></h3>
+<p>An Euclidean space is a set of <em>points</em>, whereas a real tuple space is a set of <em>tuples of real numbers</em>. We often conflate them, such as when we say &quot;the point <span class="math inline">\((x,y,z)\)</span>&quot; to mean &quot;the point <em>whose coordinates are</em> <span class="math inline">\((x,y,z)\)</span>&quot;.</p>
+<p>An <em>Euclidean vector space</em> is a set of vectors with Euclidean metric. A metric is a function that maps each vector to its length. An Euclidean metric is distance as we know it in everyday situation.</p>
+<p>Euclidean distance can be derived from the <a href="https://en.wikipedia.org/wiki/Pythagorean_theorem">Pythagorean theorem</a> that relates the lengths of the sides of a right triangle.</p>
+<p>The three-dimensional-Euclidean distance between a point <span class="math inline">\(A = (x,y,z)\)</span> and another point <span class="math inline">\(B = (x&#39;,y&#39;,z&#39;)\)</span> is written <span class="math inline">\(\norm{AB}\)</span> or <span class="math inline">\(d(A,B)\)</span>, is defined as:</p>
+<span class="math display">\[\begin{align*}
+\norm{AB} &amp;= d(A,B)
+\\ &amp;= \sqrt{(AB)_1^2 + (AB)_2^2 + (AB)_3^2}
+\\ &amp;= d((x,y,z),(x&#39;,y&#39;,z&#39;))
+\\ &amp;= \sqrt{(x&#39;-x)^2 + (y&#39;-y)^2 + (z&#39;-z)^2}
+\end{align*}
+\]</span>
+<p>They are different ways of writing the same thing; <span class="math inline">\(d(A,B)\)</span> is &quot;synthetic geometry&quot; style, whereas <span class="math inline">\(d((x,y,z),(x&#39;,y&#39;,z&#39;))\)</span> is &quot;analytic geometry&quot; style. However, without numbers, we cannot express <span class="math inline">\(d(A,B)\)</span> as a square root, because square root is a numeric operation, not a geometric operation. We have just witnessed the usefulness of analytic geometry.</p>
+<p>The &quot;synthetic geometry&quot; style of computing <span class="math inline">\(d(A,B)\)</span> is to use a ruler to measure the length.</p>
+<h3 id="intersection-of-two-spaces"><span class="section_number">4.8</span><span class="section_title">Intersection of two spaces</span></h3>
+<ul>
+<li>Understand the intersection of two spaces.
+<ul>
+<li>Understand <em>systems of equations</em> (<em>simultaneous equations</em>).</li>
+<li>Understand <em>systems of linear equations</em>?
+<ul>
+<li>Understand <em>matrices</em>.</li>
+</ul></li>
+<li><span class="math inline">\( P \cap Q = \SetBuilder{x}{p(x) \wedge q(x)} \)</span></li>
+</ul></li>
+</ul>
+<h3 id="modeling-position-with-coordinates"><span class="section_number">4.9</span><span class="section_title">Modeling position with coordinates</span></h3>
+<p>We pick a point called the <em>origin</em>, and pick three directions. Then, each point in space can be described as a tuple <span class="math inline">\((x,y,z)\)</span> of three numbers; that tuple means &quot;From the origin, go <span class="math inline">\(x\)</span> steps east, <span class="math inline">\(y\)</span> steps north, and <span class="math inline">\(z\)</span> steps up.&quot;</p>
+<p>A tuple is a bunch of numbers.</p>
+<p>A coordinate system gives meaning to such tuples.</p>
+<p>Cartesian coordinate systems?</p>
+<p>A coordinate system is a method of naming every point.</p>
+<p>Let <span class="math inline">\(E^n\)</span> mean the <span class="math inline">\(n\)</span>-dimensional Euclidean space.</p>
+<p>A Cartesian coordinate system is a geometric interpretation of a real tuple space. Such system uses a tuple in <span class="math inline">\(\Real^n\)</span> and three orthogonal axes to describe a point in <span class="math inline">\(E^n\)</span>. &quot;Axes&quot; here is plural of &quot;axis&quot;, not of &quot;axe&quot;.</p>
+<p>For an example of a two-dimensional Cartesian coordinate system, see <a href="https://en.wikipedia.org/wiki/File:Cartesian-coordinate-system.svg?">picture</a>. The positive x-axis points right. The positive y-axis points up.</p>
+<p>In three dimensions: (A picture would be nice.)</p>
+<h3 id="the-rectangular-coordinate-system"><span class="section_number">4.10</span><span class="section_title">The rectangular coordinate system</span></h3>
+<p><span class="math inline">\(R(x,y) = x e_1 + y e_2\)</span>.</p>
+<p><span class="math inline">\(R(x) = x_1 e_1 + x_2 e_2\)</span>.</p>
+<p>In this system, the coordinates are the scalar coefficients in the linear combination of basis vectors. The coordinates describe how the basis vectors should be linearly combined to form the described vector.</p>
+<p>Let <span class="math inline">\(T : V^2 \to V^2\)</span> be a linear transformation. Then <span class="math inline">\(T(R(x)) = T(x_1 e_1 + x_2 e_2) = x_1 \cdot T(e_1) + x_2 \cdot T(e_2) = x_1 e_1&#39; + x_2 e_2&#39; = R&#39;(x) \)</span>.</p>
+<h3 id="the-polar-coordinate-system"><span class="section_number">4.11</span><span class="section_title">The polar coordinate system</span></h3>
+<p><span class="math inline">\(P(r,t) = r e_1 \text{ rotated } t \text{ radians counterclockwise}\)</span>.</p>
+<p>\section{Locating the same point with different coordinate systems}</p>
+<p>Example of coordinate transformation: The same point in the same two-dimensional Euclidean space is described by both the polar coordinates <span class="math inline">\( (r,\theta) \)</span> and the rectangular coordinates <span class="math inline">\( (r \cos \theta, r \sin \theta) \)</span>. The transformation is <span class="math inline">\( (r,\theta) \to (r \cos \theta, r \sin \theta) \)</span>.</p>
+<p>What<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>A <em>coordinate system</em> <span class="math inline">\(M : C \to S\)</span> is a surjective mapping from <em>coordinate space</em> <span class="math inline">\(C\)</span> to <em>target space</em> <span class="math inline">\(S\)</span>.</p>
+<p>A <em>coordinate</em> is a point in <span class="math inline">\(C\)</span>. The coordinate system tells us how to get to a point.</p>
+<p>The <span class="math inline">\(n\)</span>-dimensional real coordinate space is <span class="math inline">\(\mathbb{R}^n\)</span>. It is also called the real <span class="math inline">\(n\)</span>-space. A point in the real <span class="math inline">\(n\)</span>-space is an <span class="math inline">\(n\)</span>-tuple of real numbers <span class="math inline">\((x_1,\ldots,x_n)\)</span>.</p>
+<p><span class="math inline">\((x,y)\)</span> is the tuple of coordinates, <span class="math inline">\(x\)</span> is the x-coordinate, and <span class="math inline">\(y\)</span> is the y-coordinate.</p>
+<p>Coordinate systems unify geometry and mathematical analysis. With coordinates, we can solve geometric problems by numbers, calculus, and algebra, so that computers can find the intersection of geometric objects by solving the corresponding system of equations, and find the size of a geometric object by solving the corresponding integral.</p>
+<h3 id="an-example-basis"><span class="section_number">4.12</span><span class="section_title">An example basis?</span></h3>
+<p>Imagine a flat sheet of paper.</p>
+<p>Draw a point <span class="math inline">\(A\)</span>.</p>
+<p>Draw a vector named <span class="math inline">\(i\)</span>, from <span class="math inline">\(A\)</span>, 1 cm long, pointing right.</p>
+<p>Draw another vector named <span class="math inline">\(j\)</span>, also from <span class="math inline">\(A\)</span>, 1 cm long, but pointing up.</p>
+<p>Thus, the vectors <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> are <em>orthogonal</em>.</p>
+<p>Then, we declare the basis <span class="math inline">\( e : \Real^2 \to E^2 \)</span> as <span class="math inline">\( e(x,y) = xi + yj \)</span>.</p>
+<p>A real tuple space on its own has no geometric meaning. One way to visualize a real tuple space is a Cartesian coordinate system.</p>
+<h3 id="spherical-coordinate-systems"><span class="section_number">4.13</span><span class="section_title">Spherical coordinate systems</span></h3>
+<p>(Why do we bring this up?)</p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">4.13.1</span><span class="section_title"><a href="#mathematicians-heading">Mathematician's heading</a></span><span class="word_count">(58w~1m)</span></li>
+<li><span class="section_number">4.13.2</span><span class="section_title"><a href="#the-spherical-coordinate-system">The spherical coordinate system</a></span><span class="word_count">(239w~2m)</span></li>
+<li><span class="section_number">4.13.3</span><span class="section_title"><a href="#relationship-with-cartesian-coordinate-systems">Relationship with Cartesian coordinate systems</a></span><span class="word_count">(82w~1m)</span></li>
+<li><span class="section_number">4.13.4</span><span class="section_title"><a href="#which-spherical-coordinate-system">Which spherical coordinate system?</a></span><span class="word_count">(87w~1m)</span></li>
+</ul>
+</div>
+<h4 id="mathematicians-heading"><span class="section_number">4.13.1</span><span class="section_title">Mathematician's heading</span></h4>
+<p>To simplify the explanation of the coming spherical coordinate system, we introduce &quot;heading&quot;.</p>
+<p>Our definition of heading begins with  pointing east (positive x-axis), and then goes counterclockwise, so  is north (positive y-axis),  is west (negative x-axis), and  is south (negative y-axis).</p>
+<p>Note that our heading differs from the navigator's heading, which begins with  pointing north and then goes clockwise.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<h4 id="the-spherical-coordinate-system"><span class="section_number">4.13.2</span><span class="section_title">The spherical coordinate system</span></h4>
+<p>The spherical coordinates <span class="math inline">\((r,a,b)\)</span> mean &quot;set heading to <span class="math inline">\(a\)</span>, set elevation to <span class="math inline">\(b\)</span>, and then go the distance <span class="math inline">\(r\)</span>&quot;.</p>
+<p>The spherical coordinate system adds another angle component to the polar coordinate system.</p>
+<p>We now describe how to map the spherical coordinates <span class="math inline">\(S(r,a,b)\)</span> to Cartesian coordinates <span class="math inline">\(C(x,y,z)\)</span>. The slogan to remember is that <span class="math inline">\(S(r,a,b)\)</span> means “set heading to <span class="math inline">\(a\)</span>, set elevation to <span class="math inline">\(b\)</span>, and then go the distance <span class="math inline">\(r\)</span>”. Another slogan is “face east, turn your head left by angle <span class="math inline">\(a\)</span>, turn your head up by angle <span class="math inline">\(b\)</span>, and then look at distance <span class="math inline">\(r\)</span>”.</p>
+<p>Let's read slower as we imagine the drawing.</p>
+<p>Let <span class="math inline">\(O\)</span> be the center of both the spherical coordinate system and the Cartesian coordinate system. Let their centers coincide.</p>
+<p>A negative angle <span class="math inline">\(-a\)</span> means the angle <span class="math inline">\(a\)</span> but in the reverse direction.</p>
+<p>Draw the point <span class="math inline">\(D\)</span> at <span class="math inline">\(C(r,0,0)\)</span>, which means that <span class="math inline">\(D\)</span> lies on the positive x-axis, at distance <span class="math inline">\(r\)</span> from <span class="math inline">\(O\)</span>.</p>
+<p>With the positive z-axis as the axis of rotation, rotate the vector <span class="math inline">\(OD\)</span>, by angle <span class="math inline">\(a\)</span> toward the positive y-axis (or toward the negative y-axis if <span class="math inline">\(a\)</span> is negative). Call the resulting vector <span class="math inline">\(OE\)</span>. Thus, the point <span class="math inline">\(E\)</span> is at <span class="math inline">\(C(r \cos a, r \sin a, 0)\)</span>, which is still on the xy-plane.</p>
+<p>Then, rotate the vector <span class="math inline">\(OE\)</span>, by angle <span class="math inline">\(b\)</span>, out of the xy-plane, toward the positive z-axis (or toward the negative z-axis if <span class="math inline">\(b\)</span> is negative). Call the resulting vector <span class="math inline">\(OF\)</span>.</p>
+<p>Then <span class="math inline">\(F\)</span> is the point described by <span class="math inline">\(S(r,a,b)\)</span>.</p>
+<h4 id="relationship-with-cartesian-coordinate-systems"><span class="section_number">4.13.3</span><span class="section_title">Relationship with Cartesian coordinate systems</span></h4>
+<p>Let's say that the point <span class="math inline">\(F\)</span> is at <span class="math inline">\(S(r,a,b)\)</span>, which is equal to <span class="math inline">\(C(x,y,z)\)</span>. By the definition of rotation and the congruence of triangles, we can convert spherical coordinates to Cartesian coordinates as follows:</p>
+<span class="math display">\[\begin{align}
+    x &amp;= r \cos a \cos b
+    \\
+    y &amp;= r \sin a \cos b
+    \\
+    z &amp;= r \sin b
+\end{align}
+\]</span>
+<p>We can convert Cartesian coordinates to spherical coordinates as follows:</p>
+<span class="math display">\[\begin{align}
+    r &amp;= \sqrt{x^2 + y^2 + z^2}
+    \\
+    \tan a &amp;= y/x
+    \\
+    \sin b &amp;= z/r
+\end{align}
+\]</span>
+<p>but we have to pick the angles that make the signs correct.</p>
+<p>Thus, we have just explained what is meant by the slogan “set heading to <span class="math inline">\(a\)</span>, set elevation to <span class="math inline">\(b\)</span>, and then go the distance <span class="math inline">\(r\)</span>”.</p>
+<h4 id="which-spherical-coordinate-system"><span class="section_number">4.13.4</span><span class="section_title">Which spherical coordinate system?</span></h4>
+<p>Note that our <span class="math inline">\(b\)</span> is elevation, not azimuth. The relationship between elevation and azimuth is <span class="math display">\[
+    \text{azimuth} = \ang{90} - \text{elevation}.
+\]</span></p>
+<p>If the elevation is zero, then the spherical coordinate system reduces to the polar coordinate system on the xy-plane. That method embeds the polar coordinate system into the xy-plane. Thus the angle <span class="math inline">\(a\)</span> is called heading angle, polar angle, or longitude. The angle <span class="math inline">\(b\)</span> is called elevation angle or latitude.</p>
+<p>Azimuth is angle from zenith. In this case, zenith is the z-axis.</p>
+<p>ISO standard? Azimuth? Elevation?</p>
+<p>What<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<h3 id="converting-polar-coordinate-tuples-to-rectangular-coordinate-tuples"><span class="section_number">4.14</span><span class="section_title">? Converting polar coordinate tuples to rectangular coordinate tuples</span></h3>
+<p>Both the rectangular coordinate <span class="math inline">\((r\cos\theta, r\sin\theta)\)</span> and the polar coordinate <span class="math inline">\((r,\theta)\)</span> describe the same point in two-dimensional Euclidean space. <span class="math display">\[
+R(r\cos\theta, r\sin\theta) = P(r,\theta)
+\]</span></p>
+<p>A point in a space can have different coordinates in different coordinate systems.</p>
+<h2 id="describing-curved-spaces"><span class="section_number">5</span><span class="section_title">Describing curved spaces</span></h2>
+<ul>
+<li>Understand how to <em>algebraically</em> describe a <em>curved space</em>.
+<ul>
+<li>Example:
+<ul>
+<li>Consider a circle with origin <span class="math inline">\(O = (0,0)\)</span> and radius <span class="math inline">\(r\)</span>.</li>
+<li>Its <em>analytic-algebraic</em> description is <span class="math inline">\( \SetBuilder{(x,y)}{x^2+y^2=r^2} \)</span>.</li>
+<li>Its <em>synthetic-algebraic</em> description is <span class="math inline">\( \SetBuilder{x}{d(O,x) = r} \)</span>.</li>
+</ul></li>
+</ul></li>
+<li>Understand two-dimensional geometry: line, circle, square.</li>
+<li>Understand three-dimensional geometry: plane, sphere, cube.</li>
+<li>Understand higher-dimensional geometry: hyperplane, hypersphere, hypercube, &quot;hyper-&quot; + &lt;the name of a three dimensional object&gt;.</li>
+</ul>
+<h2 id="differential-geometry-and-non-euclidean-geometry"><span class="section_number">6</span><span class="section_title">Differential geometry and non-Euclidean geometry</span></h2>
+<ul>
+<li>Understand that a <em>manifold</em> is a <em>locally Euclidean space</em>.</li>
+<li>Understand <em>tangent spaces</em>.</li>
+<li>Understand <em>curvature</em>.
+<ul>
+<li>Understand <em>osculating circles</em> (kissing circles).</li>
+</ul></li>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Manifold">manifold</a></em> is a &quot;space that locally resembles Euclidean space near each point&quot;.</li>
+<li>The <em><a href="https://en.wikipedia.org/wiki/Tangent_space">tangent space</a></em> of <span class="math inline">\(S\)</span> at <span class="math inline">\(p\)</span>, written <span class="math inline">\(T_p S\)</span>, is the vector space of every vector that is tangent to <span class="math inline">\(S\)</span> at <span class="math inline">\(p\)</span>.</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#manifold-chart-atlas-local-coordinate-system">Manifold, chart, atlas, local coordinate system?</a></span><span class="word_count">(41w~1m)</span></li>
+</ul>
+</div>
+<h3 id="manifold-chart-atlas-local-coordinate-system"><span class="section_number">6.1</span><span class="section_title">Manifold, chart, atlas, local coordinate system?</span></h3>
+<ul>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Atlas_(topology)">chart</a></em> (a <em>coordinate chart</em>) for <span class="math inline">\(S\)</span> is a <a href="https://en.wikipedia.org/wiki/Homeomorphism">homeomorphism</a> between a subspace of <span class="math inline">\(S\)</span> and a subspace of an Euclidean space.</li>
+<li>An <em>atlas</em> is a collection of charts.</li>
+<li>&quot;There are ways of describing curves without coordinates […]&quot;<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></li>
+</ul>
+<h2 id="appreciating-various-approaches"><span class="section_number">7</span><span class="section_title">Appreciating various approaches</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">7.1</span><span class="section_title"><a href="#appreciating-synthetic-geometry">Appreciating synthetic geometry</a></span><span class="word_count">(61w~1m)</span></li>
+<li><span class="section_number">7.2</span><span class="section_title"><a href="#appreciating-analytic-geometry">Appreciating analytic geometry</a></span><span class="word_count">(136w~1m)</span></li>
+</ul>
+</div>
+<h3 id="appreciating-synthetic-geometry"><span class="section_number">7.1</span><span class="section_title">Appreciating synthetic geometry</span></h3>
+<ul>
+<li>A circle, a sphere, a square, and a hypersphere have the <em>same description</em> <span class="math inline">\( \SetBuilder{x}{d(c,x) = r} \)</span> but <em>different metrics</em>:
+<ul>
+<li>A circle is a generalized circle in two-dimensional Euclidean metric space.</li>
+<li>A sphere is a generalized circle in three-dimensional Euclidean metric space.</li>
+<li>A hypersphere is a generalized circle in <span class="math inline">\(n\)</span>-dimensional Euclidean metric space.</li>
+<li>A square is a generalized circle in two-dimensional <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">taxicab</a> metric space.</li>
+</ul></li>
+</ul>
+<h3 id="appreciating-analytic-geometry"><span class="section_number">7.2</span><span class="section_title">Appreciating analytic geometry</span></h3>
+<p>A coordinate system marries points and numbers, so that we can refer to every point as easily as we manipulate numbers. This enables computers to do geometry. This enables geometry with calculator without drawing. This speeds up computation. This enables <a href="https://en.wikipedia.org/wiki/Analytic_geometry">analytic geometry</a>. This enables the application of the mathematical technology named &quot;differential calculus&quot; to geometry. This enables us to think more precisely about geometry.</p>
+<p>Analytic geometry is the usage of coordinate systems for thinking about spaces?</p>
+<p>Analytic geometry can be thought of doing geometry by manipulating numbers instead of by drawing shapes.</p>
+<p>With analytic geometry, we can describe shapes using real numbers.</p>
+<p>John L. Bell sums it up: &quot;The power of analytic geometry derives very largely from the fact that it permits the methods of the calculus, and, more generally, of mathematical analysis, to be introduced into geometry.&quot;<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
+<h2 id="motivating-stress-tensor"><span class="section_number">8</span><span class="section_title">Motivating stress tensor</span></h2>
+<p>See <a href="https://en.wikipedia.org/wiki/Stress_(mechanics)">Wikipedia</a>.</p>
+<p>Generalize <em>uniaxial normal stress</em> <span class="math inline">\( \sigma = F/A \)</span> and <em>simple shear stress</em> <span class="math inline">\( \tau = F/A \)</span> to <a href="https://en.wikipedia.org/wiki/Cauchy_stress_tensor">Cauchy stress tensor</a></p>
+<h2 id="invariants"><span class="section_number">9</span><span class="section_title">Invariants</span></h2>
+<p>Let <span class="math inline">\(\phi : D \to C\)</span> be a function.</p>
+<p>Let <span class="math inline">\(T : D \to D\)</span> be a function, usually called a &quot;transformation&quot;.</p>
+<p>We say &quot;<span class="math inline">\(\phi\)</span> is <em>unaffected</em> by <span class="math inline">\(T\)</span>&quot; or &quot;<span class="math inline">\( \phi \)</span> is <em><span class="math inline">\(T\)</span>-invariant</em>&quot; or &quot;<span class="math inline">\( T \)</span> is an <em>invariant</em> (a <em>symmetry</em>) of <span class="math inline">\( \phi \)</span>&quot; iff, for all <span class="math inline">\(x \in D\)</span>: <span class="math display">\[ \phi(x) = \phi(T(x)) \]</span></p>
+<p>Here are some examples of invariants.</p>
+<p>Let <span class="math inline">\( Tx = x + c \)</span> represent translation.</p>
+<p>Example: If <span class="math inline">\(\phi(x,o,r)\)</span> means &quot;<span class="math inline">\(x\)</span> is a point on a circle with center <span class="math inline">\(o\)</span> and radius <span class="math inline">\(r\)</span>&quot;, then <span class="math inline">\(\phi(x,o,r) = \phi(Tx,To,r)\)</span>. (A predicate is a function whose codomain is the set of booleans.)</p>
+<p>Example: If <span class="math inline">\(V\)</span> is a vector space, then <span class="math inline">\(\SetBuilder{Tv}{v \in V} = V\)</span>. If we follow the &quot;auto-lifting&quot; convention, we can write the equation more prettily as <span class="math inline">\( TV = V \)</span>.</p>
+<p>Example: Even functions exhibit mirror symmetry. (A function <span class="math inline">\( f \)</span> is <em>even</em> iff <span class="math inline">\( f(x) = f(-x) \)</span> for all applicable <span class="math inline">\(x\)</span>.)</p>
+<p>Example: Periodicity is a special case of translation-invariance. (A function <span class="math inline">\(f\)</span> has <em>period</em> <span class="math inline">\(p\)</span> iff <span class="math inline">\(p\)</span> is the smallest positive number such that <span class="math inline">\( f(x+p) = f(x) \)</span> for all applicable <span class="math inline">\(x\)</span>. A function is <em>periodic</em> iff it has a period.)</p>
+<h2 id="symmetries"><span class="section_number">10</span><span class="section_title">Symmetries</span></h2>
+<p>Example: let <span class="math inline">\(S\)</span> be the set of points of an unlabeled square.</p>
+<p>Let <span class="math inline">\(T\)</span> be a rotation about the square's center by a right angle.</p>
+<p>We write <span class="math inline">\(TS\)</span> to mean &quot;the result of rotating <span class="math inline">\(S\)</span> about its center by a right angle&quot;.</p>
+<p>We write <span class="math inline">\(TS = S\)</span> to mean &quot;rotating <span class="math inline">\(S\)</span> about its center by a right angle produces <span class="math inline">\(S\)</span> itself&quot;.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2020-01-26&gt;<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>&lt;2020-01-26&gt; <a href="https://en.wikipedia.org/wiki/Operator_(mathematics)">https://en.wikipedia.org/wiki/Operator_(mathematics)</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Real_coordinate_space">https://en.wikipedia.org/wiki/Real_coordinate_space</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Real_coordinate_space">https://en.wikipedia.org/wiki/Real_coordinate_space</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="https://en.wikipedia.org/wiki/Mathematical_analysis">https://en.wikipedia.org/wiki/Mathematical_analysis</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p><a href="https://en.wikipedia.org/wiki/Cardinal_direction#Additional_points">https://en.wikipedia.org/wiki/Cardinal_direction#Additional_points</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p><a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">https://en.wikipedia.org/wiki/Spherical_coordinate_system</a><a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>&lt;2020-01-26&gt; <a href="https://en.wikipedia.org/wiki/Coordinate_system">https://en.wikipedia.org/wiki/Coordinate_system</a><a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>page 1 in &quot;Two Approaches to Modelling the Universe: Synthetic Differential Geometry and Frame-Valued Sets&quot; by John L. Bell <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.1930&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.1930&amp;rep=rep1&amp;type=pdf</a><a href="#fnref9" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-26 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
