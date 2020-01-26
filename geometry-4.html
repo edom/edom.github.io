@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Geometry 4: Spheres</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Geometry 4: Spheres</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<p><span class="math inline">\(
+\newcommand\der{\operatorname{der}}
+\newcommand\Der{\mathrm{D}}
+\newcommand\dd{\operatorname{d}}
+\newcommand\ang[1]{#1^\circ}
+\newcommand\parenthesize[1]{\left(#1\right)}
+\newcommand\dif{\mathrm{d}}
+\newcommand\Dif{\Delta}
+\)</span></p>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#visualization">Visualization</a></span><span class="word_count">(43w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#spherical-coordinate-systems">Spherical coordinate systems</a></span><span class="word_count">(473w~3m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#solid-angles">Solid angles</a></span><span class="word_count">(6w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#distance-on-sphere-great-circles-geodesics">Distance on sphere, great circles, geodesics</a></span><span class="word_count">(55w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#manifold">Manifold</a></span><span class="word_count">(65w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#an-important-shift-in-thinking">An important shift in thinking</a></span><span class="word_count">(94w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#tangent-spaces">Tangent spaces</a></span><span class="word_count">(128w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#curvature">Curvature</a></span><span class="word_count">(63w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#local-coordinate-systems">Local coordinate systems</a></span><span class="word_count">(96w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#what-does-parallel-mean">What does &quot;parallel&quot; mean?</a></span><span class="word_count">(130w~1m)</span></li>
+<li><span class="section_number">11</span><span class="section_title"><a href="#local-metrics">Local metrics</a></span><span class="word_count">(181w~1m)</span></li>
+<li><span class="section_number">12</span><span class="section_title"><a href="#cartography-mapmaking">Cartography (mapmaking)</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">13</span><span class="section_title"><a href="#local-trajectory">Local trajectory?</a></span><span class="word_count">(13w~1m)</span></li>
+<li><span class="section_number">14</span><span class="section_title"><a href="#tensor-notation-and-terminology">Tensor notation and terminology</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">15</span><span class="section_title"><a href="#synthetic-differential-geometry">Synthetic differential geometry?</a></span><span class="word_count">(48w~1m)</span></li>
+<li><span class="section_number">16</span><span class="section_title"><a href="#chart-atlas">Chart, atlas?</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">17</span><span class="section_title"><a href="#bibliography">Bibliography</a></span><span class="word_count">(10w~1m)</span></li>
+</ul>
+</div>
+<h2 id="visualization"><span class="section_number">1</span><span class="section_title">Visualization</span></h2>
+<ul>
+<li>Visualize the surface of the Earth as a sphere.</li>
+<li>Visualize a person at a point on the surface of the Earth.</li>
+<li>Visualize yourself looking at that person and the Earth from outer space.</li>
+<li>This document has been designed to be understandable by replacing &quot;manifold&quot; with &quot;sphere&quot;.</li>
+</ul>
+<h2 id="spherical-coordinate-systems"><span class="section_number">2</span><span class="section_title">Spherical coordinate systems</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#mathematicians-heading">Mathematician's heading</a></span><span class="word_count">(58w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#the-spherical-coordinate-system">? The spherical coordinate system</a></span><span class="word_count">(247w~2m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#relationship-with-cartesian-coordinate-systems">Relationship with Cartesian coordinate systems</a></span><span class="word_count">(82w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#which-spherical-coordinate-system">Which spherical coordinate system?</a></span><span class="word_count">(87w~1m)</span></li>
+</ul>
+</div>
+<h3 id="mathematicians-heading"><span class="section_number">2.1</span><span class="section_title">Mathematician's heading</span></h3>
+<p>To simplify the explanation of the coming spherical coordinate system, we introduce &quot;heading&quot;.</p>
+<p>Our definition of heading begins with  pointing east (positive x-axis), and then goes counterclockwise, so  is north (positive y-axis),  is west (negative x-axis), and  is south (negative y-axis).</p>
+<p>Note that our heading differs from the navigator's heading, which begins with  pointing north and then goes clockwise.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<h3 id="the-spherical-coordinate-system"><span class="section_number">2.2</span><span class="section_title">? The spherical coordinate system</span></h3>
+<p>The spherical coordinates <span class="math inline">\((r,a,b)\)</span> mean &quot;set heading to <span class="math inline">\(a\)</span>, set elevation to <span class="math inline">\(b\)</span>, and then go the distance <span class="math inline">\(r\)</span>&quot;.</p>
+<p>The spherical coordinate system adds another angle component to the polar coordinate system.</p>
+<p>We now describe how to map the spherical coordinates <span class="math inline">\(S(r,a,b)\)</span> to Cartesian coordinates <span class="math inline">\(C(x,y,z)\)</span>. The slogan to remember is that <span class="math inline">\(S(r,a,b)\)</span> means “set heading to <span class="math inline">\(a\)</span>, set elevation to <span class="math inline">\(b\)</span>, and then go the distance <span class="math inline">\(r\)</span>”. Another slogan is “face east with your entire body, then turn your entire body left by angle <span class="math inline">\(a\)</span>, then turn your head up by angle <span class="math inline">\(b\)</span>, and then look at distance <span class="math inline">\(r\)</span>”.</p>
+<p>Let's read slower as we imagine the drawing.</p>
+<p>Let <span class="math inline">\(O\)</span> be the center of both the spherical coordinate system and the Cartesian coordinate system. Let their centers coincide.</p>
+<p>A negative angle <span class="math inline">\(-a\)</span> means the angle <span class="math inline">\(a\)</span> but in the reverse direction.</p>
+<p>Draw the point <span class="math inline">\(D\)</span> at <span class="math inline">\(C(r,0,0)\)</span>, which means that <span class="math inline">\(D\)</span> lies on the positive x-axis, at distance <span class="math inline">\(r\)</span> from <span class="math inline">\(O\)</span>.</p>
+<p>With the positive z-axis as the axis of rotation, rotate the vector <span class="math inline">\(OD\)</span>, by angle <span class="math inline">\(a\)</span> toward the positive y-axis (or toward the negative y-axis if <span class="math inline">\(a\)</span> is negative). Call the resulting vector <span class="math inline">\(OE\)</span>. Thus, the point <span class="math inline">\(E\)</span> is at <span class="math inline">\(C(r \cos a, r \sin a, 0)\)</span>, which is still on the xy-plane.</p>
+<p>Then, rotate the vector <span class="math inline">\(OE\)</span>, by angle <span class="math inline">\(b\)</span>, out of the xy-plane, toward the positive z-axis (or toward the negative z-axis if <span class="math inline">\(b\)</span> is negative). Call the resulting vector <span class="math inline">\(OF\)</span>.</p>
+<p>Then <span class="math inline">\(F\)</span> is the point described by <span class="math inline">\(S(r,a,b)\)</span>.</p>
+<h3 id="relationship-with-cartesian-coordinate-systems"><span class="section_number">2.3</span><span class="section_title">Relationship with Cartesian coordinate systems</span></h3>
+<p>Let's say that the point <span class="math inline">\(F\)</span> is at <span class="math inline">\(S(r,a,b)\)</span>, which is equal to <span class="math inline">\(C(x,y,z)\)</span>. By the definition of rotation and the congruence of triangles, we can convert spherical coordinates to Cartesian coordinates as follows:</p>
+<span class="math display">\[\begin{align}
+    x &amp;= r \cos a \cos b
+    \\
+    y &amp;= r \sin a \cos b
+    \\
+    z &amp;= r \sin b
+\end{align}
+\]</span>
+<p>We can convert Cartesian coordinates to spherical coordinates as follows:</p>
+<span class="math display">\[\begin{align}
+    r &amp;= \sqrt{x^2 + y^2 + z^2}
+    \\
+    \tan a &amp;= y/x
+    \\
+    \sin b &amp;= z/r
+\end{align}
+\]</span>
+<p>but we have to pick the angles that make the signs correct.</p>
+<p>Thus, we have just explained what is meant by the slogan “set heading to <span class="math inline">\(a\)</span>, set elevation to <span class="math inline">\(b\)</span>, and then go the distance <span class="math inline">\(r\)</span>”.</p>
+<h3 id="which-spherical-coordinate-system"><span class="section_number">2.4</span><span class="section_title">Which spherical coordinate system?</span></h3>
+<p>Note that our <span class="math inline">\(b\)</span> is elevation, not azimuth. The relationship between elevation and azimuth is <span class="math display">\[
+    \text{azimuth} = \ang{90} - \text{elevation}.
+\]</span></p>
+<p>If the elevation is zero, then the spherical coordinate system reduces to the polar coordinate system on the xy-plane. That method embeds the polar coordinate system into the xy-plane. Thus the angle <span class="math inline">\(a\)</span> is called heading angle, polar angle, or longitude. The angle <span class="math inline">\(b\)</span> is called elevation angle or latitude.</p>
+<p>Azimuth is angle from zenith. In this case, zenith is the z-axis.</p>
+<p>ISO standard? Azimuth? Elevation?</p>
+<p>What<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<h2 id="solid-angles"><span class="section_number">3</span><span class="section_title">Solid angles</span></h2>
+<ul>
+<li>Generalize angle to <a href="https://en.wikipedia.org/wiki/Solid_angle">solid angle</a>.</li>
+</ul>
+<h2 id="distance-on-sphere-great-circles-geodesics"><span class="section_number">4</span><span class="section_title">Distance on sphere, great circles, geodesics</span></h2>
+<ul>
+<li>Generalize <em>straight lines</em> to <em>geodesics</em>: shortest one-dimensional object connecting two points.
+<ul>
+<li>Let there be a sphere of radius <span class="math inline">\(r\)</span>.</li>
+<li>Let X be a point on the sphere.</li>
+<li>Let Y be a point on the sphere.</li>
+<li>? the sphere's shortest one-dimensional subspace that connects X and Y.</li>
+<li>The metric (which determines &quot;shortest&quot;) is implied from context.</li>
+</ul></li>
+</ul>
+<h2 id="manifold"><span class="section_number">5</span><span class="section_title">Manifold</span></h2>
+<ul>
+<li>A <em>manifold</em> is a <em>locally Euclidean space</em>.
+<ul>
+<li>&quot;Manifold&quot; generalizes &quot;smooth surface&quot;.</li>
+<li>For now, think of &quot;manifold&quot; as &quot;smooth surface&quot;.</li>
+<li>Example manifold: a sphere.</li>
+<li>Another example: a smooth two-dimensional surface in three-dimensional ambient Euclidean space, such as a curved sheet of paper.</li>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Manifold">manifold</a></em> is a &quot;space that locally resembles Euclidean space near each point&quot;.</li>
+<li>The manifold's <em>ambient space</em> is implied from context.</li>
+<li>Formally, every manifold is a space (a set of points).</li>
+</ul></li>
+</ul>
+<h2 id="an-important-shift-in-thinking"><span class="section_number">6</span><span class="section_title">An important shift in thinking</span></h2>
+<ul>
+<li>To begin studying differential geometry, we <em>shift our thinking</em> from global to local:
+<ul>
+<li>Previously: We associate some things with <em>the entire space</em>.</li>
+<li>Now: We associate some things with <em>each point in a manifold</em>.</li>
+<li>Previously, we have a space:
+<ul>
+<li>A metric is associated with <em>the entire space</em>.</li>
+<li>A coordinate system is associated with the entire space.</li>
+</ul></li>
+<li>Now, we have a manifold (which is also a space) but:
+<ul>
+<li>A <em>local</em> metric is associated with <em>each point of a manifold</em>.</li>
+<li>A <em>local</em> coordinate system is associated with each point of a manifold.</li>
+<li>A manifold can be globally non-Euclidean but is <em>locally</em><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> Euclidean.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="tangent-spaces"><span class="section_number">7</span><span class="section_title">Tangent spaces</span></h2>
+<ul>
+<li>Definitions for this section:
+<ul>
+<li>We can <em>derive</em> a vector space <span class="math inline">\(V(A)\)</span> from a space <span class="math inline">\(A\)</span> by collecting every possible subtraction of every pair of elements of <span class="math inline">\(A\)</span>.
+<ul>
+<li>An <span class="math inline">\(A\)</span>-vector is a member of <span class="math inline">\( V(A) = \SetBuilder{x-y}{x,y\in A} \)</span>.</li>
+<li>A vector can be created by <em>subtracting two points</em>.</li>
+</ul></li>
+<li>Let <span class="math inline">\(S\)</span> be a space whose ambient space is <span class="math inline">\(A\)</span>.</li>
+<li>Let <span class="math inline">\(p\)</span> be a point in <span class="math inline">\(S\)</span>.</li>
+<li>A <em>plane</em> in ambient space <span class="math inline">\(A\)</span> is <span class="math inline">\( \SetBuilder{x}{n \cdot (x-b) = 0, ~ x \in A} \)</span>, where <span class="math inline">\(n \in V(A)\)</span> is a vector that is <em>normal</em> to the plane, and <span class="math inline">\(b \in A\)</span> is any point on the plane.</li>
+</ul></li>
+<li>Understand that <span class="math inline">\(T_p(S)\)</span>, the <em><a href="https://en.wikipedia.org/wiki/Tangent_space">tangent space</a> of <span class="math inline">\(S\)</span> at <span class="math inline">\(p\)</span></em>, is a vector space of every <span class="math inline">\(A\)</span>-vector that is tangent to <span class="math inline">\(S\)</span> at <span class="math inline">\(p\)</span>.
+<ul>
+<li>The <em>ambient space</em> is implied from context.</li>
+</ul></li>
+</ul>
+<h2 id="curvature"><span class="section_number">8</span><span class="section_title">Curvature</span></h2>
+<ul>
+<li>Understand <a href="https://en.wikipedia.org/wiki/Osculating_circle"><em>osculating circles</em></a> (kissing circles).</li>
+<li>Understand that the <a href="https://en.wikipedia.org/wiki/Curvature"><em>curvature</em></a> (<em>scalar curvature</em> or <em>Gaussian curvature</em>) of a curve at a point is the reciprocal of the radius of the circle that osculates the curve at that point. Formally, <span class="math inline">\( K = 1/R \)</span>.
+<ul>
+<li>A straight line has zero curvature everywhere.</li>
+</ul></li>
+<li>Osculating circles readily generalize to <em>osculating hyperspheres</em>:
+<ul>
+<li>Replace normal lines with normal hyperplanes.</li>
+</ul></li>
+<li>Understand <em>Riemann curvature tensor</em> <span class="citation" data-cites="arnold1989mathematical">[<a href="#ref-arnold1989mathematical">1</a>]</span>?</li>
+<li>Ricci curvature function</li>
+</ul>
+<h2 id="local-coordinate-systems"><span class="section_number">9</span><span class="section_title">Local coordinate systems</span></h2>
+<ul>
+<li>Understand <em>local coordinate systems</em>.</li>
+<li>A local basis at <span class="math inline">\(p\)</span> is a basis for the tangent space at <span class="math inline">\(p\)</span>.
+<ul>
+<li>Recall:
+<ul>
+<li>Such tangent space is a vector space.</li>
+<li>A basis corresponds to a linear coordinate system.</li>
+</ul></li>
+</ul></li>
+<li>geodesic normal coordinate system?</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#local-coordinate-systems-on-a-sphere">Local coordinate systems on a sphere</a></span><span class="word_count">(62w~1m)</span></li>
+</ul>
+</div>
+<h3 id="local-coordinate-systems-on-a-sphere"><span class="section_number">9.1</span><span class="section_title">Local coordinate systems on a sphere</span></h3>
+<ul>
+<li>Consider a sphere with center <span class="math inline">\(O = (0,0,0)\)</span> and radius <span class="math inline">\(r\)</span>.</li>
+<li>At point <span class="math inline">\((r,0,0)\)</span>, we can have these local coordinate axes (local basis vectors): <span class="math inline">\((0,1,0)\)</span> and <span class="math inline">\((0,0,1)\)</span>. The sphere's tangent space at <span class="math inline">\((r,0,0)\)</span> is a linear combination of those two local basis vectors. Thus a <span class="math inline">\((r,0,0)\)</span>-local Cartesian coordinate tuple <span class="math inline">\((u,v)\)</span> corresponds to the ambient Cartesian coordinate tuple <span class="math inline">\((r,u,v)\)</span>.</li>
+</ul>
+<h2 id="what-does-parallel-mean"><span class="section_number">10</span><span class="section_title">What does &quot;parallel&quot; mean?</span></h2>
+<ul>
+<li>What does it mean for two lines to be <a href="https://www.etymonline.com/word/parallel">parallel</a> (&quot;beside one another&quot;)?
+<ul>
+<li>In Euclidean geometry, two lines are parallel iff either they are the same line or they never meet. (Recall that a line extends infinitely in both directions.)</li>
+<li>Generalize: two vectors are parallel if they have the same direction.</li>
+</ul></li>
+<li>What does it mean for two vectors to have the same direction?</li>
+<li>? <a href="https://en.wikipedia.org/wiki/Vector_field#Vector_fields_on_manifolds">https://en.wikipedia.org/wiki/Vector_field#Vector_fields_on_manifolds</a></li>
+<li>Deforming a manifold deforms its vector field in the same way?
+<ul>
+<li>Draw two different parallel horizontal lines on a sheet of paper.</li>
+<li>Roll the paper into a cylinder.</li>
+<li>The lines becomes circles!</li>
+</ul></li>
+<li>Two great circles of a sphere are &quot;parallel&quot; in what sense?</li>
+<li>Generalize &quot;parallel&quot; to &quot;<a href="https://en.wikipedia.org/wiki/Parallel_transport">parallel transport</a>&quot;.
+<ul>
+<li>An explanation of parallel transport <a href="https://physics.stackexchange.com/a/232119">https://physics.stackexchange.com/a/232119</a></li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Affine_connection#Motivation_from_surface_theory">affine connection</a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>
+<ul>
+<li><em>Roll</em> a plane along a manifold such that the plane is always <em>touching</em> the manifold. (Recall: tangent = touching)</li>
+</ul></li>
+</ul>
+<h2 id="local-metrics"><span class="section_number">11</span><span class="section_title">Local metrics</span></h2>
+<ul>
+<li>The <em>local metric at point <span class="math inline">\(p\)</span></em> is <span class="math inline">\( g(p) \)</span>.
+<ul>
+<li>Note that <span class="math inline">\( g \)</span> is a function that takes a point and produces a function that takes two tangent vectors. We follow currying convention: <span class="math inline">\( [g(p)](u,v) = g(p,u,v) \)</span>.</li>
+</ul></li>
+<li>Difference from ordinary metrics:
+<ul>
+<li>A metric takes two points, but a local metric takes two <em>tangent vectors</em>.</li>
+<li>Interpret <span class="math inline">\(g(p,u,v)\)</span> as the local distance between point <span class="math inline">\(p+u\)</span> and point <span class="math inline">\(p+v\)</span>.
+<ul>
+<li>Remember point–vector addition.</li>
+<li>The points <span class="math inline">\(p+u\)</span> and <span class="math inline">\(p+v\)</span> often lie <em>outside</em> the manifold, although this error is small for short tangent vectors.</li>
+</ul></li>
+<li><span class="math inline">\( d(p+u,p+v) \)</span> and <span class="math inline">\( g(p,u,v) \)</span> may differ. The ambient space's global metric and the manifold's local metric may not coincide. For example, the distance between two opposite points on a sphere is:
+<ul>
+<li><span class="math inline">\(2r\)</span> if we drill through the sphere (this is the ambient space's metric);</li>
+<li><span class="math inline">\(\pi r\)</span> if we stay on the sphere (this is the sphere's metric).</li>
+</ul></li>
+</ul></li>
+<li>If <span class="math inline">\(g(p)\)</span> is linear (with respect to what?), we can state it as a <em>metric tensor</em>.
+<ul>
+<li><span class="math inline">\( g(p,\dif u,\dif v) = \sum_i \sum_k g_{ik} (\dif u_i) (\dif v_k) \)</span></li>
+</ul></li>
+<li>The differential form of the three-dimensional Euclidean metric? <span class="math display">\[ (\dif s)^2 = (\dif x)^2 + (\dif y)^2 + (\dif z)^2 \]</span></li>
+</ul>
+<h2 id="cartography-mapmaking"><span class="section_number">12</span><span class="section_title">Cartography (mapmaking)</span></h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Tissot%27s_indicatrix">Tissot's indicatrices</a> visualize a metric tensor by scattering many circles throughout a space so that we can see how the space's metric tensor distorts them. This method tells us how much our map is distorted.
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Fuller_projection">WP:Fuller projection, Dymaxion map</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Map%E2%80%93territory_relation">WP:Map–territory relation</a></li>
+</ul></li>
+</ul>
+<h2 id="local-trajectory"><span class="section_number">13</span><span class="section_title">Local trajectory?</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">13.1</span><span class="section_title"><a href="#the-length-of-a-curve-in-a-manifold-integral-of-local-metric">The length of a curve in a manifold; integral of local metric?</a></span><span class="word_count">(12w~1m)</span></li>
+</ul>
+</div>
+<h3 id="the-length-of-a-curve-in-a-manifold-integral-of-local-metric"><span class="section_number">13.1</span><span class="section_title">The length of a curve in a manifold; integral of local metric?</span></h3>
+<h2 id="tensor-notation-and-terminology"><span class="section_number">14</span><span class="section_title">Tensor notation and terminology</span></h2>
+<ul>
+<li>Understand that <span class="math inline">\(g_{ij}\)</span> <em>notates</em> a tensor, not <em>is</em> a tensor.
+<ul>
+<li><span class="math inline">\(g\)</span> is the tensor.</li>
+<li><span class="math inline">\(g_{ij}\)</span> is a real number.</li>
+</ul></li>
+<li>? covariance and contravariance with respect to what?</li>
+</ul>
+<h2 id="synthetic-differential-geometry"><span class="section_number">15</span><span class="section_title">Synthetic differential geometry?</span></h2>
+<ul>
+<li>Synthetic differential geometry <a href="http://home.sandiego.edu/~shulman/papers/sdg-pizza-seminar.pdf">http://home.sandiego.edu/~shulman/papers/sdg-pizza-seminar.pdf</a>
+<ul>
+<li>Key idea of <em>nilsquare infinitesimals</em>: <span class="math inline">\(d \neq 0\)</span> but <span class="math inline">\(d^2 = 0\)</span>.
+<ul>
+<li>That's quite a statement of faith.</li>
+<li><a href="https://en.wikipedia.org/wiki/Smooth_infinitesimal_analysis">https://en.wikipedia.org/wiki/Smooth_infinitesimal_analysis</a>
+<ul>
+<li>&quot;smooth infinitesimal analysis differs from non-standard analysis in [that smooth infinitesimal analysis uses] nonclassical logic&quot;</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Synthetic Differential Geometry: An application to Einstein’s Equivalence Principle <a href="http://www.math.ru.nl/~landsman/scriptieTim.pdf">http://www.math.ru.nl/~landsman/scriptieTim.pdf</a></li>
+<li>See the references in
+<ul>
+<li><a href="https://ncatlab.org/nlab/show/synthetic+differential+geometry">https://ncatlab.org/nlab/show/synthetic+differential+geometry</a></li>
+<li><a href="https://mathoverflow.net/questions/186851/synthetic-vs-classical-differential-geometry">https://mathoverflow.net/questions/186851/synthetic-vs-classical-differential-geometry</a></li>
+</ul></li>
+</ul>
+<h2 id="chart-atlas"><span class="section_number">16</span><span class="section_title">Chart, atlas?</span></h2>
+<ul>
+<li>Are we interested in this detail?</li>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Atlas_(topology)">chart</a></em> (a <em>coordinate chart</em>) for <span class="math inline">\(S\)</span> is a <a href="https://en.wikipedia.org/wiki/Homeomorphism">homeomorphism</a> between a subspace of <span class="math inline">\(S\)</span> and a subspace of an Euclidean space.</li>
+<li>An <em>atlas</em> is a collection of charts.</li>
+<li>&quot;There are ways of describing curves without coordinates […]&quot;<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></li>
+</ul>
+<h2 id="bibliography" class="unnumbered"><span class="section_number">17</span><span class="section_title">Bibliography</span></h2>
+<div id="refs" class="references">
+<div id="ref-arnold1989mathematical">
+<p>[1] Arnold, V.I. 1989. <em>Mathematical methods of classical mechanics</em>. Springer-Verlag.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Cardinal_direction#Additional_points">https://en.wikipedia.org/wiki/Cardinal_direction#Additional_points</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">https://en.wikipedia.org/wiki/Spherical_coordinate_system</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Local_property">https://en.wikipedia.org/wiki/Local_property</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>&lt;2020-01-27&gt;<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>&lt;2020-01-26&gt; <a href="https://en.wikipedia.org/wiki/Coordinate_system">https://en.wikipedia.org/wiki/Coordinate_system</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-26 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Geometry 2: Coordinates</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Geometry 2: Coordinates</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#real-tuple-spaces">Real tuple spaces</a></span><span class="word_count">(30w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#coordinate-systems">Coordinate systems</a></span><span class="word_count">(641w~4m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#real-vectors">Real vectors</a></span><span class="word_count">(42w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#formulating-euclidean-distances-with-cartesian-coordinate-systems">Formulating Euclidean distances with Cartesian coordinate systems</a></span><span class="word_count">(107w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#dot-product-orthogonality">Dot product, orthogonality</a></span><span class="word_count">(31w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#coordinate-transformations">Coordinate transformations</a></span><span class="word_count">(211w~2m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#matrices">Matrices</a></span><span class="word_count">(49w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#two-ways-of-computing-intersection">Two ways of computing intersection</a></span><span class="word_count">(104w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#modeling-position-with-coordinates">Modeling position with coordinates</a></span><span class="word_count">(141w~1m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#an-example-basis">An example basis?</a></span><span class="word_count">(80w~1m)</span></li>
+</ul>
+</div>
+<h2 id="real-tuple-spaces"><span class="section_number">1</span><span class="section_title">Real tuple spaces</span></h2>
+<ul>
+<li>Conflate an <em>Euclidean space</em> and its corresponding <em>real tuple space</em>.
+<ul>
+<li>Difference:
+<ul>
+<li>An Euclidean space is a set of <em>points</em>.</li>
+<li>A real tuple space is a set of <em>tuples of real numbers</em>.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="coordinate-systems"><span class="section_number">2</span><span class="section_title">Coordinate systems</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">2.1</span><span class="section_title"><a href="#defining-coordinate-systems">Defining coordinate systems</a></span><span class="word_count">(146w~1m)</span></li>
+<li><span class="section_number">2.2</span><span class="section_title"><a href="#conflating-a-name-and-its-referent">Conflating a name and its referent</a></span><span class="word_count">(46w~1m)</span></li>
+<li><span class="section_number">2.3</span><span class="section_title"><a href="#cartesian-coordinate-systems">Cartesian coordinate systems</a></span><span class="word_count">(96w~1m)</span></li>
+<li><span class="section_number">2.4</span><span class="section_title"><a href="#imagining-the-two-dimensional-cartesian-coordinate-system">Imagining the two-dimensional Cartesian coordinate system</a></span><span class="word_count">(86w~1m)</span></li>
+<li><span class="section_number">2.5</span><span class="section_title"><a href="#the-rectangular-coordinate-system">? The rectangular coordinate system</a></span><span class="word_count">(82w~1m)</span></li>
+<li><span class="section_number">2.6</span><span class="section_title"><a href="#the-polar-coordinate-system">? The polar coordinate system</a></span><span class="word_count">(189w~1m)</span></li>
+</ul>
+</div>
+<h3 id="defining-coordinate-systems"><span class="section_number">2.1</span><span class="section_title">Defining coordinate systems</span></h3>
+<ul>
+<li>A <em>coordinate system</em> is a scheme for naming points with tuples of real numbers.
+<ul>
+<li>We need to name <em>all</em> points because we need to refer to all of them.</li>
+<li>A coordinate system is a function whose domain is the set of real <span class="math inline">\(n\)</span>-tuples and whose codomain is an <span class="math inline">\(n\)</span>-dimensional space.
+<ul>
+<li>A coordinate system takes a coordinate tuple and gives a point.</li>
+<li>The name of a point is a tuple of numbers.</li>
+<li>A coordinate system over E describes how to <em>name</em> each point in E, how to locate those points.</li>
+</ul></li>
+</ul></li>
+<li>Definitions:
+<ul>
+<li>Let <span class="math inline">\(C\)</span> be a set of coordinate tuples.</li>
+<li>Let <span class="math inline">\(S\)</span> be a space.</li>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Coordinate_system">coordinate system</a></em> for <span class="math inline">\(S\)</span> is a surjective function <span class="math inline">\(C \to S\)</span> where <span class="math inline">\(C \subseteq \Real^n\)</span>.</li>
+<li>We may say:
+<ul>
+<li><span class="math inline">\(x\)</span> <em>names</em> <span class="math inline">\(s(x)\)</span>.</li>
+<li><span class="math inline">\(x\)</span> <em>refers to</em> <span class="math inline">\(s(x)\)</span>.</li>
+<li><span class="math inline">\(x\)</span> <em>references</em> <span class="math inline">\(s(x)\)</span>.</li>
+<li><span class="math inline">\(x\)</span> is an <em><span class="math inline">\(s\)</span>-name</em> of <span class="math inline">\(s(x)\)</span>.</li>
+<li><span class="math inline">\(x\)</span> is a <em><span class="math inline">\(C\)</span>-name</em> of <span class="math inline">\(s(x)\)</span>.</li>
+<li><span class="math inline">\(s(x)\)</span> is the <em>referent</em> of <span class="math inline">\(x\)</span>.</li>
+<li><span class="math inline">\(s(x)\)</span> is the <span class="math inline">\(s\)</span>-<em>referent</em> of <span class="math inline">\(x\)</span>.</li>
+<li><span class="math inline">\(s(x)\)</span> is the <span class="math inline">\(C\)</span>-<em>referent</em> of <span class="math inline">\(x\)</span>.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="conflating-a-name-and-its-referent"><span class="section_number">2.2</span><span class="section_title">Conflating a name and its referent</span></h3>
+<ul>
+<li>It is often convenient to conflate a point and its coordinates: we often say &quot;the point <span class="math inline">\((x,y,z)\)</span>&quot; to mean &quot;the point <em>whose coordinates are</em> <span class="math inline">\((x,y,z)\)</span>&quot;, in the same way we often say &quot;John&quot; to mean &quot;the man whose name is 'John'&quot;.</li>
+</ul>
+<h3 id="cartesian-coordinate-systems"><span class="section_number">2.3</span><span class="section_title">Cartesian coordinate systems</span></h3>
+<ul>
+<li>See <a href="https://commons.wikimedia.org/wiki/File:Cartesian-coordinate-system.svg#">picture</a>.</li>
+<li>See also <a href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system">Cartesian coordinate system</a>.</li>
+<li>The <em>Cartesian basis vectors</em>:
+<ul>
+<li><span class="math inline">\(e_k\)</span> is the zero vector <em>except</em> the <span class="math inline">\(k\)</span>th element is 1.</li>
+<li><p>In two dimensions:</p>
+<span class="math display">\[\begin{align*}
+ e_1 &amp;= (1,0)
+ \\ e_2 &amp;= (0,1)
+\end{align*}
+\]</span></li>
+<li><p>In three dimensions:</p>
+<span class="math display">\[\begin{align*}
+ e_1 &amp;= (1,0,0)
+ \\ e_2 &amp;= (0,1,0)
+ \\ e_3 &amp;= (0,0,1)
+\end{align*}
+\]</span></li>
+<li><p>In <span class="math inline">\(n\)</span> dimensions:</p>
+<span class="math display">\[\begin{align*}
+ e_1 &amp;= (1,0,\ldots,0,0)
+ \\ e_2 &amp;= (0,1,\ldots,0,0)
+ \\ \vdots
+ \\ e_n &amp;= (0,0,\ldots,0,1)
+\end{align*}
+\]</span></li>
+</ul></li>
+<li>Visual interpretation:
+<ul>
+<li>Interpret a <em>basis vector</em> as a <em>coordinate axis</em>.</li>
+<li>Negative X-axis is the opposite direction to positive X-axis, and so on.</li>
+<li><p>The standard two-dimensional Cartesian coordinate system:</p>
+<table>
+<caption>Standard two-dimensional directions</caption>
+<thead>
+<tr class="header">
+<th>direction</th>
+<th>XY</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rightward</td>
+<td>X positive</td>
+</tr>
+<tr class="even">
+<td>upward</td>
+<td>Y positive</td>
+</tr>
+</tbody>
+</table></li>
+<li>The standard three-dimensional Cartesian coordinate system is <a href="https://en.wikipedia.org/wiki/Right-hand_rule">right-handed</a>.
+<ul>
+<li>With your right hand:
+<ul>
+<li>Form an L with the thumb and the index finger.</li>
+<li>Form another L with the index and the middle finger.</li>
+<li><p>Then see these table.</p>
+<table>
+<caption>Standard three-dimensional directions</caption>
+<thead>
+<tr class="header">
+<th>direction</th>
+<th>right hand finger</th>
+<th>XYZ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rightward</td>
+<td>right thumb</td>
+<td>X positive</td>
+</tr>
+<tr class="even">
+<td>forward</td>
+<td>right index</td>
+<td>Y positive</td>
+</tr>
+<tr class="odd">
+<td>upward</td>
+<td>right middle</td>
+<td>Z positive</td>
+</tr>
+</tbody>
+</table></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="imagining-the-two-dimensional-cartesian-coordinate-system"><span class="section_number">2.4</span><span class="section_title">Imagining the two-dimensional Cartesian coordinate system</span></h3>
+<ul>
+<li>Pick two rulers (graduated straightedges), called X and Y.</li>
+<li>Arrange them so that they intersect at one point (called the &quot;origin&quot;) and are at a right angle to each other.</li>
+<li>Extend each ruler infinitely in both directions.</li>
+<li>Then, assume that space is homogenous (is the same everywhere) and isotropic (is the same in all directions).</li>
+<li>To find a point named (x,y): go right x units in ruler X, and then go up y units in ruler Y. Observe that each point has a unique name.</li>
+</ul>
+<h3 id="the-rectangular-coordinate-system"><span class="section_number">2.5</span><span class="section_title">? The rectangular coordinate system</span></h3>
+<p><span class="math inline">\(R(x,y) = x e_1 + y e_2\)</span>.</p>
+<p><span class="math inline">\(R(x) = x_1 e_1 + x_2 e_2\)</span>.</p>
+<p>In this system, the coordinates are the scalar coefficients in the linear combination of basis vectors. The coordinates describe how the basis vectors should be linearly combined to form the described vector.</p>
+<p>Let <span class="math inline">\(T : V^2 \to V^2\)</span> be a linear transformation. Then <span class="math inline">\(T(R(x)) = T(x_1 e_1 + x_2 e_2) = x_1 \cdot T(e_1) + x_2 \cdot T(e_2) = x_1 e_1&#39; + x_2 e_2&#39; = R&#39;(x) \)</span>.</p>
+<h3 id="the-polar-coordinate-system"><span class="section_number">2.6</span><span class="section_title">? The polar coordinate system</span></h3>
+<p><span class="math inline">\(P(r,t) = r e_1 \text{ rotated } t \text{ radians counterclockwise}\)</span>.</p>
+<p>\section{Locating the same point with different coordinate systems}</p>
+<p>Example of coordinate transformation: The same point in the same two-dimensional Euclidean space is described by both the polar coordinates <span class="math inline">\( (r,\theta) \)</span> and the rectangular coordinates <span class="math inline">\( (r \cos \theta, r \sin \theta) \)</span>. The transformation is <span class="math inline">\( (r,\theta) \to (r \cos \theta, r \sin \theta) \)</span>.</p>
+<p>What<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>A <em>coordinate system</em> <span class="math inline">\(M : C \to S\)</span> is a surjective mapping from <em>coordinate space</em> <span class="math inline">\(C\)</span> to <em>target space</em> <span class="math inline">\(S\)</span>.</p>
+<p>A <em>coordinate</em> is a point in <span class="math inline">\(C\)</span>. The coordinate system tells us how to get to a point.</p>
+<p>The <span class="math inline">\(n\)</span>-dimensional real coordinate space is <span class="math inline">\(\mathbb{R}^n\)</span>. It is also called the real <span class="math inline">\(n\)</span>-space. A point in the real <span class="math inline">\(n\)</span>-space is an <span class="math inline">\(n\)</span>-tuple of real numbers <span class="math inline">\((x_1,\ldots,x_n)\)</span>.</p>
+<p><span class="math inline">\((x,y)\)</span> is the tuple of coordinates, <span class="math inline">\(x\)</span> is the x-coordinate, and <span class="math inline">\(y\)</span> is the y-coordinate.</p>
+<p>Coordinate systems unify geometry and mathematical analysis. With coordinates, we can solve geometric problems by numbers, calculus, and algebra, so that computers can find the intersection of geometric objects by solving the corresponding system of equations, and find the size of a geometric object by solving the corresponding integral.</p>
+<h2 id="real-vectors"><span class="section_number">3</span><span class="section_title">Real vectors</span></h2>
+<ul>
+<li>Now that we have Cartesian coordinate systems, we can use real numbers to describe vectors.</li>
+<li>A real vector is a tuple of real numbers.</li>
+<li>A real tuple space conflates points and vectors.
+<ul>
+<li>A point is a real tuple.</li>
+<li>A vector is also a real tuple?</li>
+</ul></li>
+</ul>
+<h2 id="formulating-euclidean-distances-with-cartesian-coordinate-systems"><span class="section_number">4</span><span class="section_title">Formulating Euclidean distances with Cartesian coordinate systems</span></h2>
+<ul>
+<li>Understand the <em><span class="math inline">\(n\)</span>-dimensional Euclidean metric in Cartesian coordinate systems</em>: <span class="math display">\[ d(x,y) = \sqrt{\sum_{k=1}^n (x_k-y_k)^2} \]</span></li>
+</ul>
+<p>The three-dimensional-Euclidean distance between a point <span class="math inline">\(A = (x,y,z)\)</span> and another point <span class="math inline">\(B = (x&#39;,y&#39;,z&#39;)\)</span> is written <span class="math inline">\(\norm{AB}\)</span> or <span class="math inline">\(d(A,B)\)</span>, is defined as:</p>
+<span class="math display">\[\begin{align*}
+\norm{AB} &amp;= d(A,B)
+\\ &amp;= \sqrt{(AB)_1^2 + (AB)_2^2 + (AB)_3^2}
+\\ &amp;= d((x,y,z),(x&#39;,y&#39;,z&#39;))
+\\ &amp;= \sqrt{(x&#39;-x)^2 + (y&#39;-y)^2 + (z&#39;-z)^2}
+\end{align*}
+\]</span>
+<p>They are different ways of writing the same thing; <span class="math inline">\(d(A,B)\)</span> is &quot;synthetic geometry&quot; style, whereas <span class="math inline">\(d((x,y,z),(x&#39;,y&#39;,z&#39;))\)</span> is &quot;analytic geometry&quot; style. However, without numbers, we cannot express <span class="math inline">\(d(A,B)\)</span> as a square root, because square root is a numeric operation, not a geometric operation. We have just witnessed the usefulness of analytic geometry.</p>
+<p>The &quot;synthetic geometry&quot; style of computing <span class="math inline">\(d(A,B)\)</span> is to use a ruler to measure the length.</p>
+<h2 id="dot-product-orthogonality"><span class="section_number">5</span><span class="section_title">Dot product, orthogonality</span></h2>
+<ul>
+<li>In <span class="math inline">\(n\)</span> dimensions: <span class="math display">\[ x \cdot y = \sum_{k=1}^n x_k \cdot y_k \]</span></li>
+<li>Two vectors <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are <em>orthogonal</em> iff <span class="math inline">\( x \cdot y = 0 \)</span>.</li>
+<li>What is the visual interpretation?</li>
+</ul>
+<h2 id="coordinate-transformations"><span class="section_number">6</span><span class="section_title">Coordinate transformations</span></h2>
+<ul>
+<li>Definitions for this section:
+<ul>
+<li>Let <span class="math inline">\(C\)</span> be a set of coordinate tuples.</li>
+<li>Let <span class="math inline">\(S\)</span> be a space.</li>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Coordinate_system">coordinate system</a></em> for <span class="math inline">\(S\)</span> is a surjective function <span class="math inline">\(C \to S\)</span> where <span class="math inline">\(C \subseteq \Real^n\)</span>.</li>
+<li>Let <span class="math inline">\(s : C \to S\)</span> be a coordinate system.</li>
+<li>Let <span class="math inline">\(s&#39; : C&#39; \to S\)</span> be a coordinate system.</li>
+</ul></li>
+<li>&quot;Coordinate system transformation&quot; means &quot;coordinate transformation&quot;.</li>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Coordinate_system#Transformations">coordinate transformation</a></em> from <span class="math inline">\(s\)</span> to <span class="math inline">\(s&#39;\)</span> is a function <span class="math inline">\(t : C \to C&#39;\)</span> such that <span class="math inline">\(s(c) = s&#39;(c&#39;)\)</span> where <span class="math inline">\(c&#39; = t(c)\)</span> for all <span class="math inline">\(c \in C\)</span>.</li>
+<li><p>A coordinate transformation changes the name but preserves the point.</p>
+<span class="math display">\[\begin{align*}
+ s(c) &amp;= s&#39;(c&#39;) = s&#39;(t(c))
+ \\ s &amp;= s&#39; \circ t
+ \\ (s&#39;)^{-1} \circ s &amp;= t
+\end{align*}
+\]</span></li>
+<li>Linear coordinate systems and linear transformations
+<ul>
+<li>If <span class="math inline">\(s\)</span> is linear, then there is a matrix <span class="math inline">\(E\)</span> such that <span class="math inline">\(s(x) = Ex\)</span>.</li>
+<li>If <span class="math inline">\(s&#39;\)</span> is linear, then there is a matrix <span class="math inline">\(F\)</span> such that <span class="math inline">\(s&#39;(x) = Fx\)</span>.</li>
+<li>If <span class="math inline">\(s\)</span> and <span class="math inline">\(s&#39;\)</span> are linear, then <span class="math inline">\(t\)</span> is linear, and there is a matrix <span class="math inline">\(T\)</span> such that <span class="math inline">\(t(x) = Tx\)</span>.
+<ul>
+<li><span class="math inline">\( F^{-1} E = T \)</span></li>
+</ul></li>
+<li>Understand <em>basis vectors</em> (coordinate axes?).</li>
+<li>Understand <em>span</em>.</li>
+<li>Understand <em>collinearity</em>.</li>
+<li>Understand <em>linear operators</em>?</li>
+</ul></li>
+<li>Do we need non-linear coordinate systems?</li>
+<li>? curvilinear coordinate systems</li>
+<li>? curved coordinate systems</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">6.1</span><span class="section_title"><a href="#converting-polar-coordinate-tuples-to-rectangular-coordinate-tuples">? Converting polar coordinate tuples to rectangular coordinate tuples</a></span><span class="word_count">(44w~1m)</span></li>
+</ul>
+</div>
+<h3 id="converting-polar-coordinate-tuples-to-rectangular-coordinate-tuples"><span class="section_number">6.1</span><span class="section_title">? Converting polar coordinate tuples to rectangular coordinate tuples</span></h3>
+<p>Both the rectangular coordinate <span class="math inline">\((r\cos\theta, r\sin\theta)\)</span> and the polar coordinate <span class="math inline">\((r,\theta)\)</span> describe the same point in two-dimensional Euclidean space. <span class="math display">\[
+R(r\cos\theta, r\sin\theta) = P(r,\theta)
+\]</span></p>
+<p>A point in a space can have different coordinates in different coordinate systems.</p>
+<h2 id="matrices"><span class="section_number">7</span><span class="section_title">Matrices</span></h2>
+<ul>
+<li>Relationship between matrices, bases (concatenation of basis vectors?), linear system of equations, linear transformations, and linear functions
+<ul>
+<li>Confusing names: <a href="https://en.wikipedia.org/wiki/Operator_(mathematics)#Linear_operators">linear operator</a>, <a href="https://en.wikipedia.org/wiki/Linear_map">linear map</a>, linear function</li>
+<li>'However, when using &quot;linear operator&quot; instead of &quot;linear map&quot;, mathematicians often mean actions on vector spaces of functions, which also preserve other properties, such as continuity.'<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></li>
+</ul></li>
+</ul>
+<h2 id="two-ways-of-computing-intersection"><span class="section_number">8</span><span class="section_title">Two ways of computing intersection</span></h2>
+<ul>
+<li>There are two ways of computing the intersection of several geometric objects:
+<ul>
+<li>graphical: draw and see</li>
+<li>algebraic: manipulate a system of simultaneous equations</li>
+</ul></li>
+<li>The algebraic way is easier to automate with electronic computers and works for all numbers of dimensions.</li>
+<li>Understand the intersection of two spaces.
+<ul>
+<li>Understand <em>systems of equations</em> (<em>simultaneous equations</em>).</li>
+<li>Understand <em>systems of linear equations</em>?
+<ul>
+<li>Understand <em>matrices</em>.</li>
+</ul></li>
+<li>The intersection of two spaces contains every point that is common to both spaces: <span class="math inline">\( P \cap Q = \SetBuilder{x}{p(x) \wedge q(x)} \)</span>, where <span class="math inline">\(p(x)\)</span> means &quot;point <span class="math inline">\(x\)</span> is in space <span class="math inline">\(P\)</span>&quot;.
+<ul>
+<li>space intersection ~ set intersection ~ logical conjunction</li>
+</ul></li>
+</ul></li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">8.1</span><span class="section_title"><a href="#example-intersection-of-several-lines">Example: Intersection of several lines</a></span><span class="word_count">(5w~1m)</span></li>
+<li><span class="section_number">8.2</span><span class="section_title"><a href="#example-intersection-of-a-circle-and-a-line">Example: Intersection of a circle and a line</a></span><span class="word_count">(8w~1m)</span></li>
+</ul>
+</div>
+<h3 id="example-intersection-of-several-lines"><span class="section_number">8.1</span><span class="section_title">Example: Intersection of several lines</span></h3>
+<h3 id="example-intersection-of-a-circle-and-a-line"><span class="section_number">8.2</span><span class="section_title">Example: Intersection of a circle and a line</span></h3>
+<h2 id="modeling-position-with-coordinates"><span class="section_number">9</span><span class="section_title">Modeling position with coordinates</span></h2>
+<p>We pick a point called the <em>origin</em>, and pick three directions. Then, each point in space can be described as a tuple <span class="math inline">\((x,y,z)\)</span> of three numbers; that tuple means &quot;From the origin, go <span class="math inline">\(x\)</span> steps east, <span class="math inline">\(y\)</span> steps north, and <span class="math inline">\(z\)</span> steps up.&quot;</p>
+<p>A tuple is a bunch of numbers.</p>
+<p>A coordinate system gives meaning to such tuples.</p>
+<p>Cartesian coordinate systems?</p>
+<p>A coordinate system is a method of naming every point.</p>
+<p>Let <span class="math inline">\(E^n\)</span> mean the <span class="math inline">\(n\)</span>-dimensional Euclidean space.</p>
+<p>A Cartesian coordinate system is a geometric interpretation of a real tuple space. Such system uses a tuple in <span class="math inline">\(\Real^n\)</span> and three orthogonal axes to describe a point in <span class="math inline">\(E^n\)</span>. &quot;Axes&quot; here is plural of &quot;axis&quot;, not of &quot;axe&quot;.</p>
+<p>For an example of a two-dimensional Cartesian coordinate system, see <a href="https://en.wikipedia.org/wiki/File:Cartesian-coordinate-system.svg?">picture</a>. The positive x-axis points right. The positive y-axis points up.</p>
+<p>In three dimensions: (A picture would be nice.)</p>
+<h2 id="an-example-basis"><span class="section_number">10</span><span class="section_title">An example basis?</span></h2>
+<p>Imagine a flat sheet of paper.</p>
+<p>Draw a point <span class="math inline">\(A\)</span>.</p>
+<p>Draw a vector named <span class="math inline">\(i\)</span>, from <span class="math inline">\(A\)</span>, 1 cm long, pointing right.</p>
+<p>Draw another vector named <span class="math inline">\(j\)</span>, also from <span class="math inline">\(A\)</span>, 1 cm long, but pointing up.</p>
+<p>Thus, the vectors <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> are <em>orthogonal</em>.</p>
+<p>Then, we declare the basis <span class="math inline">\( e : \Real^2 \to E^2 \)</span> as <span class="math inline">\( e(x,y) = xi + yj \)</span>.</p>
+<p>A real tuple space on its own has no geometric meaning. One way to visualize a real tuple space is a Cartesian coordinate system.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Real_coordinate_space">https://en.wikipedia.org/wiki/Real_coordinate_space</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Real_coordinate_space">https://en.wikipedia.org/wiki/Real_coordinate_space</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Mathematical_analysis">https://en.wikipedia.org/wiki/Mathematical_analysis</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>&lt;2020-01-26&gt; <a href="https://en.wikipedia.org/wiki/Operator_(mathematics)">https://en.wikipedia.org/wiki/Operator_(mathematics)</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-26 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>

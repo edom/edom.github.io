@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Geometry 1: Axioms and drawings</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Geometry 1: Axioms and drawings</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#metric-spaces">Metric spaces</a></span><span class="word_count">(45w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#normed-vector-spaces">Normed vector spaces</a></span><span class="word_count">(190w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#relationship-between-metric-and-norm">Relationship between metric and norm</a></span><span class="word_count">(27w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#relationship-between-spaces-embedding-projection-homeomorphism">Relationship between spaces: embedding, projection, homeomorphism</a></span><span class="word_count">(36w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#circles-pi-angles-radian">Circles, pi, angles, radian</a></span><span class="word_count">(138w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#basic-shapes">Basic shapes</a></span><span class="word_count">(59w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#basic-solids">Basic solids</a></span><span class="word_count">(15w~1m)</span></li>
+<li><span class="section_number">8</span><span class="section_title"><a href="#right-triangles-and-trigonometry">Right triangles and trigonometry</a></span><span class="word_count">(47w~1m)</span></li>
+<li><span class="section_number">9</span><span class="section_title"><a href="#more-dimensions">More dimensions</a></span><span class="word_count">(377w~2m)</span></li>
+<li><span class="section_number">10</span><span class="section_title"><a href="#transformations-symmetries-and-invariants">Transformations, symmetries, and invariants</a></span><span class="word_count">(243w~2m)</span></li>
+</ul>
+</div>
+<h2 id="metric-spaces"><span class="section_number">1</span><span class="section_title">Metric spaces</span></h2>
+<ul>
+<li>A <a href="https://en.wikipedia.org/wiki/Space_(mathematics)">space</a> (a mathematical space) is a set of points.</li>
+<li>A <em>point</em> is an element in a set.</li>
+<li>&quot;<a href="https://en.wikipedia.org/wiki/Metric_(mathematics)">Metric</a>&quot; is another term for &quot;distance&quot;.
+<ul>
+<li>We usually write <span class="math inline">\(d(x,y)\)</span> to mean &quot;the <em>distance</em> between point <span class="math inline">\(x\)</span> and point <span class="math inline">\(y\)</span>&quot;.</li>
+</ul></li>
+<li>A <em>metric space</em> is a space and a metric.</li>
+<li><p>Relationship:</p>
+<table>
+<thead>
+<tr class="header">
+<th>geometry</th>
+<th>set theory</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>space</td>
+<td>set</td>
+</tr>
+<tr class="even">
+<td>point</td>
+<td>element</td>
+</tr>
+</tbody>
+</table></li>
+</ul>
+<h2 id="normed-vector-spaces"><span class="section_number">2</span><span class="section_title">Normed vector spaces</span></h2>
+<ul>
+<li>An <em><a href="https://en.wikipedia.org/wiki/Euclidean_vector">Euclidean vector</a></em> is something with magnitude and direction.</li>
+<li>A <em>vector</em> is an element of a vector space.</li>
+<li>Understand <em>scalar–vector multiplication</em>:
+<ul>
+<li>If <span class="math inline">\(k\)</span> is a scalar (a real number) and <span class="math inline">\(x\)</span> is a vector, then <span class="math inline">\(kx\)</span> is a vector whose direction is the same as <span class="math inline">\(x\)</span> but whose length is <span class="math inline">\(k\)</span> times the length of <span class="math inline">\(x\)</span>.</li>
+</ul></li>
+<li>A <a href="https://en.wikipedia.org/wiki/Vector_space">vector space</a> is a set of vectors plus some structures?</li>
+<li>Notation
+<ul>
+<li><span class="math inline">\(\norm{x}\)</span> (&quot;the norm of <span class="math inline">\(x\)</span>&quot;) means the length of vector <span class="math inline">\(x\)</span>.</li>
+<li>&quot;Norm&quot; means &quot;length&quot;.</li>
+<li>The <em>norm</em> of a vector is the <em>length</em> (the magnitude) of that vector.</li>
+</ul></li>
+<li>Understand vector addition.</li>
+<li>Understand vector negation.</li>
+<li><p>Understand point–vector addition.</p>
+<table>
+<thead>
+<tr class="header">
+<th>operation</th>
+<th>left argument</th>
+<th>right argument</th>
+<th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>addition</td>
+<td>vector</td>
+<td>vector</td>
+<td>vector</td>
+</tr>
+<tr class="even">
+<td>addition</td>
+<td>point</td>
+<td>vector</td>
+<td>point</td>
+</tr>
+<tr class="odd">
+<td>subtraction</td>
+<td>vector</td>
+<td>vector</td>
+<td>vector</td>
+</tr>
+<tr class="even">
+<td>subtraction</td>
+<td>point</td>
+<td>point</td>
+<td>vector</td>
+</tr>
+</tbody>
+</table></li>
+<li>Derive subtraction from addition and negation.
+<ul>
+<li>Subtraction can be derived from addition and negation: <span class="math inline">\(x-y = x+(-y)\)</span>.</li>
+<li>Negation: <span class="math inline">\(-x\)</span> is something such that <span class="math inline">\(x+(-x) = 0\)</span>.</li>
+<li>If <span class="math inline">\(p+v=r\)</span>, then, subtract both sides by <span class="math inline">\(v\)</span> to get <span class="math inline">\(p=r-v\)</span>.</li>
+</ul></li>
+<li>See also <a href="https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics)">a brief history of vectors</a>.</li>
+<li>An <em>Euclidean vector space</em> is a set of vectors with Euclidean metric. A metric is a function that maps each vector to its length. An Euclidean metric is distance as we know it in everyday situation.</li>
+<li>Euclidean distance can be derived from the <a href="https://en.wikipedia.org/wiki/Pythagorean_theorem">Pythagorean theorem</a> that relates the lengths of the sides of a right triangle.</li>
+</ul>
+<h2 id="relationship-between-metric-and-norm"><span class="section_number">3</span><span class="section_title">Relationship between metric and norm</span></h2>
+<ul>
+<li>Because a vector can be obtained by subtracting two points:
+<ul>
+<li>A metric space can be derived from a normed vector space.</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[ d(x,y) = \norm{y-x} \]</span></p>
+<h2 id="relationship-between-spaces-embedding-projection-homeomorphism"><span class="section_number">4</span><span class="section_title">Relationship between spaces: embedding, projection, homeomorphism</span></h2>
+<ul>
+<li>Understand <a href="https://en.wikipedia.org/wiki/Ambient_space">ambient spaces</a>.</li>
+<li>Understand <em>embedding</em>.
+<ul>
+<li>Example: A line may be embedded in a three-dimensional space.</li>
+</ul></li>
+<li>Understand <em>projection</em>.
+<ul>
+<li>Example: A cube may be projected onto a plane.</li>
+<li>Understand that <em>shadows</em> can be modeled by geometric projections.</li>
+</ul></li>
+<li>Understand <em>homeomorphism</em>.</li>
+</ul>
+<h2 id="circles-pi-angles-radian"><span class="section_number">5</span><span class="section_title">Circles, pi, angles, radian</span></h2>
+<ul>
+<li>A <em><a href="https://en.wikipedia.org/wiki/Circle">circle</a> with center <span class="math inline">\(c\)</span> and radius <span class="math inline">\(r\)</span></em> is <span class="math inline">\( \SetBuilder{x}{d(c,x) = r} \)</span> (the set of every point whose distance from <span class="math inline">\(c\)</span> is <span class="math inline">\(r\)</span>).
+<ul>
+<li>A <a href="https://en.wikipedia.org/wiki/Circular_sector"><em>sector</em></a> is …</li>
+</ul></li>
+<li><a href="https://en.wikipedia.org/wiki/Pi"><span class="math inline">\( \pi \)</span></a> is the ratio of a circle's circumference to its diameter.
+<ul>
+<li>All circles have that ratio.</li>
+<li>The first few digits of π are 3.141659…</li>
+<li>π is sometimes approximated as 22/7.</li>
+</ul></li>
+<li>An <a href="https://en.wikipedia.org/wiki/Angle"><em>angle</em></a> is …?</li>
+<li>An <em>angle</em> may be thought of as one revolution, half revolution, quarter revolution, 3/4 revolution, etc., but <a href="https://en.wikipedia.org/wiki/Radian"><em>radian</em></a> is the natural unit for angles.
+<ul>
+<li>360 degrees = 2π radian = 1 revolution</li>
+<li>Understand <a href="https://en.wikipedia.org/wiki/Radian#Advantages_of_measuring_in_radians">why</a><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> radian is the natural unit for angles.</li>
+</ul></li>
+<li>Understand that a <em>positive</em> angle usually means <em>counterclockwise</em> rotation.</li>
+<li>Circle, sector, angle, congruence
+<ul>
+<li>Consider a circle of radius <span class="math inline">\(r\)</span>.</li>
+<li>Consider a sector of angle <span class="math inline">\(\alpha\)</span> in that circle.</li>
+<li>The circumference of that sector is <span class="math inline">\( r \cdot \alpha \)</span>.</li>
+<li>An angle is the &quot;radius-independent size&quot; of a sector.</li>
+</ul></li>
+</ul>
+<h2 id="basic-shapes"><span class="section_number">6</span><span class="section_title">Basic shapes</span></h2>
+<ul>
+<li>A <a href="https://en.wikipedia.org/wiki/Polygon"><em>polygon</em></a> (an <span class="math inline">\(n\)</span>-gon) is a shape with <span class="math inline">\(n\)</span> vertices / edges / internal angles.
+<ul>
+<li>A <em>vertex</em> is a point.</li>
+<li>An <em>edge</em> is a straight line that connects two vertices.</li>
+<li>An <em>internal angle</em> is …</li>
+</ul></li>
+<li>A <a href="https://en.wikipedia.org/wiki/Triangle"><em>triangle</em></a> is a shape with three vertices / three edges / three internal angles.
+<ul>
+<li>triangle = three-angle</li>
+<li>quadrangle = four-angle, etc.</li>
+</ul></li>
+<li>A <em>circle</em> is <span class="math inline">\( \SetBuilder{x}{d(c,x) = r} \)</span> (see above).</li>
+</ul>
+<h2 id="basic-solids"><span class="section_number">7</span><span class="section_title">Basic solids</span></h2>
+<ul>
+<li>A <em>sphere</em> is <span class="math inline">\( \SetBuilder{x}{d(c,x) = r} \)</span>.
+<ul>
+<li>A <a href="https://en.wikipedia.org/wiki/Sphere">sphere</a> is the surface of a ball.</li>
+</ul></li>
+</ul>
+<h2 id="right-triangles-and-trigonometry"><span class="section_number">8</span><span class="section_title">Right triangles and trigonometry</span></h2>
+<ul>
+<li>A <em>right triangle</em> is a triangle with one right angle.
+<ul>
+<li>The <em>hypothenuse</em> is the side across the right angle.</li>
+</ul></li>
+<li>The <a href="https://en.wikipedia.org/wiki/Pythagorean_theorem">Pythagorean theorem</a> relates the length of the sides of every right triangle.</li>
+<li><a href="https://en.wikipedia.org/wiki/Trigonometry">Trigonometry</a>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Trigonometric_functions">Trigonometric functions</a>
+<ul>
+<li>? sine of an angle, cosine of an angle, tangent of an angle, …</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="more-dimensions"><span class="section_number">9</span><span class="section_title">More dimensions</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">9.1</span><span class="section_title"><a href="#modeling-physical-space-as-a-three-dimensional-euclidean-space">Modeling physical space as a three-dimensional Euclidean space</a></span><span class="word_count">(89w~1m)</span></li>
+<li><span class="section_number">9.2</span><span class="section_title"><a href="#dimension">Dimension</a></span><span class="word_count">(192w~1m)</span></li>
+<li><span class="section_number">9.3</span><span class="section_title"><a href="#orthogonality-perpendicularity">Orthogonality, perpendicularity</a></span><span class="word_count">(40w~1m)</span></li>
+<li><span class="section_number">9.4</span><span class="section_title"><a href="#hypersolids">Hypersolids</a></span><span class="word_count">(58w~1m)</span></li>
+</ul>
+</div>
+<h3 id="modeling-physical-space-as-a-three-dimensional-euclidean-space"><span class="section_number">9.1</span><span class="section_title">Modeling physical space as a three-dimensional Euclidean space</span></h3>
+<p>There are two different meanings of &quot;space&quot;. Physical space is often thought of as the volume occupied by objects.</p>
+<p>Most likely, you already understand a three-dimensional Euclidean space, because it is your internal mental model of the space around you.</p>
+<p>An <a href="https://en.wikipedia.org/wiki/Euclidean_space">Euclidean space</a> is a set of points, not a set of coordinates.</p>
+<p>We usually draw a point as a dot, but a point is a zero-dimensional geometric object that occupies no space at all.</p>
+<p><a href="https://commons.wikimedia.org/wiki/File:Coord_system_CA_0.svg#">This picture</a> may help you visualize a three-dimensional real tuple space.</p>
+<h3 id="dimension"><span class="section_number">9.2</span><span class="section_title">Dimension</span></h3>
+<ul>
+<li>The <em>number of dimensions</em> of a space is the <em>maximum number of mutually orthogonal lines</em> that can coexist in that space.
+<ul>
+<li>For example, we know no way to arrange more than three mutually orthogonal rulers in physical space. Therefore, we think our physical space has three dimensions.</li>
+</ul></li>
+<li>The number of dimensions of every <em>subset</em> of <span class="math inline">\( \Real^n \)</span> is <span class="math inline">\(n\)</span>.
+<ul>
+<li>Do not confuse embeddings and subsets.
+<ul>
+<li><span class="math inline">\( \Real^m \)</span> is not a <em>subset</em> of <span class="math inline">\( \Real^n \)</span> if <span class="math inline">\( m \neq n \)</span>.</li>
+</ul></li>
+<li>We do not define <span class="math inline">\(\Real^0\)</span>.</li>
+<li>We do not define the number of dimensions of the empty set.</li>
+</ul></li>
+</ul>
+<p>How do we know how many <em>dimensions</em> a space has?</p>
+<p>We know that a space has dimension <span class="math inline">\(n\)</span> if we cannot simultaneously place more than <span class="math inline">\(n\)</span> mutually orthogonal lines in that space. We infer that our space has three dimensions because we have not found how to arrange more than three mutually orthogonal lines in our space. For example, if we pick three rulers, we can arrange them so that they are orthogonal to each other. But, if we pick four rulers, we know no way to arrange them so that they are orthogonal to each other. That is why we think that space is three-dimensional.</p>
+<h3 id="orthogonality-perpendicularity"><span class="section_number">9.3</span><span class="section_title">Orthogonality, perpendicularity</span></h3>
+<p>How do we know that two lines are <em>orthogonal</em>? By a protractor?</p>
+<p>We know that two lines are orthogonal if all the four angles formed by their intersection are equal.</p>
+<p>Other terms for &quot;orthogonal&quot; are &quot;perpendicular&quot; and &quot;at a right angle&quot;.</p>
+<h3 id="hypersolids"><span class="section_number">9.4</span><span class="section_title">Hypersolids</span></h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Polygon">polygon</a> (many-corner) → <a href="https://en.wikipedia.org/wiki/Polyhedron">polyhedron</a> (many-seat) → <a href="https://en.wikipedia.org/wiki/Polytope">polytope</a> (many-place)</li>
+<li>shape → solid → hypersolid</li>
+<li>A <em>line</em> is <span class="math inline">\( \SetBuilder{x}{x = a + tb, ~ t \in \Real} \)</span>.</li>
+<li>A <em>hyperplane</em> is <span class="math inline">\( \SetBuilder{x}{a \cdot x = b} \)</span>.</li>
+<li>Understand two-dimensional geometric objects: line, circle, square.</li>
+<li>Understand three-dimensional geometric objects: plane, sphere, cube.</li>
+<li>Understand higher-dimensional geometric objects: hyperplane, hypersphere, hypercube, &quot;hyper-&quot; + &lt;the name of a three-dimensional object&gt;.</li>
+</ul>
+<h2 id="transformations-symmetries-and-invariants"><span class="section_number">10</span><span class="section_title">Transformations, symmetries, and invariants</span></h2>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">10.1</span><span class="section_title"><a href="#invariants">Invariants</a></span><span class="word_count">(183w~1m)</span></li>
+<li><span class="section_number">10.2</span><span class="section_title"><a href="#symmetries">Symmetries</a></span><span class="word_count">(58w~1m)</span></li>
+</ul>
+</div>
+<h3 id="invariants"><span class="section_number">10.1</span><span class="section_title">Invariants</span></h3>
+<p>Let <span class="math inline">\(\phi : D \to C\)</span> be a function.</p>
+<p>Let <span class="math inline">\(T : D \to D\)</span> be a function, usually called a &quot;transformation&quot;.</p>
+<p>We say &quot;<span class="math inline">\(\phi\)</span> is <em>unaffected</em> by <span class="math inline">\(T\)</span>&quot; or &quot;<span class="math inline">\( \phi \)</span> is <em><span class="math inline">\(T\)</span>-invariant</em>&quot; or &quot;<span class="math inline">\( T \)</span> is an <em>invariant</em> (a <em>symmetry</em>) of <span class="math inline">\( \phi \)</span>&quot; iff, for all <span class="math inline">\(x \in D\)</span>: <span class="math display">\[ \phi(x) = \phi(T(x)) \]</span></p>
+<p>Here are some examples of invariants.</p>
+<p>Let <span class="math inline">\( Tx = x + c \)</span> represent translation.</p>
+<p>Example: If <span class="math inline">\(\phi(x,o,r)\)</span> means &quot;<span class="math inline">\(x\)</span> is a point on a circle with center <span class="math inline">\(o\)</span> and radius <span class="math inline">\(r\)</span>&quot;, then <span class="math inline">\(\phi(x,o,r) = \phi(Tx,To,r)\)</span>. (A predicate is a function whose codomain is the set of booleans.)</p>
+<p>Example: If <span class="math inline">\(V\)</span> is a vector space, then <span class="math inline">\(\SetBuilder{Tv}{v \in V} = V\)</span>. If we follow the &quot;auto-lifting&quot; convention, we can write the equation more prettily as <span class="math inline">\( TV = V \)</span>.</p>
+<p>Example: Even functions exhibit mirror symmetry. (A function <span class="math inline">\( f \)</span> is <em>even</em> iff <span class="math inline">\( f(x) = f(-x) \)</span> for all applicable <span class="math inline">\(x\)</span>.)</p>
+<p>Example: Periodicity is a special case of translation-invariance. (A function <span class="math inline">\(f\)</span> has <em>period</em> <span class="math inline">\(p\)</span> iff <span class="math inline">\(p\)</span> is the smallest positive number such that <span class="math inline">\( f(x+p) = f(x) \)</span> for all applicable <span class="math inline">\(x\)</span>. A function is <em>periodic</em> iff it has a period.)</p>
+<h3 id="symmetries"><span class="section_number">10.2</span><span class="section_title">Symmetries</span></h3>
+<p>Example: let <span class="math inline">\(S\)</span> be the set of points of an unlabeled square.</p>
+<p>Let <span class="math inline">\(T\)</span> be a rotation about the square's center by a right angle.</p>
+<p>We write <span class="math inline">\(TS\)</span> to mean &quot;the result of rotating <span class="math inline">\(S\)</span> about its center by a right angle&quot;.</p>
+<p>We write <span class="math inline">\(TS = S\)</span> to mean &quot;rotating <span class="math inline">\(S\)</span> about its center by a right angle produces <span class="math inline">\(S\)</span> itself&quot;.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>&lt;2020-01-26&gt;<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-26 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
