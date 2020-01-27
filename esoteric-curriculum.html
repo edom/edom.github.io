@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Toward a curriculum for esoteric science</title>
+        <link rel="stylesheet" href="/assets/main.css"/>
+        <script>
+// Help the reader estimate how much time the reading is going to take.
+// Show word count and reading time estimation in TOC entry.
+//
+// TOC = table of contents
+//
+// Known issue: This janks: this DOM manipulation is done after the page is rendered.
+// If we don't want jank, we have to manipulate the HTML source before it reaches the browser.
+// We assume that the user doesn't refresh the page while reading.
+// The benefit of fixing that jank is not enough for me to justify trying to fix it.
+document.addEventListener("DOMContentLoaded", function () {
+    function count_word (string) {
+        return string.trim().split(/\s+/).length;
+    }
+    function show_quantity (count, singular) {
+        let plural = singular + "s"; // For this script only.
+        return count + " " + ((count == 1) ? singular : plural);
+    }
+    function create_length_indicator (word, minute) {
+        let e = document.createElement("div");
+        e.className = "toc_entry__length_indicator";
+        e.textContent = " (" + show_quantity(word, "word") + " ~ " + show_quantity(minute, "minute") + ")";
+        return e;
+    }
+    // We assume that readers read this many words per minute with 100% comprehension.
+    // This assumption may not hold for dense texts such as philosophy and mathematics.
+    const wpm_assumption = 200;
+    // We assume a certain Jekyll template.
+    let page = document.querySelector("main.page-content");
+    if (page === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"main.page-content\" does not match anything");
+        return;
+    }
+    let page_title = document.querySelector("header.post-header h1.post-title");
+    if (page_title === null) {
+        console.log("toc_generate_estimate: Impossible: CSS selector \"header.post-header h1.post-title\" does not match anything");
+        return;
+    }
+    let page_word = count_word(page.textContent);
+    let page_minute = Math.ceil(page_word / wpm_assumption);
+    page_title.insertAdjacentElement("afterend", create_length_indicator(page_word, page_minute));
+    // We violate the HTML specification.
+    // The page may have several elements with the same ID.
+    // We assume that Org HTML Export generates a DIV element with ID "table-of-contents".
+    // We assume that Jekyll Markdown-to-HTML generates a UL element with ID "markdown-toc".
+    // This only works for Org HTML Export's TOC.
+    let toc_entries = document.querySelectorAll("#table-of-contents a, #text-table-of-contents a");
+    toc_entries.forEach((toc_entry_a) => {
+        let href = toc_entry_a.getAttribute("href"); // We assume that this is a string like "#org0123456".
+        if (href.charAt(0) !== '#') {
+            console.log("toc_generate_estimate: Impossible: " + href + " does not begin with hash sign");
+            return;
+        }
+        // We can't just document.querySelector(href) because target_id may contain invalid ID characters such as periods.
+        let target_id = href.substring(1);
+        let id_escaped = target_id.replace("\"", "\\\"");
+        let h_elem = document.querySelector("[id=\"" + id_escaped + "\"]"); // We assume that this is the h1/h2/h3 element referred by the TOC entry.
+        if (h_elem === null) { // We assume that this is impossible.
+            console.log("toc_generate_estimate: Impossible: " + href + " does not refer to anything");
+            return;
+        }
+        let section = h_elem.parentNode;
+        let section_word = count_word(section.textContent);
+        let section_minute = Math.ceil(section_word / wpm_assumption);
+        toc_entry_a.insertAdjacentElement("afterend", create_length_indicator(section_word, section_minute));
+    });
+});
+        </script>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12628443-6"></script>
+<script>
+  window['ga-disable-UA-12628443-6'] = window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1";
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12628443-6');
+</script>
+        
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX","input/MathML","input/AsciiMath",
+            "output/CommonHTML"
+            ],
+            extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+            TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                , equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            },
+            "CommonHTML": {
+                scale: 100
+            },
+            "fast-preview": {
+                disabled: true,
+            }
+        });
+        </script>
+        <style>
+            /*
+            PreviewHTML produces small Times New Roman text.
+            PreviewHTML scale doesn't work.
+            */
+            .MathJax_PHTML { font-size: 110%; }
+        </style>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js" async defer></script>
+    </head>
+    <body>
+        <header class="site-header" role="banner">
+            <div class="wrapper">
+                <a class="site-title" rel="author" href="/">Erik Dominikus Research Group</a>
+            </div>
+        </header>
+    <div style="display:none;">\(
+    \renewcommand\emptyset{\varnothing}
+    \newcommand\abs[1]{\left|#1\right|}
+    \newcommand\dom{\textrm{dom}}
+    \newcommand\cod{\textrm{cod}}
+    \newcommand\Bernoulli{\textrm{Bernoulli}}
+    \newcommand\Binomial{\textrm{Binomial}}
+    \newcommand\Expect[1]{\mathbb{E}[#1]}
+    \newcommand\Nat{\mathbb{N}}
+    \newcommand\Integers{\mathbb{Z}}
+    \newcommand\Real{\mathbb{R}}
+    \newcommand\Rational{\mathbb{Q}}
+    \newcommand\Complex{\mathbb{C}}
+    \newcommand\Pr{\mathrm{P}}
+    \newcommand\Time{\text{Time}}
+    \newcommand\DTime{\text{DTime}}
+    \newcommand\NTime{\text{NTime}}
+    \newcommand\TimeP{\text{P}}
+    \newcommand\TimeNP{\text{NP}}
+    \newcommand\TimeExp{\text{ExpTime}}
+    \newcommand\norm[1]{\left\lVert#1\right\rVert}
+    \newcommand\bbA{\mathbb{A}}
+    \newcommand\bbC{\mathbb{C}}
+    \newcommand\bbD{\mathbb{D}}
+    \newcommand\bbE{\mathbb{E}}
+    \newcommand\bbN{\mathbb{N}}
+    \newcommand\frakI{\mathfrak{I}}
+    % deprecated; use TimeExp
+    \newcommand\ExpTime{\text{ExpTime}}
+    \newcommand\Compute{\text{Compute}}
+    \newcommand\Search{\text{Search}}
+    % model theory structure
+    \newcommand\struc[1]{\mathcal{#1}}
+    \newcommand\SetBuilder[2]{\{#1 ~|~ #2\}}
+    \newcommand\Set[1]{\{#1\}}
+    \newcommand\semantics[1]{\langle #1 \rangle}
+    \newcommand\bigsemantics[1]{S\left(#1\right)}
+    \)</div>
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                <article class="post">
+                    <header class="post-header">
+                        <h1 class="post-title">Toward a curriculum for esoteric science</h1>
+                    </header>
+                </article>
+                <div class="post-content">
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">1</span><span class="section_title"><a href="#post-materialism">Post-materialism</a></span><span class="word_count">(21w~1m)</span></li>
+<li><span class="section_number">2</span><span class="section_title"><a href="#mediumshipchanneling">Mediumship/channeling</a></span><span class="word_count">(38w~1m)</span></li>
+<li><span class="section_number">3</span><span class="section_title"><a href="#spirits">Spirits</a></span><span class="word_count">(19w~1m)</span></li>
+<li><span class="section_number">4</span><span class="section_title"><a href="#death-related-phenomena">Death-related phenomena</a></span><span class="word_count">(11w~1m)</span></li>
+<li><span class="section_number">5</span><span class="section_title"><a href="#contact-modalities">Contact modalities</a></span><span class="word_count">(94w~1m)</span></li>
+<li><span class="section_number">6</span><span class="section_title"><a href="#meditation">Meditation</a></span><span class="word_count">(16w~1m)</span></li>
+<li><span class="section_number">7</span><span class="section_title"><a href="#toward-a-curriculum-for-spirituality">Toward a curriculum for spirituality</a></span><span class="word_count">(79w~1m)</span></li>
+</ul>
+</div>
+<h2 id="post-materialism"><span class="section_number">1</span><span class="section_title">Post-materialism</span></h2>
+<ul>
+<li>Understand the difference between scientistm and science.</li>
+<li>Understand the difference between skepticism and pseudoskepticism.</li>
+<li>Understand the difference between psychic, psychic claimant, and pseudopsychic.</li>
+<li><a href="https://thesearchforlifeafterdeath.com/2018/02/25/spiritual-philosophy-discussion-series-the-conscious-created-universe-part-i/">https://thesearchforlifeafterdeath.com/2018/02/25/spiritual-philosophy-discussion-series-the-conscious-created-universe-part-i/</a></li>
+</ul>
+<h2 id="mediumshipchanneling"><span class="section_number">2</span><span class="section_title">Mediumship/channeling</span></h2>
+<ul>
+<li>&quot;Channeling&quot; is a newer synonym for &quot;mediumship&quot;?</li>
+<li>Understand how to <em>test and verify spirits</em>.
+<ul>
+<li>Understand that we <em>can</em> refuse to communicate.</li>
+<li>? &quot;Good&quot; spirits understand the need for verification?</li>
+</ul></li>
+<li>Understand that mediumship is learnable.
+<ul>
+<li>Alan Hugenot.</li>
+</ul></li>
+<li>Understand trusted lists and their criteria.
+<ul>
+<li>Windbridge</li>
+<li>Forever Family Foundation</li>
+</ul></li>
+</ul>
+<h2 id="spirits"><span class="section_number">3</span><span class="section_title">Spirits</span></h2>
+<ul>
+<li>Understand the <em>properties</em> of spirits.</li>
+<li>Understand what spirits <em>can</em> do.</li>
+<li>Understand what spirits <em>will</em> do.</li>
+<li>Understand how the SoulPhone Foundation's SoulSwitch works.</li>
+</ul>
+<h2 id="death-related-phenomena"><span class="section_number">4</span><span class="section_title">Death-related phenomena</span></h2>
+<ul>
+<li>Understand <a href="https://thesearchforlifeafterdeath.com/2017/10/22/terminal-lucidity-reveals-mysteries-about-consciousness/"><em>terminal lucidity</em></a>.</li>
+<li>Understand <em>deathbed visions</em>.</li>
+<li>Understand <em>near-death experiences</em>.</li>
+<li>Understand <em>after-death communications</em>.
+<ul>
+<li>Protocol <a href="http://afterlifeconnections.org/craig">http://afterlifeconnections.org/craig</a></li>
+</ul></li>
+</ul>
+<h2 id="contact-modalities"><span class="section_number">5</span><span class="section_title">Contact modalities</span></h2>
+<ul>
+<li>? Understand how consciousness unifies the contact modalities.</li>
+<li>Understand <em><a href="https://alien-ufo-research.com/ufo-sighting-classification/">CE-n close encounter classification scheme</a></em>.
+<ul>
+<li>CE-1 to 4 were coined by Hynek, and CE-5 was coined by Greer? <a href="https://www.syracusenewtimes.com/contacting-extraterrestrials-with-consciousness/">https://www.syracusenewtimes.com/contacting-extraterrestrials-with-consciousness/</a></li>
+</ul></li>
+<li>Understand some protocols for contacting aliens. (Are these real?)
+<ul>
+<li>Is it <em>safe</em> to test the protocols?</li>
+<li><a href="https://www.gaia.com/article/3-methods-for-making-contact-with-ufos-telepathically">https://www.gaia.com/article/3-methods-for-making-contact-with-ufos-telepathically</a></li>
+<li>Understand the <em>CE-5 protocol for summoning aliens</em>.
+<ul>
+<li><a href="https://www.ce5texas.com/ce5-contact-protocols.php">https://www.ce5texas.com/ce5-contact-protocols.php</a></li>
+<li><a href="https://www.ce5texas.com/meditation-primer.php">https://www.ce5texas.com/meditation-primer.php</a></li>
+<li><a href="https://www.reddit.com/r/UFOs/comments/8v8ia5/are_the_csetice5_protocols_a_legitimate_way_to/">https://www.reddit.com/r/UFOs/comments/8v8ia5/are_the_csetice5_protocols_a_legitimate_way_to/</a>
+<ul>
+<li><a href="https://www.reddit.com/r/UFOs/comments/8v8ia5/are_the_csetice5_protocols_a_legitimate_way_to/e1luv8o">https://www.reddit.com/r/UFOs/comments/8v8ia5/are_the_csetice5_protocols_a_legitimate_way_to/e1luv8o</a></li>
+</ul></li>
+<li>Understand that Steven Greer may be <a href="http://www.ufowatchdog.com/steven_greer.htm">somewhat suspect</a>.
+<ul>
+<li>No wonder no one is disclosing anything to him.</li>
+</ul></li>
+</ul></li>
+<li><a href="https://www.quora.com/Is-it-possible-to-contact-extraterrestrials-with-meditation">https://www.quora.com/Is-it-possible-to-contact-extraterrestrials-with-meditation</a></li>
+</ul></li>
+<li>&quot;contactee&quot; or &quot;experiencer&quot;?</li>
+<li>Understand the relationship/difference between CUFON, MUFON, NUFORC, etc.</li>
+</ul>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1</span><span class="section_title"><a href="#need-elaboration">Need elaboration</a></span><span class="word_count">(24w~1m)</span></li>
+</ul>
+</div>
+<h3 id="need-elaboration"><span class="section_number">5.1</span><span class="section_title">Need elaboration</span></h3>
+<div class="local_table_of_contents">
+<ul>
+<li><span class="section_number">5.1.1</span><span class="section_title"><a href="#free-contact-modalities-quantum-hologram-hypothesis-mitchell-et-al.">FREE, contact modalities, quantum hologram hypothesis, Mitchell et al.</a></span><span class="word_count">(23w~1m)</span></li>
+</ul>
+</div>
+<h4 id="free-contact-modalities-quantum-hologram-hypothesis-mitchell-et-al."><span class="section_number">5.1.1</span><span class="section_title">FREE, contact modalities, quantum hologram hypothesis, Mitchell et al.</span></h4>
+<ul>
+<li>video: <a href="https://www.youtube.com/watch?v=5Ckk8xO_wbE">Contact Modalities with Reinerio Hernandez</a></li>
+<li>book: &quot;Beyond UFOS. The Science of Consciousness. Volume 1&quot; <span class="citation" data-cites="schild2018beyond">[<a href="#ref-schild2018beyond">1</a>]</span></li>
+<li><a href="https://www.consciousnessandcontact.org/">https://www.consciousnessandcontact.org/</a></li>
+</ul>
+<h2 id="meditation"><span class="section_number">6</span><span class="section_title">Meditation</span></h2>
+<ul>
+<li>Understand the <a href="https://www.reddit.com/r/UFOs/comments/8v8ia5/are_the_csetice5_protocols_a_legitimate_way_to/e1m3m4n">micronap meditation technique</a>
+<ul>
+<li>Did <a href="https://www.fastcompany.com/3023078/how-dali-einstein-and-aristotle-perfected-the-power-nap">Dali, Edison, Einstein</a>, or anybody else really do that?</li>
+<li>Is that meditation?</li>
+</ul></li>
+</ul>
+<h2 id="toward-a-curriculum-for-spirituality"><span class="section_number">7</span><span class="section_title">Toward a curriculum for spirituality</span></h2>
+<ul>
+<li>Understand the difference between Jesus and Christ.</li>
+<li>Define &quot;vibration&quot; or &quot;frequency&quot;. Number of repetitions per unit time?</li>
+<li>Define &quot;synchronicity&quot;?</li>
+<li>Understand ITC (instrumental trans-communication): Gary E. Schwartz, Sonia Rinaldi, etc.</li>
+<li>Understand cognitive-, affective-, and null-domain meditation.</li>
+<li>Overcome material desires.</li>
+<li>Overcome the desire to eat.</li>
+<li>Overcome the desire to drink.</li>
+<li>Overcome the desire to have sex.</li>
+<li>Overcome sexual thoughts.</li>
+<li>Overcome the desire to breathe.</li>
+</ul>
+<div id="refs" class="references">
+<div id="ref-schild2018beyond">
+<p>[1] Schild, R. and Klimo, J. 2018. <em>Beyond ufos: The science of consciousness &amp; contact with non human intelligence (volume 1)</em>. Experiencer.org via PublishDrive.</p>
+</div>
+</div>
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer h-card">
+            <data class="u-url" href="/"></data>
+            <div class="wrapper">
+                <p>This page was created on 2020-01-28 00:00:00 +0700.</p>
+                <p class="rss-subscribe">The
+                    <a href="/feed.xml">RSS feed</a> of this website has not been implemented.</p>
+                <p>
+                    I used Disqus, but I removed it because it hijacks my links and redirects them to third-party ad networks.
+                    On 2019-05-27, a friend of mine reported that links on my website were broken,
+                    and I caught Disqus red-handed redirecting my links to pwieu.com.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
